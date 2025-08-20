@@ -9,9 +9,14 @@ namespace RedSilver2.Framework.Scenes
 {
     public abstract partial class SceneLoaderManager : MonoBehaviour   
     {
-        private UnityEvent<int>        onLoadStarted;
-        private UnityEvent<int>        onLoadFinished;
-        private UnityEvent<int, float> onLoadProgressChanged;
+        private UnityEvent<int>        onSingleSceneLoadStarted;
+        private UnityEvent<int>        onSingleSceneLoadFinished;
+        private UnityEvent<int, float> onSingleSceneLoadProgressChanged;
+
+        private LoadingScreen[] loadingScreens;
+        private LoadingScreen   currentLoadingScreen; 
+
+        public const string SCENE_ROOT_PATH = "Scenes/";
 
 
         private static List<SceneData>              SceneDatasInstances    = new List<SceneData>();
@@ -21,88 +26,130 @@ namespace RedSilver2.Framework.Scenes
         public static SceneLoaderManager Instance { get; private set; }
 
 
-        protected abstract void OnValidate();
-
         private void Awake()
         {
             if(Instance != null) { Destroy(this); }
             Instance = this;
 
-            onLoadStarted         = new UnityEvent<int>();
-            onLoadFinished        = new UnityEvent<int>();
-            onLoadProgressChanged = new UnityEvent<int, float>();
+            SetEvents();
 
-            AddOnLoadStartedListener(OnLoadStarted);
-            AddOnLoadFinishedListener(OnLoadFinished);
+            AddOnSingleSceneLoadStartedListener(OnSingleSceneLoadStarted);
+            AddOnSingleSceneLoadFinishedListener(OnSingleSceneLoadFinished);
+
+            FindLoadingScreens();
         }
 
-        protected virtual void Start()
+        private void OnSingleSceneLoadStarted(int sceneIndex)
         {
-            AddOnLoadStartedListener(sceneIndex => Debug.Log($"Loading Scene.. (Scene Index: {sceneIndex})"));
-            AddOnLoadProgressChangedListener((sceneIndex, progression) => Debug.Log($"Scene Loaded At {(int)(progression * 100)}% (Scene Index: {sceneIndex})"));
-            AddOnLoadFinishedListener(sceneIndex => Debug.Log($"Loaded Scene!! (Scene Index: {sceneIndex})"));          
+            StopAllSceneLoadingOperations();
+            IsLoadingSingleScene = true;
         }
 
-        private void OnLoadStarted(int sceneIndex)
+        private void OnSingleSceneLoadFinished(int sceneIndex)
         {
-            if (IsLoadingSingleScene) { StopAllSceneLoadingOperations();       }
-            else                      { StopSceneLoadingOperation(sceneIndex); }
+            IsLoadingSingleScene = false;
+        }
 
-            IEnumerator operation = SceneLoadingOperation(sceneIndex);
+        private void SetEvents()
+        {
+            onSingleSceneLoadStarted         = new UnityEvent<int>();
+            onSingleSceneLoadFinished        = new UnityEvent<int>();
+            onSingleSceneLoadProgressChanged = new UnityEvent<int, float>();
+        }
+
+        private void FindLoadingScreens()
+        {
+            loadingScreens = FindObjectsByType<LoadingScreen>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            if(loadingScreens.Length > 0) currentLoadingScreen = loadingScreens[0];
+        }
+
+        private void StartSceneLoad(int sceneIndex)
+        {
+            IEnumerator operation;
+            StopSceneLoadingOperation(sceneIndex);
+
+            operation = SceneLoadingOperation(sceneIndex, IsLoadingSingleScene);
             sceneLoadingOperations.Add(sceneIndex, operation);
           
             StartCoroutine(operation);
         }
 
-        private void OnLoadFinished(int sceneIndex)
+        private void FinishSceneLoad(int sceneIndex, bool isLoadingSingleScene)
         {
-            if (IsLoadingSingleScene)
-            {
-                // Loading Screen Fade Out;
-                IsLoadingSingleScene = false;
-            }
-
             if(sceneLoadingOperations.ContainsKey(sceneIndex))
                 sceneLoadingOperations.Remove(sceneIndex);
+
+            if (isLoadingSingleScene) 
+            { 
+                onSingleSceneLoadFinished.Invoke(sceneIndex);
+                if (currentLoadingScreen) currentLoadingScreen.gameObject.SetActive(false);
+            }
         }
  
-
-
-        private IEnumerator SceneLoadingOperation(int sceneIndex)
+        private IEnumerator WaitForLoadingScreen(bool isVisible)
         {
-            if (IsLoadingSingleScene) { } // Loading Screen Fade In;
-            yield return StartCoroutine(WaitOperationLoading(sceneIndex));
-            onLoadFinished.Invoke(sceneIndex);       
+            if(currentLoadingScreen != null && IsLoadingSingleScene)
+            {
+                if (isVisible) currentLoadingScreen.Show();
+                else           currentLoadingScreen.Hide();
+
+                while (!currentLoadingScreen.IsUIVisibilitySet()) yield return null;
+            }
         }
 
-        private IEnumerator WaitOperationLoading(int sceneIndex)
+        private IEnumerator SceneLoadingOperation(int sceneIndex, bool isLoadingSingleScene)
+        {
+                yield return WaitForLoadingScreen(true);
+                yield return StartCoroutine(WaitOperationLoading(sceneIndex, isLoadingSingleScene));
+                yield return WaitForLoadingScreen(false);
+
+                FinishSceneLoad(sceneIndex, isLoadingSingleScene);  
+        }
+
+        private IEnumerator WaitOperationLoading(int sceneIndex, bool isLoadingSingleScene)
         {
             AsyncOperation operation = SceneManager.LoadSceneAsync(sceneIndex, IsLoadingSingleScene ? LoadSceneMode.Single : LoadSceneMode.Additive);
-            SceneData      data      = GetSceneData(sceneIndex);
 
             operation.allowSceneActivation = false;
-            yield return StartCoroutine(WaitOperationLoading(operation, data));       
+            yield return StartCoroutine(WaitOperationLoading(operation, GetSceneData(sceneIndex), isLoadingSingleScene));       
         }
 
-        private IEnumerator WaitOperationLoading(AsyncOperation operation, SceneData data)
+        private IEnumerator WaitOperationLoading(AsyncOperation operation, SceneData data, bool isLoadingSingleScene)
         {
-            while (operation.progress < 0.9f)
+            if (operation != null)
             {
-                SetOperationProgress(operation.progress / 0.9f, data);
-                yield return null;
-            }
+                while (operation.progress < 0.9f)
+                {
+                    UpdateOperationProgress(data, operation.progress / 0.9f, isLoadingSingleScene);
+                    yield return null;
+                }
 
-            operation.allowSceneActivation = true;
+                UpdateOperationProgress(data, 1f, isLoadingSingleScene);
+                operation.allowSceneActivation = true;
+            }
+        }
+
+        private void UpdateOperationProgress(SceneData data, float progress, bool isLoadingSingleScene)
+        {
+            progress = Mathf.Clamp01(progress);
+
+            if (data != null)
+            {
+                if (!isLoadingSingleScene) SetOperationProgress(progress, data);
+                else SetOperationProgress(data.SceneIndex, progress);
+            }
         }
 
         private void SetOperationProgress(float progression, SceneData data)
         {
-            if (data != null)
-            {
-                if (IsLoadingSingleScene) onLoadProgressChanged.Invoke(data.SceneIndex, progression);
-                else data.SetLoadProgression(progression);
-            }
+            if (data != null) data.SetLoadProgression(progression);           
         }
+
+        private void SetOperationProgress(int sceneIndex, float progress)
+        {
+            if (IsLoadingSingleScene) onSingleSceneLoadProgressChanged.Invoke(sceneIndex, progress);
+        }
+
 
         private void StopSceneLoadingOperation(int sceneIndex)
         {
@@ -119,42 +166,65 @@ namespace RedSilver2.Framework.Scenes
             sceneLoadingOperations.Clear();
         }
 
-        protected void AddOnLoadStartedListener(UnityAction<int> action)
+        public void AddOnSingleSceneLoadStartedListener(UnityAction<int> action)
         {
-            if (onLoadStarted != null && action != null) onLoadStarted.AddListener(action);
+            if (onSingleSceneLoadStarted != null && action != null) onSingleSceneLoadStarted.AddListener(action);
         }
-        protected void AddOnLoadFinishedListener(UnityAction<int> action)
+        public void AddOnSingleSceneLoadFinishedListener(UnityAction<int> action)
         {
-            if (onLoadFinished != null && action != null) onLoadFinished.AddListener(action);
+            if (onSingleSceneLoadFinished != null && action != null) onSingleSceneLoadFinished.AddListener(action);
         }
-        protected void AddOnLoadProgressChangedListener(UnityAction<int, float> action)
+        public void AddOnSingleSceneLoadProgressChangedListener(UnityAction<int, float> action)
         {
-            if (onLoadStarted != null && action != null) onLoadProgressChanged.AddListener(action);
+            if (onSingleSceneLoadStarted != null && action != null) onSingleSceneLoadProgressChanged.AddListener(action);
+        }
+
+        public void RemoveOnSingleSceneLoadStartedListener(UnityAction<int> action)
+        {
+            if (onSingleSceneLoadStarted != null && action != null)  onSingleSceneLoadStarted.RemoveListener(action);
+        }
+        public void RemoveOnSingleSceneLoadFinishedListener(UnityAction<int> action)
+        {
+            if (onSingleSceneLoadFinished != null && action != null) onSingleSceneLoadFinished.RemoveListener(action);
+        }
+        public void RemoveOnSingleSceneLoadProgressChangedListener(UnityAction<int, float> action)
+        {
+            if (onSingleSceneLoadStarted != null && action != null)  onSingleSceneLoadProgressChanged.RemoveListener(action);
+        }
+
+        public void LoadSingleScene(string sceneName)
+        {
+            SceneData data = GetSceneData(sceneName);
+            if (data != null) { LoadSingleScene(data.SceneIndex); }
         }
 
         public void LoadSingleScene(int sceneIndex) 
         {
             if (IsValidSceneIndex(sceneIndex) && CanLoadScene(sceneIndex))
             {
-                IsLoadingSingleScene = true;
-                onLoadStarted.Invoke(sceneIndex);
+                if (currentLoadingScreen) currentLoadingScreen.gameObject.SetActive(true);
+               
+                onSingleSceneLoadStarted.Invoke(sceneIndex);
+                StartSceneLoad(sceneIndex);
             }
+        }
+
+        public void LoadScene(string sceneName)
+        {
+            SceneData data = GetSceneData(sceneName);
+            if (data != null) { LoadScene(data.SceneIndex); }
         }
 
         public void LoadScene(int sceneIndex) 
         {
             if (IsValidSceneIndex(sceneIndex) && CanLoadScene(sceneIndex))
             {
-                onLoadStarted.Invoke(sceneIndex);
+                onSingleSceneLoadStarted.Invoke(sceneIndex);
             }
         }
 
         public static bool CanLoadScene(int sceneIndex)
         {
-            Debug.Log(IsSceneUnlocked(sceneIndex));
-            Debug.Log(IsSceneLoaded(sceneIndex));
-            Debug.Log(!sceneLoadingOperations.ContainsKey(sceneIndex));
-
             if (!IsLoadingSingleScene && !sceneLoadingOperations.ContainsKey(sceneIndex) 
              && !IsSceneLoaded(sceneIndex) && IsSceneUnlocked(sceneIndex)) return true;
 
@@ -229,6 +299,7 @@ namespace RedSilver2.Framework.Scenes
             if (results.Count() > 0) return results.First();
             return null;
         }
+
         public static SceneData[] GetScenesDatas(int[] sceneIndexes)
         {
             List<SceneData> results = new List<SceneData>();
@@ -242,5 +313,8 @@ namespace RedSilver2.Framework.Scenes
 
             return results.ToArray();
         }
+
+        public static SceneData[] GetAllScenesDatas() => SceneDatasInstances.ToArray();
+        
     }
 }

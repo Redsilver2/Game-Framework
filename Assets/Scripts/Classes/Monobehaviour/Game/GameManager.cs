@@ -18,18 +18,12 @@ namespace RedSilver2.Framework
 
         private void Start()
         {
-            StartCoroutine(LoadLevel());
+
         }
 
         private void Update()
         {
-            Debug.Log("Was Any Button Pressed: " + InputManager.AnyKeyDown);
-        }
 
-        private IEnumerator LoadLevel()
-        {
-            yield return new WaitForSeconds(2f);
-            SceneLoaderManager.Instance.LoadSingleScene(1);
         }
     }
 }
