@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace RedSilver2.Framework.Inputs
 {
-    public sealed class ReleaseInput : SingleInput
+    public class ReleaseInput : SingleInput
     {
         public ReleaseInput(string name, KeyboardKey defaultKeyboardKey, GamepadKey defaultGamepadKey) : base(name, defaultKeyboardKey, defaultGamepadKey)
         {

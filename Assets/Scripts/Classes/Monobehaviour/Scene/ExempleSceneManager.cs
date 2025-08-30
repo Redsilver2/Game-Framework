@@ -9,13 +9,22 @@ namespace RedSilver2.Framework.Scenes
 
         protected void Start()
         {
+            Debug.Log("WOW");
+
             AddSceneData(new SceneData[]
             {
                 new TestScene01(0, true),
-                new TestScene01(1, false)
+                new TestScene01(1, true)
             });
+        }
 
-            Debug.Log(GetAllScenesDatas().Length);
+        private void Update()
+        {
+            if (InputManager.GetKeyDown(KeyboardKey.Space))
+            {
+                //flip = !flip;
+                //LoadSingleScene(flip ? 1 : 0);
+            }
         }
     }
 

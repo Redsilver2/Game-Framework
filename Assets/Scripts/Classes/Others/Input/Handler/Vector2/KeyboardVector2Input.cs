@@ -2,37 +2,58 @@ using UnityEngine;
 
 namespace RedSilver2.Framework.Inputs
 {
-    public sealed partial class KeyboardVector2Input : Vector2Input
+    public partial class KeyboardVector2Input : Vector2Input
     {
-        private readonly Vector2Keyboard keyboardKeys;
+        protected readonly Vector2Keyboard keyboardKeys;
 
         public KeyboardKey Up    => keyboardKeys.Up;
         public KeyboardKey Down  => keyboardKeys.Down;
         public KeyboardKey Left  => keyboardKeys.Left;
         public KeyboardKey Right => keyboardKeys.Right;
 
-        public KeyboardVector2Input(string name, Vector2Keyboard keyboardKeys, GamepadStick gamepadStick) : base(name, gamepadStick) 
+        public const KeyboardKey DEFAULT_UP_KEY    = KeyboardKey.W;
+        public const KeyboardKey DEFAULT_DOWN_KEY  = KeyboardKey.S;
+
+        public const KeyboardKey DEFAULT_LEFT_KEY  = KeyboardKey.A;
+        public const KeyboardKey DEFAULT_RIGHT_KEY = KeyboardKey.D;
+
+        public KeyboardVector2Input(string name) : base(name)
         {
-           this.keyboardKeys = keyboardKeys; 
+            this.keyboardKeys = new Vector2Keyboard(DEFAULT_UP_KEY, DEFAULT_DOWN_KEY, DEFAULT_LEFT_KEY, DEFAULT_RIGHT_KEY);
         }
 
-        public void OverrideUpKey(KeyboardKey key)    => keyboardKeys.OverrideUp(key);
-        public void OverrideDownKey(KeyboardKey key)  => keyboardKeys.OverrideDown(key);
-        public void OverrideLeftKey(KeyboardKey key)  => keyboardKeys.OverrideLeft(key);
-        public void OverrideRightKey(KeyboardKey key) => keyboardKeys.OverrideRight(key);
+        public KeyboardVector2Input(string name, Vector2Keyboard keyboardKeys) : base(name)
+        {
+            this.keyboardKeys = keyboardKeys;
+        }
 
-        public string GetUpPath()    => InputManager.GetPath(keyboardKeys.Up);
-        public string GetDownPath()  => InputManager.GetPath(keyboardKeys.Down);
-        public string GetLeftPath()  => InputManager.GetPath(keyboardKeys.Left);
+        public KeyboardVector2Input(string name, GamepadStick gamepadStick) : base(name, gamepadStick)
+        {
+            this.keyboardKeys = new Vector2Keyboard(DEFAULT_UP_KEY, DEFAULT_DOWN_KEY, DEFAULT_LEFT_KEY, DEFAULT_RIGHT_KEY);
+        }
+
+        public KeyboardVector2Input(string name, Vector2Keyboard keyboardKeys, GamepadStick gamepadStick) : base(name, gamepadStick) 
+        {
+            this.keyboardKeys = keyboardKeys;
+        }
+
+        public string GetUpPath() => InputManager.GetPath(keyboardKeys.Up);
+        public string GetDownPath() => InputManager.GetPath(keyboardKeys.Down);
+        public string GetLeftPath() => InputManager.GetPath(keyboardKeys.Left);
         public string GetRightPath() => InputManager.GetPath(keyboardKeys.Right);
+
+        public string GetKeyboardKeysInfos()
+        {
+            return "| Keyboard Paths |\n"
+                  + $"Up Key: {keyboardKeys.Up} | Path: {GetUpPath()} \n"
+                  + $"Down Key: {keyboardKeys.Down} | Path: {GetDownPath()} \n"
+                  + $"Left Key: {keyboardKeys.Left} | Path: {GetLeftPath()} \n"
+                  + $"Right Key: {keyboardKeys.Right} | Path: {GetRightPath()}";
+        }
 
         public sealed override string GetPaths()
         {
-            return  $"{base.GetPaths()}\n\n" + "| Keyboard |\n" 
-                  + $"Up: {GetUpPath()} ({keyboardKeys.Up})\n"
-                  + $"Down: {GetDownPath()} ({keyboardKeys.Down})\n"
-                  + $"Left: {GetLeftPath()} ({keyboardKeys.Left})\n"
-                  + $"Right: {GetRightPath()} ({keyboardKeys.Right})";
+            return $"{base.GetPaths()}\n\n{GetKeyboardKeysInfos()}";
         }
 
         private bool TryGetKeyboardVector2(out Vector2 result)
@@ -46,11 +67,10 @@ namespace RedSilver2.Framework.Inputs
 
         protected sealed override Vector2 GetInputVector2()
         {
-            Vector2 result;     
-
-            if(TryGetKeyboardVector2(out result)) { return result; }
-            if(TryGetGamepadVector2 (out result)) { return result; }
-            return result;
+            if (TryGetKeyboardVector2(out Vector2 result)) return result;
+            return base.GetInputVector2();
         }
+
+
     }
 }

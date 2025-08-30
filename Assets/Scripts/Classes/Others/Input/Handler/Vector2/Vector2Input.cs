@@ -3,19 +3,29 @@ using UnityEngine.Events;
 
 namespace RedSilver2.Framework.Inputs
 {
-    public abstract partial class Vector2Input : InputHandler, IOverridableVector2Input
+    public abstract class Vector2Input : InputHandler
     {
-        public GamepadStick gamepadStick;
-        private UnityEvent<Vector2> onUpdate;
+        protected          GamepadStick    gamepadStick;
 
+        private UnityEvent<Vector2> onUpdate;
+        public GamepadStick GamepadStick => gamepadStick;
+       
 
         public Vector2 Value { get; private set; }
 
+        public const GamepadStick DEFAULT_GAMEPAD_STICK   = GamepadStick.LeftStick;
+
+
+        protected Vector2Input(string name) : base(name)
+        {
+            onUpdate = new UnityEvent<Vector2>();
+            this.gamepadStick = DEFAULT_GAMEPAD_STICK;
+        }
 
         protected Vector2Input(string name, GamepadStick gamepadStick) : base(name)
         {
-            onUpdate = new UnityEvent<Vector2>();
-            this.gamepadStick = gamepadStick;        
+            onUpdate          = new UnityEvent<Vector2>();
+            this.gamepadStick = gamepadStick;
         }
 
         public sealed override void Update()
@@ -34,16 +44,21 @@ namespace RedSilver2.Framework.Inputs
             if (onUpdate != null && action != null) onUpdate.RemoveListener(action);
         }
 
-        public void   OverrideStick(GamepadStick stick) { this.gamepadStick = stick; }
         public string GetGamepadStickPath() => InputManager.GetPath(gamepadStick);
+
+        public string GetGamepadStickInfos()
+        {
+            return "| Gamepad Paths |\n" +
+                    $"Gamepad Stick: {gamepadStick.ToString()} | Path: {GetGamepadStickPath()}";
+        }
 
         public override string GetPaths()
         {
-            return "| Keys Paths | \n\n" + "|Gamepad|\n" + $"Gamepad Stick: {GetGamepadStickPath()} ({gamepadStick.ToString()})";
+            return "| Keys Paths | \n\n" + $"{GetGamepadStickInfos()}";
         }
 
 
-        protected bool TryGetGamepadVector2(out Vector2 result)
+        private bool TryGetGamepadVector2(out Vector2 result)
         {
             result = InputManager.GetVector2(gamepadStick);
             if(result.magnitude > 0f) { return true; }
@@ -52,6 +67,11 @@ namespace RedSilver2.Framework.Inputs
             return false;
         }
 
-        protected abstract Vector2 GetInputVector2();
+        protected virtual Vector2 GetInputVector2()
+        {
+            Vector2 result;
+            if (TryGetGamepadVector2(out result)) { return result; }
+            return result;
+        }
     }
 }

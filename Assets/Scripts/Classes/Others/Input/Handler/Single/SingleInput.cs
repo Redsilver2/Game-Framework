@@ -1,14 +1,13 @@
-using UnityEngine;
 using UnityEngine.Events;
 
 namespace RedSilver2.Framework.Inputs
 {
-    public abstract class SingleInput : InputHandler, IOverridableSingleInput
+    public abstract class SingleInput : InputHandler
     {
         private UnityEvent onUpdate;
 
-        private KeyboardKey keyboardKey;
-        private GamepadKey  gamepadKey;
+        protected KeyboardKey keyboardKey;
+        protected GamepadKey  gamepadKey;
 
         public bool Value { get; private set; }
        
@@ -51,9 +50,6 @@ namespace RedSilver2.Framework.Inputs
             if (actions != null)
                 foreach (UnityAction action in actions) RemoveOnUpdateListener(action);
         }
-
-        public void OverrideKey(KeyboardKey key) => keyboardKey = key;  
-        public void OverrideKey(GamepadKey key)  => gamepadKey  = key; 
 
         public string GetKeyboardKeyName() => keyboardKey.ToString();
         public string GetGamepadKeyName()  => gamepadKey.ToString();

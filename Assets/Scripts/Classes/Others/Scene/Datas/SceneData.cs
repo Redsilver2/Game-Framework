@@ -75,8 +75,6 @@ namespace RedSilver2.Framework.Scenes
             public abstract string GetDescription();
             protected abstract void SetName(out string sceneName);
 
-            
-
 
             private void OnLoadStarted(int sceneIndex)
             {

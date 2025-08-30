@@ -1,6 +1,6 @@
 namespace RedSilver2.Framework.Inputs
 {
-    public sealed class PressInput : SingleInput
+    public class PressInput : SingleInput
     {
         public PressInput(string inputHandlerName, KeyboardKey defaultKeyboardKey, GamepadKey defaultGamepadKey) : base(inputHandlerName, defaultKeyboardKey, defaultGamepadKey)
         {

@@ -1,8 +1,7 @@
-using UnityEngine;
 
 namespace RedSilver2.Framework.Inputs
 {
-    public sealed partial class KeyboardVector2Input : Vector2Input
+    public partial class KeyboardVector2Input : Vector2Input
     {
         public struct Vector2Keyboard
         {

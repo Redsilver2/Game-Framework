@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace RedSilver2.Framework.Inputs
 {
-    public sealed class HoldInput : SingleInput
+    public class HoldInput : SingleInput
     {
         public HoldInput(string name, KeyboardKey defaultKeyboardKey, GamepadKey defaultGamepadKey) : base(name, defaultKeyboardKey, defaultGamepadKey)
         {
