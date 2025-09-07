@@ -1,7 +1,6 @@
 using RedSilver2.Framework.Inputs;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.UIElements;
 
 namespace RedSilver2.Framework.Player
 {
@@ -10,10 +9,12 @@ namespace RedSilver2.Framework.Player
         protected float rotationClampX;
         protected float rotationClampY;
 
-        protected readonly MouseVector2Input mouseInput;
+        protected readonly MouseVector2Input   mouseInput;
         private   readonly UnityEvent<Vector2> onInputUpdate;
 
+        public Vector2 Rotation => Vector2.right * rotationClampX + Vector2.up * rotationClampY;
         public const string MOUSE_INPUT_NAME = "Player Camera Mouse Input";
+
 
         protected PlayerCameraController() { }
 
@@ -21,9 +22,6 @@ namespace RedSilver2.Framework.Player
         {
             mouseInput    = GetMouseInput();
             onInputUpdate = new UnityEvent<Vector2>();
-
-            mouseInput.AddOnUpdateListener(OnInputUpdate);
-            mouseInput.Enable();
         }
 
         public void AddOnInputUpdate(UnityAction<Vector2> action)
@@ -43,15 +41,8 @@ namespace RedSilver2.Framework.Player
 
         protected override void OnLateUpdate()
         {
-            if(body != null)
-            {
-                body.transform.localEulerAngles = Vector2.up * rotationClampY;
-            }
-
-            if(head != null)
-            {
-                head.transform.localEulerAngles = Vector2.right * rotationClampX;
-            }
+            if(body != null) body.localEulerAngles = Vector2.up    * rotationClampY;
+            if(head != null) head.localEulerAngles = Vector2.right * rotationClampX;
         }
 
         protected virtual void OnInputUpdate(Vector2 input)
@@ -60,20 +51,32 @@ namespace RedSilver2.Framework.Player
             rotationClampX -= Time.deltaTime * GetSensitvityY() * input.y;
         }
 
-        private void Rotate()
+        public void ResetRotation()
         {
-
+            if (body != null) rotationClampX = body.localEulerAngles.x;
+            if (head != null) rotationClampY = head.localEulerAngles.y;
         }
 
-        protected virtual void Rotate(Vector2 input)
+        public void Enable()
         {
+            ResetRotation();
 
+            if(mouseInput != null)
+            {
+                mouseInput.AddOnUpdateListener(OnInputUpdate);
+                mouseInput.Enable();
+            }
         }
 
+        public void Disable()
+        {
+            if (mouseInput != null)
+            {
+                mouseInput.RemoveOnUpdateListener(OnInputUpdate);
+                mouseInput.Disable();
+            }
+        }
        
-
-
-
         private float GetSensitvityX()
         {
             return 5f;

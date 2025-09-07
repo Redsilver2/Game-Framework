@@ -14,32 +14,12 @@ namespace RedSilver2.Framework.Player
 
             }
 
-            public FallState(PlayerStateMachine owner, float defaultGravity) : base(owner)
-            {
-               this.canDisableMovementInput = false;
-
-                NotOnGround.Intialize(owner);
-                IsOnGround .Intialize(owner);
-
-                if(owner != null)
-                {
-                    owner.AddExtension(new GroundCheckExtension(owner));
-                    owner.AddExtension(new GradualGravityExtension(owner, defaultGravity));
-                }
-            }
-
-            public FallState(PlayerStateMachine owner, float defaultGravity, bool canDisableMovementInput) : base(owner)
+            public FallState(PlayerStateMachine owner, bool canDisableMovementInput) : base(owner)
             {
                 this.canDisableMovementInput = canDisableMovementInput;
 
                 NotOnGround.Intialize(owner);
                 IsOnGround .Intialize(owner);
-
-                if (owner != null)
-                {
-                    owner.AddExtension(new GroundCheckExtension(owner));
-                    owner.AddExtension(new GradualGravityExtension(owner, defaultGravity));
-                }
             }
 
             public sealed override string GetStateName() => STATE_NAME;

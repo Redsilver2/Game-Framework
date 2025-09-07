@@ -25,46 +25,8 @@ namespace RedSilver2.Framework.Player
         private List<PlayerExtension>                               extensions;
         private Dictionary<string, PlayerState>                     states;
         private Dictionary<string, PlayerStateTransitionCondition>  transitionConditions;
-        
-        public float JumpForce
-        {
-            get
-            {
-                if (owner != null) return owner.JumpForce;
-                return 0f;
-            }
-        }
-
-        public float JumpDelay
-        {
-            get
-            {
-                if(owner != null) return owner.JumpDelay;
-                return 0f;
-            }
-        }
-
-        public float GroundCheckRange
-        {
-            get
-            {
-                if(owner != null) return owner.GroundCheckRange;
-                return 0f;
-            } 
-        }
-
-        public float GravityTransitionSpeed
-        {
-            get
-            {
-               if(owner != null) return owner.GravityTransitionSpeed;
-               return 0f;
-            }
-        }
 
         private PlayerStateMachine() { }
-
-
 
         public PlayerStateMachine(PlayerController owner)
         {

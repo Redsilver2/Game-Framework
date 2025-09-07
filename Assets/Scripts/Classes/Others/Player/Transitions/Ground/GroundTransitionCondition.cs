@@ -1,4 +1,4 @@
-using UnityEngine;
+
 
 namespace RedSilver2.Framework.Player
 {
@@ -6,13 +6,13 @@ namespace RedSilver2.Framework.Player
     {
         public abstract class GroundTransitionCondition : PlayerStateTransitionCondition
         {
-            protected readonly GroundCheckExtension groundCheck;
+            protected readonly GroundCheckModule groundCheck;
 
 
 
             protected GroundTransitionCondition(PlayerStateMachine controller) : base(controller)
             {
-               groundCheck = GetGroundCheckExtension(controller);
+               if(controller != null) groundCheck = controller.owner.GetComponentInChildren<GroundCheckModule>();     
             }
 
             public override bool IsCompatible(PlayerState state)
@@ -23,7 +23,6 @@ namespace RedSilver2.Framework.Player
 
             private GroundCheckExtension GetGroundCheckExtension(PlayerStateMachine controller)
             {
-                GroundCheckExtension.Instantiate(controller);
                 return GroundCheckExtension.Get(controller);
             }
         }

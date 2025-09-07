@@ -1,182 +1,114 @@
+using RedSilver2.Framework.Inputs;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace RedSilver2.Framework.Player
 {
     public partial class PlayerStateMachine
     {
-        public class HeadBobExtension : PlayerExtension
+        [System.Serializable]
+        public class HeadbobExtension : MovementMotionExtension
         {
-            private IsOnGround isOnGround;
-            private IsMoving   isMoving;
-
             private float positionXProgress;
             private float positionYProgress;
 
             private float currentPositionX;
             private float currentPositionY;
 
-            private bool canHeabob = true;
-            private bool isHeadbobEnabled = true;
-
-            private Transform transform;
-            private Vector2   starterPosition;
-            private Vector2   min;
-            private Vector2   max;
-
+            private readonly HeadbobModule module;
             public const string EXTENSION_NAME = "Headbob Extension";
 
-            public HeadBobExtension(PlayerStateMachine owner, Transform transform, Vector2 min, Vector2 max) : base(owner)
+            public HeadbobExtension(PlayerStateMachine owner, Transform transform, HeadbobModule module) : base(owner, transform)
             {
-                this.transform = transform;
-                if(transform != null) this.starterPosition = transform.localPosition;
+                this.module = module;
 
-                this.min = min;
-                this.max = max;
-
-
-                currentPositionX = starterPosition.x;
-                currentPositionY = starterPosition.y;
-            }
-
-            public HeadBobExtension(PlayerStateMachine owner, Transform transform, Vector2 startPosition, Vector2 min, Vector2 max) : base(owner)
-            {
-                if(owner != null) transform = owner.owner.transform;
-                this.starterPosition = startPosition;
-
-                this.min = min;
-                this.max = max;
-
-                currentPositionX = starterPosition.x;
-                currentPositionY = starterPosition.y;
-            }
-
-            protected sealed override void OnStateAdded(PlayerState state)
-            {
-                base.OnStateAdded(state);
-                AddEvents(state);
-            }
-
-            protected sealed override void OnStateRemoved(PlayerState state)
-            {
-                base.OnStateRemoved(state);
-                RemoveEvents(state);
-            }
-
-            private void OnUpdate()
-            {
-                if (isHeadbobEnabled && canHeabob)
-                    UpdateHeadbob();
-                else
-                    ResetHeadbob();
-            }
-
-            private void OnLateUpdate()
-            {
-                if (transform != null)
-                {
-                    transform.localPosition = transform.right * currentPositionX + transform.up * currentPositionY;
+                if (module != null) {
+                    Vector2 starterPosition = module.StarterPosition;
+                    currentPositionX = starterPosition.x;
+                    currentPositionY = starterPosition.y;
                 }
             }
 
-            private void UpdateHeadbob()
+            protected override string GetExtensionName() => EXTENSION_NAME;
+
+            protected override void OnLateUpdate()
+            {
+                if (transform != null)
+                {
+                    transform.localPosition = Vector2.right * currentPositionX + Vector2.up * currentPositionY;
+                }
+            }
+
+            private float GetPosition(float defaultPosition, float min, float max, float progress)
+            {
+                float target;
+
+                if     (progress > 0f) target = min;
+                else if(progress < 0f) target = max;
+                else                   target = defaultPosition;
+
+                return Mathf.Lerp(defaultPosition, target, Mathf.Abs(progress));
+            }
+
+            protected sealed override void UpdateMotion(Vector2 inputMotion)
+            {
+                if (module != null && inputMotion.magnitude > 0)
+                {           
+                    UpdateMotion(module.StarterPosition, module.MinPosition, module.MaxPosition, module.HeadbobSpeed);
+                }
+                else
+                {
+                    ResetMotion();
+                }
+            }
+
+            private void UpdateMotion(Vector2 starterPosition, Vector2 min, Vector2 max, float headbobSpeed)
             {
                 float positionX, positionY;
 
-                positionXProgress = Mathf.Abs(Mathf.Sin(Time.time * 8f));
-                positionYProgress = Mathf.Abs(Mathf.Cos(Time.time * 8f));
+                positionXProgress = Mathf.Sin(Time.time * headbobSpeed);
+                positionYProgress = Mathf.Cos(Time.time * headbobSpeed);
 
-                positionX = Mathf.Lerp(min.x, max.x, positionXProgress);
-                positionY = Mathf.Lerp(min.y, max.y, positionYProgress);
+                positionX = GetPosition(starterPosition.x, min.x, max.x, positionXProgress);
+                positionY = GetPosition(starterPosition.y, min.y, max.y, positionYProgress);
 
-                currentPositionX = Mathf.Lerp(currentPositionY, positionX, Time.deltaTime);
-                currentPositionY = Mathf.Lerp(currentPositionX, positionY, Time.deltaTime);
+                currentPositionX = Mathf.Lerp(currentPositionX, positionX, Time.deltaTime);
+                currentPositionY = Mathf.Lerp(currentPositionY, positionY, Time.deltaTime);
             }
 
-            private void ResetHeadbob()
+            protected sealed override void ResetMotion()
+            {
+                if(module != null)
+                {
+                    ResetMotion(module.StarterPosition);
+                }
+            }
+
+            private void ResetMotion(Vector2 starterPosition)
             {
                 positionXProgress = Mathf.Lerp(positionXProgress, 0f, Time.deltaTime);
                 positionYProgress = Mathf.Lerp(positionYProgress, 0f, Time.deltaTime);
 
-                currentPositionX = Mathf.Lerp(currentPositionY, 0f, Time.deltaTime);
-                currentPositionY = Mathf.Lerp(currentPositionX, 0f, Time.deltaTime);
-
+                currentPositionX = Mathf.Lerp(currentPositionX, starterPosition.x, Time.deltaTime);
+                currentPositionY = Mathf.Lerp(currentPositionY, starterPosition.y, Time.deltaTime);
             }
 
-            private void AddEvents(PlayerState state)
+
+            public sealed override bool Compare(PlayerExtension extension)
             {
-                AddUpdateEvents();
-                AddOnStateEnterEvent(state);
+                if(extension == null) return false;
+                return extension is HeadbobExtension;
             }
 
-            private void RemoveEvents(PlayerState state)
+
+            protected sealed override string[] GetCompatibleStates()
             {
-                RemoveUpdateEvents();
-                RemoveOnStateEnterEvent(state);
+                return new string[] { WalkState.STATE_NAME, RunState.STATE_NAME, CrouchState.STATE_NAME };
             }
 
-            protected override void OnDisable()
+            protected sealed override Vector2Input GetInput()
             {
-                base.OnDisable();
+                return MoveState.GetMovementInput();
             }
-
-            private void RemoveUpdateEvents()
-            {
-                if (owner == null) return;
-
-                if (owner.GetStates(MoveState.RequiredInputStates).Length == 0)
-                {
-                    owner.RemoveOnUpdateListener(OnUpdate);
-                    owner.RemoveOnLateUpdateListener(OnLateUpdate);
-                    transform.localPosition = starterPosition;
-                }
-            }
-
-            private void RemoveOnStateEnterEvent(PlayerState state)
-            {
-                if (state != null)
-                {
-                    if (state is WalkState || state is RunState || state is CrouchState)
-                        state.RemoveOnEnterStateListener(OnHeadbobValideStateEnter);
-                    else
-                        state.RemoveOnEnterStateListener(OnHeadBobInvalideStateEnter);
-                }
-            }
-
-            private void AddUpdateEvents()
-            {
-                if (owner == null) return;
-
-                if (owner.GetStates(MoveState.RequiredInputStates).Length == 1)
-                {
-                    owner.AddOnUpdateListener(OnUpdate);
-                    owner.AddOnLateUpdateListener(OnLateUpdate);
-                }
-            }
-
-            private void AddOnStateEnterEvent(PlayerState state)
-            {
-                if (state != null)
-                {
-                    if (state is WalkState || state is RunState || state is CrouchState)
-                        state.AddOnEnterStateListener(OnHeadbobValideStateEnter);
-                    else
-                        state.AddOnEnterStateListener(OnHeadBobInvalideStateEnter);
-                }
-            }
-
-            private void OnHeadbobValideStateEnter()
-            {
-                canHeabob = true;
-            }
-
-            private void OnHeadBobInvalideStateEnter()
-            {
-                canHeabob = false;
-            }
-
-            protected override string GetExtensionName() => EXTENSION_NAME;
         }
-
     }
 }

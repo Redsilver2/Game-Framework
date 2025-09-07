@@ -47,7 +47,7 @@ namespace RedSilver2.Framework.Player
 
             public void Jump()
             {
-               if(owner != null) Jump(owner.JumpForce);
+               if(owner != null) Jump(50f);
             }
 
             public void Jump(float jumpForce)

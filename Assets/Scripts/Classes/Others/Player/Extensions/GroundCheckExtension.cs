@@ -9,79 +9,50 @@ namespace RedSilver2.Framework.Player
             private bool isGrounded;
             private string groundTag;
 
-            private bool wasUpdateEventAdded;
+            private GroundCheckModule   module;
+            private Transform transform;
 
-            private CharacterController character;
             public const string EXTENSION_NAME = "Ground Check Extension";
 
             public bool IsGrounded => isGrounded;
             public string GroundTag => groundTag;
 
-            public GroundCheckExtension(PlayerStateMachine owner) : base(owner)
+            public GroundCheckExtension(PlayerStateMachine owner, Transform transform, GroundCheckModule module) : base(owner)
             {
                 this.isGrounded = false;
                 this.groundTag  = string.Empty;
-
-                this.wasUpdateEventAdded = false;
-                this.character  = owner.character;
-                
+               
+                this.transform  = transform;           
+                this.module = module;
             }
 
             protected override void OnEnable()
             {
                 base.OnEnable();
-                AddListener();
+                if(owner != null) owner.AddOnUpdateListener(OnUpdate);
             }
 
             protected override void OnDisable()
             {
                 base.OnDisable();
-                RemoveListener();
-            }
-
-            protected override void OnStateAdded(PlayerState state) 
-            {
-                base.OnStateAdded(state);
-                if (state != null) AddListener();
-            }
-
-            protected override void OnStateRemoved(PlayerState state) 
-            {
-                base.OnStateRemoved(state);
-                if (state != null) RemoveListener();
+                if (owner != null) owner.RemoveOnUpdateListener(OnUpdate);
             }
 
             private void OnUpdate()
             {
-                if (owner != null)
+                if (module != null && transform != null)
                 {
-                    isGrounded = GroundCheck(owner.GroundCheckRange, out groundTag);
-                    Debug.DrawRay(character.transform.position, -character.transform.up, IsGrounded ? Color.green : Color.red);
+                    isGrounded = GroundCheck(module.GroundCheckRange, out groundTag);
+                    Debug.DrawRay(transform.position, -transform.up, IsGrounded ? Color.green : Color.red);
                 }
             }
 
-            private void AddListener()
-            {
-                if (owner != null && States.Length > 0)
-                {
-                    if (!wasUpdateEventAdded)
-                    {
-                        wasUpdateEventAdded = true;
-                        owner.AddOnUpdateListener(OnUpdate);
-                    }
-                }
-            }
+            protected override void OnStateEnter(PlayerState state) { }
 
-            private void RemoveListener()
+            public sealed override bool Compare(PlayerExtension extension)
             {
-                if(owner != null && States.Length == 0)
-                {
-                    if (wasUpdateEventAdded)
-                    {
-                        wasUpdateEventAdded = false;
-                        owner.RemoveOnUpdateListener(OnUpdate);
-                    }
-                }
+                if(extension == null) return false;
+                return extension is GroundCheckExtension;
             }
 
             private bool GroundCheck(float groundCheckRange, out string groundTag)
@@ -110,7 +81,7 @@ namespace RedSilver2.Framework.Player
 
             private RaycastHit GetHitInfo(float groundCheckRange)
             {
-                Physics.Raycast(character.transform.position, -character.transform.up, out RaycastHit hit, groundCheckRange, ~LayerMask.NameToLayer(PlayerController.PLAYER_LAYER_NAME));
+                Physics.Raycast(transform.position, -transform.up, out RaycastHit hit, groundCheckRange, ~LayerMask.NameToLayer(PlayerController.PLAYER_LAYER_NAME));
                 return hit;
             }
 
@@ -136,15 +107,9 @@ namespace RedSilver2.Framework.Player
                 return controller.GetExtension(EXTENSION_NAME) as GroundCheckExtension;
             }
 
-            public static void Instantiate(PlayerStateMachine controller)
+            protected override string[] GetCompatibleStates()
             {
-                if (controller != null)
-                {
-                    if (Get(controller) == null)
-                    {
-                        controller.AddExtension(new GroundCheckExtension(controller));
-                    }
-                }
+                return new string[] { };
             }
         }
     }

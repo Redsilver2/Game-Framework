@@ -19,7 +19,8 @@ namespace RedSilver2.Framework.Player
 
             public sealed override bool WasConditionMeet()
             {
-                if (groundCheck != null) return !groundCheck.IsGrounded;
+                PlayerStateMachine.GroundCheckExtension extension = groundCheck.Extension;
+                if (extension != null) return !extension.IsGrounded;
                 return false;
             }
 

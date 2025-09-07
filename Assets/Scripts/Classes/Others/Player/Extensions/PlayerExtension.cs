@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 using UnityEngine.Events;
 
 namespace RedSilver2.Framework.Player
@@ -9,12 +10,14 @@ namespace RedSilver2.Framework.Player
         public abstract class PlayerExtension
         {
             protected readonly PlayerStateMachine owner;
-            private   readonly List<PlayerState> states;
+            private readonly List<PlayerState> states;
 
             private UnityEvent onEnable;
             private UnityEvent onDisable;
 
-            protected bool wasEventAdded;
+
+            protected readonly string[] compatibleStates;
+
 
             private bool isEnabled = false;
             public bool IsEnabled => isEnabled;
@@ -36,22 +39,25 @@ namespace RedSilver2.Framework.Player
                 this.onEnable = new UnityEvent();
                 this.onDisable = new UnityEvent();
 
-                this.wasEventAdded = false;
                 this.isEnabled = false;
-                SetExtension();
+                this.compatibleStates = GetCompatibleStates();
+
+                AddOnEnableListener(OnEnable);
+                AddOnDisableListener(OnDisable);
             }
 
-            private void SetExtension()
+            protected virtual void OnEnable()
             {
-                if (owner != null)
-                {
-                    owner.AddOnStateAddedListener(OnStateAdded);
-                    owner.AddOnStateRemovedListener(OnStateRemoved);
-
-                    AddOnDisableListener(OnDisable);
-                    AddOnEnableListener(OnEnable);
-                }
+                isEnabled = true;
+                if (owner != null) owner.AddOnStateEnterListener(OnStateEnter);
             }
+
+            protected virtual void OnDisable()
+            {
+                isEnabled = false;
+                if (owner != null) owner.RemoveOnStateEnterListener(OnStateEnter);
+            }
+
 
             public void AddOnEnableListener(UnityAction action)
             {
@@ -77,96 +83,55 @@ namespace RedSilver2.Framework.Player
                 return states.Contains(state);
             }
 
-            protected virtual void OnStateAdded(PlayerState state)
-            {
-                if (states != null && state != null)
-                {
-                    if (!states.Contains(state))
-                    {
-                        states.Add(state);
-                    }
-                }
-            }
-
-            protected virtual void OnStateRemoved(PlayerState state)
-            {
-                if (states != null && state != null)
-                {
-                    if (states.Contains(state))
-                    {
-                        states.Remove(state);
-                    }
-                }
-            }
-
-            public void SetStateEvent(PlayerState state)
-            {
-               if(state != null) OnStateAdded(state);   
-            }
+            protected abstract void OnStateEnter(PlayerState state);
 
             public void Enable()
             {
-                onEnable.Invoke();
+                if(!isEnabled) onEnable.Invoke();
             }
 
             public void Disable()
             {
-                onDisable.Invoke();
+                if(isEnabled) onDisable.Invoke();
             }
 
-            protected virtual void OnEnable()
+            public bool Compare(string extensionName) => extensionName.ToLower() == GetExtensionName().ToLower();
+            public bool IsCompatibleState(PlayerState state)
             {
-                if (!isEnabled) isEnabled = true;
+                if (owner == null || state == null) return false;
+                if(compatibleStates == null || compatibleStates.Length == 0) return true;
+                return compatibleStates.Where(x => state.GetStateName().ToLower() == x.ToLower()).Count() > 0;
             }
 
-            protected virtual void OnDisable()
-            {
-                if (isEnabled) isEnabled = false;
-            }
-
-            public bool Compare(string extensionName) => extensionName.ToLower() == GetExtensionName().ToLower();   
+            public abstract bool Compare(PlayerExtension extension);
             protected abstract string GetExtensionName();
+            protected abstract string[] GetCompatibleStates();
         }
 
-         
-
-        public void AddExtension(PlayerExtension extension)
+        
+        public void AddExtension(PlayerExtensionModule module)
         {
+            if (module == null) return;
+            PlayerExtension extension = module.GetExtension();
+
             if (extensions != null && extension != null)
             {
-                if(extensions.Where(x => x.GetType() == extension.GetType()).Count() == 0)
+                if(extensions.Where(x => x.Compare(extension)).Count() == 0)
                 {
                     extensions.Add(extension);
-                    SetPlayerExtensionForStates(extension);
                 }
             }
         }
 
 
-        public void AddExtensions(PlayerExtension[] extensions)
+        public void AddExtensions(PlayerExtensionModule[] modules)
         {
-            if(extensions != null)
+            if(modules != null)
             {
-                foreach(PlayerExtension extension in extensions)
+                foreach(PlayerExtensionModule module in modules)
                 {
-                    AddExtension(extension);
+                    AddExtension(module);
                 }
-            }
-        }
-
-        private void SetPlayerExtensionForStates(PlayerExtension extension)
-        {
-            if (extension != null && states != null)
-            {
-                foreach(PlayerState state in states.Values) extension.SetStateEvent(state);
-            }
-        }
-
-        private void SetPlayersExtensionForState(PlayerState state)
-        {
-            if (state != null && states != null && extensions != null)
-            {
-                foreach (PlayerExtension extension in extensions) { extension.SetStateEvent(state); }
             }
         }
 

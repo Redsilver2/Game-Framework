@@ -11,6 +11,9 @@ namespace RedSilver2.Framework.Player
         private   readonly UnityEvent onUpdate;
         private   readonly UnityEvent onLateUpdate;
 
+        public Transform Head => head;
+        public Transform Body => body;
+
         protected CameraController() { }
         protected CameraController(Transform body, Transform head)
         {
@@ -54,5 +57,14 @@ namespace RedSilver2.Framework.Player
             if (onLateUpdate != null && action != null) onLateUpdate.AddListener(action);
         }
 
+        public static float GetSensitivityX()
+        {
+            return 5f;
+        }
+
+        public static float GetSensitivityY()
+        {
+            return 5f;
+        }
     }
 }

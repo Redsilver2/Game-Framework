@@ -5,117 +5,87 @@ namespace RedSilver2.Framework.Player
     {
         public abstract class GravityExtension : PlayerExtension
         {
-            protected readonly GroundCheckExtension groundCheckExtension;
-            private bool wasLateUpdateEventAdded;
+            private bool canApplyGravity = false;
+
+            protected readonly GravityModule gravityModule;
+            protected readonly GroundCheckModule groundCheckModule;
 
             public const string GRAVITY_SETTING_NAME = "Gravity";
-
-            protected static float gravity;
-            public static float Gravity => gravity;
 
 
             protected GravityExtension(PlayerStateMachine owner) : base(owner)
             {
-                SetGroundCheckExtension(ref groundCheckExtension);
-                gravity = 0f;
+                canApplyGravity         = false;
+
+                gravityModule     = owner.owner.GetComponentInChildren<GravityModule>();    
+                groundCheckModule = owner.owner.GetComponentInChildren<GroundCheckModule>();   
             }
 
-            protected GravityExtension(PlayerStateMachine owner, float defaultGravity) : base(owner)
+            protected GravityExtension(PlayerStateMachine owner, GroundCheckModule groundCheckModule) : base(owner)
             {
-                SetGroundCheckExtension(ref groundCheckExtension);
-                gravity = defaultGravity;
-                wasLateUpdateEventAdded = false;
+                canApplyGravity = false;
+
+                gravityModule = owner.owner.GetComponentInChildren<GravityModule>();
+                this.groundCheckModule =  groundCheckModule;
             }
 
-
-            public float GetGravity()
+            protected GravityExtension(PlayerStateMachine owner, GravityModule gravityModule) : base(owner)
             {
-                return gravity;
+                canApplyGravity        = false;
+                this.gravityModule     = gravityModule;
+                this.groundCheckModule = owner.owner.GetComponentInChildren<GroundCheckModule>();
+            }
+
+            protected GravityExtension(PlayerStateMachine owner, GravityModule gravityModule, GroundCheckModule groundCheckModule) : base(owner)
+            {
+                this.gravityModule     = gravityModule;
+                this.groundCheckModule = groundCheckModule;
             }
 
             protected void SetGravity(float gravity)
             {
                 if (gravity < 0f) gravity = 0f;
-                GravityExtension.gravity = gravity;
+                if (gravityModule != null) gravityModule.SetGravity(gravity);   
             }
 
             protected float GetDesiredGravity()
             {
-                if (groundCheckExtension == null || owner == null) return 0f;
-                return groundCheckExtension.IsGrounded ? 5f : 10f;
+                GroundCheckExtension extension = groundCheckModule.Extension;
+                if (extension == null || owner == null) return 0f;
+                return extension.IsGrounded ? 15f : 50f;
             }
 
 
             private void OnLateUpdate()
             {
-                if (owner != null)
+                if (owner != null && canApplyGravity)
                 {
                     CharacterController character = owner.character;
-                    character.Move(Time.deltaTime * -character.transform.up * GetGravity());
+                    character.Move(Time.deltaTime * -character.transform.up * gravityModule.Gravity);
                 }
             }
 
-            protected virtual void AddListeners()
+            protected override void OnDisable()
             {
-                if (owner != null && States.Length > 0)
-                {
-                    if (!wasLateUpdateEventAdded)
-                    {
-                        wasLateUpdateEventAdded = true;
-                        owner.AddOnLateUpdateListener(OnLateUpdate);
-                    }
-                }
+                base.OnDisable();           
+                if (owner != null) owner.RemoveOnLateUpdateListener(OnLateUpdate);
             }
 
-            protected virtual void RemoveListeners()
-            {
-                if (owner != null && States.Length == 0)
-                {
-                    if (wasLateUpdateEventAdded)
-                    {
-                        wasLateUpdateEventAdded = false;
-                        owner.RemoveOnLateUpdateListener(OnLateUpdate);
-                    }
-                }
-            }
-
-            private void SetGroundCheckExtension(ref GroundCheckExtension groundCheckExtension)
-            {
-                if (owner != null)
-                {
-                    GroundCheckExtension.Instantiate(owner);
-                    groundCheckExtension = GroundCheckExtension.Get(owner);
-                }
-            }
-
-            protected sealed override void OnStateAdded(PlayerState state)
-            {
-                if (state != null && !ContainsState(state))
-                {
-                    base.OnStateAdded(state);
-                    AddListeners();
-                }
-            }
-
-            protected sealed override void OnStateRemoved(PlayerState state)
-            {
-                if (state != null && ContainsState(state))
-                {
-                    base.OnStateRemoved(state);
-                    RemoveListeners();
-                }
-            }
-
-            protected sealed override void OnEnable()
+            protected override void OnEnable()
             {
                 base.OnEnable();
-                AddListeners();
+                if (owner != null) owner.AddOnLateUpdateListener(OnLateUpdate);
             }
 
-            protected sealed override void OnDisable()
+            protected sealed override void OnStateEnter(PlayerState state)
             {
-                base.OnDisable();
-                RemoveListeners();
+                canApplyGravity = IsCompatibleState(state);
+                Debug.Log("Can Apply Gravity: " + canApplyGravity);
+            }
+
+            protected sealed override string[] GetCompatibleStates()
+            {
+                return new string[] { WalkState.STATE_NAME, FallState.STATE_NAME, RunState.STATE_NAME, CrouchState.STATE_NAME, IdolState.STATE_NAME, JumpState.STATE_NAME };
             }
         }
     }

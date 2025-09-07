@@ -222,60 +222,67 @@ namespace RedSilver2.Framework.Player
             if (onStateRemoved != null && action != null) onStateRemoved.RemoveListener(action);
         }
 
-        private void SetStates(PlayerState[] states)
+        private void SetStates(PlayerStateModule[] modules)
         {
-            SetStates(states, 0);
+            SetStates(modules, 0);
         }
-        private void SetStates(PlayerState[] states, int defaultState)
-        {
-            if (states != null)
-            {
-                states = states.Where(x => x != null).ToArray();
-                defaultState = Mathf.Clamp(defaultState, 0, states.Length - 1);
 
-                AddStates(states);
-                if (states.Length > 0) ChangeState(states[defaultState].GetStateName());
+        private void SetStates(PlayerStateModule[] modules, int defaultState)
+        {
+            if (modules != null)
+            {
+                modules = modules.Where(x => x != null).ToArray();
+                defaultState = Mathf.Clamp(defaultState, 0, modules.Length - 1);
+
+                AddStates(modules);
+                if (modules.Length > 0) ChangeState(modules[defaultState].State.GetStateName());
             }
         }       
-        private void SetStates(PlayerState[] states, string name)
+        private void SetStates(PlayerStateModule[] modules, string name)
         {
-            if (states != null)
+            if (modules != null)
             {
-                states = states.Where(x => x != null).ToArray();
-                AddStates(states);
+                modules = modules.Where(x => x != null).ToArray();
+                AddStates(modules);
 
                 PlayerState state = GetState(name);
                 if (state != null) ChangeState(state.GetStateName());
             }
         }
 
-        public void AddState(PlayerState state)
+        public void AddState(PlayerStateModule module)
+        {
+            if (module == null) return;
+            AddState(module.State);
+        }
+
+        private void AddState(PlayerState state)
         {
             if (states != null && state != null)
             {
-                Debug.Log("Added state: " + state.GetStateName());
                 string name = state.GetStateName().ToLower();
 
                 if (!string.IsNullOrEmpty(name) && !states.ContainsKey(name))
                     onStateAdded.Invoke(state);
             }
         }
-        public void AddStates(PlayerState[] states)
+
+        public void AddStates(PlayerStateModule[] modules)
         {
-            if (states != null)
+            if (modules != null)
             {
-                foreach (PlayerState state in states.Where(x => x != null))
+                foreach (PlayerStateModule module in modules)
                 {
-                    AddState(state);
+                    AddState(module);
                 }
             }
         }
 
-        public void RemoveState(string name)
+        public void RemoveState(PlayerStateModule module)
         {
-            if (!string.IsNullOrEmpty(name) && states != null)
+            if (module != null && states != null)
             {
-                onStateRemoved.Invoke(GetState(name));
+                onStateRemoved.Invoke(module.State);
             }
         }
 
@@ -299,14 +306,13 @@ namespace RedSilver2.Framework.Player
 
                 if (isInitialized)
                 {
-                    SetPlayersExtensionForState(state);
                     SetAllTransitionsForState();
                     state.AddObligatoryTransition();            
                 }
             }
         }
 
-        private PlayerState GetState(string name)
+        public PlayerState GetState(string name)
         {
             name = name.ToLower();
 
