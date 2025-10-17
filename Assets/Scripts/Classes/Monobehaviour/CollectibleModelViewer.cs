@@ -43,25 +43,21 @@ namespace RedSilver2.Framework.Interactions.Collectibles
 
         public  static void AddCollectibleModel(CollectibleData data)
         {
-            if (data != null && collectibleModels != null) AddCollectibleModel(data, data.Model);
+            if (data != null) AddCollectibleModel(data.Model);
         }
 
-        private static void AddCollectibleModel(CollectibleData data, GameObject model)
+        private static void AddCollectibleModel(GameObject model)
         {
-            if(model != null && collectibleModels != null)
-            {
-                if(!collectibleModels.ContainsKey(model.name.ToLower()))
-                {
-                    GameObject clone = Instantiate(model);
+            GameObject clone;
+           
+            if (model == null && collectibleModels != null) return;
+            if (collectibleModels.ContainsKey(model.name.ToLower())) return;
 
-                    clone.name = model.name;
-                    clone.gameObject.SetActive(false);
+            clone = Instantiate(model);
+            clone.name = model.name;
 
-                    Debug.Log(clone);
-
-                    collectibleModels.Add(model.name.ToLower(), clone);  
-                }
-            }
+            clone.gameObject.SetActive(false);
+            collectibleModels.Add(model.name.ToLower(), clone);
         }
 
         public static GameObject GetCollectibleModel(string modelName)

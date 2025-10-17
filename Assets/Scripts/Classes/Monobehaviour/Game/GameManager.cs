@@ -8,8 +8,6 @@ namespace RedSilver2.Framework
         public const string GROUND_LAYER_NAME = "Ground";
 
         private CollectibleNotificationManager collectibleNotification;
-
-        public CollectibleNotificationManager CollectibleNotification => collectibleNotification;
         public static GameManager Instance { get; private set; }
 
         private void Awake()
@@ -21,14 +19,10 @@ namespace RedSilver2.Framework
             collectibleNotification = FindAnyObjectByType<CollectibleNotificationManager>();
         }
 
-        private void Start()
-        {
-
-        }
-
-        private void Update()
-        {
-
+        public static CollectibleNotificationManager GetCollectibleNotification() {
+            GameManager manager = Instance;
+            if (manager != null) return manager.collectibleNotification; 
+            return null;
         }
     }
 }

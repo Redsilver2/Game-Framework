@@ -1,3 +1,4 @@
+using RedSilver2.Framework.Player;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,18 +8,54 @@ namespace RedSilver2.Framework.Interactions.Collectibles
 {
     public abstract class CollectibleNotification : MonoBehaviour
     {
-        private UnityEvent<Collectible> onNotificationShown;
-        private UnityEvent<Collectible> onNotificationHid;
+        private UnityEvent<Collectible> onShowNotification;
+        private UnityEvent<Collectible> onHideNotification;
 
         private static List<string> registeredCollectible = new List<string>();
 
         protected virtual void Awake()
         {
-            onNotificationHid = new UnityEvent<Collectible>();
-            onNotificationShown = new UnityEvent<Collectible>();
+            onHideNotification = new UnityEvent<Collectible>();
+            onShowNotification = new UnityEvent<Collectible>();
 
-            onNotificationShown.AddListener(OnNotificationShown);
-            onNotificationHid.AddListener(OnNotificationHid);
+            onShowNotification.AddListener(OnShowNotification);
+            onHideNotification.AddListener(OnHideNotification);
+        }
+
+        protected virtual void OnShowNotification(Collectible collectible)
+        {
+            PlayerController.Disable();
+            CameraControllerModule.Disable();
+        }
+
+        protected virtual void OnHideNotification(Collectible collectible)
+        {
+            PlayerController.Enable();
+            CameraControllerModule.Enable();
+        }
+
+        public void AddOnShowNotificationListener(UnityAction<Collectible> action) {
+            if(onShowNotification != null && action != null)
+                onShowNotification.AddListener(action);
+        }
+
+        public void RemoveOnShowNotificationListener(UnityAction<Collectible> action)
+        {
+            if (onShowNotification != null && action != null)
+                onShowNotification.RemoveListener(action);
+        }
+
+        public void AddOnHideNotificationListener(UnityAction<Collectible> action)
+        {
+            if (onHideNotification != null && action != null)
+                onHideNotification.AddListener(action);
+        }
+
+
+        public void RemoveOnHideNotificationListener(UnityAction<Collectible> action)
+        {
+            if (onHideNotification != null && action != null)
+                onHideNotification.RemoveListener(action);
         }
 
         public static bool WasDataRegistered(CollectibleData data)
@@ -47,16 +84,13 @@ namespace RedSilver2.Framework.Interactions.Collectibles
             return CollectibleModelViewer.GetCollectibleModel(data.Model.name);
         }
 
-        protected abstract void OnNotificationShown(Collectible collectible);
-        protected abstract void OnNotificationHid(Collectible collectible);
-
         public IEnumerator UpdateNotification(Collectible collectible)
         {
-            onNotificationShown.Invoke(collectible);
+            onShowNotification.Invoke(collectible);
 
             yield return StartCoroutine(DisplayNotification(collectible));
 
-            onNotificationHid.Invoke(collectible);
+            onHideNotification.Invoke(collectible);
         }
 
         protected abstract IEnumerator DisplayNotification(Collectible collectible);

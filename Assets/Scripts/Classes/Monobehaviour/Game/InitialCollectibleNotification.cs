@@ -10,7 +10,7 @@ namespace RedSilver2.Framework.Interactions.Collectibles
 
         protected override void Awake()
         {
-            base.Awake();   
+            base.Awake();
             modelViewer = GetComponentInChildren<CollectibleModelViewer>(true);
             if(uiParent != null) uiParent.SetActive(false);
         }
@@ -19,8 +19,7 @@ namespace RedSilver2.Framework.Interactions.Collectibles
 
         private void SetViewModel(CollectibleData data, bool isShowingModel)
         {
-            if (modelViewer != null)
-            {
+            if (modelViewer != null) {
                 if (isShowingModel)
                     modelViewer.ShowModel(GetDataModel(data));
                 else
@@ -28,8 +27,10 @@ namespace RedSilver2.Framework.Interactions.Collectibles
             }
         }
 
-        protected override void OnNotificationShown(Collectible collectible)
+        protected override void OnShowNotification(Collectible collectible)
         {
+            base.OnShowNotification(collectible);
+
             if (collectible != null)
             {
                 CollectibleData data = collectible.GetData();
@@ -41,8 +42,10 @@ namespace RedSilver2.Framework.Interactions.Collectibles
             }
         }
 
-        protected override void OnNotificationHid(Collectible collectible)
+        protected override void OnHideNotification(Collectible collectible)
         {
+            base.OnHideNotification(collectible);
+
             if (collectible != null)
             {
                 SetViewModel(collectible.GetData(), false);
@@ -52,10 +55,9 @@ namespace RedSilver2.Framework.Interactions.Collectibles
 
         protected sealed override IEnumerator DisplayNotification(Collectible collectible)
         {
-            CollectibleNotificationManager manager = GameManager.Instance.CollectibleNotification;
+            CollectibleNotificationManager manager = GameManager.GetCollectibleNotification();
 
-            while (manager != null)
-            {
+            while (manager != null) {
                 if (manager.CanCloseIntialNotification()) break;
                 yield return null;
             }

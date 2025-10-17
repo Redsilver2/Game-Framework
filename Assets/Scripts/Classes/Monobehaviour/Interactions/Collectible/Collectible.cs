@@ -29,7 +29,7 @@ namespace RedSilver2.Framework.Interactions.Collectibles
 
         protected virtual void OnInteract()
         {
-            CollectibleNotificationManager collectibleNotification = GameManager.Instance.CollectibleNotification;
+            CollectibleNotificationManager collectibleNotification = GameManager.GetCollectibleNotification();
             if(collectibleNotification != null) collectibleNotification.Notify(this);
         }
 

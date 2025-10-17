@@ -51,18 +51,9 @@ namespace RedSilver2.Framework.Player
             rotationClampX -= Time.deltaTime * GetSensitvityY() * input.y;
         }
 
-        public void ResetRotation()
-        {
-            if (body != null) rotationClampX = body.localEulerAngles.x;
-            if (head != null) rotationClampY = head.localEulerAngles.y;
-        }
-
         public void Enable()
         {
-            ResetRotation();
-
-            if(mouseInput != null)
-            {
+            if(mouseInput != null) {
                 mouseInput.AddOnUpdateListener(OnInputUpdate);
                 mouseInput.Enable();
             }
@@ -70,8 +61,7 @@ namespace RedSilver2.Framework.Player
 
         public void Disable()
         {
-            if (mouseInput != null)
-            {
+            if (mouseInput != null) {
                 mouseInput.RemoveOnUpdateListener(OnInputUpdate);
                 mouseInput.Disable();
             }

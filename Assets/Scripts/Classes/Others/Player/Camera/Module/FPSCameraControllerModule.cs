@@ -10,39 +10,39 @@ namespace RedSilver2.Framework.Player
         public float MinRotationX => minRotationX;
         public float MaxRotationX => maxRotationX;
 
-        private FPSCameraController cameraController;
-        public FPSCameraController CameraController => cameraController;
+        private FPSCameraController controller;
+        public  FPSCameraController Controller => controller;
 
         protected sealed override void Update()
         {
-            if (cameraController != null) cameraController.Update();
+            if (controller != null) controller.Update();
         }
 
         protected sealed override void LateUpdate()
         {
-            if (cameraController != null) cameraController.LateUpdate();
+            if (controller != null) controller.LateUpdate();
         }
 
         protected override void OnEnable()
         {
             SetCursorVisibility(false);
-            if (cameraController != null) cameraController.Enable();
+            if (controller != null) controller.Enable();
         }
 
         protected override void OnDisable()
         {
             SetCursorVisibility(true);
-            if (cameraController != null) cameraController.Disable();
+            if (controller != null) controller.Disable();
         }
 
         protected override void SetCameraController(CameraController cameraController)
         {
-            this.cameraController = cameraController as FPSCameraController;
+            this.controller = cameraController as FPSCameraController;
         }
 
         protected override CameraController GetCameraController()
         {
-            if (cameraController != null) return cameraController;
+            if (controller != null) return controller;
             return new FPSCameraController(transform.root, transform, this);
         }
 
