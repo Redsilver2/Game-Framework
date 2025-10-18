@@ -1817,7 +1817,7 @@ MonoBehaviour:
   onEnterTrigger:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2090602673}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: RedSilver2.Framework.Interactions.InteractionModule,
           Assembly-CSharp
         m_MethodName: Interact
@@ -2856,7 +2856,7 @@ GameObject:
   - component: {fileID: 2090602676}
   - component: {fileID: 2090602675}
   - component: {fileID: 2090602674}
-  - component: {fileID: 2090602673}
+  - component: {fileID: 2090602679}
   m_Layer: 0
   m_Name: Cube (5)
   m_TagString: Untagged
@@ -2864,22 +2864,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2090602673
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2090602672}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a86f8173d0c77cf418057714777c7df9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  interactionName: 
-  onInteract:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &2090602674
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2982,6 +2966,34 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2090602679
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2090602672}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f39319cfc5b8be045963d33352879d83, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactionName: 
+  interactionSpeed: 2
+  maxInteractionTime: 10
+  resetInteractionSpeed: 0
+  resetInteractionDelay: 0
+  clearTimerValue: 1
+  resetTimerOnInputRelease: 0
+  onInputPressed:
+    m_PersistentCalls:
+      m_Calls: []
+  onInputReleased:
+    m_PersistentCalls:
+      m_Calls: []
+  onInteract:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &2096961026
 GameObject:
   m_ObjectHideFlags: 0

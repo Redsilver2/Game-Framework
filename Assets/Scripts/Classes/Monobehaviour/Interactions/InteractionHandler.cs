@@ -1,5 +1,6 @@
 using RedSilver2.Framework.Inputs;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 namespace RedSilver2.Framework.Interactions
@@ -9,6 +10,7 @@ namespace RedSilver2.Framework.Interactions
         private KeyboardKey keyboardKey;
         private GamepadKey  gamepadKey;
         private InteractionHandlerModule module;
+        private InteractionModule currentInteractionModule;
 
         public bool IsInputHeld     => InputManager.GetKey(keyboardKey, gamepadKey); 
         public bool IsInputPressed  => InputManager.GetKeyDown(keyboardKey, gamepadKey);
@@ -43,8 +45,21 @@ namespace RedSilver2.Framework.Interactions
             if (module != null)
             {
                 InteractionModule interactionModule = GetInteractionModuleInstance(GetCollider(module.InteractionRange));
+                ResetTimedInteractionModule(interactionModule);
+
+                currentInteractionModule = interactionModule;
                 if (interactionModule != null) interactionModule.Interact(this);
             }
+        }
+
+        private void ResetTimedInteractionModule(InteractionModule interactionModule)
+        {
+            if (currentInteractionModule == null || !currentInteractionModule.enabled)
+                return;
+
+                if (interactionModule != currentInteractionModule && currentInteractionModule is TimedHoldInteractionModule)
+                    (currentInteractionModule as TimedHoldInteractionModule).Release();
+
         }
 
         protected abstract Collider GetCollider(float interactionRange);

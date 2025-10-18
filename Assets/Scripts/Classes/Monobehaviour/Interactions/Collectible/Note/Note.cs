@@ -2,15 +2,9 @@ using UnityEngine;
 
 namespace RedSilver2.Framework.Interactions.Collectibles
 { 
-    public class Note : PressCollectible
+    public class Note : Collectible
     {
         [SerializeField] private NoteData noteData;
-
-        protected override void OnInteract()
-        {
-            base.OnInteract();
-            gameObject.SetActive(false);
-        }
 
         public override CollectibleData GetData()
         {
