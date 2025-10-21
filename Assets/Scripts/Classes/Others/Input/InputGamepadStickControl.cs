@@ -83,25 +83,25 @@ namespace RedSilver2.Framework.Inputs
         private bool GetPositiveAxisYKey() 
         {
             if (path == GamepadStick.LeftStickUp || path == GamepadStick.RightStickUp)
-                return InputManager.GetGamepadAxisY(path == GamepadStick.LeftStickUp ? true : false) > 0.5f;
+                return InputManager.GetAxisY(path == GamepadStick.LeftStickUp ? true : false) > 0.5f;
             return false;
         }
         private bool GetNegativeAxisYKey() 
         {
             if (path == GamepadStick.LeftStickDown || path == GamepadStick.RightStickDown)
-                return InputManager.GetGamepadAxisY(path == GamepadStick.LeftStickDown ? true : false) < -0.5f;
+                return InputManager.GetAxisY(path == GamepadStick.LeftStickDown ? true : false) < -0.5f;
             return false;
         }      
         private bool GetPositiveAxisXKey()
         {
             if (path == GamepadStick.LeftStickRight || path == GamepadStick.RightStickRight)
-              return InputManager.GetGamepadAxisY(path == GamepadStick.LeftStickRight ? true : false) > 0.5f;
+              return InputManager.GetAxisY(path == GamepadStick.LeftStickRight ? true : false) > 0.5f;
             return false;
         }
         private bool GetNegativeAxisXKey()
         {
             if (path == GamepadStick.LeftStickLeft || path == GamepadStick.RightStickLeft)
-                return InputManager.GetGamepadAxisY(path == GamepadStick.LeftStickLeft ? true : false) < -0.5f;
+                return InputManager.GetAxisY(path == GamepadStick.LeftStickLeft ? true : false) < -0.5f;
             return false;
         }
 
@@ -139,7 +139,7 @@ namespace RedSilver2.Framework.Inputs
                 canResetKeyDown = false;
             }
             else 
-                SetPositiveAxisKeyDown(InputManager.GetGamepadAxisY(path == GamepadStick.LeftStickUp ? true : false));
+                SetPositiveAxisKeyDown(InputManager.GetAxisY(path == GamepadStick.LeftStickUp ? true : false));
         }
         private void SetNegativeAxisYKeyDown()
         {
@@ -149,7 +149,7 @@ namespace RedSilver2.Framework.Inputs
                 canResetKeyDown = false;
             }
             else 
-                SetNegativeAxisKeyDown(InputManager.GetGamepadAxisY(path == GamepadStick.LeftStickDown ? true : false));
+                SetNegativeAxisKeyDown(InputManager.GetAxisY(path == GamepadStick.LeftStickDown ? true : false));
         }
         private void SetPositiveAxisXKeyDown()
         {
@@ -160,7 +160,7 @@ namespace RedSilver2.Framework.Inputs
                 canResetKeyDown = false;
             }
             else 
-                SetPositiveAxisKeyDown(InputManager.GetGamepadAxisX(path == GamepadStick.LeftStickRight ? true : false));
+                SetPositiveAxisKeyDown(InputManager.GetAxisX(path == GamepadStick.LeftStickRight ? true : false));
         }
         private void SetNegativeAxisXKeyDown()
         {
@@ -170,7 +170,7 @@ namespace RedSilver2.Framework.Inputs
                 canResetKeyDown = false;
             }
             else
-                SetNegativeAxisKeyDown(InputManager.GetGamepadAxisY(path == GamepadStick.LeftStickDown ? true : false));
+                SetNegativeAxisKeyDown(InputManager.GetAxisY(path == GamepadStick.LeftStickDown ? true : false));
         }
 
         private void SetPositiveAxisKeyDown(float axis) {

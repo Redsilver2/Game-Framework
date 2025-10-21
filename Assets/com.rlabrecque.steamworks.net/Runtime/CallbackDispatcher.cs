@@ -49,6 +49,15 @@ namespace Steamworks {
 		private static IntPtr m_pCallbackMsg;
 		private static int m_initCount;
 
+		#if UNITY_2019_3_OR_NEWER
+		// In case of disabled Domain Reload, reset static members before entering Play Mode.
+		[UnityEngine.RuntimeInitializeOnLoadMethod(UnityEngine.RuntimeInitializeLoadType.SubsystemRegistration)]
+		private static void InitOnPlayMode()
+		{
+			m_initCount = 0;
+		}
+		#endif
+
 		public static bool IsInitialized {
 			get { return m_initCount > 0; }
 		}
@@ -181,12 +190,14 @@ namespace Steamworks {
 						}
 						Marshal.FreeHGlobal(pTmpCallResult);
 					} else {
-						List<Callback> callbacks;
-						if (callbacksRegistry.TryGetValue(callbackMsg.m_iCallback, out callbacks)) {
-							List<Callback> callbacksCopy;
-							lock (m_sync) {
+						List<Callback> callbacksCopy = null;
+						lock (m_sync) {
+							List<Callback> callbacks = null;
+							if (callbacksRegistry.TryGetValue(callbackMsg.m_iCallback, out callbacks)) {
 								callbacksCopy = new List<Callback>(callbacks);
 							}
+						}
+						if (callbacksCopy != null) {
 							foreach (var callback in callbacksCopy) {
 								callback.OnRunCallback(callbackMsg.m_pubParam);
 							}

@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace RedSilver2.Framework
 {
+    [RequireComponent(typeof(SteamManager))]
     public sealed class GameManager : MonoBehaviour
     {
         public const string GROUND_LAYER_NAME = "Ground";
