@@ -40,16 +40,6 @@ namespace RedSilver2.Framework.Player
         }
 
         protected virtual void Update() {
-
-            if (InputManager.GetKey(GamepadStick.LeftStick))
-                Debug.LogWarning("Left Gamepad Stick Is Held");
-           
-            if (InputManager.GetKeyDown(GamepadStick.LeftStick))
-                Debug.LogWarning("Left Gamepad Stick Is Down");
-
-            if (InputManager.GetKeyUp(GamepadStick.LeftStick))
-                Debug.LogWarning("Left Gamepad Stick Is Up");
-
             if (stateMachine != null) stateMachine.Update();
         }
 

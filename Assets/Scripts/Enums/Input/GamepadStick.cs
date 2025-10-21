@@ -4,8 +4,9 @@ namespace RedSilver2.Framework.Inputs
     {
         #region Thumbsticks
         LeftStick     , RightStick,
-        LeftStickUp   , LeftStickDown  , LeftStickRight , LeftStickLeft ,
-        RightStickUp  , RightStickDown , RightStickRight, RightStickLeft,
+        LeftStickUp   , LeftStickDown   , LeftStickRight , LeftStickLeft ,
+        RightStickUp  , RightStickDown  , RightStickRight, RightStickLeft,
+        LeftStickPress, RightStickPress
         #endregion
     }
 }

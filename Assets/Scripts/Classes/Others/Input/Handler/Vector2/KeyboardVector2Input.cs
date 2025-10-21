@@ -27,12 +27,12 @@ namespace RedSilver2.Framework.Inputs
             this.keyboardKeys = keyboardKeys;
         }
 
-        public KeyboardVector2Input(string name, bool useLeftGamepadStick) : base(name, useLeftGamepadStick)
+        public KeyboardVector2Input(string name, Vector2GamepadStick gamepadStick) : base(name, gamepadStick)
         {
             this.keyboardKeys = new Vector2Keyboard(DEFAULT_UP_KEY, DEFAULT_DOWN_KEY, DEFAULT_LEFT_KEY, DEFAULT_RIGHT_KEY);
         }
 
-        public KeyboardVector2Input(string name, Vector2Keyboard keyboardKeys, bool useLeftGamepadStick) : base(name, useLeftGamepadStick) 
+        public KeyboardVector2Input(string name, Vector2Keyboard keyboardKeys, Vector2GamepadStick gamepadStick) : base(name, gamepadStick) 
         {
             this.keyboardKeys = keyboardKeys;
         }
@@ -58,7 +58,7 @@ namespace RedSilver2.Framework.Inputs
 
         private bool TryGetKeyboardVector2(out Vector2 result)
         {
-            result = InputManager.GetVector2(keyboardKeys);
+            result = InputManager.GetKeyboardVector2(keyboardKeys);
             if (result.magnitude > 0f) { return true; }
 
             result = Vector2.zero;

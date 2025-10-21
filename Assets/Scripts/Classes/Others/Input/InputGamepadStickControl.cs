@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
 
 namespace RedSilver2.Framework.Inputs
 {
@@ -35,6 +37,8 @@ namespace RedSilver2.Framework.Inputs
             if (path == GamepadStick.LeftStickDown  || path == GamepadStick.RightStickDown)  return () => { isKey = GetNegativeAxisYKey(); };
             if (path == GamepadStick.LeftStickRight || path == GamepadStick.RightStickRight) return () => { isKey = GetPositiveAxisXKey(); };
             if (path == GamepadStick.LeftStickLeft  || path == GamepadStick.RightStickLeft)  return () => { isKey = GetNegativeAxisXKey(); };
+            if (path == GamepadStick.LeftStickPress || path == GamepadStick.RightStickPress) return () => { isKey = GetStickPressKey();    };
+
             return () => { isKey = GetStickKey(); };
         }
 
@@ -44,16 +48,19 @@ namespace RedSilver2.Framework.Inputs
             if (path == GamepadStick.LeftStickUp    || path == GamepadStick.RightStickDown)  return () => { SetPositiveAxisYKeyDown(); if (isKeyDown) canKeyUpBeTriggered = true; };
             if (path == GamepadStick.LeftStickDown  || path == GamepadStick.RightStickDown)  return () => { SetNegativeAxisYKeyDown(); if (isKeyDown) canKeyUpBeTriggered = true; };
             if (path == GamepadStick.LeftStickRight || path == GamepadStick.RightStickRight) return () => { SetPositiveAxisXKeyDown(); if (isKeyDown) canKeyUpBeTriggered = true; };
-            if (path == GamepadStick.LeftStickLeft  || path == GamepadStick.RightStickLeft)  return () => { SetNegativeAxisXKeyDown(); if (isKeyDown) canKeyUpBeTriggered = true; };     
+            if (path == GamepadStick.LeftStickLeft  || path == GamepadStick.RightStickLeft)  return () => { SetNegativeAxisXKeyDown(); if (isKeyDown) canKeyUpBeTriggered = true; };
+            if (path == GamepadStick.LeftStickPress || path == GamepadStick.RightStickPress) return () => { SetStickPressKeyDown();                                               };
+
             return () => { SetStickKeyDown(); if (isKeyDown) canKeyUpBeTriggered = true; };
         }
 
         private UnityAction GetOnKeyUpAction() 
         {
-            return () =>
-            {
-                if      (GetKeyDown() || isKeyUp)           { isKeyUp = false;                             }
-                else if (!GetKey() && canKeyUpBeTriggered)  { isKeyUp = true; canKeyUpBeTriggered = false; }
+            if (path == GamepadStick.LeftStickPress || path == GamepadStick.RightStickPress) return () => { SetStickPressKeyUp(); };
+
+            return () => {
+                if (GetKeyDown() || isKeyUp) { isKeyUp = false; }
+                else if (!GetKey() && canKeyUpBeTriggered) { isKeyUp = true; canKeyUpBeTriggered = false; }
             };
         }
 
@@ -62,6 +69,15 @@ namespace RedSilver2.Framework.Inputs
            if(path == GamepadStick.LeftStick || path == GamepadStick.RightStick)
               return InputManager.GetGamepadVector2(path == GamepadStick.LeftStick ? true : false).magnitude > 0f; 
            return false;
+        }
+        private bool GetStickPressKey() 
+        {
+            if (path == GamepadStick.LeftStickPress || path == GamepadStick.RightStickPress) {
+                ButtonControl control = GetStickPressControl();
+                if (control != null) return control.isPressed;
+            }
+
+            return false;
         }
 
         private bool GetPositiveAxisYKey() 
@@ -101,6 +117,19 @@ namespace RedSilver2.Framework.Inputs
                     if(InputManager.GetGamepadVector2(path == GamepadStick.LeftStick ? true : false).magnitude == 0) canResetKeyDown = true;
                 }
         }
+        private void SetStickPressKeyDown()
+        {
+            canResetKeyDown = true;
+
+            if (path == GamepadStick.LeftStickPress || path == GamepadStick.RightStickPress)
+            {
+                ButtonControl control = GetStickPressControl();
+                if (control != null) isKeyDown = control.wasPressedThisFrame;
+            }
+            else
+                isKeyDown = false;
+        }
+
 
         private void SetPositiveAxisYKeyDown() 
         {
@@ -153,25 +182,42 @@ namespace RedSilver2.Framework.Inputs
             if (axis >= -0.5f) canResetKeyDown = true;
         }
 
+        private void SetStickPressKeyUp()
+        {
+            canKeyUpBeTriggered = true;
 
-        public override bool GetKey() 
+            if (path == GamepadStick.LeftStickPress || path == GamepadStick.RightStickPress) {
+                ButtonControl control = GetStickPressControl();
+                if (control != null) isKeyUp = control.wasReleasedThisFrame;
+            }
+            else
+                isKeyUp = false;
+        }
+
+
+        public sealed override bool GetKey() 
         {
             if (onKey != null) onKey.Invoke();
             return isKey;
         }
 
-        public override bool GetKeyDown() 
+        public sealed override bool GetKeyDown() 
         {
             if (onKeyDown != null) onKeyDown.Invoke();
             return isKeyDown;
         }
 
-        public override bool GetKeyUp() 
+        public sealed override bool GetKeyUp() 
         {
             if(onKeyUp != null) onKeyUp.Invoke();
             return isKeyUp;
         }
 
-        
+        private ButtonControl GetStickPressControl() 
+        {
+            if (path == GamepadStick.LeftStickPress || path == GamepadStick.RightStickPress)
+              return InputSystem.FindControl(path == GamepadStick.LeftStickPress ? "<Gamepad>/leftStickPress" : "<Gamepad>/rightStickPress") as ButtonControl;
+            return null;
+        }
     }
 }

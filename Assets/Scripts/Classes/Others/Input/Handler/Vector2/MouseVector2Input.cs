@@ -8,7 +8,7 @@ namespace RedSilver2.Framework.Inputs
         {
         }
 
-        public MouseVector2Input(string name, bool useLeftGamepadStick) : base(name, useLeftGamepadStick)
+        public MouseVector2Input(string name, Vector2GamepadStick stick) : base(name, stick)
         {
         }
 

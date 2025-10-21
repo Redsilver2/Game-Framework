@@ -13,11 +13,11 @@ namespace RedSilver2.Framework.Inputs
         {
         }
 
-        public OverrideableKeyboardVector2Input(string name, bool useLeftGamepadStick) : base(name, useLeftGamepadStick)
+        public OverrideableKeyboardVector2Input(string name, Vector2GamepadStick gamepadStick) : base(name, gamepadStick)
         {
         }
 
-        public OverrideableKeyboardVector2Input(string name, Vector2Keyboard keyboardKeys, bool useLeftGamepadStick) : base(name, keyboardKeys, useLeftGamepadStick)
+        public OverrideableKeyboardVector2Input(string name, Vector2Keyboard keyboardKeys, Vector2GamepadStick gamepadStick) : base(name, keyboardKeys, gamepadStick)
         {
         }
 
@@ -25,5 +25,6 @@ namespace RedSilver2.Framework.Inputs
         public void OverrideDownKey(KeyboardKey key)  => keyboardKeys.OverrideDown(key);
         public void OverrideLeftKey(KeyboardKey key)  => keyboardKeys.OverrideLeft(key);
         public void OverrideRightKey(KeyboardKey key) => keyboardKeys.OverrideRight(key);
+        public void OverrideGamepadStick(Vector2GamepadStick stick) => this.gamepadStick = stick;
     }
 }

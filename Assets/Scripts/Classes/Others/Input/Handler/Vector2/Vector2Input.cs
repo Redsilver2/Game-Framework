@@ -5,7 +5,7 @@ namespace RedSilver2.Framework.Inputs
 {
     public abstract class Vector2Input : InputHandler
     {
-        protected bool useLeftGamepadStick;
+        protected Vector2GamepadStick gamepadStick;
         private UnityEvent<Vector2> onUpdate;
        
 
@@ -17,13 +17,13 @@ namespace RedSilver2.Framework.Inputs
         protected Vector2Input(string name) : base(name)
         {
             onUpdate = new UnityEvent<Vector2>();
-            this.useLeftGamepadStick = true;
+            this.gamepadStick = Vector2GamepadStick.LeftStick;
         }
 
-        protected Vector2Input(string name, bool useLeftGamepadStick) : base(name)
+        protected Vector2Input(string name, Vector2GamepadStick gamepadStick) : base(name)
         {
             onUpdate = new UnityEvent<Vector2>();
-            this.useLeftGamepadStick = useLeftGamepadStick;
+            this.gamepadStick = gamepadStick;
         }
 
         public sealed override void Update()
@@ -59,7 +59,7 @@ namespace RedSilver2.Framework.Inputs
 
         private bool TryGetGamepadVector2(out Vector2 result)
         {
-            result = InputManager.GetGamepadVector2(useLeftGamepadStick);
+            result = InputManager.GetGamepadVector2(gamepadStick);
             if(result.magnitude > 0f) { return true; }
 
             result = Vector2.zero;
