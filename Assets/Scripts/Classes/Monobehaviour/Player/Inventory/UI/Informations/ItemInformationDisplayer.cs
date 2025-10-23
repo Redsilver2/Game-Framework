@@ -6,13 +6,25 @@ namespace RedSilver2.Framework.Player.Inventories.UI
 {
     public abstract class ItemInformationDisplayer : InventoryUI
     {
+        [Space]
         [SerializeField] protected string nullErrorMessage;
 
-        protected sealed override void OnHorizontalIndexChanged(int horizontalIndex) {
+        protected override void Awake()
+        {
+            if (navigator == null)
+            {
+                navigator.AddOnHorizontalIndexChangedListener(OnHorizontalIndexChanged);
+
+                if (navigator is ComplexInventoryUINavigator)
+                    (navigator as ComplexInventoryUINavigator).AddOnVerticalIndexChangedListener(OnVerticalIndexChanged);
+            }
+        }
+
+        protected void OnHorizontalIndexChanged(int horizontalIndex) {
             DisplayItemInformation();
         }
 
-        protected sealed override void OnVerticalIndexChanged(int verticalIndex) {
+        protected void OnVerticalIndexChanged(int verticalIndex) {
             DisplayItemInformation();
         }
 

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
@@ -9,10 +10,10 @@ namespace RedSilver2.Framework.Inputs
 {
     public static class InputManager
     {
-        private static readonly Dictionary<string, InputHandler> inputHandlerInstances = new Dictionary<string, InputHandler>();
-        private static readonly Dictionary<KeyboardKey  , InputButtonControl>       keyboardKeysDatas  = GetKeyboardKeysDatas();
-        private static readonly Dictionary<GamepadButton, InputButtonControl>       gamepadKeysDatas   = GetGamepadKeysDatas();
-        private static readonly Dictionary<GamepadStick , InputGamepadStickControl> gamepadSticksDatas = GetGamepadStickDatas();
+        private static readonly Dictionary<string, InputHandler>                    inputHandlerInstances = new Dictionary<string, InputHandler>();
+        private static readonly Dictionary<KeyboardKey  , InputButtonControl>       keyboardKeysDatas     = GetKeyboardKeysDatas();
+        private static readonly Dictionary<GamepadButton, InputButtonControl>       gamepadKeysDatas      = GetGamepadKeysDatas();
+        private static readonly Dictionary<GamepadStick, InputGamepadStickControl>  gamepadSticksDatas    = GetGamepadStickDatas();
 
         public static bool AnyKeyboardKey {
 
@@ -119,12 +120,12 @@ namespace RedSilver2.Framework.Inputs
         {
             Dictionary<GamepadButton, InputButtonControl> results = new Dictionary<GamepadButton, InputButtonControl>();
 
+
             foreach (GamepadButton key in Enum.GetValues(typeof(GamepadButton)))
             {
                 string keyString = key.ToString();
                 results.Add(key, new InputButtonControl(GetFormattedKey(key), GetKeyIconFromResources(key.ToString(), GAMEPAD_ICONS_PATH)));
             }
-
 
             return results;
         }
@@ -133,10 +134,8 @@ namespace RedSilver2.Framework.Inputs
         {
             Dictionary<GamepadStick, InputGamepadStickControl> results = new Dictionary<GamepadStick, InputGamepadStickControl>();
 
-            foreach (GamepadStick key in Enum.GetValues(typeof(GamepadStick))) {
-                Debug.Log(key);
+            foreach (GamepadStick key in Enum.GetValues(typeof(GamepadStick))) 
                 results.Add(key, new InputGamepadStickControl(key, GetKeyIconFromResources(key.ToString(), GAMEPAD_ICONS_PATH)));
-            }
 
             return results;
         }
@@ -329,7 +328,7 @@ namespace RedSilver2.Framework.Inputs
             return inputHandlerInstances.Keys.Distinct().ToArray();
         }
 
-        public static InputHandler GetInputHandler(string name)
+        private static InputHandler GetInputHandler(string name)
         {
             if(inputHandlerInstances != null && !string.IsNullOrEmpty(name))
             {
@@ -355,7 +354,7 @@ namespace RedSilver2.Framework.Inputs
             return results.ToArray();
         }
 
-        public static bool GetKey(KeyboardKey key)
+         public static bool GetKey(KeyboardKey key)
         {
             if (keyboardKeysDatas == null) return false;
             return keyboardKeysDatas[key].GetKey();
@@ -567,6 +566,124 @@ namespace RedSilver2.Framework.Inputs
         }
         private static Vector2Control GetStickControl(Vector2GamepadStick stick) {
             return InputSystem.FindControl($"{GAMEPAD_ROOT_PATH}{GetFormattedKey(stick.ToString())}") as Vector2Control;
+        }
+
+        public static PressInput GetPressInput(string name)  {
+            return GetInputHandler(name) as PressInput;
+        }
+        public static HoldInput GetHoldInput(string name) {
+            return GetInputHandler(name) as HoldInput;
+        }
+        public static ReleaseInput GetReleaseInput(string name) {
+            return GetInputHandler(name) as ReleaseInput;
+        }
+        public static Vector2Input GetVector2Input(string name) {
+            return GetInputHandler(name) as Vector2Input;
+        }
+        public static MouseVector2Input GetMouseVector2Input(string name) {
+            return GetInputHandler(name) as MouseVector2Input;
+        }
+        public static KeyboardVector2Input GetKeyboardVector2Input(string name)
+        {
+            return GetInputHandler(name) as KeyboardVector2Input;
+        }
+
+        public static OverrideablePressInput   GetOverrideablePressInput(string name) {
+            return GetPressInput(name) as OverrideablePressInput;
+        }
+        public static OverrideableHoldInput    GetOverrideableHoldInput(string name)
+        {
+            return GetHoldInput(name) as OverrideableHoldInput;
+        }
+        public static OverrideableReleaseInput GetOverrideableReleaseInput(string name) {
+            return GetReleaseInput(name) as OverrideableReleaseInput;
+        }
+        public static OverrideableVector2Input GetOverrideableVector2Input(string name)
+        {
+            return GetInputHandler(name) as OverrideableVector2Input;
+        }
+       
+        // I need to add OverreadbleMouseInput Class !!!
+        public static OverrideableKeyboardVector2Input GetOverrideableKeyboardVector2Input(string name)
+        {
+            return GetInputHandler(name) as OverrideableKeyboardVector2Input;
+        }
+
+
+        public static PressInput GetOrCreatePressInput(string name, KeyboardKey defaultKey, GamepadButton defaultButton)
+        {
+            PressInput result = GetPressInput(name);
+            if (result != null) return result;
+            return new PressInput(name, defaultKey, defaultButton);
+        }
+        public static HoldInput GetOrCreateHoldInput(string name, KeyboardKey defaultKey, GamepadButton defaultButton)
+        {
+            HoldInput result = GetHoldInput(name);
+            if (result != null) return result;
+            return new HoldInput(name, defaultKey, defaultButton);
+        }
+        public static ReleaseInput GetOrCreateReleaseInput(string name, KeyboardKey defaultKey, GamepadButton defaultButton)
+        {
+            ReleaseInput result = GetReleaseInput(name);
+            if (result != null) return result;
+            return new ReleaseInput(name, defaultKey, defaultButton);
+        }
+        public static MouseVector2Input GetOrCreateMouseVector2Input(string name, Vector2GamepadStick stick)
+        {
+            MouseVector2Input result = GetMouseVector2Input(name);
+            if (result != null) return result;
+            return new MouseVector2Input(name, stick);
+        }
+        public static KeyboardVector2Input GetOrCreateKeyboardVector2Input(string name, KeyboardVector2Input.Vector2Keyboard keyboard, Vector2GamepadStick stick)
+        {
+            KeyboardVector2Input result = GetKeyboardVector2Input(name);
+            if(result != null) return result;
+            return new KeyboardVector2Input(name, keyboard, stick);
+        }
+
+        public static OverrideablePressInput GetOrCreateOverrideablePressInput(string name, KeyboardKey defaultKey, GamepadButton defaultButton)
+        {
+            OverrideablePressInput result = GetOverrideablePressInput(name);
+            if (result != null) return result;
+            return new OverrideablePressInput(name, defaultKey, defaultButton);
+        }
+        public static OverrideableHoldInput GetOrCreateOverrideableHoldInput(string name, KeyboardKey defaultKey, GamepadButton defaultButton)
+        {
+            OverrideableHoldInput result = GetOverrideableHoldInput(name);
+            if (result != null) return result;
+            return new OverrideableHoldInput(name, defaultKey, defaultButton);
+        }
+        public static OverrideableReleaseInput GetOrCreateOverrideableReleaseInput(string name, KeyboardKey defaultKey, GamepadButton defaultButton)
+        {
+            OverrideableReleaseInput result = GetOverrideableReleaseInput(name);
+            if (result != null) return result;
+            return new OverrideableReleaseInput(name, defaultKey, defaultButton);
+        }
+        public static OverrideableKeyboardVector2Input GetOrCreateOverrideableKeyboardVector2Input(string name, KeyboardVector2Input.Vector2Keyboard keyboard, Vector2GamepadStick stick)
+        {
+            OverrideableKeyboardVector2Input result = GetOverrideableKeyboardVector2Input(name);
+            if (result != null) return result;
+            return new OverrideableKeyboardVector2Input(name, keyboard, stick);
+        }
+
+        public static OverrideableKeyboardVector2Input GetOrCreateOverrideableKeyboardVector2Input(string name, KeyboardVector2Input.Vector2Keyboard keyboard)
+        {
+            return GetOrCreateOverrideableKeyboardVector2Input(name,
+                                                               keyboard,
+                                                               Vector2GamepadStick.LeftStick);
+        }
+
+        public static OverrideableKeyboardVector2Input GetOrCreateOverrideableKeyboardVector2Input(string name, Vector2GamepadStick stick)
+        {
+            return GetOrCreateOverrideableKeyboardVector2Input(name,
+                                                               new KeyboardVector2Input.Vector2Keyboard(KeyboardKey.W, KeyboardKey.S, KeyboardKey.A, KeyboardKey.D),
+                                                               stick);
+        }
+
+        public static OverrideableKeyboardVector2Input GetOrCreateOverrideableKeyboardVector2Input(string name)
+        {
+            return GetOrCreateOverrideableKeyboardVector2Input(name,
+                   new KeyboardVector2Input.Vector2Keyboard(KeyboardKey.W, KeyboardKey.S, KeyboardKey.A, KeyboardKey.D));
         }
     }
 }

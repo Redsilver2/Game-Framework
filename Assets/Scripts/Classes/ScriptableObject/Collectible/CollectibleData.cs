@@ -5,7 +5,7 @@ namespace RedSilver2.Framework.Interactions.Collectibles
     public abstract class CollectibleData : ScriptableObject
     {
         [SerializeField] private string collectibleName;
-        [SerializeField][TextArea(3,3)] private string collectibleDescription;
+        [SerializeField][TextArea(3,3)] private string description;
 
         [Space]
         [Header("Notification Settings")]
@@ -20,8 +20,8 @@ namespace RedSilver2.Framework.Interactions.Collectibles
         [SerializeField] private Sprite     icon;
         [SerializeField] private GameObject model;
 
-        public string  CollectibleName                  => collectibleName; 
-        public string  CollectibleDescription           => collectibleDescription;
+        public string  Name                             => collectibleName; 
+        public string  Description                      => description;
         public bool    CanTriggerInitialNotification    => canTriggerInitialNotification;
         public bool    AlwaysTriggerInitialNotification => alwaysTriggerInitialNotification;
 

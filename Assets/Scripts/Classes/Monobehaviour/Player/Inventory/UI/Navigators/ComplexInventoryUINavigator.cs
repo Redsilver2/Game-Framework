@@ -7,17 +7,31 @@ namespace RedSilver2.Framework.Player.Inventories.UI
 {
     public sealed class ComplexInventoryUINavigator : InventoryUINavigator
     {
-        [Space]
-        [SerializeField] private KeyboardKey keyboardNextVertical, keyboardPreviousVertical;
-       
-        [Space]
-        [SerializeField] private GamepadButton gamepadNextVertical, gamepadPreviousVertical;
+        
 
         [Space]
         [SerializeField] private UnityEvent<int> onVerticalIndexChanged;
 
+        private OverrideablePressInput nextVerticalPressInput;
+        private OverrideablePressInput previousVerticalPressInput;
+
         private int verticalIndex;
         public  int VerticalIndex => verticalIndex;
+
+        public const string NEXT_VERTICAL_INPUT_NAME     = "Next Vertical Navigator Input";
+        public const string PREVIOUS_VERTICAL_INPUT_NAME = "Previous Vertical Navigator Input";
+
+
+        protected sealed override void Awake()
+        {
+            base.Awake();
+
+            nextVerticalPressInput     = GetNextVerticalInput();
+            previousVerticalPressInput = GetPreviousVerticalInput();
+
+            nextVerticalPressInput.Enable();
+            previousVerticalPressInput.Enable();
+        }
 
         public void AddOnVerticalIndexChangedListener(UnityAction<int> action) 
         {
@@ -30,13 +44,17 @@ namespace RedSilver2.Framework.Player.Inventories.UI
               if(onVerticalIndexChanged != null && action != null)
                   onVerticalIndexChanged.RemoveListener(action);
         }
-        protected sealed override void UpdateInput() {
+        protected sealed override void UpdateInput() 
+        {
             base.UpdateInput();
 
-            if (InputManager.GetKey(keyboardNextVertical, gamepadNextVertical))
-                IncrementVerticalIndex();
-            else if (InputManager.GetKey(keyboardPreviousVertical, gamepadPreviousVertical))
-                DecrementVerticalIndex();
+            if (nextVerticalPressInput != null && previousVerticalPressInput != null) {
+                nextVerticalPressInput.Update();
+                previousVerticalPressInput.Update();
+
+                if      (nextVerticalPressInput.Value)     IncrementVerticalIndex();
+                else if (previousVerticalPressInput.Value) DecrementVerticalIndex();
+            }
         }
 
         private void DecrementVerticalIndex()  {
@@ -82,6 +100,15 @@ namespace RedSilver2.Framework.Player.Inventories.UI
             if (inventory is ComplexInventory)
                 return (inventory as ComplexInventory).GetMaxVerticalIndex();
             return -1;
+        }
+
+        public static OverrideablePressInput GetNextVerticalInput() {
+            return InputManager.GetOrCreateOverrideablePressInput(NEXT_VERTICAL_INPUT_NAME, KeyboardKey.S, GamepadButton.DpadDown); 
+        }
+
+
+        public OverrideablePressInput GetPreviousVerticalInput() {
+            return InputManager.GetOrCreateOverrideablePressInput(PREVIOUS_VERTICAL_INPUT_NAME, KeyboardKey.W, GamepadButton.DpadUp);
         }
     }
 }

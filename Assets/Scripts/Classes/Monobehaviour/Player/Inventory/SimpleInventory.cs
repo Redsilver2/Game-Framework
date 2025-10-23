@@ -31,10 +31,11 @@ namespace RedSilver2.Framework.Player.Inventories
 
             isItemAdded = false;
 
-            if ((ContainsDuplicate(item) && AllowDuplicateItems) || Contains(item)) {
+            if ((ContainsDuplicate(item) && AllowDuplicateItems) || (!Contains(item) && !ContainsDuplicate(item))) {
                 items.Add(item);
-                base.AddItem(item, out isItemAdded);
             }
+
+            base.AddItem(item, out isItemAdded);
         }
 
 
@@ -64,7 +65,7 @@ namespace RedSilver2.Framework.Player.Inventories
         public sealed override bool ContainsDuplicate(Item item)
         {
             if(items == null || item == null) return false;
-            return items.Where(x => x.GetType() == item.GetType()).Count() > 0;
+            return items.Where(x => x.GetType() == item.GetType()).Count() > 1;
         }
 
         public sealed override bool ContainsDuplicate(string itemName) {

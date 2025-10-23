@@ -132,9 +132,7 @@ namespace RedSilver2.Framework.Player
 
             public static OverrideableKeyboardVector2Input GetMovementInput()
             {
-                OverrideableKeyboardVector2Input result = InputManager.GetInputHandler(MOVEMENT_INPUT_NAME) as OverrideableKeyboardVector2Input;
-                if (result == null) return new OverrideableKeyboardVector2Input(MOVEMENT_INPUT_NAME);
-                return result;
+                return InputManager.GetOrCreateOverrideableKeyboardVector2Input(MOVEMENT_INPUT_NAME);
             }
         }
 

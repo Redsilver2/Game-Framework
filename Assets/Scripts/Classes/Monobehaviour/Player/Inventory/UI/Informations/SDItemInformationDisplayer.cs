@@ -7,10 +7,18 @@ namespace RedSilver2.Framework.Player.Inventories.UI
     [RequireComponent(typeof(Text))]
     public abstract class SDItemInformationDisplayer : ItemInformationDisplayer
     {
-        protected Text displayer;
+        [SerializeField] private Text displayer;
 
         protected sealed override void Awake() {
             displayer = GetComponent<Text>();   
+            base.Awake();
+        }
+
+        protected sealed override void DisplayItemInformation(string message)
+        {
+            if (displayer != null){
+                displayer.text = message;
+            }
         }
     }
 }

@@ -1,6 +1,4 @@
 using RedSilver2.Framework.Interactions.Items;
-using UnityEngine;
-
 
 namespace RedSilver2.Framework.Player.Inventories.UI
 {

@@ -13,7 +13,7 @@ namespace RedSilver2.Framework.Interactions.Collectibles
             if(model != null && parent != null)
             {
                 model.SetActive(true);
-                model.transform.parent = parent.transform;
+                model.transform.SetParent(parent.transform);
 
                 yield return StartCoroutine(UpdateModelShown(model));
                 model.SetActive(false);

@@ -16,7 +16,7 @@ namespace RedSilver2.Framework.Interactions.Collectibles
         protected sealed override void SetInformationsText(CollectibleData collectibleData)
         {
             if(collectibleData != null && displayer != null)
-                displayer.text = $"{collectibleData.CollectibleName}\n\n{collectibleData.CollectibleDescription}";
+                displayer.text = $"{collectibleData.Name}\n\n{collectibleData.Description}";
         }
     }
 }

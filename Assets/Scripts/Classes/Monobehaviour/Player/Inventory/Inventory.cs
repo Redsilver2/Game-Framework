@@ -9,16 +9,27 @@ namespace RedSilver2.Framework.Player.Inventories
 {
     public abstract class Inventory : MonoBehaviour 
     {
+        [SerializeField] private GameObject invetoryUIParent;
+
+        [Space]
         [SerializeField] private bool allowDuplicateItems;
 
+
+        [Space]
+        [SerializeField] private UnityEvent onOpenUI;
+        [SerializeField] private UnityEvent onCloseUI;
 
         [Space]
         [SerializeField] private UnityEvent<Item> onItemAdded;
         [SerializeField] private UnityEvent<Item> onItemRemoved;
 
+        private bool isUIOpened;
+
         private static List<Inventory> instances = new List<Inventory>();
 
         protected bool AllowDuplicateItems => allowDuplicateItems;
+
+        public bool IsUIOpened => isUIOpened;
 
         public static Inventory[] Instances
         {
@@ -30,8 +41,47 @@ namespace RedSilver2.Framework.Player.Inventories
         }
 
 
-        protected virtual void Awake() {
+        protected virtual void Awake() 
+        {
             instances.Add(this);
+
+            AddOnOpenUIListener(OnOpenUI);
+            AddOnCloseUIListener(OnCloseUI);
+
+            if (invetoryUIParent != null) invetoryUIParent.SetActive(false);
+            isUIOpened = false;
+        }
+
+        public void OpenUI() {
+            if(onOpenUI != null) onOpenUI.Invoke(); 
+        }
+
+        public void CloseUI() {
+            if(onCloseUI != null) onCloseUI.Invoke(); 
+        }
+
+        public void AddOnOpenUIListener(UnityAction action)
+        {
+            Debug.Log("On Open UI: " + onOpenUI  + " | Action: " + action);
+
+            if(onOpenUI != null && action != null)
+                onOpenUI.AddListener(action); 
+        }
+        public void RemoveOnOpenUIListener(UnityAction action)
+        {
+            if (action != null && onOpenUI != null)
+                onOpenUI.RemoveListener(action);
+        }
+
+        public void AddOnCloseUIListener(UnityAction action)
+        {
+            if (action != null && onCloseUI != null)
+                onCloseUI.AddListener(action);
+        }
+        public void RemoveOnCloseUIListener(UnityAction action)
+        {
+            if (action != null && onCloseUI != null)
+                onCloseUI.RemoveListener(action);
         }
 
         public void AddOnItemAddedListener(UnityAction<Item> action)
@@ -77,6 +127,27 @@ namespace RedSilver2.Framework.Player.Inventories
                 onItemRemoved.Invoke(item);
             }
         }
+
+        protected virtual void OnOpenUI()
+        {
+            Debug.Log("Open Inventory UI");
+
+            PlayerController.Disable();
+            CameraControllerModule.Disable();
+            if (invetoryUIParent != null) invetoryUIParent.SetActive(true);
+            isUIOpened = true;
+        }
+        protected virtual void OnCloseUI()
+        {
+            Debug.Log("Close Inventory UI");
+            if (invetoryUIParent != null) invetoryUIParent.SetActive(false);
+
+            PlayerController.Enable();
+            CameraControllerModule.Enable();
+
+            isUIOpened = false;
+        }
+
 
         public abstract bool ContainsDuplicate(Item item);
         public abstract bool ContainsDuplicate(string itemName);

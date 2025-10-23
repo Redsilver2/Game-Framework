@@ -6,9 +6,9 @@ using UnityEngine.Events;
 
 namespace RedSilver2.Framework.Interactions.Items
 {
-    public abstract class Item : Collectible {
-
-        [SerializeField] private string inventoryName;
+    public class Item : Collectible 
+    {
+        [SerializeField] private ItemData data;
 
         [Space]
         [SerializeField] private UnityEvent<Item> onAdded;
@@ -18,9 +18,9 @@ namespace RedSilver2.Framework.Interactions.Items
 
         protected override void OnInteract() {
 
-            Inventory inventory = Inventory.GetInventory(inventoryName);
-            
-            if (inventory == null) return;
+            Inventory inventory = Inventory.GetInventory(0);
+
+            if (inventory == null || inventory == owner) return;
             Add(inventory);
 
             if (inventory.Contains(this)) {
@@ -34,6 +34,7 @@ namespace RedSilver2.Framework.Interactions.Items
             Remove();
 
             inventory.AddItem(this, out bool isItemAdded);
+            Debug.LogWarning(isItemAdded);
             
             if (isItemAdded) {
                 onAdded.Invoke(this);
@@ -52,5 +53,13 @@ namespace RedSilver2.Framework.Interactions.Items
 
             owner = null;
         }
+
+
+        public sealed override CollectibleData GetData()
+        {
+            return data;
+        }
+
     }
+
 }
