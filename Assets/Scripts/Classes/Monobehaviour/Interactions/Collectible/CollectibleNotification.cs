@@ -26,6 +26,7 @@ namespace RedSilver2.Framework.Interactions.Collectibles
         {
             PlayerController.Disable();
             CameraControllerModule.Disable();
+            if (collectible != null) CollectibleNotification.RegisterData(collectible.GetData());
         }
 
         protected virtual void OnHideNotification(Collectible collectible)
@@ -71,9 +72,8 @@ namespace RedSilver2.Framework.Interactions.Collectibles
           
             if (model != null && registeredCollectible != null) 
             {
-                if (!WasDataRegistered(data))
-                {
-                    registeredCollectible.Contains(model.name.ToLower());
+                if (!WasDataRegistered(data)) {
+                    registeredCollectible.Add(model.name.ToLower());
                 }
             }    
         }

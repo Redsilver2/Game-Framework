@@ -1,6 +1,5 @@
 using RedSilver2.Framework.Interactions.Items;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace RedSilver2.Framework.Player.Inventories.UI
 {
@@ -11,61 +10,78 @@ namespace RedSilver2.Framework.Player.Inventories.UI
 
         protected override void Awake()
         {
-            if (navigator == null)
-            {
-                navigator.AddOnHorizontalIndexChangedListener(OnHorizontalIndexChanged);
-
-                if (navigator is ComplexInventoryUINavigator)
-                    (navigator as ComplexInventoryUINavigator).AddOnVerticalIndexChangedListener(OnVerticalIndexChanged);
-            }
+            SetNavigatorEvents();
         }
 
-        protected void OnHorizontalIndexChanged(int horizontalIndex) {
+        private void SetNavigatorEvents()
+        {
+            if (navigator == null) return;
+
+             SetInventoryEvents(navigator.Inventory);
+             navigator.AddOnHorizontalIndexChangedListener(OnHorizontalIndexChanged);
+
+            if (navigator is ComplexInventoryUINavigator)
+            (navigator as ComplexInventoryUINavigator).AddOnVerticalIndexChangedListener(OnVerticalIndexChanged);
+        }
+
+        private void SetInventoryEvents(Inventory inventory)
+        {
+            if(inventory == null) return;
+            inventory.AddOnCloseUIListener(OnInventoryUIClose);
+            inventory.AddOnOpenUIListener(OnInventoryUIOpen);
+        }
+
+        private void OnInventoryUIClose()
+        {
+            DisplayItemInformation(string.Empty);
+        }
+
+        private void OnInventoryUIOpen() {
             DisplayItemInformation();
         }
 
-        protected void OnVerticalIndexChanged(int verticalIndex) {
+
+        private void OnHorizontalIndexChanged(int horizontalIndex) {
+            Debug.LogWarning(horizontalIndex);
+            DisplayItemInformation();
+        }
+
+        private void OnVerticalIndexChanged(int verticalIndex) {
             DisplayItemInformation();
         }
 
         private void DisplayItemInformation() 
         {
-            Inventory inventory;
             if (navigator == null) return;
-
-            inventory = navigator.Inventory;
-         
-            if (inventory == null) return;
-            DisplayItemInformation(navigator, inventory as ComplexInventory);
+            DisplayItemInformation(navigator, navigator.Inventory);
         }
 
-        private void DisplayItemInformation(InventoryUINavigator navigator, Inventory inventory) 
+        private void DisplayItemInformation(InventoryUINavigator navigator, Inventory inventory)
         {
-            if(navigator != null && inventory != null) 
-            {
+            if (navigator == null || inventory == null) { DisplayItemInformation(nullErrorMessage); return;  }
+            
                 if (navigator is SimpleInventoryUINavigator)
                     DisplayItemInformation(navigator as SimpleInventoryUINavigator, inventory as SimpleInventory);
                 if (navigator is HorizontalInventoryUINavigator)
                     DisplayItemInformation(navigator as HorizontalInventoryUINavigator, inventory as ComplexInventory);
                 else if (navigator is ComplexInventoryUINavigator)
                     DisplayItemInformation(navigator as ComplexInventoryUINavigator, inventory as ComplexInventory);
-            }
         }
 
         private void DisplayItemInformation(SimpleInventoryUINavigator navigator, SimpleInventory inventory) 
         {
-            if (inventory != null && navigator != null) 
-                DisplayItemInformation(inventory.GetItem(navigator.HorizontalIndex));
+            if (navigator == null || inventory == null) { DisplayItemInformation(nullErrorMessage); return; }
+            DisplayItemInformation(inventory.GetItem(navigator.HorizontalIndex));
         }
 
         private void DisplayItemInformation(HorizontalInventoryUINavigator navigator, ComplexInventory inventory) {
-            if(navigator != null && inventory != null) 
-                DisplayItemInformation(inventory.GetItem(navigator.VerticalIndex, navigator.HorizontalIndex));
+            if (navigator == null || inventory == null) { DisplayItemInformation(nullErrorMessage); return; }
+            DisplayItemInformation(inventory.GetItem(navigator.VerticalIndex, navigator.HorizontalIndex));
         }
 
         private void DisplayItemInformation(ComplexInventoryUINavigator navigator, ComplexInventory inventory) {
-            if (navigator != null && inventory != null)
-                DisplayItemInformation(inventory.GetItem(navigator.VerticalIndex, navigator.HorizontalIndex));
+            if (navigator == null || inventory == null) { DisplayItemInformation(nullErrorMessage); return; }
+            DisplayItemInformation(inventory.GetItem(navigator.VerticalIndex, navigator.HorizontalIndex));
         }
 
         private void DisplayItemInformation(Item item) 

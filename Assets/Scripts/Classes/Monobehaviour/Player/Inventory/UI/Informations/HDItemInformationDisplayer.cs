@@ -7,9 +7,9 @@ namespace RedSilver2.Framework.Player.Inventories.UI
 
        [SerializeField] private TextMeshProUGUI displayer;
         
-        protected override void Awake() 
+        protected sealed override void Awake() 
         {
-            displayer = GetComponent<TextMeshProUGUI>();
+            if (displayer != null) displayer.text = string.Empty;
             base.Awake();
         }
 

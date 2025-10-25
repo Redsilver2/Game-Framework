@@ -69,8 +69,6 @@ namespace RedSilver2.Framework.Player.Inventories.UI
         {
             if (right == null || left == null || current == null) return;
             UpdateModelPosition   (current);
-
-            Debug.LogWarning("Left Count: " + left.Length + " | Right Count: " + right.Length);
             UpdateModelsPositions (left , current, true);
             UpdateModelsPositions (right, current, false);
         }

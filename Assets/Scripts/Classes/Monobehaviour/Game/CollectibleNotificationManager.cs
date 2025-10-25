@@ -111,7 +111,7 @@ namespace RedSilver2.Framework.Interactions.Collectibles
             {
                 if (CanTriggerInitialNotification(collectible.GetData()))
                      yield return StartCoroutine(TriggerIntialNotification(collectible));
-                else
+                else if(notifications.Count > 0)
                      yield return StartCoroutine(TriggerNotification(notifications.Dequeue(), collectible));
             }
         }
@@ -127,8 +127,7 @@ namespace RedSilver2.Framework.Interactions.Collectibles
 
         private IEnumerator TriggerIntialNotification(Collectible collectible)
         {
-            if (initialCollectibleNotification != null && collectible != null)
-            {
+            if (initialCollectibleNotification != null && collectible != null) {
                 yield return StartCoroutine(initialCollectibleNotification.UpdateNotification(collectible));
             }
         }

@@ -5,7 +5,7 @@ using UnityEngine.Events;
 
 namespace RedSilver2.Framework.Player.Inventories.UI
 {
-    public sealed class ComplexInventoryUINavigator : InventoryUINavigator
+    public class ComplexInventoryUINavigator : InventoryUINavigator
     {
         
 
@@ -15,14 +15,14 @@ namespace RedSilver2.Framework.Player.Inventories.UI
         private OverrideablePressInput nextVerticalPressInput;
         private OverrideablePressInput previousVerticalPressInput;
 
-        private int verticalIndex;
+        protected int verticalIndex;
         public  int VerticalIndex => verticalIndex;
 
         public const string NEXT_VERTICAL_INPUT_NAME     = "Next Vertical Navigator Input";
         public const string PREVIOUS_VERTICAL_INPUT_NAME = "Previous Vertical Navigator Input";
 
 
-        protected sealed override void Awake()
+        protected override void Awake()
         {
             base.Awake();
 
@@ -57,7 +57,8 @@ namespace RedSilver2.Framework.Player.Inventories.UI
             }
         }
 
-        private void DecrementVerticalIndex()  {
+        protected virtual void DecrementVerticalIndex()  
+        {
             verticalIndex--;
             if(verticalIndex < 0) verticalIndex = GetMaxVerticalIndex() - 1;
 
@@ -67,7 +68,7 @@ namespace RedSilver2.Framework.Player.Inventories.UI
             if(onVerticalIndexChanged != null) onVerticalIndexChanged.Invoke(verticalIndex);
         }
 
-        private void IncrementVerticalIndex() 
+        protected virtual void IncrementVerticalIndex() 
         {
             verticalIndex++;
             if (verticalIndex >= GetMaxVerticalIndex()) verticalIndex = 0;
@@ -78,7 +79,7 @@ namespace RedSilver2.Framework.Player.Inventories.UI
             if (onVerticalIndexChanged != null) onVerticalIndexChanged.Invoke(verticalIndex);
         }
 
-        public sealed override void SetIndex(Item item) 
+        public override void SetIndex(Item item) 
         {
             if(inventory is ComplexInventory && item != null)
             {
@@ -89,7 +90,7 @@ namespace RedSilver2.Framework.Player.Inventories.UI
             }
         }
 
-        protected sealed override int GetMaxHorizontalIndex() {
+        protected override int GetMaxHorizontalIndex() {
             if (inventory is ComplexInventory)
                 return (inventory as ComplexInventory).GetMaxHorizontalIndex(verticalIndex);
             return -1;

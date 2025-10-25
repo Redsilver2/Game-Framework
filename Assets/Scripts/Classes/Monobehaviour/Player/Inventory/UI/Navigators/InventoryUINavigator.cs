@@ -39,10 +39,8 @@ namespace RedSilver2.Framework.Player.Inventories.UI
 
         public const string NEXT_HORIZONTAL_INPUT_NAME     = "Next Horizontal Navigator Input";
         public const string PREVIOUS_HORIZONTAL_INPUT_NAME = "Previous Horizontal Navigator Input";
-
-
-
-        protected virtual void Awake() {
+        protected virtual void Awake() 
+        {
             this.enabled = false;
 
             nextHorizontalPressInput     = GetNextHorizontalInput();
@@ -128,7 +126,8 @@ namespace RedSilver2.Framework.Player.Inventories.UI
 
         public void AddOnHorizontalIndexChangedListener(UnityAction<int> action)
         {
-            if(onHorizontalIndexChanged != null && action != null)
+            Debug.LogWarning(action);
+            if (onHorizontalIndexChanged != null && action != null)
                onHorizontalIndexChanged.AddListener(action);
         }
 

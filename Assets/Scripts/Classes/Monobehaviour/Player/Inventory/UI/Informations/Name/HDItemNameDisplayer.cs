@@ -5,9 +5,10 @@ namespace RedSilver2.Framework.Player.Inventories.UI
 {
     public sealed class HDItemNameDisplayer : HDItemInformationDisplayer
     {
-        protected override void DisplayItemInformation(ItemData data)
+        protected sealed override void DisplayItemInformation(ItemData data)
         {
             if(data != null) {
+                Debug.LogWarning("WTF");
                 DisplayItemInformation(data.Name);
             }
         }
