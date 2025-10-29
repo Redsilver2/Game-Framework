@@ -8,14 +8,6 @@ namespace RedSilver2.Framework.Player.Inventories
     public class SimpleInventory : Inventory  {
         
         private List<Item> items;
-        public Item[] Items
-        {
-            get
-            {
-                if (items == null) return new Item[0];
-                return items.ToArray();
-            }
-        }
 
         protected sealed override void Awake()
         {
@@ -55,7 +47,7 @@ namespace RedSilver2.Framework.Player.Inventories
             }
         }
 
-        public int GetMaxHorizontalIndex()
+        public sealed override int GetMaxHorizontalIndex()
         {
             if (items == null) return 0;
             return items.Count;
@@ -105,6 +97,12 @@ namespace RedSilver2.Framework.Player.Inventories
 
         public sealed override int GetHorizontalIndex(string itemName) {
             return GetHorizontalIndex(GetItem(itemName));
+        }
+
+        public Item[] GetItems()
+        {
+            if (items == null) return new Item[0];
+            return items.ToArray();
         }
 
         public Item GetItem(int index) {

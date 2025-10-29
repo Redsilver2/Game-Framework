@@ -8,20 +8,11 @@ namespace RedSilver2.Framework.Player.Inventories
     public abstract class ComplexInventory : Inventory
     {
         private List<List<Item>> items;
-        public  Item[][] Items
+
+        protected override void Awake()
         {
-            get
-            {
-                List<Item[]> results;
-                if(items == null || items.Count == 0) return (new List<Item[]>(0)).ToArray();
-
-                results = new List<Item[]>();
-
-                foreach (List<Item> result in items)
-                    results.Add(result != null ? result.ToArray() : new Item[0]);
-
-                return results.ToArray();
-            }
+            base.Awake();
+            items = new List<List<Item>>();
         }
 
         public sealed override bool Contains(Item item) 
@@ -105,6 +96,8 @@ namespace RedSilver2.Framework.Player.Inventories
             return GetItemIndex(GetItem(itemName), getVerticalIndex);
         }
 
+
+
         public int GetMaxHorizontalIndex(int verticalIndex) 
         {
             if(items == null || items.Count == 0 || verticalIndex < 0 || verticalIndex >= items.Count)
@@ -121,7 +114,31 @@ namespace RedSilver2.Framework.Player.Inventories
             if (items == null || items.Count == 0)
                 return -1;
 
-            return Items.Length;
+            return GetItems().Length;
+        }
+
+        public int GetItemsCount()
+        {
+            Item[][] items = GetItems();
+            if(items.Length == 0) return -1;
+
+            int count = 0;
+            foreach(Item[] results in items.Where(x => x != null)) { count += results.Length; }
+
+            return count;
+        }
+
+        public Item[][] GetItems()
+        {
+            List<Item[]> results;
+            if (items == null || items.Count == 0) return (new List<Item[]>(0)).ToArray();
+
+            results = new List<Item[]>();
+
+            foreach (List<Item> result in items)
+                results.Add(result != null ? result.ToArray() : new Item[0]);
+
+            return results.ToArray();
         }
 
         public Item[] GetItems(int verticalIndex)

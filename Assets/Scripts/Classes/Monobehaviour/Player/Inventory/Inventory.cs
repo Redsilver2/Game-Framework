@@ -47,9 +47,12 @@ namespace RedSilver2.Framework.Player.Inventories
 
             AddOnOpenUIListener(OnOpenUI);
             AddOnCloseUIListener(OnCloseUI);
-
-            if (invetoryUIParent != null) invetoryUIParent.SetActive(false);
             isUIOpened = false;
+        }
+
+        protected virtual void Start()
+        {
+            if (invetoryUIParent != null) invetoryUIParent.SetActive(false);
         }
 
         public void OpenUI() {
@@ -161,6 +164,8 @@ namespace RedSilver2.Framework.Player.Inventories
         public abstract int  GetHorizontalIndex(Item item);
         public abstract int  GetHorizontalIndex(string itemName);
 
+
+        public abstract int GetMaxHorizontalIndex();
         public abstract Item GetItem(string itemName);
 
         public static Inventory GetInventory(string inventoryName)

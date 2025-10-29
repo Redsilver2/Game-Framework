@@ -8,7 +8,14 @@ namespace RedSilver2.Framework.Player.Inventories.UI
 {
     public abstract class InventoryUINavigator : MonoBehaviour
     {
+        [SerializeField] private Transform modelParentTransform;
+
+        [Space]
         [SerializeField] protected Inventory inventory;
+
+        [Space]
+        [SerializeField] private bool canWrapHorizontalIndex = true;
+
 
         [Space]
         [SerializeField] private UnityEvent onUpdate, onLateUpdate, onEnable, onDisable;
@@ -24,9 +31,8 @@ namespace RedSilver2.Framework.Player.Inventories.UI
         private static List<InventoryUINavigator> navigators;
         private static InventoryUINavigator current;
 
-
-        public    int HorizontalIndex => horizontalIndex;
-        public Inventory Inventory => inventory;
+        public int HorizontalIndex      => horizontalIndex;
+        public Transform ModelParentTransform => modelParentTransform;
 
         public InventoryUINavigator[] Navigators
         {
@@ -39,6 +45,7 @@ namespace RedSilver2.Framework.Player.Inventories.UI
 
         public const string NEXT_HORIZONTAL_INPUT_NAME     = "Next Horizontal Navigator Input";
         public const string PREVIOUS_HORIZONTAL_INPUT_NAME = "Previous Horizontal Navigator Input";
+
         protected virtual void Awake() 
         {
             this.enabled    = false;
@@ -49,6 +56,10 @@ namespace RedSilver2.Framework.Player.Inventories.UI
 
             nextHorizontalPressInput.Enable();
             previousHorizontalPressInput.Enable();
+
+
+            inventory.AddOnItemAddedListener(OnItemAdded);
+            inventory.AddOnItemRemovedListener(OnItemRemoved);
 
             inventory.AddOnOpenUIListener(OnOpenInventoryUI);
             inventory.AddOnCloseUIListener(OnCloseInventoryUI);
@@ -74,13 +85,56 @@ namespace RedSilver2.Framework.Player.Inventories.UI
             if (onEnable != null && didAwake) onEnable.Invoke();
         }
 
-        private void OnOpenInventoryUI() {
+
+        protected virtual void OnOpenInventoryUI()
+        {
+            UpdateModels();
             SetCurrent(this);
         }
 
-        private void OnCloseInventoryUI(){
+        protected virtual void OnCloseInventoryUI()
+        {
+            UpdateModels();
             SetCurrent(null);
         }
+
+        public void AddOnInventoryOpenUIListener(UnityAction action)
+        {
+            if(inventory != null) inventory.AddOnOpenUIListener(action);
+        }
+        public void RemoveOnInventoryOpenUIListener(UnityAction action)
+        {
+            if (inventory != null) inventory.RemoveOnOpenUIListener(action);
+        }
+
+
+        public void AddOnInventoryCloseUIListener(UnityAction action)
+        {
+            if (inventory != null) inventory.AddOnCloseUIListener(action);
+        }
+        public void RemoveOnInventoryCloseUIListener(UnityAction action)
+        {
+            if (inventory != null) inventory.RemoveOnCloseUIListener(action);
+        }
+
+        public void AddOnInventoryItemAddedListener(UnityAction<Item> action)
+        {
+            if (inventory != null) inventory.AddOnItemAddedListener(action);
+        }
+        public void RemoveOnInventoryItemAddedListener(UnityAction<Item> action)
+        {
+            if (inventory != null) inventory.RemoveOnItemAddedListener(action);
+        }
+
+        public void AddOnInventoryItemRemovedListener(UnityAction<Item> action)
+        {
+            if (inventory != null) inventory.AddOnItemRemovedListener(action);
+        }
+        public void RemoveOnInventoryItemRemovedListener(UnityAction<Item> action)
+        {
+            if (inventory != null) inventory.RemoveOnItemRemovedListener(action);
+        }
+
 
         public void AddOnEnableListener(UnityAction action) {
             if (onEnable != null && action != null)
@@ -138,6 +192,29 @@ namespace RedSilver2.Framework.Player.Inventories.UI
                 onHorizontalIndexChanged.RemoveListener(action);
         }
 
+        protected virtual void OnItemAdded(Item item)
+        {
+            if (item != null && inventory != null)
+            {
+                Debug.LogWarning("We added item...");
+                UpdateItems();
+
+                if (inventory.IsUIOpened) 
+                    UpdateModels();
+            }
+        }
+
+        protected virtual void OnItemRemoved(Item item)
+        {
+            if (item != null)
+            {
+                UpdateItems();
+
+                if (inventory.IsUIOpened)
+                    UpdateModels();
+            }
+        }
+
         protected virtual void UpdateInput()
         {
             if (nextHorizontalPressInput != null) {
@@ -155,7 +232,7 @@ namespace RedSilver2.Framework.Player.Inventories.UI
         {
            if (inventory == null) return;
            horizontalIndex++;
-           ClampIncrementHorizontalIndex(ref horizontalIndex, GetMaxHorizontalIndex());
+           ClampIncrementHorizontalIndex(ref horizontalIndex, canWrapHorizontalIndex);
            if (onHorizontalIndexChanged != null) onHorizontalIndexChanged.Invoke(horizontalIndex);
         }
 
@@ -163,20 +240,35 @@ namespace RedSilver2.Framework.Player.Inventories.UI
         {
             if (inventory == null) return;
             horizontalIndex--;
-            ClampDecrementHorizontalIndex(ref horizontalIndex, GetMaxHorizontalIndex());
+            ClampDecrementHorizontalIndex(ref horizontalIndex, canWrapHorizontalIndex);
             if (onHorizontalIndexChanged != null) onHorizontalIndexChanged.Invoke(horizontalIndex);
         }
 
-        protected virtual void ClampIncrementHorizontalIndex(ref int horizontalIndex, int maxValue) {
-            if (horizontalIndex >= maxValue) horizontalIndex = 0;
+        protected virtual void ClampIncrementHorizontalIndex(ref int horizontalIndex, bool canWarpHorizontalIndex) {
+
+            int maxHorizontalIndex = GetMaxHorizontalIndex();
+            
+            if (horizontalIndex >= maxHorizontalIndex) {
+                if(canWarpHorizontalIndex) horizontalIndex = 0;
+                else                       horizontalIndex = maxHorizontalIndex - 1;
+            }
         }
 
-        protected virtual void ClampDecrementHorizontalIndex(ref int horizontalIndex, int maxValue) {
-            if (horizontalIndex < 0) horizontalIndex = maxValue;
+        protected virtual void ClampDecrementHorizontalIndex(ref int horizontalIndex, bool canWarpHorizontalIndex) 
+        {
+            if (horizontalIndex < 0) {
+               if(canWarpHorizontalIndex) horizontalIndex = GetMaxHorizontalIndex() - 1;
+               else                       horizontalIndex = 0;
+            }
         }
 
-        public abstract void SetIndex(Item item);
+        public abstract void Select(Item item);
         public abstract int GetMaxHorizontalIndex();
+
+        protected abstract void UpdateItems();
+        protected abstract void UpdateModels();
+
+        public abstract Item GetSelectedItem();
 
         public static void Disable() {
             if (current != null) current.enabled = false;

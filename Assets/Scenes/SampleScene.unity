@@ -3924,7 +3924,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e0167fc076436c49b6d89fe4cb7b41d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainInventory: {fileID: 0}
+  mainInventory: {fileID: 1856122275}
 --- !u!1 &1212440873
 GameObject:
   m_ObjectHideFlags: 0
@@ -3934,9 +3934,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1212440874}
-  - component: {fileID: 1212440877}
   - component: {fileID: 1212440876}
   - component: {fileID: 1212440875}
+  - component: {fileID: 1212440877}
   m_Layer: 0
   m_Name: States
   m_TagString: Untagged
@@ -4979,6 +4979,7 @@ GameObject:
   - component: {fileID: 1856122272}
   - component: {fileID: 1856122275}
   - component: {fileID: 1856122274}
+  - component: {fileID: 1856122276}
   m_Layer: 0
   m_Name: Main
   m_TagString: Untagged
@@ -5059,7 +5060,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a4c5721dea7ee145bec2b94767f50e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  modelParentTransform: {fileID: 836682518}
   inventory: {fileID: 1856122275}
+  canWrapHorizontalIndex: 1
   onUpdate:
     m_PersistentCalls:
       m_Calls: []
@@ -5075,13 +5078,17 @@ MonoBehaviour:
   onHorizontalIndexChanged:
     m_PersistentCalls:
       m_Calls: []
+  canWarpVerticalIndex: 1
   onVerticalIndexChanged:
     m_PersistentCalls:
       m_Calls: []
-  maxHorizontalPageIndex: 4
-  maxVerticalPageIndex: 4
-  pageChangeDirection: 1
+  maxHorizontalPageIndex: 2
+  maxVerticalPageIndex: 2
   canWrapPageIndex: 1
+  pageChangeDirection: 1
+  onPageIndexChanged:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &1856122275
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5095,7 +5102,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   invetoryUIParent: {fileID: 1856122266}
-  allowDuplicateItems: 0
+  allowDuplicateItems: 1
   onOpenUI:
     m_PersistentCalls:
       m_Calls: []
@@ -5108,6 +5115,23 @@ MonoBehaviour:
   onItemRemoved:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1856122276
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1856122266}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8cf1321699dfe5a4e923ba7c73220c18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  navigator: {fileID: 1856122274}
+  horizontalSpacing: 5
+  verticalSpacing: 5
+  forwardSpacing: -5
+  modelPositionLerpSpeed: 10
 --- !u!1 &1874025942
 GameObject:
   m_ObjectHideFlags: 0

@@ -7,7 +7,8 @@ namespace RedSilver2.Framework.Player.Inventories.UI
 {
     public abstract class VerticalInventoryUINavigator : InventoryUINavigator
     {
-        
+        [Space]
+        [SerializeField] private bool canWarpVerticalIndex = true;
 
         [Space]
         [SerializeField] private UnityEvent<int> onVerticalIndexChanged;
@@ -21,6 +22,12 @@ namespace RedSilver2.Framework.Player.Inventories.UI
         public const string NEXT_VERTICAL_INPUT_NAME     = "Next Vertical Navigator Input";
         public const string PREVIOUS_VERTICAL_INPUT_NAME = "Previous Vertical Navigator Input";
 
+        private Item      [,] items;
+        private GameObject[,] models;
+
+        public Item[,] Items        => items;
+        public GameObject[,] Models => models;
+
 
         protected override void Awake()
         {
@@ -32,6 +39,18 @@ namespace RedSilver2.Framework.Player.Inventories.UI
 
             nextVerticalPressInput.Enable();
             previousVerticalPressInput.Enable();
+
+            items = new Item[0, 0];
+        }
+
+
+        protected override void UpdateItems() {
+            items = GetItems();
+        }
+
+        protected override void UpdateModels() {
+            ItemModel.ReturnBorrowedModels(models);
+            models = ItemModel.GetModels(items);
         }
 
         public void AddOnVerticalIndexChangedListener(UnityAction<int> action) 
@@ -61,29 +80,40 @@ namespace RedSilver2.Framework.Player.Inventories.UI
         private void DecrementVerticalIndex()  
         {
             verticalIndex--;
-            ClampDecrementVerticalIndex(ref verticalIndex, GetMaxVerticalIndex());
+            ClampDecrementVerticalIndex(ref verticalIndex, canWarpVerticalIndex);
             if(onVerticalIndexChanged != null) onVerticalIndexChanged.Invoke(verticalIndex);
         }
 
         private void IncrementVerticalIndex()  
         {
             verticalIndex++;
-            ClampIncrementVerticalIndex(ref verticalIndex, GetMaxVerticalIndex());
+            ClampIncrementVerticalIndex(ref verticalIndex, canWarpVerticalIndex);
             if (onVerticalIndexChanged != null) onVerticalIndexChanged.Invoke(verticalIndex);
         }
 
-        protected virtual void ClampIncrementVerticalIndex(ref int verticalIndex, int maxValue)
+        protected virtual void ClampIncrementVerticalIndex(ref int verticalIndex, bool canWarpVerticalIndex)
         {
-            if (verticalIndex >= maxValue) verticalIndex = 0;
+            int maxVerticalIndex = GetMaxVerticalIndex();
+           
+            if (verticalIndex >= maxVerticalIndex)
+            {
+               if(canWarpVerticalIndex) verticalIndex = 0;
+               else                     verticalIndex = maxVerticalIndex - 1;
+            }
         }
 
-        protected virtual void ClampDecrementVerticalIndex(ref int verticalIndex, int maxValue)
+        protected virtual void ClampDecrementVerticalIndex(ref int verticalIndex, bool canWarpVerticalIndex)
         {
-            if (verticalIndex < 0) verticalIndex = maxValue;
+            if (verticalIndex < 0)
+            {
+               if(canWarpVerticalIndex) verticalIndex = GetMaxVerticalIndex() - 1;
+               else                     verticalIndex = 0;
+            }
         }
 
 
         public abstract int GetMaxVerticalIndex();
+        public abstract Item[,] GetItems();
 
         public static OverrideablePressInput GetNextVerticalInput() {
             return InputManager.GetOrCreateOverrideablePressInput(NEXT_VERTICAL_INPUT_NAME, KeyboardKey.S, GamepadButton.DpadDown); 
