@@ -6,9 +6,8 @@ namespace RedSilver2.Framework.Player.Inventories.UI
     public class ItemModelPositionUpdater : ItemModelUpdater
     {
         [Space]
-        [SerializeField] protected float horizontalSpacing;
-        [SerializeField] protected float verticalSpacing;
-        [SerializeField] protected float forwardSpacing;
+        [SerializeField] protected float modelOffsetX;
+        [SerializeField] protected float modelOffsetY;
 
         [Space]
         [SerializeField] protected float modelPositionLerpSpeed;
@@ -16,7 +15,7 @@ namespace RedSilver2.Framework.Player.Inventories.UI
         protected override void UpdateModels(SimpleInventoryUINavigator navigator) 
         {
             if (navigator != null) {
-               UpdateModelsPosition(navigator.HorizontalIndex, navigator.Models);
+                UpdateModelsPosition(navigator.HorizontalIndex, navigator.Models);
             }
         }
 
@@ -55,9 +54,8 @@ namespace RedSilver2.Framework.Player.Inventories.UI
             if (model == null) return;
 
             transform = model.transform;
-            transform.localPosition = Vector3.Lerp(transform.localPosition, -Vector3.up      * (verticalIndex * verticalSpacing) + 
-                                                                             Vector3.right   * (horizontalIndex * horizontalSpacing)
-                                                                            -Vector3.forward * forwardSpacing, 
+            transform.localPosition = Vector3.Lerp(transform.localPosition, -Vector3.up      * (verticalIndex   * modelOffsetY) + 
+                                                                             Vector3.right   * (horizontalIndex * modelOffsetX), 
                                                                              Time.deltaTime  * modelPositionLerpSpeed);
         }
     }

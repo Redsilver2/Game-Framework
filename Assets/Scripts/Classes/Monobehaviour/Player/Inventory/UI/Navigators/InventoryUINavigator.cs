@@ -287,6 +287,12 @@ namespace RedSilver2.Framework.Player.Inventories.UI
             }
         }
 
+        public static bool IsCurrent(InventoryUINavigator navigator)
+        {
+            if (navigator == null) return false;
+            return current == navigator;
+        }
+
         public static OverrideablePressInput GetNextHorizontalInput() {
             return InputManager.GetOrCreateOverrideablePressInput(NEXT_HORIZONTAL_INPUT_NAME, KeyboardKey.D, GamepadButton.DpadRight);
         }

@@ -1,6 +1,4 @@
-using RedSilver2.Framework.Interactions.Items;
 using System.Collections;
-using System.Linq;
 using UnityEngine;
 
 namespace RedSilver2.Framework.Player.Inventories.UI
@@ -11,20 +9,24 @@ namespace RedSilver2.Framework.Player.Inventories.UI
 
         protected override void Awake()
         {
+            base.Awake();
+
             if (navigator != null) {
                 navigator.AddOnEnableListener(OnNavigatorEnable);
                 navigator.AddOnDisableListener(OnNavigatorDisable);
             }
         }
 
-        private void OnDestroy()
-        {
+        private void OnDestroy() {
             OnNavigatorDisable();
         }
 
-        private void OnDisable()
-        {
+        private void OnDisable() {
             OnNavigatorDisable();
+        }
+
+        private void OnEnable() {
+            if (InventoryUINavigator.IsCurrent(navigator)) OnNavigatorEnable();
         }
 
         private void OnNavigatorEnable()

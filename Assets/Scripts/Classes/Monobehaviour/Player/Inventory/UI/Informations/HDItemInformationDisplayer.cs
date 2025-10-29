@@ -3,12 +3,14 @@ using UnityEngine;
 
 namespace RedSilver2.Framework.Player.Inventories.UI
 {
+    [RequireComponent(typeof(TextMeshProUGUI))]
     public abstract class HDItemInformationDisplayer : ItemInformationDisplayer {
 
-       [SerializeField] private TextMeshProUGUI displayer;
+        private TextMeshProUGUI displayer;
         
         protected sealed override void Awake() 
         {
+            displayer = GetComponent<TextMeshProUGUI>();
             if (displayer != null) displayer.text = string.Empty;
             base.Awake();
         }

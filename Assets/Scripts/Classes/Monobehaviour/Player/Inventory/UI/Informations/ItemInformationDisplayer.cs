@@ -10,6 +10,7 @@ namespace RedSilver2.Framework.Player.Inventories.UI
 
         protected override void Awake()
         {
+            base.Awake();
             SetNavigatorEvents();
         }
 
@@ -17,6 +18,8 @@ namespace RedSilver2.Framework.Player.Inventories.UI
         {
             if (navigator == null) return;
              navigator.AddOnHorizontalIndexChangedListener(OnHorizontalIndexChanged);
+             navigator.AddOnInventoryCloseUIListener(OnInventoryUIClose);
+             navigator.AddOnInventoryOpenUIListener(OnInventoryUIOpen);
 
             if (navigator is VerticalInventoryUINavigator)
                (navigator as VerticalInventoryUINavigator).AddOnVerticalIndexChangedListener(OnVerticalIndexChanged);
@@ -25,8 +28,6 @@ namespace RedSilver2.Framework.Player.Inventories.UI
         private void SetInventoryEvents(Inventory inventory)
         {
             if(inventory == null) return;
-            navigator.AddOnInventoryCloseUIListener(OnInventoryUIClose);
-            navigator.AddOnInventoryOpenUIListener(OnInventoryUIOpen);
         }
 
         private void OnInventoryUIClose()

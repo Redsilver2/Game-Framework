@@ -71,9 +71,11 @@ namespace RedSilver2.Framework.Player.Inventories.UI
 
                 if(pageChangeDirection == PageChangeDirection.Horizontal) DecrementPageIndex();
                 base.ClampDecrementVerticalIndex(ref horizontalIndex, canWarpHorizontalIndex);
-
-                UpdateItems();
-                UpdateModels();
+               
+                if (pageChangeDirection == PageChangeDirection.Horizontal) {
+                    UpdateItems();
+                    UpdateModels();
+                }
             }
         }
 
@@ -84,8 +86,10 @@ namespace RedSilver2.Framework.Player.Inventories.UI
                 if(pageChangeDirection == PageChangeDirection.Horizontal) IncrementPageIndex();
                 base.ClampIncrementHorizontalIndex(ref horizontalIndex, canWarpHorizontalIndex);
 
-                UpdateItems();
-                UpdateModels();
+                if (pageChangeDirection == PageChangeDirection.Horizontal) {
+                    UpdateItems();
+                    UpdateModels();
+                }
             }
         }
 
@@ -96,8 +100,10 @@ namespace RedSilver2.Framework.Player.Inventories.UI
                 if (pageChangeDirection == PageChangeDirection.Vertical) IncrementPageIndex();
                 base.ClampIncrementVerticalIndex(ref verticalIndex, canWarpVerticalIndex);
 
-                UpdateItems();
-                UpdateModels();
+                if (pageChangeDirection == PageChangeDirection.Vertical) {
+                    UpdateItems();
+                    UpdateModels();
+                }
             }
         }
 
@@ -108,8 +114,11 @@ namespace RedSilver2.Framework.Player.Inventories.UI
                 if (pageChangeDirection == PageChangeDirection.Vertical) DecrementPageIndex();
                 base.ClampDecrementVerticalIndex(ref verticalIndex, canWarpVerticalIndex);
 
-                UpdateItems();
-                UpdateModels();
+                if (pageChangeDirection == PageChangeDirection.Vertical)
+                {
+                    UpdateItems();
+                    UpdateModels();
+                }
             }
         }
 
@@ -131,12 +140,11 @@ namespace RedSilver2.Framework.Player.Inventories.UI
             int maxPageIndex = GetMaxPages();
             pageIndex++;
 
-            if (pageIndex >= GetMaxPages())
+            if (pageIndex >= maxPageIndex)
             {
-
+                if (canWrapPageIndex) pageIndex = 0;
+                else                  pageIndex = maxPageIndex - 1;
             }
-
-            if (canWrapPageIndex && pageIndex >= GetMaxPages()) pageIndex = 0;
         }
 
         private void AddPage()
@@ -201,8 +209,8 @@ namespace RedSilver2.Framework.Player.Inventories.UI
 
         private void RemovePageItem(Item item)
         {
-            int pageIndex = GetItemPageIndex(item);
-            int verticalIndex = GetItemVerticalIndex(item);
+            int pageIndex       = GetItemPageIndex(item);
+            int verticalIndex   = GetItemVerticalIndex(item);
             int horizontalIndex = GetItemHorizontalIndex(item);
 
             CleanPages();
@@ -394,7 +402,7 @@ namespace RedSilver2.Framework.Player.Inventories.UI
             if(pageIndex < 0 || verticalIndex < 0 || horizontalIndex < 0) return null;
 
             Item[,] items = GetItems(pageIndex);
-            if(items == null || verticalIndex >= items.GetLength(0) || horizontalIndex >= items.GetLength(0)) return null;
+            if(items == null || verticalIndex >= items.GetLength(0) || horizontalIndex >= items.GetLength(1)) return null;
 
             return items[verticalIndex, horizontalIndex];
         }
