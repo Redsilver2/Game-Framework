@@ -39,7 +39,9 @@ namespace RedSilver2.Framework.Dev
             currentMessagesType = LogMessageType.All;
 
             new TeleportCommand();
-            new LogCommand();
+            new LogDefaultCommand();
+            new LogWarningCommand();
+            new LogErrorCommand();
         }
 
         protected abstract void Start();
@@ -306,7 +308,7 @@ namespace RedSilver2.Framework.Dev
 
             inputField.onSubmit.AddListener(async context =>
             {
-                var results = await GetValidCommands(context);
+                var results = (await GetValidCommands(context)).OrderBy(x => x.prefix.Length).Reverse();
                 if (results.Count() > 0) results.First().Execute(context);
                 inputField.text = string.Empty;
             });
@@ -341,7 +343,8 @@ namespace RedSilver2.Framework.Dev
 
             inputField.onSubmit.AddListener(async context =>
             {
-                var results = await GetValidCommands(context);
+                var results = (await GetValidCommands(context)).OrderBy(x => x.prefix.Length).Reverse();
+
                 if (results.Count() > 0) results.First().Execute(context);
                 inputField.text = string.Empty;
             });
@@ -354,10 +357,9 @@ namespace RedSilver2.Framework.Dev
 
             await Awaitable.BackgroundThreadAsync();
 
-            foreach(DevConsoleCommand command in commands.Where(x => x != null)){
-                if(await command.IsValid(context)) 
-                    results.Add(command);
-            }
+            foreach(DevConsoleCommand command in commands.Where(x => x != null))
+                if(await command.IsValid(context))
+                    results.Add(command);       
 
             await Awaitable.MainThreadAsync();
             return results.ToArray();

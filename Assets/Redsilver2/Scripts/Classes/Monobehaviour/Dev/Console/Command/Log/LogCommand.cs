@@ -1,71 +1,76 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
-using static UnityEngine.Rendering.GPUSort;
 
 
 namespace RedSilver2.Framework.Dev
 {
     public abstract partial class DevConsole : MonoBehaviour
     {
-        public class LogCommand : DevConsoleCommand
+        public abstract class LogCommand : DevConsoleCommand
         {
-            private const string PREFIX = "Log";
-
             protected override void SetActions(ref List<DevConsoleCommandAction> actions)
             {
                 if (actions == null) actions = new List<DevConsoleCommandAction>();
 
-                actions.Add(new DevConsoleCommandAction(new DevConsoleArgument[]
-                {
-                   new DevConsoleArgument("useUnityLog [Boolean]", DevConsoleArgumentType.Boolean)
+                actions.Add(new DevConsoleCommandAction(new DevConsoleArgument[] {
+                   new DevConsoleStringArgument("message"),
                 },
-                LogAction02()));
+                LogAction01(),
+                false));
+
+
+                actions.Add(new DevConsoleCommandAction(new DevConsoleArgument[] {
+                   new DevConsoleBoolArgument("useUnityLog"),
+                   new DevConsoleStringArgument("message"),
+                },
+                LogAction02(),
+                false));
 
             }
 
-            protected override void SetPrefix(ref string prefix)
+            private UnityAction<string[]> LogAction01()
             {
-                prefix = PREFIX;
+                return args => {
+                    try {
+                        LogMessage(GetMessage(0, args), false);
+                    }
+                    catch {
+                        DevConsole.LogError("....");
+                    }
+                };
             }
 
             private UnityAction<string[]> LogAction02()
             {
+                return args => {
+                    try {
+                        bool useUnityLog = false;
+                        args[0] = args[0].ToLower(); 
 
-                return args =>
-                {
-                    List<string> results = args.ToList();
-                    bool canUseUnityLog = false;
-                    if (args == null || args.Length == 0) return;
+                        if (args[0].Equals("t") || args[0].Equals("true"))       useUnityLog = true;
+                        else if (args[0].Equals("f") || args[0].Equals("false")) useUnityLog = false;
 
-
-                    if (results.Count > 1) {
-                        if      (args[0].ToLower().Equals("true") || args[1].ToLower().Equals("t")) canUseUnityLog = true;
-                        else if (args[0].ToLower().Equals("false") || args[1].ToLower().Equals("f")) canUseUnityLog = false;
-                        else return;
-
-                        results.RemoveAt(0);
-                        if (results.Count == 0) return;
+                        LogMessage(GetMessage(1, args), useUnityLog);
                     }
-                    else
-                    {
-                        return;
+                    catch {
+                        DevConsole.LogError("....");
                     }
-
-                   Log(results.ToArray(), canUseUnityLog);
                 };
             }
 
-            private void Log(string[] results, bool useUnityLog)
+            private string GetMessage(int startingIndex, string[] args)
             {
-                string debugMessage = string.Empty;
+                string message = string.Empty;
+                if (args == null || args.Length == 0) return string.Empty;
 
-                foreach (string arg in results)
-                    debugMessage += $"{arg} ";
+                for (int i = startingIndex; i < args.Length; i++)
+                    message += args[i] + " ";
 
-                DevConsole.Log(debugMessage, useUnityLog);
+                return message;
             }
+
+            protected abstract void LogMessage(string message, bool useUnityLog);
         }
     }
 }

@@ -19,54 +19,52 @@ namespace RedSilver2.Framework.Dev
             protected sealed override void SetActions(ref List<DevConsoleCommandAction> actions)
             {
                 if (actions == null) actions = new List<DevConsoleCommandAction>();
-                SetTeleportToGameObjectAction(ref actions);
-            }
 
-            private void SetTeleportToGameObjectAction(ref List<DevConsoleCommandAction> actions)
-            {
-                if (actions == null) return;
                 actions.Add(new DevConsoleCommandAction(
                     GetTeleportToDestinationArguments01(),
-                    GetTeleportToDestinationAction01()
+                    GetTeleportToDestinationAction01(),
+                    true
                 ));
 
                 actions.Add(new DevConsoleCommandAction(
                     GetTeleportToXYZArguments01(),
-                    GetTeleportXYZAction01()
+                    GetTeleportXYZAction01(),
+                    true
                 ));
 
                 actions.Add(new DevConsoleCommandAction(
                     GetTeleportToXYZArguments02(),
-                    GetTeleportXYZAction02()
+                    GetTeleportXYZAction02(),
+                    true
                 ));
             }
 
             private DevConsoleArgument[] GetBaseTeleportToArguments()
             {
                 return new DevConsoleArgument[] {
-                     new DevConsoleArgument("targetName [String]", DevConsoleArgumentType.String),
+                     new DevConsoleStringArgument("targetName"),
                 };
             }
 
             private DevConsoleArgument[] GetTeleportToDestinationArguments01()
             {
                 List<DevConsoleArgument> arguments = GetBaseTeleportToArguments().ToList();
-                arguments.Add(new DevConsoleArgument("destinationName [String]", DevConsoleArgumentType.String));
+                arguments.Add(new DevConsoleStringArgument("destinationName"));
                 return arguments.ToArray();
             }
 
             private DevConsoleArgument[] GetTeleportToXYZArguments01()
             {
                 List<DevConsoleArgument> arguments = GetBaseTeleportToArguments().ToList();
-                arguments.Add(new DevConsoleArgument("(X,", DevConsoleArgumentType.Float));
-                arguments.Add(new DevConsoleArgument("Y," , DevConsoleArgumentType.Float));
-                arguments.Add(new DevConsoleArgument("Z)" , DevConsoleArgumentType.Float));
+                arguments.Add(new DevConsoleFloatArgument("X"));
+                arguments.Add(new DevConsoleFloatArgument("Y"));
+                arguments.Add(new DevConsoleFloatArgument("Z"));
                 return arguments.ToArray();
             }
 
             private DevConsoleArgument[] GetTeleportToXYZArguments02() {
                 List<DevConsoleArgument> arguments = GetTeleportToXYZArguments01().ToList();
-                arguments.Add(new DevConsoleArgument("teleportationType (Local or Global)", DevConsoleArgumentType.String));
+                arguments.Add(new DevConsoleStringArgument("teleportationType", new string[] { "Global", "Local" }));
                 return arguments.ToArray();
             }
 
@@ -92,8 +90,10 @@ namespace RedSilver2.Framework.Dev
                     {
                         bool isLocalPositionChange = false;
 
-                        if      (args[4].ToLower().Equals("global")) { isLocalPositionChange = false; }
-                        else if (args[4].ToLower().Equals("local"))  { isLocalPositionChange = true; }
+                        args[4] = args[4].ToLower();
+
+                        if      (args[4].Equals("global")) { isLocalPositionChange = false; }
+                        else if (args[4].Equals("local"))  { isLocalPositionChange = true; }
                         else                                         { return; }
 
                         TeleportToVector3(GameObject.Find(args[0]),
@@ -112,6 +112,7 @@ namespace RedSilver2.Framework.Dev
                 return args =>
                 {
                     try {
+                        DevConsole.Log($"Teleported {args[0]} to {args[1]}");
                         TeleportToGameObject(GameObject.Find(args[0]), GameObject.Find(args[1]));
                     }
                     catch
