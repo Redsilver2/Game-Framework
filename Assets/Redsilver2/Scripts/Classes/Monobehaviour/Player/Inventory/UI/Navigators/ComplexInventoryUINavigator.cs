@@ -1,3 +1,4 @@
+using RedSilver2.Framework.Dev;
 using RedSilver2.Framework.Interactions.Items;
 using UnityEngine;
 
@@ -33,27 +34,30 @@ namespace RedSilver2.Framework.Player.Inventories.UI
             return items.GetLength(0);
         }
 
-        protected override void OnItemAdded(Item item)
+        protected override async void OnItemAdded(Item item)
         {
             base.OnItemAdded(item); 
+            DevConsole.LogWarning(await GetItemList(GetItems()));
+        }
 
-            Item[,] items = GetItems();
-            string results = "";
-
-            if (items == null) return;
+        private async Awaitable<string> GetItemList(Item[,] items) {
+            string results = string.Empty;
+            
+            await Awaitable.BackgroundThreadAsync();
+            if(items == null) return results;
 
             for (int i = 0; i < items.GetLength(0); i++)
             {
                 results += $"Row {i + 1} | ";
 
-                for (int j = 0; j < items.GetLength(1); j++) {
+                for (int j = 0; j < items.GetLength(1); j++)
                     results += $"Item Name: " + (items[i, j] == null ? "Null" : items[i, j].name) + "| ";
-                }
 
                 results += "\n";
             }
-                    
-            Debug.LogWarning(results);
+
+            await Awaitable.MainThreadAsync();
+            return results;
         }
 
         public sealed override Item[,] GetItems()

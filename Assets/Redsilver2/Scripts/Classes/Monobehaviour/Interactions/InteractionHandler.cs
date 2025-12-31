@@ -9,7 +9,7 @@ namespace RedSilver2.Framework.Interactions
     {
         private KeyboardKey keyboardKey;
         private GamepadButton  gamepadKey;
-        private InteractionHandlerModule module;
+        private readonly InteractionHandlerModule module;
         private InteractionModule currentInteractionModule;
 
         public bool IsInputHeld     => InputManager.GetKey(keyboardKey, gamepadKey); 
