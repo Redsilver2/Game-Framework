@@ -94,7 +94,7 @@ namespace RedSilver2.Framework.Dev
 
                         if      (args[4].Equals("global")) { isLocalPositionChange = false; }
                         else if (args[4].Equals("local"))  { isLocalPositionChange = true; }
-                        else                                         { return; }
+                        else                               { return; }
 
                         TeleportToVector3(GameObject.Find(args[0]),
                                           new Vector3(float.Parse(args[1]), float.Parse(args[2]), float.Parse(args[3])),

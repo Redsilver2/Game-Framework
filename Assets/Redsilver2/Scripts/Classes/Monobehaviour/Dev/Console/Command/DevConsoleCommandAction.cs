@@ -11,10 +11,8 @@ namespace RedSilver2.Framework.Dev
             private readonly UnityAction<string[]> onExecuted;
             private readonly bool exactNumberOfArgs;
 
-            public int ArgumentCount
-            {
-                get
-                {
+            public int ArgumentCount {
+                get {
                     if (arguments == null) return 0;
                     return arguments.Length; 
                 }

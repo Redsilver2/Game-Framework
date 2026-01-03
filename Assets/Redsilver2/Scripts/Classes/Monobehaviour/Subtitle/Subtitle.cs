@@ -1,4 +1,4 @@
-using RedSilver2.Framework.Dev;
+using System.Collections;
 using System.Threading;
 using UnityEngine;
 
@@ -9,82 +9,163 @@ namespace RedSilver2.Framework.Subtitles
     public abstract class Subtitle : MonoBehaviour {
 
         private CanvasGroup canvasGroup;
-        private CancellationTokenSource tokenSource;
+        private CancellationTokenSource subtitleUpdateTokenSource, subtitleFadeTokenSource;
+        private SubtitleHandler handler;
 
         protected virtual void Awake() {
-            canvasGroup = GetComponent<CanvasGroup>();  
+            canvasGroup = GetComponent<CanvasGroup>();
+            canvasGroup.alpha = 0f;
         }
 
-        private void Start()
-        {
-            Play("The Butcher", "What's going on folks? I hope you guys are having a wonderful Time?!", 1.5f);
+        public void SetSubtitleHandler(SubtitleHandler handler){
+            this.handler = handler;
         }
 
-
-
-        public async void Play(string characterName, string contextText, float duration) {
-             await AwaitPlay(characterName, contextText, duration);
+        public void Play(string characterName, string contextText, float duration, float fadeDelay) {
+            StartCoroutine(UpdateSubtitle(characterName, contextText, duration, fadeDelay, GetCancellationToken(ref subtitleUpdateTokenSource)));
         }
 
-
-        public async Awaitable AwaitPlay(string characterName, string contextText, float duration) {
-            await UpdateSubtitle(characterName, contextText, duration, GetCancellationToken());
+        public void PlayDescription(string characterName, string contextText, float duration, float fadeDelay) {
+            StartCoroutine(UpdateDescription(characterName, contextText, duration, fadeDelay, GetCancellationToken(ref subtitleUpdateTokenSource)));
         }
+
 
         public void Stop()
         {
-            if (tokenSource != null)
+            if (subtitleUpdateTokenSource != null)
             {
-                tokenSource.Cancel();
-                tokenSource = null;
+                subtitleUpdateTokenSource.Cancel();
+                subtitleUpdateTokenSource = null;
             }
 
+            if(subtitleFadeTokenSource != null) {
+                subtitleFadeTokenSource.Cancel();
+                subtitleFadeTokenSource = null;
+            }
+
+            SubtitleManager subtitleManager = SubtitleManager.Instance;
+
+            if (subtitleManager != null) {
+                subtitleManager.RemoveScreenSubtitle(this);
+
+                if (handler != null)
+                {
+                    handler.RemoveActifSubtitle(this);
+                    handler = null;
+                }
+            }
+
+            if (canvasGroup != null) canvasGroup.alpha = 0f;
             UpdateDisplayers(string.Empty, string.Empty);
         }
 
 
-        public void Skip()
-        {
-            // Add something over here
+        public void Skip() {
+            StartCoroutine(EndSubtitle(" ", " ", 0.5f, GetCancellationToken(ref subtitleUpdateTokenSource)));
         }
 
-        protected virtual async Awaitable UpdateSubtitle(string characterName, string context, float duration, CancellationToken token)
+        protected IEnumerator UpdateSubtitle(string characterName, string context, float duration, float fadeDelay, CancellationToken token)
         {
             float  timeElapsed = 0f;
+            SubtitleManager subtitleManager = SubtitleManager.Instance;
+
+            if (subtitleManager != null)
+                StartCoroutine(Fade(true, 0.1f, 0f));
 
             if (!string.IsNullOrEmpty(context)) {
                 while (timeElapsed < duration && !token.IsCancellationRequested)  {
-
-                    await Awaitable.BackgroundThreadAsync();
-                    string characterNameResult = await GetText($"{characterName}:", Mathf.Clamp01(timeElapsed / 0.5f), SubtitleDisplayMode.Progressif);
-                    string contextResult       = await GetText(context, Mathf.Clamp01(timeElapsed / duration), SubtitleDisplayMode.Progressif);
-                    await Awaitable.MainThreadAsync();
+                    string characterNameResult = GetText(string.IsNullOrEmpty(characterName) ? string.Empty : characterName, Mathf.Clamp01(timeElapsed / 0.5f), SubtitleDisplayMode.Instant);
+                    string contextResult       = GetText(context, Mathf.Clamp01(timeElapsed / duration), SubtitleDisplayMode.Progressif);
 
                     UpdateDisplayers(characterNameResult, contextResult);
-
                     timeElapsed = Mathf.Clamp(Time.deltaTime + timeElapsed, 0f, duration);
-                    await Awaitable.NextFrameAsync();
+                    yield return null;
                 }
 
-                if (timeElapsed >= duration && !token.IsCancellationRequested) {
-                    UpdateDisplayers($"{characterName}:", context);
-                }
+                if (timeElapsed >= duration) 
+                    yield return StartCoroutine(EndSubtitle(string.IsNullOrEmpty(characterName) ? string.Empty : characterName, context, fadeDelay, token));
+
+
+                yield return null;
             }
         }
 
-        protected async Awaitable<string> GetText(string text, float progress, SubtitleDisplayMode displayMode)
+        private IEnumerator UpdateDescription(string characterName, string context, float duration, float fadeDelay, CancellationToken token) {
+            float t = 0f;
+            SubtitleManager subtitleManager = SubtitleManager.Instance;
+
+            if (subtitleManager != null)
+                StartCoroutine(Fade(true, 0.1f, 0f));
+
+
+            UpdateDisplayers(string.IsNullOrEmpty(characterName) ? string.Empty : characterName, $"[{context}]");
+
+            while(t < duration && !token.IsCancellationRequested) {
+                t += Time.deltaTime;
+                yield return null;
+            }
+
+            if(t >= duration)
+               yield return StartCoroutine(EndSubtitle(string.IsNullOrEmpty(characterName) ? string.Empty : characterName, $"[{context}]", fadeDelay, token));
+        }
+
+        private IEnumerator EndSubtitle(string characterName, string contextText, float fadeDelay, CancellationToken token)
+        {
+            SubtitleManager subtitleManager = SubtitleManager.Instance;
+            UpdateDisplayers($"{characterName}:", contextText);
+
+            if (!token.IsCancellationRequested) {
+                if (subtitleManager != null)
+                {
+                    yield return StartCoroutine(Fade(false, subtitleManager.SubtitleFadeDuration, fadeDelay));
+                    subtitleManager.RemoveScreenSubtitle(this);
+
+                    if(handler != null){
+                        handler.RemoveActifSubtitle(this);
+                        handler = null;
+                    }             
+                }
+
+                
+            }
+        }
+
+        private IEnumerator Fade(bool isVisible, float duration, float delay) {
+            float currentAlpha = canvasGroup.alpha;
+            float t = 0f;
+
+            CancellationToken token = GetCancellationToken(ref subtitleFadeTokenSource);
+
+            while(t < delay && !token.IsCancellationRequested) {
+                t += Time.deltaTime;
+                yield return null;
+            }
+
+            t = 0f;
+
+            while (!token.IsCancellationRequested) {
+                if (t >= duration) {
+                    canvasGroup.alpha = isVisible ? 1f : 0f;
+                    break;
+                }
+
+                canvasGroup.alpha = Mathf.Lerp(currentAlpha, isVisible ? 1f : 0f, t / duration);
+                t += Time.deltaTime;
+                yield return null;
+            }
+        }
+
+        protected string GetText(string text, float progress, SubtitleDisplayMode displayMode)
         {
             if      (string.IsNullOrEmpty(text))                                   return string.Empty;
             else if (displayMode == SubtitleDisplayMode.Instant || progress >= 1f) return text;
-            return await GetText(text, progress);
+            return GetText(text, progress);
         }
 
-        protected virtual async Awaitable<string> GetText(string text, float progress) {            
+        protected virtual string GetText(string text, float progress) {            
 
             if (string.IsNullOrEmpty(text)) return string.Empty;
             else if(progress >= 1f)         return text;
-
-            await Awaitable.BackgroundThreadAsync();
 
             char[] characters = text.ToCharArray();
             int    maxIndex   = (int)(characters.Length * Mathf.Clamp01(progress));
@@ -92,16 +173,16 @@ namespace RedSilver2.Framework.Subtitles
             string resultat = string.Empty;
             for (int i = 0; i <= maxIndex; i++)  resultat += characters[i];
 
-            await Awaitable.MainThreadAsync();
             return resultat;
         }
 
-        private CancellationToken GetCancellationToken() {
+        private CancellationToken GetCancellationToken(ref CancellationTokenSource tokenSource) {
             if (tokenSource != null) tokenSource.Cancel();
             tokenSource = new CancellationTokenSource();
             return tokenSource.Token;
         }
 
+        public abstract int GetLineCount();
         protected abstract void UpdateDisplayers(string characterName, string context);
     }
 }
