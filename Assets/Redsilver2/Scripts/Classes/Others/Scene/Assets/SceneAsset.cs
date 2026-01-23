@@ -1,65 +1,34 @@
+using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
 namespace RedSilver2.Framework.Scenes
 {
-    public abstract partial class SceneLoaderManager : MonoBehaviour
+    public partial class SceneLoaderManager : MonoBehaviour
     {
-        public abstract class SceneData
+        public class SceneAsset
         {
             private bool isUnlocked;
+            public  readonly SceneData Data;
 
-            public readonly string SceneName;
-            public readonly int    SceneIndex;
-
-            private readonly Sprite[] Thumbnails;
-
-            private readonly UnityEvent onLoadStarted;
-            private readonly UnityEvent onLoadFinished;
-            private readonly UnityEvent<float> onLoadProgressChanged;
+            private readonly UnityEvent onLoadStarted = new UnityEvent();
+            private readonly UnityEvent onLoadFinished = new UnityEvent();
+            private readonly UnityEvent<float> onLoadProgressChanged = new UnityEvent<float>();
 
             public bool IsUnlocked => isUnlocked;
 
-            protected SceneData()
-            {
+            protected SceneAsset(SceneData sceneData, bool isUnlocked) {
+                SceneLoaderManager sceneLoaderManager = GameManager.SceneLoaderManager;
+                SetSceneLoaderManagerEvents(sceneLoaderManager);
+
+                this.isUnlocked = isUnlocked;
+                this.Data = sceneData;
+
+                sceneLoaderManager?.AddSceneAsset(this);
             }
 
-            public SceneData(int sceneIndex)
-            {
-                SetName(out this.SceneName);
-                InitializeEvents(out onLoadStarted, out onLoadFinished, out onLoadProgressChanged);
-
-                SetSceneLoaderManagerEvents(Instance);
-                AddSceneData(this);
-
-                this.SceneIndex       = sceneIndex;            
-                this.isUnlocked       = false;
-
-                this.Thumbnails       = GetThumbnails();
-            }
-
-            public SceneData(int sceneIndex, bool isUnlocked)
-            {
-                SetName(out this.SceneName);
-                InitializeEvents(out onLoadStarted, out onLoadFinished, out onLoadProgressChanged);
-
-                SetSceneLoaderManagerEvents(Instance);
-                AddSceneData(this);
-
-                this.SceneIndex       = sceneIndex;
-                this.isUnlocked       = isUnlocked;
-
-                this.Thumbnails       = GetThumbnails();
-            }
-
-            private void InitializeEvents(out UnityEvent event01, out UnityEvent event02, out UnityEvent<float> event03)
-            {
-                event01 = new UnityEvent();
-                event02 = new UnityEvent();
-                event03 = new UnityEvent<float>();
-            }
-            protected virtual void SetSceneLoaderManagerEvents(SceneLoaderManager sceneLoaderManager)
+            private void SetSceneLoaderManagerEvents(SceneLoaderManager sceneLoaderManager)
             {
                 if (sceneLoaderManager != null)
                 {
@@ -68,25 +37,21 @@ namespace RedSilver2.Framework.Scenes
                     sceneLoaderManager.AddOnSingleSceneLoadProgressChangedListener(OnLoadProgressChanged);
                 }
             }
-            
-            
-            private Sprite[] GetThumbnails() => Resources.LoadAll<Sprite>($"{SCENE_ROOT_PATH}{SceneName}/{SceneIndex}");
-
-            public abstract string GetDescription();
-            protected abstract void SetName(out string sceneName);
-
 
             private void OnLoadStarted(int sceneIndex)
             {
-                if (sceneIndex == this.SceneIndex) { onLoadStarted.Invoke(); }
+                if (Data == null) return;
+                else if (sceneIndex == Data.SceneIndex) { onLoadStarted.Invoke(); }
             }
             private void OnLoadFinished(int sceneIndex)
             {
-                if (sceneIndex == this.SceneIndex) { onLoadFinished.Invoke(); }
+                if (Data == null) return;
+                else if (sceneIndex == Data.SceneIndex) { onLoadFinished.Invoke(); }
             }
             private void OnLoadProgressChanged(int sceneIndex, float progress)
             {
-                if (sceneIndex == this.SceneIndex) { onLoadProgressChanged.Invoke(progress); }
+                if      (Data == null) return;
+                else if (sceneIndex == Data.SceneIndex) { onLoadProgressChanged.Invoke(progress); }
             }
 
             public void AddOnLoadStartedListener(UnityAction action)
@@ -150,28 +115,41 @@ namespace RedSilver2.Framework.Scenes
             }
 
             public void SetLoadProgression(float progression) { onLoadProgressChanged.Invoke(progression); }
-            public bool IsLoaded() => SceneManager.GetSceneByBuildIndex(SceneIndex).isLoaded;
-
-            public bool Compare(string sceneName)
+            public bool IsLoaded()
             {
-                if (!string.IsNullOrEmpty(sceneName)) return sceneName.ToLower() == this.SceneName.ToLower();
+                if (Data == null) return true;
+                return SceneManager.GetSceneByBuildIndex(Data.SceneIndex).isLoaded;
+            }
+
+            public bool Compare(string sceneName) {
+                if (!string.IsNullOrEmpty(sceneName)) return sceneName.ToLower().Equals(Data.SceneName.ToLower());
                 return false;
             }
-            public bool Compare(int sceneIndex)
-            {
-                return sceneIndex == this.SceneIndex;
+
+            public bool Compare(int sceneIndex) {
+                if (Data == null) return false;
+                return sceneIndex == Data.SceneIndex;
             }
 
-            public Sprite GetThumbnail(int index)
-            {
-                if (index >= 0 && index < Thumbnails.Length) return Thumbnails[index];
+            public Sprite GetThumbnail(int index) {
+                if(Data == null) return null;
+                Sprite[] thumbnails = Data.SceneThumbnails;
+
+                if (index >= 0 && index < thumbnails.Length) return thumbnails[index];
                 return null;
             }
 
-            public Sprite GetRandomThumbnail()
-            {
-                if (Thumbnails.Length > 0) return Thumbnails[Random.Range(0, Thumbnails.Length)];
+            public Sprite GetRandomThumbnail() {
+                if (Data == null) return null;
+                Sprite[] thumbnails = Data.SceneThumbnails;
+
+                if (thumbnails.Length > 0) return thumbnails[Random.Range(0, thumbnails.Length)];
                 return null;
+            }
+
+            public static SceneAsset CreateAndGet(SceneData data, bool isUnlocked) {
+                if(data == null) return null;
+                return new SceneAsset(data, isUnlocked);
             }
         }
     }

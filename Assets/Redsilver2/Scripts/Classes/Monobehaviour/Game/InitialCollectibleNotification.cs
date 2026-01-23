@@ -55,7 +55,7 @@ namespace RedSilver2.Framework.Interactions.Collectibles
 
         protected sealed override IEnumerator DisplayNotification(Collectible collectible)
         {
-            CollectibleNotificationManager manager = GameManager.GetCollectibleNotification();
+            CollectibleNotificationManager manager = GameManager.CollectibleNotification;
 
             while (manager != null) {
                 if (manager.CanCloseIntialNotification()) break;

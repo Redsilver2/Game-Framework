@@ -29,22 +29,10 @@ namespace RedSilver2.Framework.Subtitles
         public float SubtitleFadeDuration => subtitleFadeDuration;    
         public static SubtitleDisplayMode SubtitleDisplayMode => SubtitleDisplayMode.Instant;
 
-        private static SubtitleManager instance;
-        public  static SubtitleManager Instance  => instance;
-
 
         private async void Awake() {
-            if(instance == null) {
-                instance = this;
-                DontDestroyOnLoad(instance);
-            }
-            else {
-                Destroy(gameObject);
-                return;
-            }
-
             canUpdateSubtitle = false;
-            screenSubtitles = new List<Subtitle>();
+            screenSubtitles   = new List<Subtitle>();
         }
 
         public void AddScreenSubtitle(Subtitle subtitle) {

@@ -4,14 +4,11 @@ namespace RedSilver2.Framework.Scenes.UI
 {
     public abstract class LoadingScreenUI : MonoBehaviour
     {
-        protected virtual void OnDisable()
-        {
-           DisableEvent(SceneLoaderManager.Instance);
+        protected virtual void OnDisable() {
+           DisableEvent(GameManager.SceneLoaderManager);
         }
-        protected virtual void OnEnable()
-        {
-            Debug.Log("...");
-            EnableEvent(SceneLoaderManager.Instance);
+        protected virtual void OnEnable() {
+            EnableEvent(GameManager.SceneLoaderManager);
         }
 
         protected abstract void EnableEvent(SceneLoaderManager sceneLoader);

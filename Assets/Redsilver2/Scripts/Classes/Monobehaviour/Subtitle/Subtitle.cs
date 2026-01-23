@@ -43,7 +43,7 @@ namespace RedSilver2.Framework.Subtitles
                 subtitleFadeTokenSource = null;
             }
 
-            SubtitleManager subtitleManager = SubtitleManager.Instance;
+            SubtitleManager subtitleManager = GameManager.SubtitleManager;
 
             if (subtitleManager != null) {
                 subtitleManager.RemoveScreenSubtitle(this);
@@ -67,7 +67,7 @@ namespace RedSilver2.Framework.Subtitles
         protected IEnumerator UpdateSubtitle(string characterName, string context, float duration, float fadeDelay, CancellationToken token)
         {
             float  timeElapsed = 0f;
-            SubtitleManager subtitleManager = SubtitleManager.Instance;
+            SubtitleManager subtitleManager = GameManager.SubtitleManager;
 
             if (subtitleManager != null)
                 StartCoroutine(Fade(true, 0.1f, 0f));
@@ -92,7 +92,7 @@ namespace RedSilver2.Framework.Subtitles
 
         private IEnumerator UpdateDescription(string characterName, string context, float duration, float fadeDelay, CancellationToken token) {
             float t = 0f;
-            SubtitleManager subtitleManager = SubtitleManager.Instance;
+            SubtitleManager subtitleManager = GameManager.SubtitleManager;
 
             if (subtitleManager != null)
                 StartCoroutine(Fade(true, 0.1f, 0f));
@@ -111,7 +111,7 @@ namespace RedSilver2.Framework.Subtitles
 
         private IEnumerator EndSubtitle(string characterName, string contextText, float fadeDelay, CancellationToken token)
         {
-            SubtitleManager subtitleManager = SubtitleManager.Instance;
+            SubtitleManager subtitleManager = GameManager.SubtitleManager;
             UpdateDisplayers($"{characterName}:", contextText);
 
             if (!token.IsCancellationRequested) {
@@ -124,9 +124,7 @@ namespace RedSilver2.Framework.Subtitles
                         handler.RemoveActifSubtitle(this);
                         handler = null;
                     }             
-                }
-
-                
+                }   
             }
         }
 

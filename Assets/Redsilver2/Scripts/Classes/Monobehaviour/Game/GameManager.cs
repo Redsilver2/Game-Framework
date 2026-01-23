@@ -1,4 +1,8 @@
 using RedSilver2.Framework.Interactions.Collectibles;
+using RedSilver2.Framework.Performance.Lights;
+using RedSilver2.Framework.Scenes;
+using RedSilver2.Framework.Settings;
+using RedSilver2.Framework.Subtitles;
 using UnityEngine;
 
 namespace RedSilver2.Framework
@@ -8,22 +12,63 @@ namespace RedSilver2.Framework
     {
         public const string GROUND_LAYER_NAME = "Ground";
 
-        private CollectibleNotificationManager collectibleNotification;
-        public static GameManager Instance { get; private set; }
+        [SerializeField] private CollectibleNotificationManager collectibleNotification;
+        [SerializeField] private SceneLoaderManager             sceneLoaderManager;
+        [SerializeField] private SubtitleManager                subtitleManager;
+        [SerializeField] private SettingManager                 settingManager;
+        [SerializeField] private LightManager                   lightManager;
+
+        private static GameManager instance;
+
+        public static CollectibleNotificationManager CollectibleNotification {
+            get{
+                GameManager manager = instance;
+                if (manager != null) return manager.collectibleNotification;
+                return null;
+            }
+        }
+
+        public static SceneLoaderManager SceneLoaderManager {
+            get {
+                GameManager manager = instance;
+                if (manager != null) return manager.sceneLoaderManager;
+                return null;
+            }
+        }
+
+        public static SubtitleManager SubtitleManager
+        {
+            get {
+                GameManager manager = instance;
+                if (manager != null) return manager.subtitleManager;
+                return null;
+            }
+        }
+
+        public static SettingManager SettingManager
+        {
+            get
+            {
+                GameManager manager = instance;
+                if (manager != null) return manager.settingManager;
+                return null;
+            }
+        }
+
+        public static LightManager LightManager {
+            get {
+                GameManager manager = instance;
+                if (manager != null) return manager.lightManager;
+                return null;
+            }
+        }
 
         private void Awake()
         {
-            if (Instance != null) { Destroy(gameObject); return; }
-            Instance = this;
-            DontDestroyOnLoad(Instance);
-
-            collectibleNotification = FindAnyObjectByType<CollectibleNotificationManager>();
-        }
-
-        public static CollectibleNotificationManager GetCollectibleNotification() {
-            GameManager manager = Instance;
-            if (manager != null) return manager.collectibleNotification; 
-            return null;
+            if (instance != null) { Destroy(gameObject); return; }
+            instance = this;
+            DontDestroyOnLoad(instance);
+            gameObject.name = "GameManager";
         }
     }
 }

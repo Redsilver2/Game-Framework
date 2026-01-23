@@ -1,9 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -11,24 +6,13 @@ namespace RedSilver2.Framework.Settings
 {
     public partial class SettingManager : MonoBehaviour
     {
-        public static SettingManager Instance { get; private set; }
         private readonly static UnityEvent<SettingManager> onAwakeHook = new UnityEvent<SettingManager>();
 
 
        // public static readonly Resolution[] screenResolutions = Screen.resolutions.Distinct().Reverse().ToArray();
 
         private void Awake() {
-
-            if (Instance == null) Instance = this;
-            else
-            {
-                Destroy(gameObject);
-                return;
-            }
-
-            gameObject.name = "Setting Manager";
             data = Load();
-
             onAwakeHook.Invoke(this);
         }
 

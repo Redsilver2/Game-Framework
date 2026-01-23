@@ -91,7 +91,8 @@ namespace RedSilver2.Framework.Subtitles
             isUpdatingSubtitles = true;
 
             while (actifSubtitles.Count > 0) {
-                SubtitleManager  subtitleManager = SubtitleManager.Instance;
+
+                SubtitleManager subtitleManager  = GameManager.SubtitleManager;
                 PlayerController player          = PlayerController.Current;
                 Subtitle[]       subtitles       = actifSubtitles.Where(x => x != null).ToArray();
 
@@ -103,8 +104,6 @@ namespace RedSilver2.Framework.Subtitles
                 if (!subtitleManager.CanSubtitleUseWorldSpace || isExcludedFromWorldSpaceCheck)
                     yield return StartCoroutine(ScreenSpaceSubtitleUpdate(subtitleManager, subtitles));
                 else {
-                    Debug.Log("Distance: " + Vector3.Distance(transform.position, player.transform.position));
-
                     if (Vector3.Distance(transform.position, player.transform.position) >= maxDistanceCheck)
                         yield return StartCoroutine(ScreenSpaceSubtitleUpdate(subtitleManager, subtitles));
                     else
@@ -144,7 +143,8 @@ namespace RedSilver2.Framework.Subtitles
                 }
             }
 
-            SubtitleManager subtitleManager = SubtitleManager.Instance;
+
+            SubtitleManager subtitleManager = GameManager.SubtitleManager;
 
             if (subtitleManager != null && !foundSubtitle) {
                 actifSubtitles.Add(subtitleManager.GetSubtitle());

@@ -1,3 +1,4 @@
+using RedSilver2.Framework.Player;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,60 +8,65 @@ using UnityEngine.SceneManagement;
 
 namespace RedSilver2.Framework.Scenes
 {
-    public abstract partial class SceneLoaderManager : MonoBehaviour   
+    public partial class SceneLoaderManager : MonoBehaviour   
     {
-        private UnityEvent<int>        onSingleSceneLoadStarted;
-        private UnityEvent<int>        onSingleSceneLoadFinished;
-        private UnityEvent<int, float> onSingleSceneLoadProgressChanged;
 
-        private LoadingScreen[] loadingScreens;
-        private LoadingScreen   currentLoadingScreen; 
+        [SerializeField] private LoadingScreen[] loadingScreens;
+        [SerializeField] private int defaultLoadingScreenIndex;
+        
+        private LoadingScreen currentLoadingScreen;
 
+
+        private readonly UnityEvent<SceneAsset> onSceneAssetAdded   = new UnityEvent<SceneAsset>();
+        private readonly UnityEvent<SceneAsset> onSceneAssetRemoved = new UnityEvent<SceneAsset>();
+
+        private readonly UnityEvent<int>        onSingleSceneLoadStarted         = new UnityEvent<int>();
+        private readonly UnityEvent<int>        onSingleSceneLoadFinished        = new UnityEvent<int>();
+        private readonly UnityEvent<int, float> onSingleSceneLoadProgressChanged = new UnityEvent<int, float>();
+
+        private SceneData[] sceneDatas;
         public const string SCENE_ROOT_PATH = "Scenes/";
-
-
-        private static List<SceneData>              SceneDatasInstances    = new List<SceneData>();
+       
+        private static List<SceneAsset>             sceneAssetsInstances   = new List<SceneAsset>();
         private static Dictionary<int, IEnumerator> sceneLoadingOperations = new Dictionary<int, IEnumerator>();
 
         public static bool IsLoadingSingleScene { get; private set; } = false;
-        public static SceneLoaderManager Instance { get; private set; }
+
+        #if UNITY_EDITOR
+        private void OnValidate()
+        {
+            defaultLoadingScreenIndex = Mathf.Clamp(defaultLoadingScreenIndex, 0, loadingScreens != null ? loadingScreens.Length - 1 : 0);
+        }
+        #endif
 
 
         private void Awake()
         {
-            if(Instance != null) { Destroy(this); }
-            Instance = this;
-
-            SetEvents();
-
             AddOnSingleSceneLoadStartedListener(OnSingleSceneLoadStarted);
             AddOnSingleSceneLoadFinishedListener(OnSingleSceneLoadFinished);
 
-            FindLoadingScreens();
+            if (loadingScreens.Length > 0) currentLoadingScreen = loadingScreens[defaultLoadingScreenIndex];
+        }
+
+        private void Start()
+        {
+            sceneDatas = Resources.FindObjectsOfTypeAll<SceneData>().Distinct()
+                                                        .OrderBy(x => x.SceneIndex)
+                                                        .ToArray();
+
+            foreach (SceneData sceneData in sceneDatas) sceneData.Load();
         }
 
         private void OnSingleSceneLoadStarted(int sceneIndex)
         {
+            PlayerController.Disable();
             StopAllSceneLoadingOperations();
             IsLoadingSingleScene = true;
         }
 
-        private void OnSingleSceneLoadFinished(int sceneIndex)
-        {
+        private void OnSingleSceneLoadFinished(int sceneIndex) {
+            PlayerController.Enable();
             IsLoadingSingleScene = false;
-        }
-
-        private void SetEvents()
-        {
-            onSingleSceneLoadStarted         = new UnityEvent<int>();
-            onSingleSceneLoadFinished        = new UnityEvent<int>();
-            onSingleSceneLoadProgressChanged = new UnityEvent<int, float>();
-        }
-
-        private void FindLoadingScreens()
-        {
-            loadingScreens = FindObjectsByType<LoadingScreen>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-            if(loadingScreens.Length > 0) currentLoadingScreen = loadingScreens[0];
         }
 
         private void StartSceneLoad(int sceneIndex)
@@ -114,7 +120,7 @@ namespace RedSilver2.Framework.Scenes
             yield return StartCoroutine(WaitOperationLoading(operation, GetSceneData(sceneIndex), isLoadingSingleScene));       
         }
 
-        private IEnumerator WaitOperationLoading(AsyncOperation operation, SceneData data, bool isLoadingSingleScene)
+        private IEnumerator WaitOperationLoading(AsyncOperation operation, SceneAsset data, bool isLoadingSingleScene)
         {
             if (operation != null)
             {
@@ -129,18 +135,18 @@ namespace RedSilver2.Framework.Scenes
             }
         }
 
-        private void UpdateOperationProgress(SceneData data, float progress, bool isLoadingSingleScene)
+        private void UpdateOperationProgress(SceneAsset asset, float progress, bool isLoadingSingleScene)
         {
             progress = Mathf.Clamp01(progress);
 
-            if (data != null)
+            if (asset != null)
             {
-                if (!isLoadingSingleScene) SetOperationProgress(progress, data);
-                else SetOperationProgress(data.SceneIndex, progress);
+                if (!isLoadingSingleScene) SetOperationProgress(progress, asset);
+                else SetOperationProgress(asset.Data.SceneIndex, progress);
             }
         }
 
-        private void SetOperationProgress(float progression, SceneData data)
+        private void SetOperationProgress(float progression, SceneAsset data)
         {
             if (data != null) data.SetLoadProgression(progression);           
         }
@@ -164,6 +170,30 @@ namespace RedSilver2.Framework.Scenes
         {
             foreach(IEnumerator operation in sceneLoadingOperations.Values) StopCoroutine(operation);
             sceneLoadingOperations.Clear();
+        }
+
+        public void AddOnSceneAssetAddedListener(UnityAction<SceneAsset> action)
+        {
+            if(action != null && onSceneAssetAdded != null)
+                onSceneAssetAdded.AddListener(action);
+        }
+        public void RemoveOnSceneAssetAddedListener(UnityAction<SceneAsset> action)
+        {
+            if (action != null && onSceneAssetAdded != null)
+                onSceneAssetAdded.RemoveListener(action);
+        }
+
+
+        public void AddOnSceneAssetRemovedListener(UnityAction<SceneAsset> action)
+        {
+            if (action != null && onSceneAssetRemoved != null)
+                onSceneAssetRemoved.AddListener(action);
+        }
+
+        public void RemoveOnSceneAssetRemovedListener(UnityAction<SceneAsset> action)
+        {
+            if (action != null && onSceneAssetRemoved != null)
+                onSceneAssetRemoved.RemoveListener(action);
         }
 
         public void AddOnSingleSceneLoadStartedListener(UnityAction<int> action)
@@ -194,8 +224,10 @@ namespace RedSilver2.Framework.Scenes
 
         public void LoadSingleScene(string sceneName)
         {
-            SceneData data = GetSceneData(sceneName);
-            if (data != null) { LoadSingleScene(data.SceneIndex); }
+            SceneAsset asset = GetSceneData(sceneName);
+            if (asset != null) {
+                LoadSingleScene(asset.Data.SceneName); 
+            }
         }
 
         public void LoadSingleScene(int sceneIndex) 
@@ -211,8 +243,8 @@ namespace RedSilver2.Framework.Scenes
 
         public void LoadScene(string sceneName)
         {
-            SceneData data = GetSceneData(sceneName);
-            if (data != null) { LoadScene(data.SceneIndex); }
+            SceneAsset asset = GetSceneData(sceneName);
+            if (asset != null) { LoadScene(asset.Data.SceneIndex); }
         }
 
         public void LoadScene(int sceneIndex) 
@@ -223,7 +255,7 @@ namespace RedSilver2.Framework.Scenes
             }
         }
 
-        public static bool CanLoadScene(int sceneIndex)
+        public bool CanLoadScene(int sceneIndex)
         {
             if (!IsLoadingSingleScene && !sceneLoadingOperations.ContainsKey(sceneIndex) 
              && !IsSceneLoaded(sceneIndex) && IsSceneUnlocked(sceneIndex)) return true;
@@ -231,90 +263,96 @@ namespace RedSilver2.Framework.Scenes
             return false;
         }
 
-        public static bool IsSceneLoaded(int sceneIndex)
+        public bool IsSceneLoaded(int sceneIndex)
         {
             if(!IsValidSceneIndex(sceneIndex)) return false; 
             return SceneManager.GetSceneByBuildIndex(sceneIndex).isLoaded;
         }
 
-        public static bool IsSceneUnlocked(int sceneIndex)
+        public bool IsSceneUnlocked(int sceneIndex)
         {
-            SceneData data = GetSceneData(sceneIndex);
+            SceneAsset data = GetSceneData(sceneIndex);
             if (data != null) return data.IsUnlocked;
             return false;
         }
 
-        public static bool IsValidSceneIndex(int sceneIndex)
+        public bool IsValidSceneIndex(int sceneIndex)
         {
             if(sceneIndex < 0 || sceneIndex >= SceneManager.sceneCountInBuildSettings) return false;
             return true;
         }
 
-        public static void AddSceneData(SceneData sceneData)
+        protected void AddSceneAsset(SceneAsset asset)
         {
-            if (SceneDatasInstances.Where(x => x.Compare(sceneData.SceneIndex)).Count() == 0)
-                SceneDatasInstances.Add(sceneData);
-        }
-        public static void AddSceneData(SceneData[] sceneDatas)
-        {
-            if(sceneDatas != null)
+            if (asset == null || asset.Data == null) return;
+
+            if (sceneAssetsInstances.Where(x => x.Compare(asset.Data.SceneIndex)).Count() == 0)
             {
-                sceneDatas = sceneDatas.Where(x => x != null).Distinct().ToArray();
-                foreach(SceneData sceneData in sceneDatas) AddSceneData(sceneData);
+                sceneAssetsInstances.Add(asset);
+                if(onSceneAssetAdded != null) onSceneAssetAdded.Invoke(asset);
+            }
+        }
+        public void AddSceneAsset(SceneAsset[] assets)
+        {
+            if(assets != null)
+            {
+                assets = assets.Where(x => x != null).Distinct().ToArray();
+                foreach(SceneAsset sceneData in assets) AddSceneAsset(sceneData);
             }
         }
 
-        public static string[] GetSceneDatas()
+        public string[] GetSceneDatas()
         {
             List<string> results = new List<string>();
-            SceneData[]  datas   = SceneDatasInstances.OrderBy(x => x.SceneIndex).ToArray();  
+            SceneAsset[] assets  = sceneAssetsInstances.OrderBy(x => x.Data).ToArray();  
             
-            foreach(SceneData data in datas) { results.Add($"{data.ToString()}\n"); }
+            foreach(SceneAsset data in assets) { results.Add($"{data.ToString()}\n"); }
             return results.ToArray();
         }
 
-        public static SceneData   GetSceneData(string sceneName)
+        public SceneAsset   GetSceneData(string sceneName)
         {
-            var results = SceneDatasInstances.Where(x => x.Compare(sceneName));
+            var results = sceneAssetsInstances.Where(x => x.Compare(sceneName));
             if (results.Count() > 0) return results.First();
             return null;
         }
-        public static SceneData[] GetScenesDatas(string[] sceneNames)
+
+        public SceneAsset[] GetScenesDatas(string[] sceneNames)
         {
-            List<SceneData> results = new List<SceneData>();
+            List<SceneAsset> results = new List<SceneAsset>();
             if (sceneNames == null) return results.ToArray();
 
             foreach (string sceneName in sceneNames)
             {
-                SceneData data = GetSceneData(sceneName);
+                SceneAsset data = GetSceneData(sceneName);
                 if(data != null) { results.Add(data); }
             }
 
             return results.ToArray();
         }
 
-        public static SceneData GetSceneData(int sceneIndex)
+        public SceneAsset GetSceneData(int sceneIndex)
         {
-            var results = SceneDatasInstances.Where(x => x.Compare(sceneIndex));
+            var results = sceneAssetsInstances.Where(x => x.Compare(sceneIndex));
             if (results.Count() > 0) return results.First();
             return null;
         }
 
-        public static SceneData[] GetScenesDatas(int[] sceneIndexes)
+        public SceneAsset[] GetScenesDatas(int[] sceneIndexes)
         {
-            List<SceneData> results = new List<SceneData>();
+            List<SceneAsset> results = new List<SceneAsset>();
             if (sceneIndexes == null) return results.ToArray();
 
             foreach (int sceneIndex in sceneIndexes)
             {
-                SceneData data = GetSceneData(sceneIndex);
+                SceneAsset data = GetSceneData(sceneIndex);
                 if (data != null) { results.Add(data); }
             }
 
             return results.ToArray();
         }
 
-        public static SceneData[] GetAllScenesDatas() => SceneDatasInstances.ToArray();
+        public SceneAsset[] GetAllScenesDatas() => sceneAssetsInstances.ToArray();
         
     }
 }

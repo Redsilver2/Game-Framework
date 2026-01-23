@@ -50,7 +50,7 @@ namespace RedSilver2.Framework.Interactions.Collectibles
         }
 
         protected virtual void OnInteract()  {
-            CollectibleNotificationManager collectibleNotification = GameManager.GetCollectibleNotification();
+            CollectibleNotificationManager collectibleNotification = GameManager.CollectibleNotification;
             if(collectibleNotification != null) collectibleNotification.Notify(this);
            
             if (interactionModule != null) interactionModule.enabled = false;
