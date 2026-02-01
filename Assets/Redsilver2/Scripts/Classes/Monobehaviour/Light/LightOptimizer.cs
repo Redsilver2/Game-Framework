@@ -1,5 +1,6 @@
-using RedSilver2.Framework.Player;
 using UnityEngine;
+using RedSilver2.Framework.StateMachines.Controllers;
+
 
 namespace RedSilver2.Framework.Performance.Lights
 {

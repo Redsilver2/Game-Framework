@@ -13,6 +13,7 @@ namespace RedSilver2.Framework.Player
         private   readonly UnityEvent<Vector2> onInputUpdate;
 
         public Vector2 Rotation => Vector2.right * rotationClampX + Vector2.up * rotationClampY;
+        public MouseVector2Input MouseInput => mouseInput;
         public const string MOUSE_INPUT_NAME = "Player Camera Mouse Input";
 
 

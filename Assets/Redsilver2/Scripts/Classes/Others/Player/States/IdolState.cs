@@ -1,38 +1,29 @@
-using System.Linq;
 
-namespace RedSilver2.Framework.Player
-{
-    public partial class PlayerStateMachine 
+namespace RedSilver2.Framework.StateMachines.States {
+    public sealed class IdolState : PlayerState
     {
-        public sealed class IdolState : PlayerState
-        {
-            public const string STATE_NAME = "Idol";
+        public IdolState(PlayerStateMachine owner) : base(owner) {
+            
+        }
 
-            private IdolState() { }
+        public sealed override bool IsValidTransition() {
+            if (MovementHandler == null) return false;
 
-            public IdolState(PlayerStateMachine owner) : base(owner)
-            {
-                IsNotMoving.Intialize(owner);
-                AddTransitionCondition(IsNotMoving.Get(owner));
-            }
+            return MovementHandler.IsGrounded && !MovementHandler.IsCrouching
+                    && !MovementHandler.IsRunning && MovementHandler.GetMoveInputValue().magnitude == 0f;
+        }
 
-            public sealed override string GetStateName() => STATE_NAME;
+        protected sealed override void AddRequiredTransitionStates(PlayerStateMachine stateMachine) {
+           
+        }
 
-            protected override void SetObligatoryTransition(PlayerState[] states, bool removeTransition) { }
+        protected sealed override void SetIncompatibleStateTransitions(ref PlayerStateType[] results) {
+            results = GetStateTypes(new PlayerStateType[] { PlayerStateType.Walk, PlayerStateType.Run, PlayerStateType.Fall, 
+                                                            PlayerStateType.Jump, PlayerStateType.Crouch });
+        }
 
-            public static bool Contains(PlayerStateMachine owner)
-            {
-                return Contains(owner, out int count);
-            }
-
-            public static bool Contains(PlayerStateMachine owner, out int count)
-            {
-                count = 0;
-                if (owner == null) return false;
-
-                count = owner.GetStates().Where(x => x is IdolState).Count();
-                return count > 0;
-            }
+        protected sealed override void SetPlayerStateType(ref PlayerStateType type) {
+            type = PlayerStateType.Idol;
         }
     }
 }

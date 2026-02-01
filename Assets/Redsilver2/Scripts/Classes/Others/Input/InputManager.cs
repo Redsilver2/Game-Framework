@@ -682,7 +682,8 @@ namespace RedSilver2.Framework.Inputs
         public static OverrideableKeyboardVector2Input GetOrCreateOverrideableKeyboardVector2Input(string name)
         {
             return GetOrCreateOverrideableKeyboardVector2Input(name,
-                   new KeyboardVector2Input.Vector2Keyboard(KeyboardKey.W, KeyboardKey.S, KeyboardKey.A, KeyboardKey.D));
+                   new KeyboardVector2Input.Vector2Keyboard(KeyboardKey.W, KeyboardKey.S, KeyboardKey.A, KeyboardKey.D),
+                   Vector2GamepadStick.LeftStick);
         }
     }
 }

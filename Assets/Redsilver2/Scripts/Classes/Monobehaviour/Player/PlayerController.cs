@@ -1,16 +1,13 @@
-using RedSilver2.Framework.Dev;
-using RedSilver2.Framework.Inputs;
+using RedSilver2.Framework.StateMachines.States;
+using RedSilver2.Framework.StateMachines.States.Movement;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace RedSilver2.Framework.Player
+namespace RedSilver2.Framework.StateMachines.Controllers
 {
-    [RequireComponent(typeof(CharacterController))]
-    public class PlayerController : MonoBehaviour
+    public abstract class PlayerController : StateMachineController
     {
-        private PlayerStateMachine stateMachine;
-
         private static PlayerController current;
         private static List<PlayerController> instances = new List<PlayerController>();
 
@@ -21,64 +18,37 @@ namespace RedSilver2.Framework.Player
                 return instances.ToArray();
             }
         }
-
-        public PlayerStateMachine StateMachine => stateMachine;
         public  static PlayerController Current => current;
 
-        public const string PLAYER_LAYER_NAME = "Player";
+        protected override void Awake() {
+            base.Awake();
 
-        protected virtual void Awake() {
-            stateMachine = new PlayerStateMachine(this);    
-            stateMachine.AddOnStateEnterListener (state => { if (state != null) Debug.Log($"Entering {state.GetStateName()} State | {GetTransitions(state.GetTransitionConditions())}"); });
-            stateMachine.AddOnStateExitListener  (state => { if (state != null) Debug.Log($"Exiting { state.GetStateName()} State | {GetTransitions(state.GetTransitionConditions())}"); });
+            new IdolState(StateMachine as PlayerStateMachine);
+            new WalkState(StateMachine as PlayerStateMachine);
+            new RunState (StateMachine as PlayerStateMachine);
+            new JumpState(StateMachine as PlayerStateMachine);
+            new LandState(StateMachine as PlayerStateMachine);
+            new FallState  (StateMachine as PlayerStateMachine);
+            new CrouchState(StateMachine as PlayerStateMachine);
+
+            StateMachine.AddOnStateEnteredListener(state => { Debug.Log("Current State: " + (state == null ? "Null" : state.GetType().ToString())); });
+            StateMachine.AddOnStateExitedListener(state => { Debug.Log("Previous State: " + (state == null ? "Null" : state.GetType().ToString())); });
+
+            StateMachine.ChangeState(PlayerStateType.Idol.ToString());
+            current = this;
             instances.Add(this);
         }
 
-        protected virtual void Start() {
-            current = this;
-            stateMachine.ChangeState(PlayerStateMachine.IdolState.STATE_NAME);
-        }
-
-        protected virtual void Update() {
-            if (stateMachine != null) stateMachine.Update();
-        }
-
-        protected virtual void LateUpdate() {
-            if (stateMachine != null) stateMachine.LateUpdate();
-        }
-
         private void OnDestroy() {
-            if(instances.Contains(this)) instances.Remove(this);
+            if (instances.Contains(this)) instances.Remove(this);
         }
 
-        public string GetTransition(PlayerStateMachine.PlayerStateTransitionCondition transitionCondition)
-        {
-            if (transitionCondition == null) return string.Empty;
-            return transitionCondition.ToString() + "\n";
+        protected sealed override void InitializeStateMachine(ref StateMachine stateMachine) {
+            stateMachine = GetPlayerStateMachine(GetMovementHandler());
+            stateMachine?.Enable();
         }
-
-
-        public string GetTransitions(PlayerStateMachine.PlayerState state)
-        {
-            if (state == null) return string.Empty;
-            return GetTransitions(state.GetTransitionConditions());
-        }
-
-        public string GetTransitions(PlayerStateMachine.PlayerStateTransitionCondition[] conditions)
-        {
-            string result = string.Empty;
-
-            foreach (var condition in conditions)
-            {
-                result += GetTransition(condition);
-            }
-
-            return result;
-        }
-
-        public static int GetLayer() {
-            return LayerMask.NameToLayer(PLAYER_LAYER_NAME);
-        }
+        protected abstract PlayerStateMachine    GetPlayerStateMachine(PlayerMovementHandler movementHandler);
+        protected abstract PlayerMovementHandler GetMovementHandler();
 
         public static void SetCurrent(int index) {
             SetCurrent(GetController(index));
@@ -118,7 +88,7 @@ namespace RedSilver2.Framework.Player
             if(instances == null || string.IsNullOrEmpty(controllerName)) return null;
 
             var results = instances.Where(x => x != null)
-                                     .Where(x => x.name.ToLower() == controllerName.ToLower());
+                                   .Where(x => x.name.ToLower() == controllerName.ToLower());
 
             if (results.Count() > 0) return results.First();
             return null;
