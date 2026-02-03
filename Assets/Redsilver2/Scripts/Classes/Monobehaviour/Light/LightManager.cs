@@ -72,8 +72,6 @@ namespace RedSilver2.Framework.Performance.Lights {
 
         private void SetupSceneEvents()
         {
-            Debug.LogError(GameManager.SceneLoaderManager);
-
            GameManager.SceneLoaderManager.AddOnSceneAssetAddedListener(sceneData => {
                if (sceneData == null) return;
                sceneData.AddOnLoadFinishedListener(ResetLightOptimizers);

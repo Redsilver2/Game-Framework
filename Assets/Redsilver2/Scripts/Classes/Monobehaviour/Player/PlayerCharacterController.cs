@@ -18,14 +18,8 @@ namespace RedSilver2.Framework.StateMachines.Controllers
             base.Awake();
         }
 
-        protected sealed override PlayerMovementHandler GetMovementHandler()
-        {
+        protected sealed override PlayerMovementHandler GetPlayerMovementHandler() {
             return new PlayerCharacterControllerMovementHandler(this);
-        }
-
-        protected override PlayerStateMachine GetPlayerStateMachine(PlayerMovementHandler movementHandler)
-        {
-            return new PlayerStateMachine(this, movementHandler);
         }
     }
 }

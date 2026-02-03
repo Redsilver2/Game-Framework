@@ -25,7 +25,12 @@ namespace RedSilver2.Framework.StateMachines
         private readonly UnityEvent<State> onStateEntered;
         private readonly UnityEvent<State> onStateExited;
 
+        private readonly UnityEvent<StateInitializer> onStateInitializerAdded;
+        private readonly UnityEvent<StateInitializer> onStateInitializerRemoved;
+
         private readonly Dictionary<string, State> states;
+        private readonly List<StateInitializer> stateInitializers;
+
         public  readonly StateMachineController Controller;
 
         public bool IsEnabled => isEnabled;
@@ -33,6 +38,9 @@ namespace RedSilver2.Framework.StateMachines
         protected StateMachine(StateMachineController controller) {
             onStateAdded   = new UnityEvent<State>();
             onStateRemoved = new UnityEvent<State>();
+
+            onStateInitializerAdded   = new UnityEvent<StateInitializer>();
+            onStateInitializerRemoved = new UnityEvent<StateInitializer>();
 
             onEnabled      = new UnityEvent();
             onDisabled     = new UnityEvent();
@@ -43,28 +51,25 @@ namespace RedSilver2.Framework.StateMachines
             onStateEntered = new UnityEvent<State>();
             onStateExited  = new UnityEvent<State>();
 
-            states = new Dictionary<string, State>();
+            states            = new Dictionary<string, State>();
+            stateInitializers = new List<StateInitializer>();
+
             Controller = controller;
 
             AddOnEnabledListener(()  => { isEnabled = true; });
             AddOnDisabledListener(() => { isEnabled = false; });
 
+            AddOnStateEnteredListener(state => { currentState = state; });
+            AddOnStateExitedListener (state => { currentState = null;  });
+
             AddOnStateAddedListener(state => {
+                if (state == null) return;
+
                 State[] states = GetStates();
-            
-                foreach(State _state in states)
-                    state?.AddTransitionState(_state);
-            });
+                foreach (State _state in states) state?.AddTransitionState(_state);
 
-            AddOnStateEnteredListener(state => { 
-                currentState = state;
+                if (currentState == null) { ChangeState(state); }
             });
-
-            AddOnStateExitedListener(state  => { 
-                currentState = null;
-            });
-
-            
 
             isEnabled = false;
         }
@@ -86,12 +91,9 @@ namespace RedSilver2.Framework.StateMachines
         }
 
         public void ChangeState(string stateName) {
-
-            if (string.IsNullOrEmpty(stateName)) return;
+            if (string.IsNullOrEmpty(stateName) || states == null || !states.ContainsKey(stateName.ToLower())) return;
 
             State state = states[stateName.ToLower()];
-
-
             if (states == null || state == null || !states.ContainsValue(state) || !state.IsValidTransition()) return;
 
             onStateExited?.Invoke(currentState);
@@ -104,6 +106,24 @@ namespace RedSilver2.Framework.StateMachines
             Debug.Log("New State: " + state + " " + state.IsValidTransition()); 
 
             if(state != null) ChangeState(state.GetStateName());
+        }
+
+        public virtual void AddStateInitializer(StateInitializer stateInitializer) {
+            if (stateInitializers == null) return;
+
+            if(stateInitializer != null && !stateInitializers.Contains(stateInitializer)) {
+                stateInitializers?.Add(stateInitializer);
+                onStateInitializerAdded?.Invoke(stateInitializer);
+            }
+        }
+
+        public void RemoveStateInitializer(StateInitializer stateInitializer) {
+            if (stateInitializers == null) return;
+
+            if (stateInitializer != null &&  stateInitializers.Contains(stateInitializer)) {
+                stateInitializers?.Remove(stateInitializer);    
+                onStateInitializerRemoved?.Invoke(stateInitializer);
+            }
         }
 
         public virtual void AddState(string stateName, State state) {
@@ -128,7 +148,7 @@ namespace RedSilver2.Framework.StateMachines
 
         public bool ContainsState(string stateName) {
             if (states == null || string.IsNullOrEmpty(stateName)) return false;
-            return states.ContainsKey(stateName);
+            return states.ContainsKey(stateName.ToLower());
         }
 
         public bool ContainsState(State state) {
@@ -223,6 +243,23 @@ namespace RedSilver2.Framework.StateMachines
                 onStateExited?.RemoveListener(state);
         }
 
+        public void AddOnStateInitializerAddedListener(UnityAction<StateInitializer> action)
+        {
+            if(action != null) onStateInitializerAdded?.AddListener(action);
+        }
+        public void RemoveOnStateInitializerAddedListener(UnityAction<StateInitializer> action)
+        {
+            if (action != null) onStateInitializerAdded?.RemoveListener(action);
+        }
+
+        public void AddOnStateInitializerRemovedListener(UnityAction<StateInitializer> action)
+        {
+            if (action != null) onStateInitializerRemoved?.AddListener(action);
+        }
+        public void RemoveOnStateInitializerRemovedListener(UnityAction<StateInitializer> action)
+        {
+            if (action != null) onStateInitializerRemoved?.RemoveListener(action);
+        }
 
         public string[] GetStateNames()
         {

@@ -1,17 +1,12 @@
+using RedSilver2.Framework.StateMachines.States.Movement;
+
 namespace RedSilver2.Framework.StateMachines.States
 {
-    public sealed class JumpState : PlayerState
+    public sealed class JumpState : MovementState
     {
-        public JumpState(PlayerStateMachine owner) : base(owner) {
-            MovementHandler?.EnableJumpInputUpdate();
-
+        public JumpState(MovementStateMachine owner) : base(owner) {
             AddOnStateEnteredListener(() => {
-                if (owner == null || owner.Controller == null) return;
-                MovementHandler?.SetJumpHeight(owner.Controller.JumpForce);
-            });
-
-            AddOnStateRemovedListener(() => {
-                MovementHandler?.DisableJumpInputUpdate();
+                MovementHandler?.SetJumpHeight(50f);
             });
         }
 
@@ -20,20 +15,30 @@ namespace RedSilver2.Framework.StateMachines.States
             return MovementHandler.IsGrounded && MovementHandler.IsJumping;
         }
 
-        protected sealed override void AddRequiredTransitionStates(PlayerStateMachine stateMachine) {
+        protected sealed override void AddRequiredTransitionStates(MovementStateMachine stateMachine) {
              if(stateMachine == null) return;
-            if (!stateMachine.ContainsState(PlayerStateType.Fall) && IsValidTransitionState(PlayerStateType.Fall)) {
+            if (!stateMachine.ContainsState(MovementStateType.Fall) && IsValidTransitionState(MovementStateType.Fall)) {
                 new FallState(stateMachine);
-                AddTransitionState(stateMachine.GetState(PlayerStateType.Fall));
+                AddTransitionState(stateMachine.GetState(MovementStateType.Fall));
             }
         }
 
-        protected sealed override void SetIncompatibleStateTransitions(ref PlayerStateType[] results) {
-            results = GetStateTypes(new PlayerStateType[] { PlayerStateType.Fall });
+        protected sealed override void SetIncompatibleStateTransitions(ref MovementStateType[] results) {
+            results = GetExcludedStateTypes(new MovementStateType[] { MovementStateType.Fall });
         }
 
-        protected sealed override void SetPlayerStateType(ref PlayerStateType type) {
-            type = PlayerStateType.Jump;
+        protected sealed override void SetPlayerInputsEvents(PlayerMovementHandler handler)
+        {
+            if (handler == null) return;
+            handler?.EnableJumpInputUpdate();
+
+            AddOnStateRemovedListener(() => {
+                handler?.DisableJumpInputUpdate();
+            });
+        }
+
+        protected sealed override void SetPlayerStateType(ref MovementStateType type) {
+            type = MovementStateType.Jump;
         }
     }
 }

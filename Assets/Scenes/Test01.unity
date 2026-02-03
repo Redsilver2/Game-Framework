@@ -13130,6 +13130,11 @@ GameObject:
   - component: {fileID: 2928140784715583621}
   - component: {fileID: 4631621921684913520}
   - component: {fileID: 8650058561087978750}
+  - component: {fileID: 8650058561087978754}
+  - component: {fileID: 8650058561087978753}
+  - component: {fileID: 8650058561087978752}
+  - component: {fileID: 8650058561087978751}
+  - component: {fileID: 8650058561087978755}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -13151,15 +13156,80 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.Controllers.PlayerCharacterController
   walkSpeed: 5
   runSpeed: 10
-  crouchHeight: 1
   standHeight: 2
   jumpForce: 100
   defaultGravitySpeed: -10
   fallSpeed: -25
   groundCheckRange: 1.2
-  crouchCheckDistance: 2
   use2DMovement: 0
-  visualizeUnCrouchCheck: 1
+--- !u!114 &8650058561087978751
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8650058561087978749}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc3ac9a3f5171d9469e42e329ef8fb37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.CrouchStateIntializer
+  standingHeight: 2
+  crouchHeight: 1
+  crouchMoveSpeed: 1
+--- !u!114 &8650058561087978752
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8650058561087978749}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a589a07e9542e84d9c61e34526b03f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.States.RunStateInitializer
+  runSpeed: 5
+--- !u!114 &8650058561087978753
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8650058561087978749}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 233052e6c051fea4cb2e0a2d112be34c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.States.WalkStateInitializer
+  walkSpeed: 5
+--- !u!114 &8650058561087978754
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8650058561087978749}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb8e0505cf6cfd54e8f388bca75de788, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.States.IdolStateInitializer
+--- !u!114 &8650058561087978755
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8650058561087978749}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ade82f67f64c294d8835ec243a0ad3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.FallStateInitializer
+  defaultFallSpeed: -15
+  fallSpeed: -20
+  fallMoveSpeed: 2.5
 --- !u!223 &8665155085325908703
 Canvas:
   m_ObjectHideFlags: 0

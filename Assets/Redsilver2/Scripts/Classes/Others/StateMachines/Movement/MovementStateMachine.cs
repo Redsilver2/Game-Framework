@@ -6,11 +6,11 @@ using UnityEngine;
 
 namespace RedSilver2.Framework.StateMachines {
     [System.Serializable]
-    public class PlayerStateMachine : StateMachine
+    public class MovementStateMachine : StateMachine
     {
-        public readonly PlayerMovementHandler MovementHandler;
+        public readonly MovementHandler MovementHandler;
 
-        public PlayerStateMachine(PlayerController controller, PlayerMovementHandler movementHandler) : base(controller) {
+        public MovementStateMachine(StateMachineController controller, MovementHandler movementHandler) : base(controller) {
             MovementHandler = movementHandler;
             movementHandler?.SetStateMachine(this);
 
@@ -29,24 +29,28 @@ namespace RedSilver2.Framework.StateMachines {
             });
         }
 
-        public void ChangeState(PlayerStateType stateType) {
+        public sealed override void AddStateInitializer(StateInitializer stateInitializer) {
+           if(stateInitializer is MovementStateInitializer) base.AddStateInitializer(stateInitializer);
+        }
+
+        public void ChangeState(MovementStateType stateType) {
             ChangeState(stateType.ToString());
         }
 
-        public bool ContainsState(PlayerStateType stateType) {
+        public bool ContainsState(MovementStateType stateType) {
             return ContainsState(stateType.ToString()); 
         }
 
-        public void AddState(PlayerStateType stateType, State state) {
+        public void AddState(MovementStateType stateType, State state) {
             AddState(stateType.ToString(), state);  
         }
 
         public sealed override void AddState(string stateName, State state) {
-            if(state is PlayerState)  base.AddState(stateName, state);
+            if(state is MovementState)  base.AddState(stateName, state);
         }
 
-        public PlayerState GetState(PlayerStateType stateType) {
-            return GetState(stateType.ToString()) as PlayerState; 
+        public MovementState GetState(MovementStateType stateType) {
+            return GetState(stateType.ToString()) as MovementState; 
         }
     }
 }

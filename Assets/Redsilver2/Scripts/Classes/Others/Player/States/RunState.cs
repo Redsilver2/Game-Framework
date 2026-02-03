@@ -1,34 +1,42 @@
+using RedSilver2.Framework.StateMachines.States.Movement;
+
 namespace RedSilver2.Framework.StateMachines.States
 {
-    public sealed class RunState : PlayerState
+    public sealed class RunState : MovementState
     {
-        public RunState(PlayerStateMachine owner) : base(owner) {
-            MovementHandler?.EnableRunInputUpdate();
-
-            AddOnStateRemovedListener(() => {
-                MovementHandler?.DisableRunInputUpdate();
-            });
+        public RunState(MovementStateMachine owner) : base(owner) {
+   
         }
 
         public sealed override bool IsValidTransition() {
             return MovementHandler.IsGrounded && !MovementHandler.IsCrouching
-                && MovementHandler.IsRunning  && MovementHandler.GetMoveInputValue().magnitude > 0f;
+                && MovementHandler.IsRunning  && MovementHandler.GetMoveMagnitude() > 0f;
         }
 
-        protected sealed override void AddRequiredTransitionStates(PlayerStateMachine stateMachine) {
+        protected sealed override void AddRequiredTransitionStates(MovementStateMachine stateMachine) {
             if (stateMachine == null) return;
-            if (!stateMachine.ContainsState(PlayerStateType.Idol) && IsValidTransitionState(PlayerStateType.Idol)) {
+            if (!stateMachine.ContainsState(MovementStateType.Idol) && IsValidTransitionState(MovementStateType.Idol)) {
                 new IdolState(stateMachine);
-                AddTransitionState(stateMachine.GetState(PlayerStateType.Idol));
+                AddTransitionState(stateMachine.GetState(MovementStateType.Idol));
             }
         }
 
-        protected sealed override void SetIncompatibleStateTransitions(ref PlayerStateType[] results) {
-            results = GetStateTypes(new PlayerStateType[] { PlayerStateType.Walk, PlayerStateType.Idol, PlayerStateType.Fall, PlayerStateType.Crouch, PlayerStateType.Jump });
+        protected sealed override void SetIncompatibleStateTransitions(ref MovementStateType[] results) {
+            results = GetExcludedStateTypes(new MovementStateType[] { MovementStateType.Walk, MovementStateType.Idol, MovementStateType.Fall, MovementStateType.Crouch, MovementStateType.Jump });
         }
 
-        protected sealed override void SetPlayerStateType(ref PlayerStateType type) {
-            type = PlayerStateType.Run;
+        protected override void SetPlayerInputsEvents(PlayerMovementHandler handler)
+        {
+            if(handler == null) return;
+            handler?.EnableRunInputUpdate();
+
+            AddOnStateRemovedListener(() => {
+                handler?.DisableRunInputUpdate();
+            });
+        }
+
+        protected sealed override void SetPlayerStateType(ref MovementStateType type) {
+            type = MovementStateType.Run;
         }
     }
 }                                                                                                                                                                                                                                         

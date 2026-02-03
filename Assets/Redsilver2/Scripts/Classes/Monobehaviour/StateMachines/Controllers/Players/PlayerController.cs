@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace RedSilver2.Framework.StateMachines.Controllers
 {
-    public abstract class PlayerController : StateMachineController
+    public abstract class PlayerController : MovementStateMachineController
     {
         private static PlayerController current;
         private static List<PlayerController> instances = new List<PlayerController>();
@@ -23,32 +23,29 @@ namespace RedSilver2.Framework.StateMachines.Controllers
         protected override void Awake() {
             base.Awake();
 
-            new IdolState(StateMachine as PlayerStateMachine);
-            new WalkState(StateMachine as PlayerStateMachine);
-            new RunState (StateMachine as PlayerStateMachine);
-            new JumpState(StateMachine as PlayerStateMachine);
-            new LandState(StateMachine as PlayerStateMachine);
-            new FallState  (StateMachine as PlayerStateMachine);
-            new CrouchState(StateMachine as PlayerStateMachine);
-
             StateMachine.AddOnStateEnteredListener(state => { Debug.Log("Current State: " + (state == null ? "Null" : state.GetType().ToString())); });
             StateMachine.AddOnStateExitedListener(state => { Debug.Log("Previous State: " + (state == null ? "Null" : state.GetType().ToString())); });
 
-            StateMachine.ChangeState(PlayerStateType.Idol.ToString());
+            StateMachine.ChangeState(MovementStateType.Idol.ToString());
             current = this;
             instances.Add(this);
         }
+
 
         private void OnDestroy() {
             if (instances.Contains(this)) instances.Remove(this);
         }
 
-        protected sealed override void InitializeStateMachine(ref StateMachine stateMachine) {
-            stateMachine = GetPlayerStateMachine(GetMovementHandler());
-            stateMachine?.Enable();
+        protected sealed override MovementHandler GetMovementHandler() {
+            return GetPlayerMovementHandler();
         }
-        protected abstract PlayerStateMachine    GetPlayerStateMachine(PlayerMovementHandler movementHandler);
-        protected abstract PlayerMovementHandler GetMovementHandler();
+
+        protected sealed override MovementStateMachine GetStateMachine(MovementHandler movementHandler) {
+            return new MovementStateMachine(this, movementHandler);   
+        }
+
+        protected abstract PlayerMovementHandler GetPlayerMovementHandler();
+
 
         public static void SetCurrent(int index) {
             SetCurrent(GetController(index));

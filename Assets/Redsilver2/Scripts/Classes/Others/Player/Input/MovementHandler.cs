@@ -24,7 +24,7 @@ namespace RedSilver2.Framework.StateMachines.States.Movement
         protected float fallSpeed;
         protected Vector3 nextPosition;
 
-        private StateMachine stateMachine;
+        private MovementStateMachine stateMachine;
 
         public float MoveSpeed => moveSpeed;
         public float FallSpeed => fallSpeed;
@@ -39,7 +39,7 @@ namespace RedSilver2.Framework.StateMachines.States.Movement
 
 
 
-        protected MovementHandler(StateMachineController controller) {
+        protected MovementHandler(MovementStateMachineController controller) {
             this.use2DMovement = false;
            
             this.isGrounded     = true;
@@ -58,7 +58,7 @@ namespace RedSilver2.Framework.StateMachines.States.Movement
             }
         }
 
-        protected MovementHandler(StateMachineController controller, bool use2DMovement) {
+        protected MovementHandler(MovementStateMachineController controller, bool use2DMovement) {
             this.use2DMovement = use2DMovement;
             
             this.isGrounded  = true;
@@ -70,14 +70,14 @@ namespace RedSilver2.Framework.StateMachines.States.Movement
             this.canResetCrouch = true;
             this.groundTag      = string.Empty;
 
-            if(controller != null) {
+            if(controller != null) { 
                 moveSpeed = controller.WalkSpeed;
                 fallSpeed = controller.DefaultGravitySpeed;
                 height = controller.StandHeight;
             }
         }
 
-        public void SetStateMachine(StateMachine stateMachine) {
+        public void SetStateMachine(MovementStateMachine stateMachine) {
             if(this.stateMachine == null) {
                 this.stateMachine = stateMachine;
                 stateMachine?.AddOnUpdateListener(Update);
@@ -98,13 +98,7 @@ namespace RedSilver2.Framework.StateMachines.States.Movement
             }
 
             if (stateMachine == null || stateMachine.Controller == null) return;
-            StateMachineController controller = stateMachine.Controller;
-
-            UpdateHeight   (GetHeight(controller), 4f);
-            UpdateMoveSpeed(GetMoveSpeed(controller), 2.5f);
-            UpdateFallSpeed(GetGravity(controller), 3.5f);
-
-            nextPosition = GetNextPosition(GetTransform(), moveSpeed, fallSpeed, stateMachine.Controller != null ? stateMachine.Controller.Use2DMovement : false);
+            nextPosition = GetNextPosition(GetTransform(), moveSpeed, fallSpeed, stateMachine.Controller != null ?  false : false);
         }
 
         protected virtual void LateUpdate() {
@@ -117,22 +111,22 @@ namespace RedSilver2.Framework.StateMachines.States.Movement
 
         private float GetMoveSpeed(StateMachineController controller) {
             if (controller == null) return 0f;
-            else if (!isGrounded)   return controller.WalkSpeed * 0.5f;
-            else if (isCrouching)   return controller.WalkSpeed * 0.25f;
-            else if (isRunning)     return controller.RunSpeed;
+            else if (!isGrounded)   return 5f * 0.5f;
+            else if (isCrouching)   return 5f * 0.25f;
+            else if (isRunning)     return 10f;
             
-            return controller.WalkSpeed;
+            return 5f;
         }
 
         private float GetHeight(StateMachineController controller)
         {
             if(controller == null) return 0f;
-            return isCrouching ? controller.CrouchHeight : controller.StandHeight;
+            return isCrouching ? 1f : 2f;
         }
 
         private float GetGravity(StateMachineController controller) {
             if (controller == null) return 0f;
-            return isGrounded ? controller.DefaultGravitySpeed : controller.FallSpeed;
+            return isGrounded ? -10f : -20;
         }
 
         public void SetCanResetCrouch(bool canResetCrouch) {
@@ -144,7 +138,7 @@ namespace RedSilver2.Framework.StateMachines.States.Movement
         }
 
 
-        private void UpdateMoveSpeed(float nextMoveSpeed, float updateSpeed) {
+        public void UpdateMoveSpeed(float nextMoveSpeed, float updateSpeed) {
             if(nextMoveSpeed >= Mathf.Epsilon)
                this.moveSpeed = Mathf.Lerp(moveSpeed, nextMoveSpeed, Time.deltaTime * updateSpeed);
         }
@@ -152,20 +146,26 @@ namespace RedSilver2.Framework.StateMachines.States.Movement
         public void SetFallSpeed(float fallSpeed) {
             this.fallSpeed = Mathf.Clamp(fallSpeed, float.MinValue, 0f);
         }
+        public void SetJumpHeight(float jumpHeight) {
+            this.fallSpeed = Mathf.Clamp(jumpHeight, 0f, float.MaxValue);
+        }
 
-        private void UpdateFallSpeed(float nextFallSpeed, float updateSpeed) {
+        public void UpdateFallSpeed(float nextFallSpeed, float updateSpeed) {
             if (nextFallSpeed <= 0f)
               this.fallSpeed = Mathf.Lerp(fallSpeed, nextFallSpeed, Time.deltaTime * updateSpeed);
         }
 
-        private void UpdateHeight(float nextHeight, float updateSpeed) {
+
+
+        public void UpdateHeight(float nextHeight, float updateSpeed) {
                 this.height = Mathf.Lerp(height, nextHeight, Time.deltaTime * updateSpeed);
         }
 
         protected abstract void Crouch(float height);
         protected abstract void Move(Vector3 position);
 
-        public abstract float GetGroundCheckRange();
+        public    abstract float GetMoveMagnitude();
+        public    abstract float GetGroundCheckRange();
         protected abstract bool  IsOnGround(out string groundTag, Transform transform);
 
         protected abstract Vector3 GetNextPosition(Transform transform, float moveSpeed, float fallSpeed, bool use2DMovement);

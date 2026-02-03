@@ -1,8 +1,10 @@
 
+using RedSilver2.Framework.StateMachines.States.Movement;
+
 namespace RedSilver2.Framework.StateMachines.States {
-    public sealed class IdolState : PlayerState
+    public sealed class IdolState : MovementState
     {
-        public IdolState(PlayerStateMachine owner) : base(owner) {
+        public IdolState(MovementStateMachine owner) : base(owner) {
             
         }
 
@@ -10,20 +12,24 @@ namespace RedSilver2.Framework.StateMachines.States {
             if (MovementHandler == null) return false;
 
             return MovementHandler.IsGrounded && !MovementHandler.IsCrouching
-                    && !MovementHandler.IsRunning && MovementHandler.GetMoveInputValue().magnitude == 0f;
+                    && !MovementHandler.IsRunning && MovementHandler.GetMoveMagnitude() == 0f;
         }
 
-        protected sealed override void AddRequiredTransitionStates(PlayerStateMachine stateMachine) {
+        protected sealed override void AddRequiredTransitionStates(MovementStateMachine stateMachine) {
            
         }
 
-        protected sealed override void SetIncompatibleStateTransitions(ref PlayerStateType[] results) {
-            results = GetStateTypes(new PlayerStateType[] { PlayerStateType.Walk, PlayerStateType.Run, PlayerStateType.Fall, 
-                                                            PlayerStateType.Jump, PlayerStateType.Crouch });
+        protected sealed override void SetIncompatibleStateTransitions(ref MovementStateType[] results) {
+            results = GetExcludedStateTypes(new MovementStateType[] { MovementStateType.Walk, MovementStateType.Run, MovementStateType.Fall, 
+                                                            MovementStateType.Jump, MovementStateType.Crouch });
         }
 
-        protected sealed override void SetPlayerStateType(ref PlayerStateType type) {
-            type = PlayerStateType.Idol;
+        protected sealed override void SetPlayerInputsEvents(PlayerMovementHandler handler) {
+
+        }
+
+        protected sealed override void SetPlayerStateType(ref MovementStateType type) {
+            type = MovementStateType.Idol;
         }
     }
 }

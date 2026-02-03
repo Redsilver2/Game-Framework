@@ -1,11 +1,11 @@
-using System.Collections.Generic;
+using RedSilver2.Framework.StateMachines.States.Movement;
 using UnityEngine;
 
 namespace RedSilver2.Framework.StateMachines.States
 {
-    public class FallState : PlayerState
+    public class FallState : MovementState
     {
-        public FallState(PlayerStateMachine owner) : base(owner) {
+        public FallState(MovementStateMachine owner) : base(owner) {
 
         }
 
@@ -14,23 +14,27 @@ namespace RedSilver2.Framework.StateMachines.States
             return !MovementHandler.IsGrounded;
         }
 
-        protected sealed override void AddRequiredTransitionStates(PlayerStateMachine stateMachine) {
+        protected sealed override void AddRequiredTransitionStates(MovementStateMachine stateMachine) {
             if (stateMachine == null) return;
 
-            Debug.LogWarning("Create Land State | Contains: " + !stateMachine.ContainsState(PlayerStateType.Land) +  " | Is Valid Transition: " + IsValidTransitionState(PlayerStateType.Land));
+            Debug.LogWarning("Create Land State | Contains: " + !stateMachine.ContainsState(MovementStateType.Land) +  " | Is Valid Transition: " + IsValidTransitionState(MovementStateType.Land));
 
-            if (!stateMachine.ContainsState(PlayerStateType.Land) && IsValidTransitionState(PlayerStateType.Land)) {
+            if (!stateMachine.ContainsState(MovementStateType.Land) && IsValidTransitionState(MovementStateType.Land)) {
                 new LandState(stateMachine);
-                AddTransitionState(stateMachine.GetState(PlayerStateType.Land));
+                AddTransitionState(stateMachine.GetState(MovementStateType.Land));
             }
         }
 
-        protected sealed override void SetIncompatibleStateTransitions(ref PlayerStateType[] results) {
-           results = GetStateTypes(new PlayerStateType[] { PlayerStateType.Land });
+        protected sealed override void SetIncompatibleStateTransitions(ref MovementStateType[] results) {
+           results = GetExcludedStateTypes(new MovementStateType[] { MovementStateType.Land });
         }
 
-        protected sealed override void SetPlayerStateType(ref PlayerStateType type) {
-            type = PlayerStateType.Fall;
+        protected sealed override void SetPlayerInputsEvents(PlayerMovementHandler handler) {
+
+        }
+
+        protected sealed override void SetPlayerStateType(ref MovementStateType type) {
+            type = MovementStateType.Fall;
         }
     }
 }

@@ -92,9 +92,6 @@ namespace RedSilver2.Framework.StateMachines.States.Movement
             PlayerPrefs.Save();
         }
 
-        public void SetJumpHeight(float jumpHeight) {
-            this.fallSpeed = jumpHeight;
-        }
         public void AddOnMoveInputUpdateListener(UnityAction<Vector2> action) {
             if (action != null) moveInput?.AddOnUpdateListener(action);
         }
@@ -108,15 +105,11 @@ namespace RedSilver2.Framework.StateMachines.States.Movement
             return moveInput.IsEnabled;
         }
 
-        public Vector2 GetMoveInputValue() {
-            if (moveInput == null || !moveInput.IsEnabled) return Vector2.zero;
-            return moveInput.Value;
-        }
-
         protected override void Update() {
             onUpdate?.Invoke();
             base.Update();
         }
+
 
         protected override void Disable() {
             holdRunInput?.Disable();
@@ -138,6 +131,11 @@ namespace RedSilver2.Framework.StateMachines.States.Movement
 
             pressJumpInput?.Enable();
             moveInput?.Enable();
+        }
+
+        public sealed override float GetMoveMagnitude() {
+            if(moveInput == null) return 0f;
+            return moveInput.Value.magnitude;
         }
 
         public void EnableJumpInputUpdate()
@@ -226,15 +224,15 @@ namespace RedSilver2.Framework.StateMachines.States.Movement
         private void OnHoldRunUpdate() {
             holdRunInput?.Update();
 
-            if (holdRunInput == null || GetMoveInputValue().magnitude == 0f) isRunning = false;
-            else                                                             isRunning = holdRunInput.Value;
+            if (holdRunInput == null || GetMoveMagnitude() == 0f) isRunning = false;
+            else                                                  isRunning = holdRunInput.Value;
         }
 
         private void OnPressRunUpdate() {
-            if (pressRunInput == null || GetMoveInputValue().magnitude == 0f) {
+            if (pressRunInput == null || GetMoveMagnitude() == 0f) {
                 isRunning = false;
             }
-            else{
+            else {
                 if (pressRunInput.Value) isRunning = !isRunning;
             }
         }
@@ -287,9 +285,9 @@ namespace RedSilver2.Framework.StateMachines.States.Movement
         }
 
         protected override Vector3 GetNextPosition(Transform transform, float moveSpeed, float fallSpeed, bool use2DMovement) {
-            if(transform == null) return Vector3.zero;
+            if(transform == null || moveInput == null) return Vector3.zero;
 
-            Vector2 input = GetMoveInputValue();
+            Vector2 input = moveInput.Value;
             return Time.deltaTime * (transform.forward *                       input.y * moveSpeed +
                                      transform.up                                      * fallSpeed +
                                      transform.right   * (use2DMovement ? 0f : input.x * moveSpeed));
