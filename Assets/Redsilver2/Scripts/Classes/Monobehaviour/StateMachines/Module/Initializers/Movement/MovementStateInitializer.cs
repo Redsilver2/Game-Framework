@@ -1,64 +1,89 @@
 using RedSilver2.Framework.StateMachines.Controllers;
 using System.Linq;
 using UnityEngine.Events;
+using UnityEngine;
+
 
 namespace RedSilver2.Framework.StateMachines.States
 {
-    public abstract class MovementStateInitializer : StateInitializer
+    public abstract class MovementStateInitializer : MovementStateModule
     {
-        private MovementStateType[] inclusiveStates;
+        [SerializeField] private MovementStateType[] transitionStates;
+        private State defaultState;
+
 
         protected override void Start() {
-            inclusiveStates = GetInclusiveStates();
-            if (inclusiveStates != null) inclusiveStates = inclusiveStates.Distinct().ToArray();
+            base.Start();   
+            defaultState = GetDefaultState(stateMachine);
 
-            base.Start();
+            stateMachine?.AddState(defaultState);
+            AddAllTransitionStates();
         }
 
-        protected sealed override State GetDefaultState(StateMachine stateMachine)
+        protected override void OnEnable()
+        {
+            base.OnEnable();
+            AddAllTransitionStates();
+            stateMachine?.AddState(defaultState);   
+        }
+
+        protected  override void OnDisable()
+        {
+            base.OnDisable();
+            RemoveAllTransitionStates();
+            stateMachine?.RemoveState(defaultState);
+        }
+
+        private State GetDefaultState(StateMachine stateMachine)
         {
             if (!CanAddOrRemoveState(stateMachine)) return null;
             return GetDefaultState(stateMachine as MovementStateMachine);
         }
 
         protected sealed override void OnStateAdded(State state) {
-            if (IsInclusiveState(state as MovementState)) base.OnStateAdded(state);
+            AddTransitionState(state);
+        }
+        protected sealed override void OnStateRemoved(State state) { 
+            RemoveTransitionState(state);   
         }
 
-        protected sealed override void OnStateRemoved(State state) {
-            if (IsInclusiveState(state as MovementState)) base.OnStateRemoved(state);
-        }
+        protected sealed override UnityAction<State> GetOnStateAddedAction() { return null; }
+        protected sealed override UnityAction<State> GetOnStateRemovedAction() { return null; }
 
-        protected sealed override UnityAction<State> GetOnStateAddedAction() {
-            return state => { OnStateAdded(state as MovementState); };
-        }
-
-        protected sealed override UnityAction<State> GetOnStateRemovedAction() {
-            return state => { OnStateRemoved(state as MovementState); };
-        }
-
-        protected sealed override bool CanAddOrRemoveState(StateMachine controller) {
+        private bool CanAddOrRemoveState(StateMachine controller) {
             return controller is MovementStateMachine;
         }
 
-
-        protected sealed override void SetStateMachine(ref StateMachine stateMachine) {
-            if(transform.root.gameObject.TryGetComponent(out StateMachineController controller)) {
-                if (controller is MovementStateMachineController)
-                    stateMachine = controller.StateMachine;
+        private void AddTransitionState(State state)
+        {
+            if (IsTransitionState(state as MovementState))
+            {
+                defaultState?.AddTransitionState(state);
             }
         }
 
-        public bool IsInclusiveState(MovementState state)
+        private void RemoveTransitionState(State state)
         {
-            if (state == null || inclusiveStates == null) return false;
-            return inclusiveStates.Where(x => x == state.Type).Count() > 0;
+            defaultState?.RemoveTransitionState(state);
         }
 
-        protected abstract void OnStateAdded(MovementState state);
-        protected abstract void OnStateRemoved(MovementState state);
+
+        private void AddAllTransitionStates() {
+            if (stateMachine == null) return;
+            foreach(State state in stateMachine.GetStates()) AddTransitionState(state);
+        }
+
+        private void RemoveAllTransitionStates() {
+            if (stateMachine == null) return;
+            foreach (State state in stateMachine.GetStates()) RemoveTransitionState(state);
+        }
+
+        public bool IsTransitionState(MovementState state)
+        {
+            if (state == null || transitionStates == null) return false;
+            return transitionStates.Contains(state.Type);
+        }
 
         protected abstract MovementState GetDefaultState(MovementStateMachine stateMachine);
-        protected abstract MovementStateType[] GetInclusiveStates();
     }
 }

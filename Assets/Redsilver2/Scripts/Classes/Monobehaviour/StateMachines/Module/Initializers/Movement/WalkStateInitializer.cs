@@ -1,4 +1,4 @@
-using RedSilver2.Framework.StateMachines.Controllers;
+using RedSilver2.Framework.StateMachines.States.Movement;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -8,6 +8,20 @@ namespace RedSilver2.Framework.StateMachines.States
     public sealed class WalkStateInitializer : MovementStateInitializer
     {
         [SerializeField] private float walkSpeed;
+        [SerializeField] private float walkTransitionSpeed;
+        public float WalkSpeed => walkSpeed;
+        public float WalkTransitionSpeed => walkTransitionSpeed;
+
+        protected sealed override void Start()
+        {
+            base.Start();
+
+            if(stateMachine is MovementStateMachine)
+            {
+                MovementHandler handler = (stateMachine as MovementStateMachine).MovementHandler;
+                if(handler != null)  handler.SetMoveSpeed(walkSpeed);
+            }
+        }
 
         protected sealed override MovementState GetDefaultState(MovementStateMachine stateMachine) {
             if(stateMachine == null)  return null;
@@ -15,32 +29,12 @@ namespace RedSilver2.Framework.StateMachines.States
             if (stateMachine.ContainsState(MovementStateType.Walk)) 
                 return stateMachine.GetState(MovementStateType.Walk) as WalkState;
 
-            return new WalkState(stateMachine);
+            return new WalkState(stateMachine, this);
         }
 
-        private UnityAction OnUpdateWalkState(MovementState state)
+        protected override string GetModuleName()
         {
-            if(state == null) return null;
-            return () =>
-            {
-                if (state == null) return;
-                state.MovementHandler?.UpdateMoveSpeed(walkSpeed, 5f);
-            };
-        }
-
-        protected sealed override void OnStateAdded(MovementState state)
-        {
-            state?.AddOnUpdateListener(OnUpdateWalkState(state));
-        }
-
-        protected sealed override void OnStateRemoved(MovementState state)
-        {
-            state?.AddOnUpdateListener(OnUpdateWalkState(state));
-        }
-
-        protected override MovementStateType[] GetInclusiveStates()
-        {
-            return new MovementStateType[] { MovementStateType.Walk };
+            return "Walk State Initializer";
         }
     }
 }

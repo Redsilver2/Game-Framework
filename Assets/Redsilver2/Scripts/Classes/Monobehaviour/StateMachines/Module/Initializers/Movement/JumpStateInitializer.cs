@@ -5,17 +5,18 @@ using UnityEngine.Events;
 
 namespace RedSilver2.Framework.StateMachines
 {
-    [RequireComponent(typeof(FallStateInitializer))]
-    public class JumpStateInitializer : MovementStateInitializer
+    [RequireComponent(typeof(JumpMovementStateCondition))]
+    public abstract class JumpStateInitializer : MovementConditionStateInitializer
     {
         [SerializeField] private float jumpForce;
+        public float JumpForce => jumpForce;
 
         #if UNITY_EDITOR
         private void OnValidate()
         {
-            jumpForce = Mathf.Clamp(jumpForce, 10f, float.MaxValue);
+            jumpForce = Mathf.Clamp(jumpForce, 0f, float.MaxValue);
         }
-        #endif
+#endif
 
         protected sealed override MovementState GetDefaultState(MovementStateMachine stateMachine)
         {
@@ -24,33 +25,21 @@ namespace RedSilver2.Framework.StateMachines
             if (stateMachine.ContainsState(MovementStateType.Jump)) 
                 return stateMachine.GetState(MovementStateType.Jump) as JumpState;
 
-            return new JumpState(stateMachine);
+            return new JumpState(stateMachine, this);
         }
 
-        private UnityAction OnJumpStateEnter(MovementState state)
-        {
-            if(state == null)  return null;
-            return () => {
-                if (state == null) return;
-                state.MovementHandler?.SetJumpHeight(jumpForce);
-            };
+        protected override string GetModuleName() {
+            return "Jump State Initializer";
         }
 
-        protected sealed override void OnStateAdded(MovementState state)
+        protected sealed override bool IsValidCondition(MovementStateCondition condition)
         {
-            state?.AddOnStateEnteredListener(OnJumpStateEnter(state));
+            return condition is GroundMovementStateCondition || condition is CrouchMovementStateCondition;
         }
 
-        protected sealed override void OnStateRemoved(MovementState state)
+        protected sealed override bool IsShowOppositeResultCondition(MovementStateCondition condition)
         {
-            state?.RemoveOnStateEnteredListener(OnJumpStateEnter(state));
-        }
-
-        protected sealed override MovementStateType[] GetInclusiveStates()
-        {
-            return new MovementStateType[] {
-                MovementStateType.Jump
-            };
+            return condition is GroundMovementStateCondition;
         }
     }
 }

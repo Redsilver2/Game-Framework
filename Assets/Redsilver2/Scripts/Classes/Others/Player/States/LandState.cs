@@ -32,15 +32,6 @@ namespace RedSilver2.Framework.StateMachines.States
             if (action != null) onLanded?.RemoveListener(action);
         }
 
-        protected sealed override void AddRequiredTransitionStates(MovementStateMachine stateMachine) {
-            if (stateMachine == null) return;
-            if (!stateMachine.ContainsState(MovementStateType.Fall) && IsValidTransitionState(MovementStateType.Fall))
-            {
-                new FallState(stateMachine);
-                AddTransitionState(stateMachine.GetState(MovementStateType.Fall));
-            }
-        }
-
         protected sealed override void SetIncompatibleStateTransitions(ref MovementStateType[] results) {
             results = GetExcludedStateTypes(new MovementStateType[] { MovementStateType.Walk, MovementStateType.Run, MovementStateType.Idol });
         }

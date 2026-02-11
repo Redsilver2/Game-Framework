@@ -14,17 +14,9 @@ namespace RedSilver2.Framework.StateMachines.States
             return new LandState(stateMachine);
         }
 
-        protected sealed override void OnStateAdded(MovementState state) {
-
-        }
-
-        protected sealed override void OnStateRemoved(MovementState state) {
-
-        }
-
-        protected sealed override MovementStateType[] GetInclusiveStates()
+        protected sealed override string GetModuleName()
         {
-            return null;
+            return "Land State Initializer";
         }
     }
 }

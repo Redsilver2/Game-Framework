@@ -1,10 +1,9 @@
 
-using RedSilver2.Framework.StateMachines.States.Extensions;
 using System.Linq;
 
 namespace RedSilver2.Framework.StateMachines.States
 {
-    public abstract class MovementStateTransitionExtension : MovementStateExtension, IStateTransition
+    public abstract class MovementStateTransitionExtension : MovementStateExtension, ICheckableStateTransition
     {
         private MovementStateType[] validResultStateTypes;
 
@@ -17,32 +16,32 @@ namespace RedSilver2.Framework.StateMachines.States
         protected override void Start()
         {
             base.Start();
-            stateMachine?.AddOnStateExtensionAddedListener(OnStateExtensionAdded);
+            stateMachine?.AddOnStateModuleAddedListener(OnStateExtensionAdded);
         }
 
         protected override void OnEnable() {
             base.OnEnable();
-            stateMachine?.AddOnStateExtensionAddedListener(OnStateExtensionAdded);
+            stateMachine?.AddOnStateModuleAddedListener(OnStateExtensionAdded);
         }
 
         protected override void OnDisable() {
             base.OnDisable();
-            stateMachine?.RemoveOnStateExtensionAddedListener(OnStateExtensionAdded);
+            stateMachine?.RemoveOnStateModuleAddedListener(OnStateExtensionAdded);
         }
 
         protected override void OnStateAdded(MovementState state)
         {
             if (validResultStateTypes == null || state == null) return;
-            state?.RemoveTransitionCheck(GetExtensionName());
-            state?.AddTransitionCheck(GetExtensionName(), this, !validResultStateTypes.Contains(state.Type));
+            state?.RemoveTransitionCheck(ModuleName);
+            state?.AddTransitionCheck(ModuleName, this, !validResultStateTypes.Contains(state.Type));
         }
 
         protected override void OnStateRemoved(MovementState state) {
-            state?.RemoveTransitionCheck(GetExtensionName());
+            state?.RemoveTransitionCheck(ModuleName);
         }
 
-        public abstract bool Validate();
-        protected abstract void OnStateExtensionAdded(StateExtension extension);
+        public abstract bool GetTransitionState();
+        protected abstract void OnStateExtensionAdded(StateModule module);
         protected abstract MovementStateType[] GetValidResultStateTypes();
     }
 }

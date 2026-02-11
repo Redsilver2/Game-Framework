@@ -1,7 +1,7 @@
 using RedSilver2.Framework.StateMachines.Controllers;
 using RedSilver2.Framework.StateMachines.States;
-using RedSilver2.Framework.StateMachines.States.Extensions;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -14,8 +14,7 @@ namespace RedSilver2.Framework.StateMachines
         private bool isEnabled;
         private State currentState;
 
-        private readonly List<StateInitializer> stateInitializers;
-        private readonly List<StateExtension>   stateExtensions;
+        private readonly List<StateModule> stateModules;
 
         private readonly UnityEvent onUpdate;
         private readonly UnityEvent onLateUpdate;
@@ -29,11 +28,8 @@ namespace RedSilver2.Framework.StateMachines
         private readonly UnityEvent<State> onStateEntered;
         private readonly UnityEvent<State> onStateExited;
 
-        private readonly UnityEvent<StateInitializer> onStateInitializerAdded;
-        private readonly UnityEvent<StateInitializer> onStateInitializerRemoved;
-
-        private readonly UnityEvent<StateExtension> onStateExtensionAdded;
-        private readonly UnityEvent<StateExtension> onStateExtensionRemoved;
+        private readonly UnityEvent<StateModule> onStateModuleAdded;
+        private readonly UnityEvent<StateModule> onStateModuleRemoved;
 
         private readonly Dictionary<string, State> states;
         public  readonly StateMachineController Controller;
@@ -44,25 +40,20 @@ namespace RedSilver2.Framework.StateMachines
             onStateAdded   = new UnityEvent<State>();
             onStateRemoved = new UnityEvent<State>();
 
-            onStateInitializerAdded   = new UnityEvent<StateInitializer>();
-            onStateInitializerRemoved = new UnityEvent<StateInitializer>();
+            onStateModuleAdded   = new UnityEvent<StateModule>();
+            onStateModuleRemoved = new UnityEvent<StateModule>();
 
-            onStateExtensionAdded     = new UnityEvent<StateExtension>();
-            onStateExtensionRemoved   = new UnityEvent<StateExtension>();
+            onEnabled            = new UnityEvent();
+            onDisabled           = new UnityEvent();
 
-            onEnabled         = new UnityEvent();
-            onDisabled        = new UnityEvent();
+            onUpdate             = new UnityEvent();
+            onLateUpdate         = new UnityEvent();
 
-            onUpdate          = new UnityEvent();
-            onLateUpdate      = new UnityEvent();
+            onStateEntered       = new UnityEvent<State>();
+            onStateExited        = new UnityEvent<State>();
 
-            onStateEntered    = new UnityEvent<State>();
-            onStateExited     = new UnityEvent<State>();
-
-            states            = new Dictionary<string, State>();
-            
-            stateInitializers = new List<StateInitializer>();
-            stateExtensions   = new List<StateExtension>();
+            states               = new Dictionary<string, State>();  
+            stateModules         = new List<StateModule>();
 
             Controller = controller;
 
@@ -72,30 +63,8 @@ namespace RedSilver2.Framework.StateMachines
             AddOnStateEnteredListener(state => { currentState = state; });
             AddOnStateExitedListener (state => { currentState = null;  });
 
-            AddOnStateAddedListener(state => {
-                if (state == null) return;
-
-                State[] states = GetStates();
-                foreach (State _state in states) {
-                    state?.AddTransitionState(_state);
-                    _state?.AddTransitionState(state);
-                }
-
-                if (currentState == null) { ChangeState(state); }
-            });
-
-            AddOnStateRemovedListener(state =>
-            {
-                if(state == null) return;
-
-
-                State[] states = GetStates();
-                foreach (State _state in states) {
-                    state?.RemoveTransitionState(_state);
-                    _state?.RemoveTransitionState(state);
-                }
-               // if(currentState == state) { currentState = null; }
-            });
+            AddOnStateAddedListener(DefaultStateAddedListener);
+            AddOnStateRemovedListener(DefaultStateRemovedListener);
 
             isEnabled = false;
         }
@@ -134,43 +103,32 @@ namespace RedSilver2.Framework.StateMachines
             if(state != null) ChangeState(state.GetStateName());
         }
 
-        public virtual void AddStateInitializer(StateInitializer stateInitializer) {
-            if (stateInitializers == null || stateInitializer == null) return;
-
-            if(!stateInitializers.Contains(stateInitializer)) {
-                stateInitializers?.Add(stateInitializer);
-                onStateInitializerAdded?.Invoke(stateInitializer);
-            }
-        }
-
-        public void RemoveStateInitializer(StateInitializer stateInitializer) {
-            if (stateInitializers == null || stateInitializer == null) return;
-
-            if (stateInitializers.Contains(stateInitializer)) {
-                stateInitializers?.Remove(stateInitializer);    
-                onStateInitializerRemoved?.Invoke(stateInitializer);
-            }
-        }
-
-        public virtual void AddStateExtension(StateExtension stateExtension)
+        public virtual void AddStateModule(StateModule module)
         {
-            if (stateExtensions == null || stateExtension == null) return;
+            if (stateModules == null || module == null) return;
 
-            if (!stateExtensions.Contains(stateExtension)) {
-                stateExtensions?.Add(stateExtension);
-                onStateExtensionAdded?.Invoke(stateExtension);
+            if (!stateModules.Contains(module)) {
+                stateModules?.Add(module);
+                onStateModuleAdded?.Invoke(module);
             }
         }
 
-        public void RemoveStateExtension(StateExtension stateExtension)
+        public void RemoveStateModule(StateModule module)
         {
-            if (stateExtensions == null || stateExtension == null) return;
+            if (stateModules == null || module == null) return;
 
-            if (stateExtensions.Contains(stateExtension)) {
-                stateExtensions?.Remove(stateExtension);
-                onStateExtensionRemoved?.Invoke(stateExtension);
+            if (stateModules.Contains(module)) {
+                stateModules?.Remove(module);
+                onStateModuleRemoved?.Invoke(module);
             }
         }
+
+
+        public virtual void AddState(State state)
+        {
+            AddState(GetStateName(state), state);
+        }
+
 
         public virtual void AddState(string stateName, State state) {
             if (states == null || state == null || string.IsNullOrEmpty(stateName)) return;
@@ -182,6 +140,11 @@ namespace RedSilver2.Framework.StateMachines
             onStateAdded?.Invoke(states[stateName]);
         }
 
+        public  void RemoveState(State state)
+        {
+            RemoveState(GetStateName(state));
+        }
+
         public virtual void RemoveState(string stateName)
         {
             if (states == null || string.IsNullOrEmpty(stateName)) return;
@@ -190,6 +153,20 @@ namespace RedSilver2.Framework.StateMachines
             if (!states.ContainsKey(stateName)) return;
             onStateRemoved?.Invoke(states[stateName]);
             states.Remove(stateName);
+        }
+
+
+
+        protected virtual void DefaultStateAddedListener(State state)
+        {
+            if (state == null) return;
+            if (currentState == null) { ChangeState(state); }
+        }
+
+        protected virtual void DefaultStateRemovedListener(State state)
+        {
+            if (state == null) return;
+            // if (currentState == state) { ChangeState(null); }
         }
 
         public bool ContainsState(string stateName) {
@@ -288,40 +265,22 @@ namespace RedSilver2.Framework.StateMachines
                 onStateExited?.RemoveListener(state);
         }
 
-        public void AddOnStateInitializerAddedListener(UnityAction<StateInitializer> action)
+        public void AddOnStateModuleAddedListener(UnityAction<StateModule> action)
         {
-            if(action != null) onStateInitializerAdded?.AddListener(action);
+            if (action != null) onStateModuleAdded?.AddListener(action);
         }
-        public void RemoveOnStateInitializerAddedListener(UnityAction<StateInitializer> action)
+        public void RemoveOnStateModuleAddedListener(UnityAction<StateModule> action)
         {
-            if (action != null) onStateInitializerAdded?.RemoveListener(action);
-        }
-
-        public void AddOnStateInitializerRemovedListener(UnityAction<StateInitializer> action)
-        {
-            if (action != null) onStateInitializerRemoved?.AddListener(action);
-        }
-        public void RemoveOnStateInitializerRemovedListener(UnityAction<StateInitializer> action)
-        {
-            if (action != null) onStateInitializerRemoved?.RemoveListener(action);
+            if (action != null) onStateModuleAdded?.RemoveListener(action);
         }
 
-        public void AddOnStateExtensionAddedListener(UnityAction<StateExtension> action)
+        public void AddOnStateModuleRemovedListener(UnityAction<StateModule> action)
         {
-            if (action != null) onStateExtensionAdded?.AddListener(action);
+            if (action != null) onStateModuleRemoved?.AddListener(action);
         }
-        public void RemoveOnStateExtensionAddedListener(UnityAction<StateExtension> action)
+        public void RemoveOnStateModuleRemovedListener(UnityAction<StateModule> action)
         {
-            if (action != null) onStateExtensionAdded?.RemoveListener(action);
-        }
-
-        public void AddOnStateExtensionRemovedListener(UnityAction<StateExtension> action)
-        {
-            if (action != null) onStateExtensionRemoved?.AddListener(action);
-        }
-        public void RemoveOnStateExtensionRemovedListener(UnityAction<StateExtension> action)
-        {
-            if (action != null) onStateExtensionRemoved?.RemoveListener(action);
+            if (action != null) onStateModuleRemoved?.RemoveListener(action);
         }
 
         public string[] GetStateNames()
@@ -337,16 +296,43 @@ namespace RedSilver2.Framework.StateMachines
             return results.ToArray();
         }
 
+        public string GetStateName(State state)
+        {
+            if (state == null || states == null) return string.Empty;
+            var reuslts = states.Where(x => x.Value == state);
+
+            if (reuslts.Count() > 0) return reuslts.First().Key;
+            return string.Empty;
+        }
+
         public State[] GetStates() {
             List<State> results = new List<State>();
            
             if(this.states != null) {
-                foreach(var state in this.states) {
+                foreach(var state in this.states)
                     results.Add(state.Value);
-                }
             }
 
             return results.ToArray();
+        }
+
+        public StateModule[] GetModules()
+        {
+            if (stateModules != null)
+                return stateModules.ToArray();
+
+            return new StateModule[0];
+        }
+
+        public StateModule GetModule(string name)
+        {
+            if (string.IsNullOrEmpty(name) || stateModules == null) return null;
+
+            var results = stateModules.Where(x => x != null)
+                                      .Where(x => x.ModuleName.ToLower().Equals(name.ToLower()));
+
+            if(results.Count() > 0) return results.First();
+            return null;
         }
 
         public State GetState(string stateName) {
@@ -355,6 +341,7 @@ namespace RedSilver2.Framework.StateMachines
 
             return states.ContainsKey(stateName) ? states[stateName] : null;
         }
+
     }
 
 }

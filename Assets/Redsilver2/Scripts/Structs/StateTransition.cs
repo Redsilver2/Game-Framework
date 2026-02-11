@@ -3,9 +3,9 @@ using UnityEngine;
 namespace RedSilver2.Framework.StateMachines.States {
     public struct StateTransition {
         private bool showOppositeResult;
-        private IStateTransition stateTransition;
+        private ICheckableStateTransition stateTransition;
 
-        public StateTransition(bool showOppositeResult, IStateTransition stateTransition) {
+        public StateTransition(bool showOppositeResult, ICheckableStateTransition stateTransition) {
             this.showOppositeResult = showOppositeResult;
             this.stateTransition    = stateTransition;
         }
@@ -13,7 +13,7 @@ namespace RedSilver2.Framework.StateMachines.States {
         public bool GetTransitionResult() {
             if(stateTransition == null) return true;
 
-            bool result = stateTransition.Validate();
+            bool result = stateTransition.GetTransitionState();
             return showOppositeResult ? !result : result; 
         }
     }

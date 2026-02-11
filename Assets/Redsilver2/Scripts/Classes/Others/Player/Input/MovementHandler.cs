@@ -1,38 +1,27 @@
 using RedSilver2.Framework.StateMachines.Controllers;
 using UnityEngine;
+using UnityEngine.Windows;
 
 namespace RedSilver2.Framework.StateMachines.States.Movement
 {
     [System.Serializable]
     public abstract class MovementHandler {
-        protected bool use2DMovement;
-        protected bool canResetCrouch;
+        protected bool  use2DMovement;
+        private   float moveSpeed;
 
-        private float moveSpeed;
-        private float fallSpeed;
-        private float height;
-
-        protected Vector3 nextPosition;
-
+        private Vector3 nextPosition;
+        private FallStateInitializer fallStateInitializer;
         private MovementStateMachine stateMachine;
 
-        public bool  CanResetCrouch => canResetCrouch;
-        public float MoveSpeed      => moveSpeed;    
-        public float Height         => height;
-        public float FallSpeed      => fallSpeed;
-
-        public const float DEFAULT_CROUCH_SPEED = 5f;
-
-
+        public float   MoveSpeed    => moveSpeed;    
+        public Vector3 NextPosition => nextPosition;
 
         protected MovementHandler(MovementStateMachineController controller) {
             this.use2DMovement  = false;  
-            this.canResetCrouch = true;
         }
 
         protected MovementHandler(MovementStateMachineController controller, bool use2DMovement) {
             this.use2DMovement  = use2DMovement;
-            this.canResetCrouch = true;
         }
 
         public void SetStateMachine(MovementStateMachine stateMachine) {
@@ -40,29 +29,32 @@ namespace RedSilver2.Framework.StateMachines.States.Movement
                 this.stateMachine = stateMachine;
                 stateMachine?.AddOnUpdateListener(Update);
                 stateMachine?.AddOnLateUpdateListener(LateUpdate);
-              
+
                 stateMachine?.AddOnEnabledListener(Enable);
                 stateMachine?.AddOnDisabledListener(Disable);
+                stateMachine?.AddOnStateModuleAddedListener(OnStateModuleAdded);
             }
         }
 
 
+        private void OnStateModuleAdded(StateModule module)
+        {
+            if(module as FallStateInitializer) fallStateInitializer = module as FallStateInitializer;
+        }
+
 
         protected virtual void Update() {
             if (stateMachine == null || stateMachine.Controller == null) return;
-            nextPosition = GetNextPosition(GetTransform(), moveSpeed, fallSpeed, stateMachine.Controller != null ?  false : false);
+            nextPosition = GetNextPosition(GetTransform(), moveSpeed, GetFallSpeed(), false);
         }
 
         protected virtual void LateUpdate() {
-            Crouch(height);
-            Move(nextPosition);
+            Move(Time.deltaTime * nextPosition);
         }
 
         protected abstract void Enable();
-        protected abstract void Disable();
-
-        public void SetCanResetCrouch(bool canResetCrouch) {
-            this.canResetCrouch = canResetCrouch;
+        protected virtual void Disable() {
+            nextPosition = Vector3.zero;
         }
 
         public void SetMoveSpeed(float moveSpeed) {
@@ -74,27 +66,22 @@ namespace RedSilver2.Framework.StateMachines.States.Movement
                this.moveSpeed = Mathf.Lerp(moveSpeed, nextMoveSpeed, Time.deltaTime * updateSpeed);
         }
 
-        public void SetFallSpeed(float fallSpeed) {
-            this.fallSpeed = Mathf.Clamp(fallSpeed, float.MinValue, 0f);
-        }
-        public void SetJumpHeight(float jumpHeight) {
-            this.fallSpeed = Mathf.Clamp(jumpHeight, 0f, float.MaxValue);
-        }
-
-        public void UpdateFallSpeed(float nextFallSpeed, float updateSpeed) {
-            if (nextFallSpeed <= 0f)
-              this.fallSpeed = Mathf.Lerp(fallSpeed, nextFallSpeed, Time.deltaTime * updateSpeed);
+        private float GetFallSpeed()
+        {
+            if (fallStateInitializer == null || use2DMovement) return 0f;
+            return fallStateInitializer.CurrentFallSpeed;
         }
 
-        public void UpdateHeight(float nextHeight, float updateSpeed) {
-                this.height = Mathf.Lerp(height, nextHeight, Time.deltaTime * updateSpeed);
+        public void Jump(float jumpForce)
+        {
+            fallStateInitializer?.SetJumpHeight(jumpForce);
         }
-        protected abstract void Crouch(float height);
-        protected abstract void Move(Vector3 position);
 
-        public    abstract float GetMoveMagnitude();
+        public abstract void Crouch(float height, float speed);
+        public abstract void Move(Vector3 position);
+        public abstract float GetMagnitude();
 
-        protected abstract Vector3 GetNextPosition(Transform transform, float moveSpeed, float fallSpeed, bool use2DMovement);
-        public abstract Transform GetTransform();
+        protected abstract Vector3   GetNextPosition(Transform transform, float moveSpeed, float fallSpeed, bool use2DMovement);
+        public    abstract Transform GetTransform();
     }
 }

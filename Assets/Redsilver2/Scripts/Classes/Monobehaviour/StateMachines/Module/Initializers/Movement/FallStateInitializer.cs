@@ -1,4 +1,3 @@
-using RedSilver2.Framework.StateMachines.Controllers;
 using RedSilver2.Framework.StateMachines.States;
 using UnityEngine.Events;
 using UnityEngine;
@@ -8,22 +7,60 @@ namespace RedSilver2.Framework.StateMachines
     [RequireComponent(typeof(LandStateInitializer))]
     public class FallStateInitializer : MovementStateInitializer
     {
-
+        [Space]
         [SerializeField] private float defaultFallSpeed;
-        [SerializeField] private float fallSpeed;
+        [SerializeField] private float defaultFallTransitiionSpeed;
+
 
         [Space]
-        [SerializeField] private float fallMoveSpeed;
+        [SerializeField] private float fallSpeed;
+        [SerializeField] private float fallTransitionSpeed;
+
+        [Space]
+        [SerializeField] private float moveSpeed;
+        [SerializeField] private float movementTransitionSpeed;
+
+        private float currentFallSpeed;
+
+        public float MovementTransitionSpeed    => movementTransitionSpeed;
+        public float DefaultFallTransitionSpeed => defaultFallTransitiionSpeed;
+        public float FallTransitionSpeed        => fallTransitionSpeed;
+        public float DefaultFallSpeed           => defaultFallSpeed;
+        public float FallSpeed                  => fallSpeed;
+        public float CurrentFallSpeed           => currentFallSpeed;
+        public float MoveSpeed                  => moveSpeed;
 
         #if UNITY_EDITOR
 
         private void OnValidate() {
             defaultFallSpeed = Mathf.Clamp(defaultFallSpeed, float.MinValue, 0f);
-            fallSpeed        = Mathf.Clamp(fallSpeed       , float.MinValue, defaultFallSpeed - 1f);
-            fallMoveSpeed    = Mathf.Clamp(fallMoveSpeed   , Mathf.Epsilon, float.MaxValue);
+            fallSpeed        = Mathf.Clamp(fallSpeed       , float.MinValue, defaultFallSpeed);
+            moveSpeed        = Mathf.Clamp(moveSpeed       , Mathf.Epsilon, float.MaxValue);
         }
 
 #endif
+
+        protected override void Start()
+        {
+            base.Start();
+            currentFallSpeed = defaultFallSpeed;
+        }
+
+        public void SetFallSpeed(float fallSpeed)
+        {
+            this.currentFallSpeed = Mathf.Clamp(fallSpeed, float.MinValue, 0f);
+        }
+
+        public void SetJumpHeight(float jumpHeight)
+        {
+            this.currentFallSpeed = Mathf.Clamp(jumpHeight, 0f, float.MaxValue);
+        }
+
+        public void UpdateFallSpeed(float nextFallSpeed, float updateSpeed)
+        {
+            if (nextFallSpeed <= 0f)
+                this.currentFallSpeed = Mathf.Lerp(currentFallSpeed, nextFallSpeed, Time.deltaTime * updateSpeed);
+        }
 
         protected sealed override MovementState GetDefaultState(MovementStateMachine stateMachine)
         {
@@ -32,57 +69,12 @@ namespace RedSilver2.Framework.StateMachines
             if (stateMachine.ContainsState(MovementStateType.Fall)) 
                 return stateMachine.GetState(MovementStateType.Fall) as FallState;
 
-            return new FallState(stateMachine);
+            return new FallState(stateMachine, this);
         }
 
-        private UnityAction OnEnterLandState(MovementState state) {
-            if (state == null) return null;
-
-            return () => {
-                if (state == null) return;
-                state.MovementHandler?.SetFallSpeed(defaultFallSpeed);
-            };
-        }
-
-
-        private UnityAction OnUpdateFall(MovementState state)
+        protected sealed override string GetModuleName()
         {
-            if (state == null) return null;
-
-            return () => {
-                if (state == null) return;
-                state.MovementHandler?.UpdateMoveSpeed(fallMoveSpeed, 5f);
-                state.MovementHandler?.UpdateFallSpeed(fallSpeed, 2.5f);
-            };
-        }
-
-        protected sealed override void OnStateAdded(MovementState state)
-        {
-            if (state is FallState){
-                state?.AddOnUpdateListener(OnUpdateFall(state));
-            }
-            else {
-                state?.AddOnStateEnteredListener(OnEnterLandState(state));
-            }
-        }
-
-        protected sealed override void OnStateRemoved(MovementState state)
-        {
-            if (state is FallState)
-            {
-                state?.RemoveOnUpdateListener(OnUpdateFall(state));
-            }
-            else
-            {
-                state?.RemoveOnStateEnteredListener(OnEnterLandState(state));
-            }
-        }
-
-        protected override MovementStateType[] GetInclusiveStates()
-        {
-            return new MovementStateType[] {
-                MovementStateType.Land, MovementStateType.Fall
-            };
+            return "Fall State Initializer";
         }
     }
 }

@@ -26,7 +26,6 @@ namespace RedSilver2.Framework.StateMachines.Controllers
             StateMachine.AddOnStateEnteredListener(state => { Debug.Log("Current State: " + (state == null ? "Null" : state.GetType().ToString())); });
             StateMachine.AddOnStateExitedListener(state => { Debug.Log("Previous State: " + (state == null ? "Null" : state.GetType().ToString())); });
 
-            StateMachine.ChangeState(MovementStateType.Idol.ToString());
             current = this;
             instances.Add(this);
         }

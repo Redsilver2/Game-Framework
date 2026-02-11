@@ -17,13 +17,13 @@ namespace RedSilver2.Framework.StateMachines.States.Movement
             Controller = controller;
         }
 
-        protected sealed override void Move(Vector3 position)
+        public sealed override void Move(Vector3 position)
         {
             if(Controller != null) {
-               Controller.Rigidbody?.AddForce(position, ForceMode.Force);
+               Controller.Rigidbody?.AddForce(Time.deltaTime * position, ForceMode.Force);
             }
         }
-        protected sealed override void Crouch(float height) {
+        public sealed override void Crouch(float height, float speed) {
             if (Controller != null) {
                 Transform transform = Controller.transform;
                 Vector3 currentSize = transform.localScale;
@@ -31,9 +31,10 @@ namespace RedSilver2.Framework.StateMachines.States.Movement
                 transform.localScale = Vector3.Lerp(currentSize, Vector3.right * currentSize.x +
                                                                  Vector3.up * height +
                                                                  Vector3.forward * currentSize.z,
-                                                                 Time.deltaTime * DEFAULT_CROUCH_SPEED);
+                                                                 Time.deltaTime * speed);
             }
         }
+
         public sealed override Transform GetTransform() {
             if (Controller == null) return null;
             return Controller.transform;

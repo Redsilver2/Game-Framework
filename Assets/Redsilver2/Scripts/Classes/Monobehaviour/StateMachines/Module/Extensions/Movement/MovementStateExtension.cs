@@ -1,19 +1,12 @@
 using RedSilver2.Framework.StateMachines.Controllers;
-using RedSilver2.Framework.StateMachines.States.Extensions;
 using System.Linq;
 using UnityEngine.Events;
+using UnityEngine;
 
 namespace RedSilver2.Framework.StateMachines.States {
-    public abstract class MovementStateExtension : StateExtension
+    public abstract class MovementStateExtension : MovementStateModule
     {
-        private MovementStateType[] inclusiveStates;
-
-        protected override void Awake()  {
-            inclusiveStates = GetInclusiveStates();
-            if (inclusiveStates != null) inclusiveStates = inclusiveStates.Distinct().ToArray();
-
-            base.Awake();
-        }
+        [SerializeField] private MovementStateType[] inclusiveStates;
 
         protected sealed override void OnStateAdded(State state)
         {
@@ -34,11 +27,6 @@ namespace RedSilver2.Framework.StateMachines.States {
             return state => { if (state is MovementState) OnStateRemoved(state as MovementState); };
         }
 
-        protected sealed override void SetStateMachine(ref StateMachine stateMachine) {
-           if(transform.root.gameObject.TryGetComponent(out StateMachineController controller)) {
-                if (controller is MovementStateMachineController) stateMachine = controller.StateMachine;
-           }
-        }
         public bool IsInclusiveState(MovementState state) {
             if (state == null || inclusiveStates == null) return false;
             return inclusiveStates.Where(x => x == state.Type).Count() > 0;
@@ -46,6 +34,5 @@ namespace RedSilver2.Framework.StateMachines.States {
 
         protected abstract void OnStateAdded(MovementState state);
         protected abstract void OnStateRemoved(MovementState state);
-        protected abstract MovementStateType[] GetInclusiveStates();
     }
 }

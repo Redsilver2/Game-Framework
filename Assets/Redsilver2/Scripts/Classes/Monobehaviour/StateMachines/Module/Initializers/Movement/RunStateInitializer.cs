@@ -1,18 +1,21 @@
-using RedSilver2.Framework.StateMachines.Controllers;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace RedSilver2.Framework.StateMachines.States
 {
-    [RequireComponent(typeof(WalkStateInitializer))]
-    public sealed class RunStateInitializer : MovementStateInitializer
+    [RequireComponent(typeof(RunMovementStateCondition))]
+    [RequireComponent(typeof(MoveMovementStateCondition))]
+    public abstract class RunStateInitializer : MovementConditionStateInitializer
     {
         [SerializeField] private float runSpeed;
+        [SerializeField] private float runTransitionSpeed;
+        public float RunSpeed => runSpeed; 
+        public float RunTransitionSpeed => runTransitionSpeed;  
 
         #if UNITY_EDITOR
         private void OnValidate()
         {
-            runSpeed = Mathf.Clamp(runSpeed, 1f, float.MaxValue);
+            runSpeed = Mathf.Clamp(runSpeed, Mathf.Epsilon, float.MaxValue);
         }
 #endif
 
@@ -23,29 +26,21 @@ namespace RedSilver2.Framework.StateMachines.States
             if (stateMachine.ContainsState(MovementStateType.Run)) 
                 return stateMachine.GetState(MovementStateType.Run) as RunState;
 
-            return new RunState(stateMachine);
+            return new RunState(stateMachine, this);
         }
 
-        private UnityAction OnUpdateRunState(MovementState state) {
-            if (state == null) return null;
-            return () =>
-            {
-                if (state == null) return;
-                state.MovementHandler?.UpdateMoveSpeed(runSpeed, 5f);
-            };
+        protected override string GetModuleName()
+        {
+            return "Run State Initializer";
         }
 
-        protected sealed override void OnStateAdded(MovementState state) {
-            state?.AddOnUpdateListener(OnUpdateRunState(state));
+        protected override bool IsValidCondition(MovementStateCondition condition) {
+            return condition is GroundMovementStateCondition || condition is CrouchMovementStateCondition ||
+                   condition is MoveMovementStateCondition;
         }
 
-        protected sealed override void OnStateRemoved(MovementState state) {
-            state?.RemoveOnUpdateListener(OnUpdateRunState(state));
+        protected sealed override bool IsShowOppositeResultCondition(MovementStateCondition condition) {
+            return condition is GroundMovementStateCondition || condition is MoveMovementStateCondition;
         }
-
-        protected sealed override MovementStateType[] GetInclusiveStates() {
-            return new MovementStateType[] { MovementStateType.Run };
-        }
-
     }
 }

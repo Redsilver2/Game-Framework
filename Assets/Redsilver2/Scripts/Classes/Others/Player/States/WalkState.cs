@@ -1,22 +1,33 @@
-using RedSilver2.Framework.StateMachines.States.Movement;
-using System.Collections.Generic;
-using UnityEngine;
-
-
 namespace RedSilver2.Framework.StateMachines.States
 {
     public sealed class WalkState : MovementState
     {
-        public WalkState(MovementStateMachine owner) : base(owner) {
+        private WalkStateInitializer initializer;
 
+        public WalkState(MovementStateMachine owner, WalkStateInitializer initializer) : base(owner) {
+            this.initializer = initializer;
+            
+            AddOnUpdateListener(() => {
+                if (owner == null || this.initializer == null) return;
+                owner.MovementHandler?.UpdateMoveSpeed(this.initializer.WalkSpeed, this.initializer.WalkTransitionSpeed);
+            });
+
+            AddOnStateAddedListener(() =>
+            {
+                owner?.AddOnStateModuleAddedListener(OnStateModuleAdded);
+            });
         }
 
-        protected sealed override void AddRequiredTransitionStates(MovementStateMachine stateMachine) {
-            if (stateMachine == null) return;
+        protected sealed override void RemoveAllListenersFromOwner(StateMachine owner)
+        {
+            base.RemoveAllListenersFromOwner(owner);
+            owner?.RemoveOnStateModuleAddedListener(OnStateModuleAdded);
+        }
 
-            if (!stateMachine.ContainsState(MovementStateType.Idol) && IsValidTransitionState(MovementStateType.Idol)) {
-                new IdolState(stateMachine);
-                AddTransitionState(stateMachine.GetState(MovementStateType.Idol));
+        private void OnStateModuleAdded(StateModule module)
+        {
+            if (module is WalkStateInitializer) {
+                initializer = module as WalkStateInitializer;
             }
         }
 

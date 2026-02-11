@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
+using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.InputSystem.XR;
 
 namespace RedSilver2.Framework.StateMachines.States
 {
@@ -121,7 +123,7 @@ namespace RedSilver2.Framework.StateMachines.States
         }
 
 
-        public virtual void AddTransitionCheck(string transitionName, IStateTransition transition, bool showOppositeResult)
+        public virtual void AddTransitionCheck(string transitionName, ICheckableStateTransition transition, bool showOppositeResult)
         {
             if (transition == null || string.IsNullOrEmpty(transitionName))
                 return;
@@ -214,6 +216,19 @@ namespace RedSilver2.Framework.StateMachines.States
            if (transitionChecks == null) return false;
            var results = transitionChecks.Values.Where(x => x.GetTransitionResult());
            return results.Count() == transitionChecks.Values.Count;
+        }
+
+        public string GetTranstitionValidations()
+        {
+            string results = "Transition Checks: \n";
+            if(transitionChecks == null) return results + "null";
+
+            foreach(KeyValuePair<string, StateTransition> valuePair in transitionChecks)
+            {
+                results += $"{valuePair.Key} | Is Valid: {valuePair.Value.GetTransitionResult()} \n";
+            }
+
+            return results;
         }
 
         public abstract string GetStateName();

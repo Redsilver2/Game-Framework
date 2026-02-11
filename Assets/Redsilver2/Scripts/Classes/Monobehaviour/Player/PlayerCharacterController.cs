@@ -8,6 +8,8 @@ namespace RedSilver2.Framework.StateMachines.Controllers
 
     public class PlayerCharacterController : PlayerController
     {
+        [SerializeField] private bool dontDestroyOnLoad;
+
         private CharacterController character;
         public CharacterController Character => character;
 
@@ -16,6 +18,8 @@ namespace RedSilver2.Framework.StateMachines.Controllers
             character = gameObject.GetOrAddComponent<CharacterController>();
             if (character != null) character.skinWidth = Mathf.Epsilon;
             base.Awake();
+
+            if (dontDestroyOnLoad) DontDestroyOnLoad(this);
         }
 
         protected sealed override PlayerMovementHandler GetPlayerMovementHandler() {

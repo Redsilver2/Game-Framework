@@ -1,26 +1,42 @@
 using RedSilver2.Framework.Inputs;
 using RedSilver2.Framework.StateMachines.States.Movement;
+using System.Linq;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 namespace RedSilver2.Framework.StateMachines.States
 {
     public sealed class RunState : MovementState
     {
+        private RunStateInitializer initializer;
+
         private const string HOLD_RUN_INPUT    = "Hold Run Input";
         private const string PRESS_RUN_INPUT   = "Press Run Input";
         private const string RUN_INPUT_SETTING = "Run Input Setting";
     
 
-        public RunState(MovementStateMachine owner) : base(owner) {
-   
+        public RunState(MovementStateMachine owner, RunStateInitializer initializer) : base(owner) {
+            this.initializer = initializer;
+
+            AddOnStateAddedListener(() =>
+            {
+                owner?.AddOnStateModuleAddedListener(OnStateModuleAdded);
+            });
+
+            AddOnUpdateListener(() => {
+                if (owner == null || this.initializer == null) return;
+                owner.MovementHandler?.UpdateMoveSpeed(initializer.RunSpeed, this.initializer.RunTransitionSpeed);
+            });
         }
 
-        protected sealed override void AddRequiredTransitionStates(MovementStateMachine stateMachine) {
-            if (stateMachine == null) return;
-            if (!stateMachine.ContainsState(MovementStateType.Idol) && IsValidTransitionState(MovementStateType.Idol)) {
-                new IdolState(stateMachine);
-                AddTransitionState(stateMachine.GetState(MovementStateType.Idol));
-            }
+        protected override void RemoveAllListenersFromOwner(StateMachine owner)
+        {
+            base.RemoveAllListenersFromOwner(owner);
+            owner?.RemoveOnStateModuleAddedListener(OnStateModuleAdded);
+        }
+
+        private void OnStateModuleAdded(StateModule module) {
+            if (module is RunStateInitializer) initializer = module as RunStateInitializer;
         }
 
         protected sealed override void SetIncompatibleStateTransitions(ref MovementStateType[] results) {

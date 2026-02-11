@@ -1,12 +1,9 @@
 using RedSilver2.Framework.StateMachines.States.Movement;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
 namespace RedSilver2.Framework.StateMachines.States
 {
-
     public abstract class MovementState : UpdateableState
     {
         public readonly MovementStateType   Type;
@@ -52,17 +49,11 @@ namespace RedSilver2.Framework.StateMachines.States
            // AddRequiredTransitionStates(stateMachine as MovementStateMachine);
         }
 
-        public sealed override void AddTransitionCheck(string transitionName, IStateTransition transition, bool showOppositeResult) {
-             if(transition is MovementStateTransitionExtension) 
-                 base.AddTransitionCheck(transitionName, transition, showOppositeResult);
-        }
-
         public sealed override string GetStateName()
         {
             return Type.ToString();
         }
 
-        protected abstract void AddRequiredTransitionStates(MovementStateMachine stateMachine);
         protected abstract void SetPlayerStateType(ref MovementStateType type);
         protected abstract void SetIncompatibleStateTransitions(ref MovementStateType[] results);
         public static MovementStateType[] GetStateTypes(){

@@ -5,10 +5,6 @@ namespace RedSilver2.Framework.StateMachines.States {
             
         }
 
-        protected sealed override void AddRequiredTransitionStates(MovementStateMachine stateMachine) {
-           
-        }
-
         protected sealed override void SetIncompatibleStateTransitions(ref MovementStateType[] results) {
             results = GetExcludedStateTypes(new MovementStateType[] { MovementStateType.Walk, MovementStateType.Run, MovementStateType.Fall, 
                                                             MovementStateType.Jump, MovementStateType.Crouch });

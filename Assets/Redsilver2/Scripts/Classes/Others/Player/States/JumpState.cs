@@ -1,22 +1,32 @@
 using RedSilver2.Framework.Inputs;
-using RedSilver2.Framework.StateMachines.States.Movement;
 
 namespace RedSilver2.Framework.StateMachines.States
 {
     public sealed class JumpState : MovementState
     {
+        private JumpStateInitializer initializer;
         private const string PRESS_JUMP_INPUT = "Press Jump";
 
-        public JumpState(MovementStateMachine owner) : base(owner) {
+        public JumpState(MovementStateMachine owner, JumpStateInitializer initializer) : base(owner) {
+            this.initializer = initializer;
+            
+            AddOnStateEnteredListener(() => {
+                if (this.initializer == null || MovementHandler == null) return;
+                MovementHandler?.Jump(this.initializer.JumpForce);
+            });
 
+            owner?.AddOnStateModuleAddedListener(OnStateModuleAdded);
         }
 
-        protected sealed override void AddRequiredTransitionStates(MovementStateMachine stateMachine) {
-             if(stateMachine == null) return;
-            if (!stateMachine.ContainsState(MovementStateType.Fall) && IsValidTransitionState(MovementStateType.Fall)) {
-                new FallState(stateMachine);
-                AddTransitionState(stateMachine.GetState(MovementStateType.Fall));
-            }
+        protected override void RemoveAllListenersFromOwner(StateMachine owner)
+        {
+            base.RemoveAllListenersFromOwner(owner);
+            owner?.RemoveOnStateModuleAddedListener(OnStateModuleAdded);
+        }
+
+        private void OnStateModuleAdded(StateModule module)
+        {
+            if (module is JumpStateInitializer) initializer = module as JumpStateInitializer;
         }
 
         protected sealed override void SetIncompatibleStateTransitions(ref MovementStateType[] results) {

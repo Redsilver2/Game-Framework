@@ -14,16 +14,9 @@ namespace RedSilver2.Framework.StateMachines.States
             return new IdolState(stateMachine);
         }
 
-        protected override MovementStateType[] GetInclusiveStates() {
-            return null;
-        }
-
-        protected sealed override void OnStateAdded(MovementState state) {
-
-        }
-
-        protected sealed override void OnStateRemoved(MovementState state) {
-
+        protected sealed override string GetModuleName()
+        {
+            return "Idol state Initializer";
         }
     }
 }

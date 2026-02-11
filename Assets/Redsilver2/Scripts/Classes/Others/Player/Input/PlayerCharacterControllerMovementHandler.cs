@@ -17,17 +17,15 @@ namespace RedSilver2.Framework.StateMachines.States.Movement
             this.Controller = controller;
         }
 
- 
-        protected sealed override void Move(Vector3 position) {
-            if(Controller != null) {
-                Controller.Character?.Move(position);
-            }
+
+        public sealed override void Move(Vector3 position) {
+            if(Controller != null)  Controller.Character?.Move(position);
         }
 
-        protected sealed override void Crouch(float height) {
+        public sealed override void Crouch(float height, float speed) {
             if (Controller != null) {
                 CharacterController character = Controller.Character;
-                if(character != null) character.height = Mathf.Lerp(character.height, height, Time.deltaTime * DEFAULT_CROUCH_SPEED);
+                if(character != null) character.height = Mathf.Lerp(character.height, height, Time.deltaTime * speed);
             }
         }
 
