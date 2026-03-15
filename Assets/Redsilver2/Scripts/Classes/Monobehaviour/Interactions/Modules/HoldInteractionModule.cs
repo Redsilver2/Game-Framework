@@ -6,7 +6,7 @@ namespace RedSilver2.Framework.Interactions
 
             if(handler != null && enabled)
                 if (handler.IsInputHeld)
-                    Interact();
+                    base.Interact(handler); 
         }
     }
 }

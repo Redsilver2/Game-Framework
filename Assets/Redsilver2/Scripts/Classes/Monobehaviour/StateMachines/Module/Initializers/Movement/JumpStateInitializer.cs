@@ -1,3 +1,4 @@
+using RedSilver2.Framework.Inputs;
 using RedSilver2.Framework.StateMachines.States;
 using UnityEngine;
 using UnityEngine.Events;
@@ -11,7 +12,7 @@ namespace RedSilver2.Framework.StateMachines
         [SerializeField] private float jumpForce;
         public float JumpForce => jumpForce;
 
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         private void OnValidate()
         {
             jumpForce = Mathf.Clamp(jumpForce, 0f, float.MaxValue);

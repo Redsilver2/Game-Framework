@@ -1,7 +1,6 @@
 using RedSilver2.Framework.StateMachines.Controllers;
 using RedSilver2.Framework.StateMachines.States;
 using RedSilver2.Framework.StateMachines.States.Movement;
-using System.Linq;
 using UnityEngine;
 
 
@@ -17,7 +16,7 @@ namespace RedSilver2.Framework.StateMachines {
 
             AddOnStateEnteredListener(state => {
                 if (state == null) return;
-
+ 
                 Debug.LogWarning("Current State: " + state.GetStateName());
 
             });

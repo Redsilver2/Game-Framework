@@ -1,5 +1,6 @@
 using RedSilver2.Framework.Dev;
 using RedSilver2.Framework.Interactions.Items;
+using RedSilver2.Framework.StateMachines.Controllers;
 using UnityEngine;
 
 namespace RedSilver2.Framework.Player.Inventories.UI

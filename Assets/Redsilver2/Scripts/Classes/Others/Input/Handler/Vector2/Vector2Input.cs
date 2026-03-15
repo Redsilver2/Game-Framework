@@ -5,22 +5,22 @@ namespace RedSilver2.Framework.Inputs
 {
     public abstract class Vector2Input : InputHandler
     {
-        protected Vector2GamepadStick gamepadStick;
+        protected GamepadStick gamepadStick;
         private UnityEvent<Vector2> onUpdate;
        
 
         public Vector2 Value { get; private set; }
 
-        public const GamepadStick DEFAULT_GAMEPAD_STICK   = GamepadStick.LeftStick;
+        public const GamepadStick DEFAULT_GAMEPAD_STICK = GamepadStick.LeftStick;
 
 
         protected Vector2Input(string name) : base(name)
         {
             onUpdate = new UnityEvent<Vector2>();
-            this.gamepadStick = Vector2GamepadStick.LeftStick;
+            this.gamepadStick = GamepadStick.LeftStick;
         }
 
-        protected Vector2Input(string name, Vector2GamepadStick gamepadStick) : base(name)
+        protected Vector2Input(string name, GamepadStick gamepadStick) : base(name)
         {
             onUpdate = new UnityEvent<Vector2>();
             this.gamepadStick = gamepadStick;

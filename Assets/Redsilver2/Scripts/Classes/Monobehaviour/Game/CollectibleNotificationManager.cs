@@ -68,7 +68,8 @@ namespace RedSilver2.Framework.Interactions.Collectibles
         public bool CanCloseIntialNotification() 
         {
             if (canPressAnyKey) return InputManager.AnyKeyDown;
-            return InputManager.GetKeyDown(keyboardKey, gamepadKey);
+            // return InputManager.GetKeyDown(keyboardKey, gamepadKey);
+            return true;
         }
 
         private void AddNotification(CollectibleNotification notification)

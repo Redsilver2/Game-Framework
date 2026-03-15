@@ -1,5 +1,6 @@
 
 using RedSilver2.Framework.Interactions.Items;
+using RedSilver2.Framework.Items;
 using RedSilver2.Framework.StateMachines.Controllers;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,11 +9,15 @@ using UnityEngine.Events;
 
 namespace RedSilver2.Framework.Player.Inventories
 {
-    public class Inventory : MonoBehaviour
+    public abstract class Inventory : MonoBehaviour
     {
+        [SerializeField] private Item[] defaultItems;
 
         [Space]
         [SerializeField] private bool allowDuplicateItems;
+
+        [Space]
+        [SerializeField] private ItemType[] allowedItemTypes;
 
         private UnityEvent onOpenUI, onCloseUI;
         private UnityEvent<Item> onItemAdded, onItemRemoved;
@@ -36,24 +41,27 @@ namespace RedSilver2.Framework.Player.Inventories
         protected virtual void Awake()
         {
             instances.Add(this);
+            items         = new List<Item>();
 
-            items = new List<Item>();
+            onCloseUI     = new UnityEvent();
+            onOpenUI      = new UnityEvent();
 
-            onCloseUI = new UnityEvent();
-            onOpenUI = new UnityEvent();
-
-            onItemAdded = new UnityEvent<Item>();
+            onItemAdded   = new UnityEvent<Item>();
             onItemRemoved = new UnityEvent<Item>();
 
-            isUIOpened = false;
+            isUIOpened    = false;
 
             AddOnOpenUIListener(OnOpenUI);
             AddOnCloseUIListener(OnCloseUI);
+
+            AddOnItemAddedListener(OnItemAdded);
+            AddOnItemRemovedListener(OnItemRemoved);
         }
 
-        protected virtual void Start()
+        protected void Start()
         {
-            gameObject.SetActive(false);
+            foreach(Item item in defaultItems)
+                item?.Add(this);
         }
 
         public void Open() {
@@ -79,57 +87,69 @@ namespace RedSilver2.Framework.Player.Inventories
 
         public void AddOnCloseUIListener(UnityAction action)
         {
-            if (action != null && onCloseUI != null)
-                onCloseUI.AddListener(action);
+            if (action != null)
+                onCloseUI?.AddListener(action);
         }
         public void RemoveOnCloseUIListener(UnityAction action)
         {
-            if (action != null && onCloseUI != null)
-                onCloseUI.RemoveListener(action);
+            if (action != null)
+                onCloseUI?.RemoveListener(action);
         }
 
         public void AddOnItemAddedListener(UnityAction<Item> action)
         {
-            if (onItemAdded != null && action != null) {
-                onItemAdded.AddListener(action);
-            }
+            if (action != null) 
+                onItemAdded?.AddListener(action);
         }
         public void RemoveOnItemAddedListener(UnityAction<Item> action)
         {
-            if (onItemAdded != null && action != null)
-            {
-                onItemAdded.RemoveListener(action);
-            }
+            if (action != null)
+                onItemAdded?.RemoveListener(action);
         }
 
         public void AddOnItemRemovedListener(UnityAction<Item> action)
         {
-            if (onItemRemoved != null && action != null) {
-                onItemRemoved.AddListener(action);
-            }
+            if (action != null) 
+                onItemRemoved?.AddListener(action);
+           
         }
+
         public void RemoveOnItemRemovedListener(UnityAction<Item> action)
         {
-            if (onItemRemoved != null && action != null) {
-                onItemRemoved.RemoveListener(action);
-            }
+            if (action != null) 
+                onItemRemoved?.RemoveListener(action);
+        }
+
+        public virtual void AddItem(Item item) {
+            AddItem(item, out bool isItemAdded);
         }
 
         public virtual void AddItem(Item item, out bool isItemAdded)
         {
             isItemAdded = false;
-            if (items == null || item == null) return;
+
+            if (items == null || item == null || allowedItemTypes == null || !allowedItemTypes.Contains(item.Type))
+                return;
 
             if (allowDuplicateItems) {
                 if (items.Count == 0 || ContainsDuplicate(item)) items.Add(item);
             }
-            else if (!Contains(item) && !ContainsDuplicate(item))
-                items.Add(item);
+            else if (!Contains(item) && !ContainsDuplicate(item)) items.Add(item);
+            else {
+                isItemAdded = false; return;
+            }
 
             isItemAdded = Contains(item);
-            if (isItemAdded == true && onItemAdded != null) onItemAdded.Invoke(item);
+            if (isItemAdded == true) onItemAdded?.Invoke(item);
         }
-        public virtual void RemoveItem(Item item, out bool isItemRemoved)
+
+        public void RemoveItem(Item item)
+        {
+            RemoveItem(item, out bool isItemRemoved);
+        }
+
+
+        protected virtual void RemoveItem(Item item, out bool isItemRemoved)
         {
             isItemRemoved = false;
             if (items == null || item == null) return;
@@ -137,7 +157,7 @@ namespace RedSilver2.Framework.Player.Inventories
             if (items.Contains(item)) {
                 items.Remove(item);
                 isItemRemoved = !Contains(item);
-                if (isItemRemoved == false && onItemRemoved != null) onItemRemoved.Invoke(item);
+                if (isItemRemoved == true) onItemRemoved?.Invoke(item);
             }
         }
 
@@ -245,6 +265,10 @@ namespace RedSilver2.Framework.Player.Inventories
 
             return null;
         }
+
+
+        protected abstract void OnItemAdded(Item item);
+        protected abstract void OnItemRemoved(Item item);
 
         public static Inventory GetComponent(Transform root)
         {

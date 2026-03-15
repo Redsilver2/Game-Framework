@@ -60,29 +60,32 @@ namespace RedSilver2.Framework.Interactions.Collectibles
                 onHideNotification.RemoveListener(action);
         }
 
-        public static bool WasDataRegistered(CollectibleData data)
+        public static bool WasDataRegistered(IPickableInteractable pickable)
         {
-            GameObject model = GetDataModel(data);
+            GameObject model = GetDataModel(pickable);
             if (model == null) return false;
             return registeredCollectible.Contains(model.name.ToLower());
         }
 
-        public static void RegisterData(CollectibleData data)
+        public static void RegisterData(IPickableInteractable pickable)
         {
-            GameObject model = GetDataModel(data);
+            GameObject model = GetDataModel(pickable);
           
             if (model != null && registeredCollectible != null) 
             {
-                if (!WasDataRegistered(data)) {
+                if (!WasDataRegistered(pickable)) {
                     registeredCollectible.Add(model.name.ToLower());
                 }
             }    
         }
 
-        protected static GameObject GetDataModel(CollectibleData data)
+        protected static GameObject GetDataModel(IPickableInteractable pickable)
         {
-            if (data == null || data.Model == null) return null;
-            return CollectibleModelViewer.GetCollectibleModel(data.Model.name);
+            if (pickable == null) return null;
+            GameObject model = pickable.GetModel();
+
+            if (model == null) return null;
+            return CollectibleModelViewer.GetCollectibleModel(model.name);
         }
 
         public IEnumerator UpdateNotification(Collectible collectible)

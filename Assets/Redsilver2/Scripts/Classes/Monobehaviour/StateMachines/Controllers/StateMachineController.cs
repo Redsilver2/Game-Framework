@@ -1,4 +1,4 @@
-using RedSilver2.Framework.StateMachines.States;
+using RedSilver2.Framework.Inputs;
 using UnityEngine;
 
 namespace RedSilver2.Framework.StateMachines.Controllers
@@ -6,36 +6,31 @@ namespace RedSilver2.Framework.StateMachines.Controllers
     public abstract class StateMachineController : MonoBehaviour
     {
         private StateMachine stateMachine;
-        public StateMachine StateMachine => stateMachine;
+        public  StateMachine StateMachine => stateMachine;
 
         protected virtual void Awake() {
             InitializeStateMachine(ref stateMachine);
         }
 
-        private void Update() {
+        protected virtual void Update() {
+            if (InputManager.GetKey(GamepadButton.RightStickLeft))
+                Debug.Log("Pushing the right stick left");
+             if (InputManager.GetKeyUp(GamepadButton.RightStickLeft))
+                    Debug.Log("Pushing Up the right stick right");
+
             stateMachine?.Update();
         }
 
-        private void LateUpdate() {
+        protected virtual void LateUpdate() {
             stateMachine?.LateUpdate();
         }
 
-        private void OnDisable() {
+        protected virtual void OnDisable() {
             stateMachine?.Disable();
         }
 
-        private void OnEnable() {
+        protected virtual void OnEnable() {
             stateMachine?.Enable();
-        }
-
-        protected virtual void AddState(State state) {
-            if (state != null)
-              stateMachine?.AddState(state.GetStateName(), state);
-        }
-
-        public void RemoveState(State state) {
-            if(state != null)
-              stateMachine?.RemoveState(state.GetStateName());
         }
 
         protected abstract void InitializeStateMachine(ref StateMachine stateMachine);

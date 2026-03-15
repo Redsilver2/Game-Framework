@@ -1,5 +1,6 @@
 using RedSilver2.Framework.Inputs;
 using RedSilver2.Framework.StateMachines.States;
+using UnityEngine;
 
 namespace RedSilver2.Framework.StateMachines
 {
@@ -8,10 +9,12 @@ namespace RedSilver2.Framework.StateMachines
         private PressInput input;
         public  PressInput Input => input;
 
+        private const string PRESS_JUMP_INPUT = "Press Jump";
+
         protected override void Awake()
         {
             base.Awake();
-            input = JumpState.GetPressInput();
+            input = GetPressInput();
         }
 
         protected override void Start() {
@@ -21,7 +24,7 @@ namespace RedSilver2.Framework.StateMachines
 
         protected sealed override void OnDisable() {
             base.OnDisable();
-            input?.Disable();
+            input?.Disable();    
         }
 
 
@@ -48,6 +51,11 @@ namespace RedSilver2.Framework.StateMachines
             }
 
             base.OnUpdate();
+        }
+
+        public static OverrideablePressInput GetPressInput()
+        {
+            return InputManager.GetOrCreateOverrideablePressInput(PRESS_JUMP_INPUT, KeyboardKey.Space, GamepadButton.ButtonSouth);
         }
     }
 }

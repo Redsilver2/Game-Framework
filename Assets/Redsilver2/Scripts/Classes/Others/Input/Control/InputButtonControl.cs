@@ -8,11 +8,12 @@ namespace RedSilver2.Framework.Inputs
     public class InputButtonControl : InputControl
     {
         private readonly ButtonControl control;
-        private string path;
-        public string Path => path;
 
-        public InputButtonControl(string path, Sprite icon) : base(icon) {
-            this.path = path;
+        public InputButtonControl(string path) : base(path) {
+            control = InputSystem.FindControl(path) as ButtonControl;
+        }
+
+        public InputButtonControl(string path, Sprite icon) : base(path, icon) {
             control = InputSystem.FindControl(path) as ButtonControl;
         }
 

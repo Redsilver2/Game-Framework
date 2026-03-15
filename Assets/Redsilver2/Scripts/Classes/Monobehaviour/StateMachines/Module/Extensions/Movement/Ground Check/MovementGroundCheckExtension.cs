@@ -29,32 +29,38 @@ namespace RedSilver2.Framework.StateMachines.States
             stateMachine?.RemoveOnUpdateListener(OnUpdate); 
         }
 
-        protected sealed override void OnEnable()
-        {
+        protected sealed override void OnEnable() {
             base.OnEnable();
             stateMachine?.AddOnUpdateListener(OnUpdate);
         }
 
-        protected sealed override void SetStateMachine(ref StateMachine stateMachine)
+        private void OnUpdate()
         {
-            if (transform.root.TryGetComponent(out MovementStateMachineController controller)) {
-                stateMachine = controller.StateMachine;
-            }
+            OnUpdate(groundCheckRange, ref isGrounded, ref groundTag, ref hitPosition);
         }
 
+        protected sealed override StateMachineController GetStateMachineStateMachine(StateMachineController controller)
+        {
+            if (controller is not MovementStateMachineController) return null;
+            return base.GetStateMachineStateMachine(controller);
+        }
 
         protected sealed override UnityAction<State> GetOnStateAddedAction() { return null; }
         protected sealed override UnityAction<State> GetOnStateRemovedAction() { return null; }
            
 
-        private void OnUpdate() {
-            OnUpdate(groundCheckRange, ref isGrounded, ref groundTag, ref hitPosition);
-        }
 
-        protected abstract void OnUpdate(float groundCheckRange, ref bool isGrounded, ref string groundTag, ref Vector3 hitPosition);
 
         protected sealed override string GetModuleName() {
             return "Ground Check";
         }
+
+        protected sealed override bool CanAddOrRemoveState(State state)
+        {
+            return state is MovementState;
+        }
+
+        protected abstract void OnUpdate(float groundCheckRange, ref bool isGrounded, ref string groundTag, ref Vector3 hitPosition);
+
     }
 }

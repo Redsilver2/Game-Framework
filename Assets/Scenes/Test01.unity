@@ -273,6 +273,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2898601627265390757, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
+      propertyPath: type
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7714366484231452935, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.55414
@@ -348,14 +352,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9503ea5d1991198449e6eb29d73af2a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Interactions.Items.Flashlight
-  leftHand: {fileID: 0}
-  rightHand: {fileID: 0}
-  equipAnimation: {fileID: 7400000, guid: 4e085f086c2af5c45b9054f9b38ebc5f, type: 2}
-  unequipAnimation: {fileID: 7400000, guid: 59d6e1d5b9547154b9f59340bd22d97c, type: 2}
-  dropAnimation: {fileID: 0}
-  data: {fileID: 11400000, guid: a75d5f48dd4811f42a2ec2cac635ffb8, type: 2}
-  leftArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
-  rightArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
 --- !u!82 &46899730
 AudioSource:
   m_ObjectHideFlags: 0
@@ -678,6 +674,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2898601627265390757, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
+      propertyPath: type
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7714366484231452935, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.55414
@@ -753,14 +753,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9503ea5d1991198449e6eb29d73af2a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Interactions.Items.Flashlight
-  leftHand: {fileID: 0}
-  rightHand: {fileID: 0}
-  equipAnimation: {fileID: 7400000, guid: 4e085f086c2af5c45b9054f9b38ebc5f, type: 2}
-  unequipAnimation: {fileID: 7400000, guid: 59d6e1d5b9547154b9f59340bd22d97c, type: 2}
-  dropAnimation: {fileID: 0}
-  data: {fileID: 11400000, guid: a75d5f48dd4811f42a2ec2cac635ffb8, type: 2}
-  leftArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
-  rightArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
 --- !u!82 &58563853
 AudioSource:
   m_ObjectHideFlags: 0
@@ -888,6 +880,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2898601627265390757, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
+      propertyPath: type
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7714366484231452935, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.55414
@@ -963,14 +959,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9503ea5d1991198449e6eb29d73af2a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Interactions.Items.Flashlight
-  leftHand: {fileID: 0}
-  rightHand: {fileID: 0}
-  equipAnimation: {fileID: 7400000, guid: 4e085f086c2af5c45b9054f9b38ebc5f, type: 2}
-  unequipAnimation: {fileID: 7400000, guid: 59d6e1d5b9547154b9f59340bd22d97c, type: 2}
-  dropAnimation: {fileID: 0}
-  data: {fileID: 11400000, guid: a75d5f48dd4811f42a2ec2cac635ffb8, type: 2}
-  leftArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
-  rightArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
 --- !u!82 &112670899
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1238,6 +1226,37 @@ MonoBehaviour:
   maxPitch: 1
   minVolume: 0.5
   maxVolume: 1
+--- !u!1 &145174869
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 145174870}
+  m_Layer: 0
+  m_Name: Left Hand
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &145174870
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 145174869}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.39050078, y: -0.6186564, z: 0.38533264}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1706787817}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &164885846
 GameObject:
   m_ObjectHideFlags: 0
@@ -1419,6 +1438,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2898601627265390757, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
+      propertyPath: type
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7714366484231452935, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.55414
@@ -1494,14 +1517,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9503ea5d1991198449e6eb29d73af2a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Interactions.Items.Flashlight
-  leftHand: {fileID: 0}
-  rightHand: {fileID: 0}
-  equipAnimation: {fileID: 7400000, guid: 4e085f086c2af5c45b9054f9b38ebc5f, type: 2}
-  unequipAnimation: {fileID: 7400000, guid: 59d6e1d5b9547154b9f59340bd22d97c, type: 2}
-  dropAnimation: {fileID: 0}
-  data: {fileID: 11400000, guid: a75d5f48dd4811f42a2ec2cac635ffb8, type: 2}
-  leftArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
-  rightArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
 --- !u!82 &197196314
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1906,6 +1921,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2898601627265390757, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
+      propertyPath: type
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7714366484231452935, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.55414
@@ -1981,14 +2000,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9503ea5d1991198449e6eb29d73af2a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Interactions.Items.Flashlight
-  leftHand: {fileID: 0}
-  rightHand: {fileID: 0}
-  equipAnimation: {fileID: 7400000, guid: 4e085f086c2af5c45b9054f9b38ebc5f, type: 2}
-  unequipAnimation: {fileID: 7400000, guid: 59d6e1d5b9547154b9f59340bd22d97c, type: 2}
-  dropAnimation: {fileID: 0}
-  data: {fileID: 11400000, guid: a75d5f48dd4811f42a2ec2cac635ffb8, type: 2}
-  leftArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
-  rightArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
 --- !u!82 &240640403
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2125,14 +2136,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9503ea5d1991198449e6eb29d73af2a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Interactions.Items.Flashlight
-  leftHand: {fileID: 0}
-  rightHand: {fileID: 0}
-  equipAnimation: {fileID: 7400000, guid: 4e085f086c2af5c45b9054f9b38ebc5f, type: 2}
-  unequipAnimation: {fileID: 7400000, guid: 59d6e1d5b9547154b9f59340bd22d97c, type: 2}
-  dropAnimation: {fileID: 0}
-  data: {fileID: 11400000, guid: a75d5f48dd4811f42a2ec2cac635ffb8, type: 2}
-  leftArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
-  rightArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
 --- !u!82 &245903330
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2469,6 +2472,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 277034415}
+  - component: {fileID: 277034416}
   m_Layer: 0
   m_Name: Inventory
   m_TagString: Untagged
@@ -2489,7 +2493,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1936917132}
-  - {fileID: 563302939}
   m_Father: {fileID: 403580465}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -2497,6 +2500,23 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &277034416
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 277034414}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d89ca475ad95c204da03155a03e1117a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Player.Inventories.EquippableInventory
+  defaultItems: []
+  allowDuplicateItems: 0
+  allowedItemTypes: 00000000
+  defaultSlotsCount: 5
+  leftHand: {fileID: 145174870}
 --- !u!1001 &310646760
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2505,6 +2525,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2898601627265390757, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
+      propertyPath: type
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7714366484231452935, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.55414
@@ -2571,6 +2595,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2898601627265390757, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
+      propertyPath: type
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7714366484231452935, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.55414
@@ -2646,14 +2674,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9503ea5d1991198449e6eb29d73af2a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Interactions.Items.Flashlight
-  leftHand: {fileID: 0}
-  rightHand: {fileID: 0}
-  equipAnimation: {fileID: 7400000, guid: 4e085f086c2af5c45b9054f9b38ebc5f, type: 2}
-  unequipAnimation: {fileID: 7400000, guid: 59d6e1d5b9547154b9f59340bd22d97c, type: 2}
-  dropAnimation: {fileID: 0}
-  data: {fileID: 11400000, guid: a75d5f48dd4811f42a2ec2cac635ffb8, type: 2}
-  leftArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
-  rightArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
 --- !u!82 &365992638
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2806,9 +2826,9 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1141812908}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 50, y: -95}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &383822753
@@ -2956,6 +2976,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 277034415}
+  - {fileID: 563302939}
   m_Father: {fileID: 468072658}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -3310,6 +3331,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2898601627265390757, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
+      propertyPath: type
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7714366484231452935, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.55414
@@ -3385,14 +3410,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9503ea5d1991198449e6eb29d73af2a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Interactions.Items.Flashlight
-  leftHand: {fileID: 0}
-  rightHand: {fileID: 0}
-  equipAnimation: {fileID: 7400000, guid: 4e085f086c2af5c45b9054f9b38ebc5f, type: 2}
-  unequipAnimation: {fileID: 7400000, guid: 59d6e1d5b9547154b9f59340bd22d97c, type: 2}
-  dropAnimation: {fileID: 0}
-  data: {fileID: 11400000, guid: a75d5f48dd4811f42a2ec2cac635ffb8, type: 2}
-  leftArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
-  rightArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
 --- !u!82 &450403981
 AudioSource:
   m_ObjectHideFlags: 0
@@ -3556,7 +3573,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa832de34f7a94c4dbcfd002e4df58d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.PlayerCrouchStateIntializer
-  transitionStates: 000000000100000002000000
+  transitionStates: 00000000010000000200000005000000
   standingHeight: 2
   crouchHeight: 1
   moveSpeed: 2.5
@@ -3750,7 +3767,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e4f52933b543944d92b7ebb09d203e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.States.PlayerRunStateInitializer
-  transitionStates: 00000000010000000300000004000000
+  transitionStates: 0000000001000000030000000400000005000000
   runSpeed: 10
   runTransitionSpeed: 5
 --- !u!114 &468072653
@@ -3765,7 +3782,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 233052e6c051fea4cb2e0a2d112be34c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.States.WalkStateInitializer
-  transitionStates: 00000000020000000300000004000000
+  transitionStates: 0000000002000000030000000400000005000000
   walkSpeed: 5
   walkTransitionSpeed: 5
 --- !u!114 &468072654
@@ -3780,7 +3797,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb8e0505cf6cfd54e8f388bca75de788, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.States.IdolStateInitializer
-  transitionStates: 01000000020000000300000004000000
+  transitionStates: 0100000002000000030000000400000005000000
 --- !u!143 &468072655
 CharacterController:
   m_ObjectHideFlags: 0
@@ -3818,7 +3835,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 848cc657753e2854b8be185a3572225b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.Controllers.PlayerCharacterController
-  use2DMovement: 0
+  use2DMovement: 1
   dontDestroyOnLoad: 1
 --- !u!114 &468072657
 MonoBehaviour:
@@ -3832,7 +3849,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e0167fc076436c49b6d89fe4cb7b41d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainInventory: {fileID: 1936917122}
+  mainInventory: {fileID: 0}
 --- !u!4 &468072658
 Transform:
   m_ObjectHideFlags: 0
@@ -4026,6 +4043,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2898601627265390757, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
+      propertyPath: type
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7714366484231452935, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.55414
@@ -4101,14 +4122,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9503ea5d1991198449e6eb29d73af2a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Interactions.Items.Flashlight
-  leftHand: {fileID: 0}
-  rightHand: {fileID: 0}
-  equipAnimation: {fileID: 7400000, guid: 4e085f086c2af5c45b9054f9b38ebc5f, type: 2}
-  unequipAnimation: {fileID: 7400000, guid: 59d6e1d5b9547154b9f59340bd22d97c, type: 2}
-  dropAnimation: {fileID: 0}
-  data: {fileID: 11400000, guid: a75d5f48dd4811f42a2ec2cac635ffb8, type: 2}
-  leftArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
-  rightArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
 --- !u!82 &550615635
 AudioSource:
   m_ObjectHideFlags: 0
@@ -4286,15 +4299,15 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 563302938}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0.000061774335}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 277034415}
+  m_Father: {fileID: 403580465}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 837, y: 447}
+  m_AnchoredPosition: {x: -72.99982, y: -42.79245}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &563302940
@@ -4560,6 +4573,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2898601627265390757, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
+      propertyPath: type
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7714366484231452935, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.55414
@@ -4635,14 +4652,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9503ea5d1991198449e6eb29d73af2a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Interactions.Items.Flashlight
-  leftHand: {fileID: 0}
-  rightHand: {fileID: 0}
-  equipAnimation: {fileID: 7400000, guid: 4e085f086c2af5c45b9054f9b38ebc5f, type: 2}
-  unequipAnimation: {fileID: 7400000, guid: 59d6e1d5b9547154b9f59340bd22d97c, type: 2}
-  dropAnimation: {fileID: 0}
-  data: {fileID: 11400000, guid: a75d5f48dd4811f42a2ec2cac635ffb8, type: 2}
-  leftArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
-  rightArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
 --- !u!82 &644019631
 AudioSource:
   m_ObjectHideFlags: 0
@@ -5280,6 +5289,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2898601627265390757, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
+      propertyPath: type
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7714366484231452935, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.55414
@@ -5355,14 +5368,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9503ea5d1991198449e6eb29d73af2a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Interactions.Items.Flashlight
-  leftHand: {fileID: 0}
-  rightHand: {fileID: 0}
-  equipAnimation: {fileID: 7400000, guid: 4e085f086c2af5c45b9054f9b38ebc5f, type: 2}
-  unequipAnimation: {fileID: 7400000, guid: 59d6e1d5b9547154b9f59340bd22d97c, type: 2}
-  dropAnimation: {fileID: 0}
-  data: {fileID: 11400000, guid: a75d5f48dd4811f42a2ec2cac635ffb8, type: 2}
-  leftArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
-  rightArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
 --- !u!82 &790361722
 AudioSource:
   m_ObjectHideFlags: 0
@@ -5602,6 +5607,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2898601627265390757, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
+      propertyPath: type
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7714366484231452935, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.55414
@@ -5677,14 +5686,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9503ea5d1991198449e6eb29d73af2a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Interactions.Items.Flashlight
-  leftHand: {fileID: 0}
-  rightHand: {fileID: 0}
-  equipAnimation: {fileID: 7400000, guid: 4e085f086c2af5c45b9054f9b38ebc5f, type: 2}
-  unequipAnimation: {fileID: 7400000, guid: 59d6e1d5b9547154b9f59340bd22d97c, type: 2}
-  dropAnimation: {fileID: 0}
-  data: {fileID: 11400000, guid: a75d5f48dd4811f42a2ec2cac635ffb8, type: 2}
-  leftArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
-  rightArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
 --- !u!82 &836069554
 AudioSource:
   m_ObjectHideFlags: 0
@@ -5812,6 +5813,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2898601627265390757, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
+      propertyPath: type
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7714366484231452935, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.55414
@@ -5887,14 +5892,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9503ea5d1991198449e6eb29d73af2a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Interactions.Items.Flashlight
-  leftHand: {fileID: 0}
-  rightHand: {fileID: 0}
-  equipAnimation: {fileID: 7400000, guid: 4e085f086c2af5c45b9054f9b38ebc5f, type: 2}
-  unequipAnimation: {fileID: 7400000, guid: 59d6e1d5b9547154b9f59340bd22d97c, type: 2}
-  dropAnimation: {fileID: 0}
-  data: {fileID: 11400000, guid: a75d5f48dd4811f42a2ec2cac635ffb8, type: 2}
-  leftArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
-  rightArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
 --- !u!82 &840862216
 AudioSource:
   m_ObjectHideFlags: 0
@@ -6149,6 +6146,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2898601627265390757, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
+      propertyPath: type
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7714366484231452935, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.55414
@@ -6224,14 +6225,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9503ea5d1991198449e6eb29d73af2a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Interactions.Items.Flashlight
-  leftHand: {fileID: 0}
-  rightHand: {fileID: 0}
-  equipAnimation: {fileID: 7400000, guid: 4e085f086c2af5c45b9054f9b38ebc5f, type: 2}
-  unequipAnimation: {fileID: 7400000, guid: 59d6e1d5b9547154b9f59340bd22d97c, type: 2}
-  dropAnimation: {fileID: 0}
-  data: {fileID: 11400000, guid: a75d5f48dd4811f42a2ec2cac635ffb8, type: 2}
-  leftArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
-  rightArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
 --- !u!82 &930522302
 AudioSource:
   m_ObjectHideFlags: 0
@@ -6359,6 +6352,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2898601627265390757, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
+      propertyPath: type
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7714366484231452935, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.55414
@@ -6434,14 +6431,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9503ea5d1991198449e6eb29d73af2a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Interactions.Items.Flashlight
-  leftHand: {fileID: 0}
-  rightHand: {fileID: 0}
-  equipAnimation: {fileID: 7400000, guid: 4e085f086c2af5c45b9054f9b38ebc5f, type: 2}
-  unequipAnimation: {fileID: 7400000, guid: 59d6e1d5b9547154b9f59340bd22d97c, type: 2}
-  dropAnimation: {fileID: 0}
-  data: {fileID: 11400000, guid: a75d5f48dd4811f42a2ec2cac635ffb8, type: 2}
-  leftArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
-  rightArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
 --- !u!82 &969613880
 AudioSource:
   m_ObjectHideFlags: 0
@@ -6696,6 +6685,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2898601627265390757, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
+      propertyPath: type
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7714366484231452935, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.55414
@@ -6771,14 +6764,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9503ea5d1991198449e6eb29d73af2a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Interactions.Items.Flashlight
-  leftHand: {fileID: 0}
-  rightHand: {fileID: 0}
-  equipAnimation: {fileID: 7400000, guid: 4e085f086c2af5c45b9054f9b38ebc5f, type: 2}
-  unequipAnimation: {fileID: 7400000, guid: 59d6e1d5b9547154b9f59340bd22d97c, type: 2}
-  dropAnimation: {fileID: 0}
-  data: {fileID: 11400000, guid: a75d5f48dd4811f42a2ec2cac635ffb8, type: 2}
-  leftArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
-  rightArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
 --- !u!82 &1011992937
 AudioSource:
   m_ObjectHideFlags: 0
@@ -7386,6 +7371,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2898601627265390757, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
+      propertyPath: type
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7714366484231452935, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.55414
@@ -7461,14 +7450,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9503ea5d1991198449e6eb29d73af2a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Interactions.Items.Flashlight
-  leftHand: {fileID: 0}
-  rightHand: {fileID: 0}
-  equipAnimation: {fileID: 7400000, guid: 4e085f086c2af5c45b9054f9b38ebc5f, type: 2}
-  unequipAnimation: {fileID: 7400000, guid: 59d6e1d5b9547154b9f59340bd22d97c, type: 2}
-  dropAnimation: {fileID: 0}
-  data: {fileID: 11400000, guid: a75d5f48dd4811f42a2ec2cac635ffb8, type: 2}
-  leftArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
-  rightArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
 --- !u!82 &1120302183
 AudioSource:
   m_ObjectHideFlags: 0
@@ -7772,6 +7753,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2898601627265390757, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
+      propertyPath: type
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7714366484231452935, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.55414
@@ -7847,14 +7832,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9503ea5d1991198449e6eb29d73af2a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Interactions.Items.Flashlight
-  leftHand: {fileID: 0}
-  rightHand: {fileID: 0}
-  equipAnimation: {fileID: 7400000, guid: 4e085f086c2af5c45b9054f9b38ebc5f, type: 2}
-  unequipAnimation: {fileID: 7400000, guid: 59d6e1d5b9547154b9f59340bd22d97c, type: 2}
-  dropAnimation: {fileID: 0}
-  data: {fileID: 11400000, guid: a75d5f48dd4811f42a2ec2cac635ffb8, type: 2}
-  leftArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
-  rightArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
 --- !u!82 &1214190655
 AudioSource:
   m_ObjectHideFlags: 0
@@ -8588,6 +8565,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2898601627265390757, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
+      propertyPath: type
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7714366484231452935, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.55414
@@ -8663,14 +8644,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9503ea5d1991198449e6eb29d73af2a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Interactions.Items.Flashlight
-  leftHand: {fileID: 0}
-  rightHand: {fileID: 0}
-  equipAnimation: {fileID: 7400000, guid: 4e085f086c2af5c45b9054f9b38ebc5f, type: 2}
-  unequipAnimation: {fileID: 7400000, guid: 59d6e1d5b9547154b9f59340bd22d97c, type: 2}
-  dropAnimation: {fileID: 0}
-  data: {fileID: 11400000, guid: a75d5f48dd4811f42a2ec2cac635ffb8, type: 2}
-  leftArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
-  rightArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
 --- !u!82 &1364890306
 AudioSource:
   m_ObjectHideFlags: 0
@@ -9083,6 +9056,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2898601627265390757, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
+      propertyPath: type
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7714366484231452935, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.55414
@@ -9158,14 +9135,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9503ea5d1991198449e6eb29d73af2a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Interactions.Items.Flashlight
-  leftHand: {fileID: 0}
-  rightHand: {fileID: 0}
-  equipAnimation: {fileID: 7400000, guid: 4e085f086c2af5c45b9054f9b38ebc5f, type: 2}
-  unequipAnimation: {fileID: 7400000, guid: 59d6e1d5b9547154b9f59340bd22d97c, type: 2}
-  dropAnimation: {fileID: 0}
-  data: {fileID: 11400000, guid: a75d5f48dd4811f42a2ec2cac635ffb8, type: 2}
-  leftArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
-  rightArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
 --- !u!82 &1388311666
 AudioSource:
   m_ObjectHideFlags: 0
@@ -9329,6 +9298,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2898601627265390757, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
+      propertyPath: type
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7714366484231452935, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.55414
@@ -9404,14 +9377,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9503ea5d1991198449e6eb29d73af2a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Interactions.Items.Flashlight
-  leftHand: {fileID: 0}
-  rightHand: {fileID: 0}
-  equipAnimation: {fileID: 7400000, guid: 4e085f086c2af5c45b9054f9b38ebc5f, type: 2}
-  unequipAnimation: {fileID: 7400000, guid: 59d6e1d5b9547154b9f59340bd22d97c, type: 2}
-  dropAnimation: {fileID: 0}
-  data: {fileID: 11400000, guid: a75d5f48dd4811f42a2ec2cac635ffb8, type: 2}
-  leftArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
-  rightArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
 --- !u!82 &1447815027
 AudioSource:
   m_ObjectHideFlags: 0
@@ -9942,6 +9907,140 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1495851408}
   m_CullTransparentMesh: 1
+--- !u!1 &1519345035
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1519345039}
+  - component: {fileID: 1519345037}
+  - component: {fileID: 1519345036}
+  - component: {fileID: 1519345042}
+  - component: {fileID: 1519345041}
+  - component: {fileID: 1519345040}
+  m_Layer: 0
+  m_Name: Flashlight
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!65 &1519345036
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1519345035}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.0025, y: 0.003, z: 0.0125}
+  m_Center: {x: 0, y: 0, z: 0.0055}
+--- !u!114 &1519345037
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1519345035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a86f8173d0c77cf418057714777c7df9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Interactions.PressInteractionModule
+  interactionName: 
+  type: 3
+  onInteract:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!4 &1519345039
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1519345035}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.010183737, y: 0.08014179, z: 0.012946101, w: -0.99664736}
+  m_LocalPosition: {x: 2.56, y: 0.85, z: -9.59}
+  m_LocalScale: {x: 100.00007, y: 100.00005, z: 100.000015}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 6821401191070323280}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 10, y: 10, z: 0}
+--- !u!114 &1519345040
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1519345035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26de67b4405631c40bf00bc55310c8ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Items.TurnOnFlashlightAction
+  actionDelay: 0.5
+  turnAnimationData:
+    animationName: Turn_On_Flashlight
+    crossFadeTime: 0.1
+    timestampEvents: []
+  defaultTurnEventTriggerTime: 0.5
+--- !u!114 &1519345041
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1519345035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 975b02a1daa17b04a821624d814888c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Items.TurnOffFlashlightAction
+  actionDelay: 0.5
+  turnAnimationData:
+    animationName: Turn_Off_Flashlight
+    crossFadeTime: 0.1
+    timestampEvents: []
+  defaultTurnEventTriggerTime: 0.5
+--- !u!114 &1519345042
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1519345035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1b04e5353a5962419615a48c16381eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Interactions.Items.Flashlight
+  data: {fileID: 0}
+  equippedAnimationData:
+    animationName: Equip_Flashlight
+    crossFadeTime: 0.1
+    timestampEvents: []
+  unequippedAnimationData:
+    animationName: Unequip_Flashlight
+    crossFadeTime: 0.1
+    timestampEvents: []
+  parentRotation: {x: 0, y: 0, z: 0}
+  parentPosition: {x: 0, y: 0, z: 0}
 --- !u!1 &1529588168
 GameObject:
   m_ObjectHideFlags: 0
@@ -10413,6 +10512,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2898601627265390757, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
+      propertyPath: type
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7714366484231452935, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.55414
@@ -10488,14 +10591,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9503ea5d1991198449e6eb29d73af2a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Interactions.Items.Flashlight
-  leftHand: {fileID: 0}
-  rightHand: {fileID: 0}
-  equipAnimation: {fileID: 7400000, guid: 4e085f086c2af5c45b9054f9b38ebc5f, type: 2}
-  unequipAnimation: {fileID: 7400000, guid: 59d6e1d5b9547154b9f59340bd22d97c, type: 2}
-  dropAnimation: {fileID: 0}
-  data: {fileID: 11400000, guid: a75d5f48dd4811f42a2ec2cac635ffb8, type: 2}
-  leftArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
-  rightArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
 --- !u!82 &1651634924
 AudioSource:
   m_ObjectHideFlags: 0
@@ -10623,6 +10718,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2898601627265390757, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
+      propertyPath: type
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7714366484231452935, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.55414
@@ -10698,14 +10797,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9503ea5d1991198449e6eb29d73af2a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Interactions.Items.Flashlight
-  leftHand: {fileID: 0}
-  rightHand: {fileID: 0}
-  equipAnimation: {fileID: 7400000, guid: 4e085f086c2af5c45b9054f9b38ebc5f, type: 2}
-  unequipAnimation: {fileID: 7400000, guid: 59d6e1d5b9547154b9f59340bd22d97c, type: 2}
-  dropAnimation: {fileID: 0}
-  data: {fileID: 11400000, guid: a75d5f48dd4811f42a2ec2cac635ffb8, type: 2}
-  leftArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
-  rightArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
 --- !u!82 &1674953932
 AudioSource:
   m_ObjectHideFlags: 0
@@ -10858,7 +10949,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 145174870}
   m_Father: {fileID: 1328651008}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1706787818
@@ -10874,6 +10966,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   interactionRange: 5
+  allowedInteractionTypes: 030000000100000000000000
 --- !u!114 &1706787819
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11452,6 +11545,133 @@ Transform:
   - {fileID: 1328651008}
   m_Father: {fileID: 468072658}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1903580732
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1903580733}
+  - component: {fileID: 1903580735}
+  - component: {fileID: 1903580734}
+  m_Layer: 0
+  m_Name: Spot Light
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1903580733
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1903580732}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.0002, y: 0.0002, z: 0.01102}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6821401191070323280}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1903580734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1903580732}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_CustomShadowLayers: 0
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
+  m_RenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_ShadowRenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_Version: 4
+  m_LightLayerMask: 1
+  m_ShadowLayerMask: 1
+  m_RenderingLayers: 1
+  m_ShadowRenderingLayers: 1
+--- !u!108 &1903580735
+Light:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1903580732}
+  m_Enabled: 1
+  serializedVersion: 12
+  m_Type: 0
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Intensity: 200
+  m_Range: 11.92
+  m_SpotAngle: 61.653446
+  m_InnerSpotAngle: 39.928665
+  m_CookieSize2D: {x: 0.5, y: 0.5}
+  m_Shadows:
+    m_Type: 0
+    m_Resolution: -1
+    m_CustomResolution: -1
+    m_Strength: 1
+    m_Bias: 0.05
+    m_NormalBias: 0.4
+    m_NearPlane: 0.2
+    m_CullingMatrixOverride:
+      e00: 1
+      e01: 0
+      e02: 0
+      e03: 0
+      e10: 0
+      e11: 1
+      e12: 0
+      e13: 0
+      e20: 0
+      e21: 0
+      e22: 1
+      e23: 0
+      e30: 0
+      e31: 0
+      e32: 0
+      e33: 1
+    m_UseCullingMatrixOverride: 0
+  m_Cookie: {fileID: 0}
+  m_DrawHalo: 0
+  m_Flare: {fileID: 0}
+  m_RenderMode: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingLayerMask: 1
+  m_Lightmapping: 4
+  m_LightShadowCasterMode: 0
+  m_AreaSize: {x: 1, y: 1}
+  m_BounceIntensity: 0
+  m_ColorTemperature: 6570
+  m_UseColorTemperature: 0
+  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_UseBoundingSphereOverride: 0
+  m_UseViewFrustumForShadowCasterCull: 1
+  m_ForceVisible: 0
+  m_ShadowRadius: 0
+  m_ShadowAngle: 0
+  m_LightUnit: 1
+  m_LuxAtDistance: 1
+  m_EnableSpotReflector: 1
 --- !u!1001 &1911095760
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11460,6 +11680,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2898601627265390757, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
+      propertyPath: type
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7714366484231452935, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.55414
@@ -11535,14 +11759,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9503ea5d1991198449e6eb29d73af2a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Interactions.Items.Flashlight
-  leftHand: {fileID: 0}
-  rightHand: {fileID: 0}
-  equipAnimation: {fileID: 7400000, guid: 4e085f086c2af5c45b9054f9b38ebc5f, type: 2}
-  unequipAnimation: {fileID: 7400000, guid: 59d6e1d5b9547154b9f59340bd22d97c, type: 2}
-  dropAnimation: {fileID: 0}
-  data: {fileID: 11400000, guid: a75d5f48dd4811f42a2ec2cac635ffb8, type: 2}
-  leftArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
-  rightArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
 --- !u!82 &1911095763
 AudioSource:
   m_ObjectHideFlags: 0
@@ -11673,14 +11889,12 @@ GameObject:
   - component: {fileID: 1936917132}
   - component: {fileID: 1936917131}
   - component: {fileID: 1936917130}
-  - component: {fileID: 1936917122}
   - component: {fileID: 1936917129}
   - component: {fileID: 1936917128}
   - component: {fileID: 1936917127}
   - component: {fileID: 1936917126}
   - component: {fileID: 1936917125}
   - component: {fileID: 1936917124}
-  - component: {fileID: 1936917123}
   m_Layer: 0
   m_Name: Main
   m_TagString: Untagged
@@ -11688,32 +11902,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!114 &1936917122
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1936917121}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dbe8fbcd80f52444991a9a9830025e3c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Player.Inventories.Inventory
-  allowDuplicateItems: 1
---- !u!114 &1936917123
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1936917121}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a9095a3399eed6048bb0fd31f6fa7c66, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Player.Inventories.InventoryQuickSlotHandler
-  parent: {fileID: 1706787817}
 --- !u!114 &1936917124
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11879,6 +12067,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2898601627265390757, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
+      propertyPath: type
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7714366484231452935, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.55414
@@ -11954,14 +12146,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9503ea5d1991198449e6eb29d73af2a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Interactions.Items.Flashlight
-  leftHand: {fileID: 0}
-  rightHand: {fileID: 0}
-  equipAnimation: {fileID: 7400000, guid: 4e085f086c2af5c45b9054f9b38ebc5f, type: 2}
-  unequipAnimation: {fileID: 7400000, guid: 59d6e1d5b9547154b9f59340bd22d97c, type: 2}
-  dropAnimation: {fileID: 0}
-  data: {fileID: 11400000, guid: a75d5f48dd4811f42a2ec2cac635ffb8, type: 2}
-  leftArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
-  rightArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
 --- !u!82 &1941446701
 AudioSource:
   m_ObjectHideFlags: 0
@@ -12267,6 +12451,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2898601627265390757, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
+      propertyPath: type
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7714366484231452935, guid: 29b0dd732a2455a4b91b35d0e4205873, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.55414
@@ -12342,14 +12530,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9503ea5d1991198449e6eb29d73af2a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Interactions.Items.Flashlight
-  leftHand: {fileID: 0}
-  rightHand: {fileID: 0}
-  equipAnimation: {fileID: 7400000, guid: 4e085f086c2af5c45b9054f9b38ebc5f, type: 2}
-  unequipAnimation: {fileID: 7400000, guid: 59d6e1d5b9547154b9f59340bd22d97c, type: 2}
-  dropAnimation: {fileID: 0}
-  data: {fileID: 11400000, guid: a75d5f48dd4811f42a2ec2cac635ffb8, type: 2}
-  leftArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
-  rightArmController: {fileID: 9100000, guid: eb31115461163514bb3f82a38152e0d5, type: 2}
 --- !u!82 &2095782010
 AudioSource:
   m_ObjectHideFlags: 0
@@ -12502,9 +12682,9 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1141812908}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 50, y: -25}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2134253783
@@ -13373,6 +13553,56 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!23 &5683913133563029823
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6188417103542618346}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: -6478536213147159724, guid: 7cbf324c004ae1643b381c2c3d84d412, type: 3}
+  - {fileID: -3846018093981099296, guid: 7cbf324c004ae1643b381c2c3d84d412, type: 3}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!222 &5689654818674080272
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -13471,6 +13701,25 @@ MonoBehaviour:
   m_FirstSelected: {fileID: 0}
   m_sendNavigationEvents: 1
   m_DragThreshold: 10
+--- !u!1 &6188417103542618346
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6821401191070323280}
+  - component: {fileID: 7567639091918102005}
+  - component: {fileID: 5683913133563029823}
+  - component: {fileID: 7567639091918102006}
+  m_Layer: 0
+  m_Name: Model
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &6215530527092122265
 GameObject:
   m_ObjectHideFlags: 0
@@ -13532,6 +13781,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5801638334722417782}
   m_CullTransparentMesh: 1
+--- !u!4 &6821401191070323280
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6188417103542618346}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1903580733}
+  m_Father: {fileID: 1519345039}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
 --- !u!224 &6826191927659336341
 RectTransform:
   m_ObjectHideFlags: 0
@@ -13664,6 +13929,36 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 3740, y: 2060}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!33 &7567639091918102005
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6188417103542618346}
+  m_Mesh: {fileID: -4011192574050175271, guid: 7cbf324c004ae1643b381c2c3d84d412, type: 3}
+--- !u!95 &7567639091918102006
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6188417103542618346}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 06615fc0c4599814c8da18ea402225db, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &7741609617502654557
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14140,6 +14435,7 @@ RectTransform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 1519345039}
   - {fileID: 1547555934}
   - {fileID: 4035005127381905932}
   - {fileID: 468072658}

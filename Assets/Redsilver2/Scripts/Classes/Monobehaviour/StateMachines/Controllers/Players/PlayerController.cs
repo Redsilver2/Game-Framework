@@ -31,7 +31,7 @@ namespace RedSilver2.Framework.StateMachines.Controllers
         }
 
 
-        private void OnDestroy() {
+        protected void OnDestroy() {
             if (instances.Contains(this)) instances.Remove(this);
         }
 

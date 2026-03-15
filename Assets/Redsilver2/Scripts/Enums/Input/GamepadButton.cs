@@ -18,6 +18,12 @@ namespace RedSilver2.Framework.Inputs
         Select, Start,
         #endregion
 
+        #region Thumbsticks
+        LeftStickUp   , LeftStickDown, LeftStickRight, LeftStickLeft,
+        RightStickUp  , RightStickDown, RightStickRight, RightStickLeft,
+        LeftStickPress, RightStickPress,
+        #endregion
+
         #region D-Pad
         DpadUp, DpadDown, DpadLeft, DpadRight
         #endregion

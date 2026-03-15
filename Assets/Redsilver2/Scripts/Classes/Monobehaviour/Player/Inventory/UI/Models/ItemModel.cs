@@ -1,4 +1,5 @@
 using RedSilver2.Framework.Interactions.Items;
+using RedSilver2.Framework.StateMachines.Controllers;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -101,7 +102,7 @@ namespace RedSilver2.Framework.Player.Inventories.UI
         public static GameObject GetModel(Item item)
         {
             if(item == null) return null;
-            return GetModel(item.GetData() as ItemData);            
+            return GetModel(item.Data);
         }
         public static GameObject GetModel(Item item, Transform parent)
         {
@@ -119,7 +120,7 @@ namespace RedSilver2.Framework.Player.Inventories.UI
         private static GameObject GetModel(ItemData data)
         {
             if(data == null) return null;
-            return GetModel(data.Model);       
+            return GetModel(data.GetModel());       
         }
 
         private static GameObject GetModel(GameObject model)

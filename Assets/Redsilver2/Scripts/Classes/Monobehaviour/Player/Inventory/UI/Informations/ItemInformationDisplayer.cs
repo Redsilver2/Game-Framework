@@ -1,4 +1,5 @@
 using RedSilver2.Framework.Interactions.Items;
+using RedSilver2.Framework.StateMachines.Controllers;
 using UnityEngine;
 
 namespace RedSilver2.Framework.Player.Inventories.UI
@@ -51,11 +52,14 @@ namespace RedSilver2.Framework.Player.Inventories.UI
             DisplayItemInformation(navigator.GetSelectedItem());
         }
         private void DisplayItemInformation(Item item) 
-        {
-            if (item != null)
-                DisplayItemInformation(item.GetData() as ItemData);
-            else
-                DisplayNullMessage();
+        {                
+        
+            if(item == null) return;
+
+            //if (item != null)
+               // DisplayItemInformation(item.GetData() as ItemData);
+           // else
+               // DisplayNullMessage();
         }
 
         protected void DisplayNullMessage() {

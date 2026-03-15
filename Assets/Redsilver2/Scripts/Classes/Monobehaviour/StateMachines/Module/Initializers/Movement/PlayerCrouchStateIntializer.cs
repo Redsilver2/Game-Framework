@@ -64,8 +64,6 @@ namespace RedSilver2.Framework.StateMachines
 
             holdInput?.Update();
             transitionState = holdInput.Value;
-
-            Debug.Log("Hold Crouch: " + holdInput.Value);
         }
 
         private void OnUpdatePressInput()

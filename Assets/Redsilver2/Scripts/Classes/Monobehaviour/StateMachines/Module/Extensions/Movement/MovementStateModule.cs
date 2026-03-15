@@ -1,15 +1,16 @@
 using RedSilver2.Framework.StateMachines.States;
+using System.Threading.Tasks;
+using UnityEngine;
 using UnityEngine.Events;
 
 namespace RedSilver2.Framework.StateMachines.Controllers
 {
     public abstract class MovementStateModule : StateModule
     {
-        protected sealed override void SetStateMachine(ref StateMachine stateMachine)
+        protected sealed override StateMachineController GetStateMachineStateMachine(StateMachineController controller)
         {
-            if(transform.root.TryGetComponent(out StateMachineController controller)) {
-                if (controller is MovementStateMachineController) stateMachine = (controller as MovementStateMachineController).StateMachine;
-            }
+            if (controller is not MovementStateMachineController) return null;
+            return  base.GetStateMachineStateMachine(controller);
         }
 
         protected sealed override UnityAction<State> GetOnStateAddedAction()

@@ -1,32 +1,49 @@
+using System.IO;
 using UnityEngine.Events;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
 
 namespace RedSilver2.Framework.Inputs
 {
     public abstract class SingleInput : InputHandler
     {
-        private UnityEvent onUpdate;
+        private   UnityEvent     onUpdate;
 
-        protected KeyboardKey keyboardKey;
-        protected GamepadButton  gamepadKey;
+        protected InputControl defaultControl;
+        protected InputControl gamepadControl;
+        protected InputControl xrControl;
 
+        private bool allowXRPath;
         public bool Value { get; private set; }
-       
-        public KeyboardKey KeyboardKey => keyboardKey;
-        public GamepadButton  GamepadKey  => gamepadKey;
 
-        public SingleInput(string inputHandlerName, KeyboardKey defaultKeyboardKey, GamepadButton defaultGamepadKey) : base(inputHandlerName)
+        public bool AllowXRPath => allowXRPath;
+
+        public SingleInput(string inputHandlerName, KeyboardKey defaultKeyboardKey, GamepadButton defaultGamepadButton) : base(inputHandlerName)
         {
             Value       = false;
+            allowXRPath = false;
             onUpdate    = new UnityEvent();
 
-            keyboardKey = defaultKeyboardKey;
-            gamepadKey  = defaultGamepadKey;
+            defaultControl = InputManager.GetKeyboardControl(defaultKeyboardKey); 
+            gamepadControl = InputManager.GetGamepadControl(defaultGamepadButton);
+            xrControl      = null;
+        }
+
+        public SingleInput(string inputHandlerName, MouseButton defaultMouseButton, GamepadButton defaultGamepadButton) : base(inputHandlerName)
+        {
+            Value       = false;
+            allowXRPath = false;
+            onUpdate    = new UnityEvent();
+
+            defaultControl = InputManager.GetMouseControl(defaultMouseButton);
+            gamepadControl = InputManager.GetGamepadControl(defaultGamepadButton);
+            xrControl = null;
         }
 
         public sealed override void Update()
         {
-            Value = IsEnabled ?  GetKeyboardKeyValue()
-                              || GetGamepadKeyValue() : false;
+            Value = IsEnabled ?  GetDefaultPathValue()
+                              || GetGamepadPathValue() : false;
 
             if(IsEnabled && Value) { onUpdate?.Invoke(); }
         }
@@ -51,15 +68,37 @@ namespace RedSilver2.Framework.Inputs
                 foreach (UnityAction action in actions) RemoveOnUpdateListener(action);
         }
 
-        public string GetKeyboardKeyName() => keyboardKey.ToString();
-        public string GetGamepadKeyName()  => gamepadKey.ToString();
+        public sealed override string GetPaths() {
+            string result = string.Empty;
 
-        public string GetKeyboardKeyPath() => InputManager.GetPath(keyboardKey);
-        public string GetGamepadKeyPath()  => InputManager.GetPath(gamepadKey);
+            if(defaultControl != null)
+            {
+               result = defaultControl.Path.Contains("Mouse", System.StringComparison.OrdinalIgnoreCase) ? 
+                    $"Mouse Button Path: {defaultControl}" : $"Keyboard Key Path: {defaultControl}";
+            }
 
-        public sealed override string GetPaths() => $"Keyboard Path: {GetKeyboardKeyPath()} | Gamepad Path: {GetGamepadKeyPath()}";
+           if(gamepadControl != null) result += $"\nGamepad Button Path: {gamepadControl}";
+           if(xrControl      != null) result += $"\nXR Button Path:      {xrControl}";
+           return result;
+        }
 
-        public abstract bool GetKeyboardKeyValue();
-        public abstract bool GetGamepadKeyValue();
+
+
+        public bool GetDefaultPathValue()
+        {
+            return GetXRValue(defaultControl);
+        }
+        public bool GetGamepadPathValue()
+        {
+            return GetXRValue(gamepadControl);
+        }
+        public bool GetXRControllerPathValue()
+        {
+            return GetXRValue(xrControl);
+        }
+
+        protected abstract bool GetDefaultValue(InputControl control);
+        protected abstract bool GetGamepadValue(InputControl control);
+        protected abstract bool GetXRValue(InputControl control);
     }
 }

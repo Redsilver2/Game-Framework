@@ -25,8 +25,8 @@ namespace RedSilver2.Framework.Interactions.Collectibles
 
             if (interactionModule is SingleInteractionModule)
                 SetInteractionModuleEvents(interactionModule as SingleInteractionModule, isAddingEvents);
-            else if (interactionModule is TimedHoldInteractionModule)
-                SetInteractionModuleEvents(interactionModule as TimedHoldInteractionModule, isAddingEvents);
+            else if (interactionModule is AdvancedHoldInteractionModule)
+                SetInteractionModuleEvents(interactionModule as AdvancedHoldInteractionModule, isAddingEvents);
         }
 
         private void SetInteractionModuleEvents(SingleInteractionModule module, bool isAddingEvents) {
@@ -38,7 +38,7 @@ namespace RedSilver2.Framework.Interactions.Collectibles
                 module.RemoveOnInteractListener(OnInteract);
         }
 
-        private void SetInteractionModuleEvents(TimedHoldInteractionModule module, bool isAddingEvents) {
+        private void SetInteractionModuleEvents(AdvancedHoldInteractionModule module, bool isAddingEvents) {
 
             if (module == null) return;
 
@@ -49,7 +49,7 @@ namespace RedSilver2.Framework.Interactions.Collectibles
   
         }
 
-        protected virtual void OnInteract()  {
+        protected virtual void OnInteract(InteractionHandler handler) {
             CollectibleNotificationManager collectibleNotification = GameManager.CollectibleNotification;
             if(collectibleNotification != null) collectibleNotification.Notify(this);
            
@@ -57,9 +57,9 @@ namespace RedSilver2.Framework.Interactions.Collectibles
             gameObject.SetActive(false);
         }
 
-        protected void OnInteract(float progression) {
+        protected void OnInteract(float progression, InteractionHandler handler) {
             if(progression >= 1f) 
-                OnInteract();
+                OnInteract(handler);
         }
 
 

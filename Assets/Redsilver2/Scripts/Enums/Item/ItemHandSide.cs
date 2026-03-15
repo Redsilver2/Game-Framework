@@ -5,6 +5,7 @@ namespace RedSilver2.Framework.Interactions.Items
 {
     public enum ItemHandSide {
         Left,
-        Right
+        Right,
+        Middle
     }
 }

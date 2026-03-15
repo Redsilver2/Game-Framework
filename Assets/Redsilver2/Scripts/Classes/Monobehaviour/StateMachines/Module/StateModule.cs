@@ -1,4 +1,6 @@
+using RedSilver2.Framework.StateMachines.Controllers;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -12,24 +14,37 @@ namespace RedSilver2.Framework.StateMachines.States
         private UnityAction<State> onStateAdded;
         private UnityAction<State> onStateRemoved;
 
-        protected StateMachine stateMachine;
+        private StateMachineController controller;
+      
+        protected StateMachine stateMachine 
+        {
+            get {
+                if (controller == null) return null;
+                return controller.StateMachine;
+            }
+        }
+
         public string ModuleName => moduleName;
 
-        protected virtual void Awake()
+        protected virtual async void Awake()
         {
             moduleName       = GetModuleName();
             registeredStates = new List<State>();
 
             onStateAdded   = GetOnStateAddedAction();
             onStateRemoved = GetOnStateRemovedAction();
+
+            controller = GetStateMachineController();
         }
 
         protected virtual void Start()
         {
-            SetStateMachine(ref stateMachine);
             stateMachine?.AddOnStateAddedListener(OnStateAdded);
             stateMachine?.AddOnStateRemovedListener(OnStateRemoved);
             stateMachine?.AddStateModule(this);
+
+            if (stateMachine != null)
+                foreach (State state in stateMachine.GetStates()) OnStateAdded(state);
         }
 
         protected virtual void OnEnable()
@@ -39,6 +54,9 @@ namespace RedSilver2.Framework.StateMachines.States
                 stateMachine?.AddOnStateAddedListener(OnStateAdded);
                 stateMachine?.AddOnStateRemovedListener(OnStateRemoved);
                 stateMachine?.AddStateModule(this);
+
+                if (stateMachine != null)
+                    foreach (State state in stateMachine.GetStates()) OnStateAdded(state); 
             }
         }
 
@@ -46,15 +64,19 @@ namespace RedSilver2.Framework.StateMachines.States
         {
             if (didStart)
             {
-
                 stateMachine?.RemoveOnStateAddedListener(OnStateAdded);
                 stateMachine?.RemoveOnStateRemovedListener(OnStateRemoved);
                 stateMachine?.RemoveStateModule(this);
+
+                if (stateMachine != null)
+                    foreach (State state in stateMachine.GetStates()) OnStateRemoved(state);
             }
         }
 
         protected virtual void OnStateAdded(State state)
         {
+            if (registeredStates == null || state == null || !CanAddOrRemoveState(state)) return;
+
             if (!registeredStates.Contains(state))
             {
                 registeredStates?.Add(state);
@@ -64,6 +86,8 @@ namespace RedSilver2.Framework.StateMachines.States
 
         protected virtual void OnStateRemoved(State state)
         {
+            if (registeredStates == null || state == null || !CanAddOrRemoveState(state)) return;
+
             if (registeredStates.Contains(state))
             {
                 registeredStates?.Remove(state);
@@ -71,9 +95,25 @@ namespace RedSilver2.Framework.StateMachines.States
             }
         }
 
-        protected abstract void SetStateMachine(ref StateMachine stateMachine);
+        private StateMachineController GetStateMachineController()
+        {
+            if (transform.root.TryGetComponent(out StateMachineController controller)) {
+                return GetStateMachineStateMachine(controller);
+            }
+
+            return null;
+        }
+
+        protected virtual StateMachineController GetStateMachineStateMachine(StateMachineController controller)
+        {
+            if (controller == null) return null;
+            return controller;
+        }
+
+        protected abstract bool CanAddOrRemoveState(State state);
+        protected abstract string GetModuleName();
+
         protected abstract UnityAction<State> GetOnStateAddedAction();
         protected abstract UnityAction<State> GetOnStateRemovedAction();
-        protected abstract string GetModuleName();
     }
 }

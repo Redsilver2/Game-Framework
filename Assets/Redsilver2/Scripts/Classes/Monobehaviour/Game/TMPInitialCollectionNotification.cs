@@ -13,10 +13,10 @@ namespace RedSilver2.Framework.Interactions.Collectibles
             displayer = GetComponentInChildren<TextMeshProUGUI>(true);  
         }
 
-        protected sealed override void SetInformationsText(CollectibleData collectibleData)
+        protected sealed override void SetInformationsText(IPickableInteractable pickable)
         {
-            if(collectibleData != null && displayer != null)
-                displayer.text = $"{collectibleData.Name}\n\n{collectibleData.Description}";
+            if(pickable != null && displayer != null)
+                displayer.text = $"{pickable.GetName()}\n\n{pickable.GetName()}";
         }
     }
 }

@@ -1,3 +1,4 @@
+using RedSilver2.Framework.Animations;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -10,33 +11,52 @@ public static class AnimationManager {
         PlayAnimation(animator, GetAnimationClip(animator, animationName));
     }
     public static async void PlayAnimation(this Animator animator, AnimationClip clip) {
-        if (await PlayAnimationAsync(animator, clip)) ClearAnimationPlaying(animator, clip);
+        if (await PlayAnimationAsync(animator, clip))
+            ClearAnimationPlaying(animator, clip);
     }
 
-    public static async Awaitable<bool> PlayAnimationAsync(this Animator animator, string animationName) {
-        return await PlayAnimationAsync(animator, GetAnimationClip(animator, animationName));
+    public static async void PlayAnimation(this Animator animator, AnimationClip clip, AnimationTimestampEvent[] timestampEvents)
+    {
+        if (await PlayAnimationAsync(animator, clip, timestampEvents))
+            ClearAnimationPlaying(animator, clip);
+    }
+
+
+    public static async Awaitable<bool> PlayAnimationAsync(this Animator animator, string animationName)
+    {
+        return await PlayAnimationAsync(animator, animationName, null);
+    }
+
+
+    public static async Awaitable<bool> PlayAnimationAsync(this Animator animator, string animationName, AnimationTimestampEvent[] timestampEvents) {
+        return await PlayAnimationAsync(animator, GetAnimationClip(animator, animationName), timestampEvents);
     }
 
     public static async Awaitable<bool> PlayAnimationAsync(this Animator animator, AnimationClip clip)
+    {
+        return await PlayAnimationAsync(animator, clip, null);
+    }
+
+    public static async Awaitable<bool> PlayAnimationAsync(this Animator animator, AnimationClip clip, AnimationTimestampEvent[] timestampEvents)
     {
         if (animator == null || clip == null || !animator.HasAnimationClip(clip)) return false;
 
         SetAnimationPlaying(animator, clip);
         animator.Play(clip.name);
 
-        await AwaitPlayAnimationAsync(animator, clip);
+        await AwaitPlayAnimationAsync(animator, clip, timestampEvents);
 
         if (!currentAnimations.ContainsKey(animator)) return false;
         return currentAnimations[animator] == clip.name;
     }
 
-    private static async Awaitable AwaitPlayAnimationAsync(Animator animator, AnimationClip clip)
+    private static async Awaitable AwaitPlayAnimationAsync(Animator animator, AnimationClip clip, AnimationTimestampEvent[] timestampEvents)
     {
         float currentAnimationTime = 0f;
 
         while (animator != null && clip != null) {
             if (!animator.CompareCurrentAnimationName(clip) || currentAnimationTime >= clip.length) break;
-            if (!clip.isLooping) currentAnimationTime += Time.deltaTime;
+            if (!clip.isLooping) UpdateAnimationTime(clip, ref timestampEvents, ref currentAnimationTime); ;
             await Awaitable.NextFrameAsync();
         }
 
@@ -82,47 +102,97 @@ public static class AnimationManager {
         return false;
     }
 
-    public static void CrossFadeAnimation(this Animator animator, string animationName, float crossFadeTime)
+    public static void CrossFadeAnimation(this Animator animator, AnimationData[] datas)
     {
-        CrossFadeAnimation(animator, GetAnimationClip(animator, animationName), crossFadeTime);
+        if (datas == null || datas.Length == 0) return;
+        animator?.CrossFadeAnimation(datas[Random.Range(0, datas.Length)]);
     }
-    public static async void CrossFadeAnimation(this Animator animator, AnimationClip clip, float crossFadeTime)
+
+    public static void CrossFadeAnimation(this Animator animator, AnimationData data)
     {
-        bool isFinished = await AsyncCrossFadeAnimation(animator, clip, crossFadeTime);
+        if (data == null) return;
+        data.ResetTimeStampEvents();
+        animator?.CrossFadeAnimation(data.AnimationName, data.TimestampEvents, data.CrossFadeTime);
+    }
+
+    public static void CrossFadeAnimation(this Animator animator, string animationName, float crossFadeTime) {
+        CrossFadeAnimation(animator, animationName, null, crossFadeTime);
+    }
+
+    public static void CrossFadeAnimation(this Animator animator, string animationName, AnimationTimestampEvent[] timestampEvents, float crossFadeTime) {
+        CrossFadeAnimation(animator, GetAnimationClip(animator, animationName), timestampEvents, crossFadeTime);
+    }
+
+    public static async void CrossFadeAnimation(this Animator animator, AnimationClip clip, float crossFadeTime) {
+        CrossFadeAnimation(animator, clip, null, crossFadeTime);
+    }
+
+    public static async void CrossFadeAnimation(this Animator animator, AnimationClip clip, AnimationTimestampEvent[] timestampEvents, float crossFadeTime)
+    {
+
+        Debug.Log("1. " + clip);
+
+        bool isFinished = await AsyncCrossFadeAnimation(animator, clip, timestampEvents, crossFadeTime);
         if (isFinished) ClearAnimationPlaying(animator, clip.name);
     }
 
+
+    public static async Awaitable<bool> AsyncCrossFadeAnimation(this Animator animator, AnimationData data)
+    {
+          return await AsyncCrossFadeAnimation(animator, data.AnimationName, data.TimestampEvents, data.CrossFadeTime);
+    }
+
+
     public static async Awaitable<bool> AsyncCrossFadeAnimation(this Animator animator, string animationName, float crossFadeTime)
     {
-        return await AsyncCrossFadeAnimation(animator, GetAnimationClip(animator, animationName), crossFadeTime);
+            return await AsyncCrossFadeAnimation(animator, animationName, null, crossFadeTime);
     }
-    public static async Awaitable<bool> AsyncCrossFadeAnimation(this Animator animator, AnimationClip clip, float crossFadeTime)
+
+    public static async Awaitable<bool> AsyncCrossFadeAnimation(this Animator animator, string animationName, AnimationTimestampEvent[] timestampEvents, float crossFadeTime)
     {
-        if (animator == null || clip == null || !animator.HasAnimationClip(clip)) return false;
+        return await AsyncCrossFadeAnimation(animator, GetAnimationClip(animator, animationName), timestampEvents, crossFadeTime);
+    }
+    public static async Awaitable<bool> AsyncCrossFadeAnimation(this Animator animator, AnimationClip clip, AnimationTimestampEvent[] timestampEvents, float crossFadeTime)
+    {
+        if (animator == null || clip == null || animator.IsPlayingAnimationClip(clip))
+        {
+            Debug.Log("2. Failed");
+            return false;
+        }
 
         SetAnimationPlaying(animator, clip);
-        animator.CrossFade(clip.name, crossFadeTime);
+        animator?.CrossFade(clip.name, crossFadeTime);
+        
+        Debug.Log("2. " + clip);
+        await AwaitCrossFadeAnimation(animator, clip, timestampEvents, crossFadeTime);
 
-        await AwaitCrossFadeAnimation(animator, clip, crossFadeTime);
 
         if (!currentAnimations.ContainsKey(animator)) return false;
         return currentAnimations[animator] == clip.name;
     }
 
-    private static async Awaitable AwaitCrossFadeAnimation(Animator animator, AnimationClip clip, float crossFadeTime) {
+    private static async Awaitable AwaitCrossFadeAnimation(Animator animator, AnimationClip clip, AnimationTimestampEvent[] timestampEvents, float crossFadeTime) {
 
         float currentCrossFadeTime = 0, currentAnimationTime = 0;
 
         while (animator != null && clip != null) {
-            if (!animator.CompareCurrentAnimationName(clip) || currentAnimationTime >= clip.length)  break;
+
        
-            currentCrossFadeTime = Mathf.Clamp(Time.deltaTime + crossFadeTime, 0f, crossFadeTime);    
-            if (currentCrossFadeTime >= crossFadeTime && !clip.isLooping) currentAnimationTime += Time.deltaTime;
+            if (!animator.CompareCurrentAnimationName(clip) || currentAnimationTime >= clip.length) break;
+
+            currentCrossFadeTime = Mathf.Clamp(Time.deltaTime + crossFadeTime, 0f, crossFadeTime);
+            if (currentCrossFadeTime >= crossFadeTime) UpdateAnimationTime(clip, ref timestampEvents, ref currentAnimationTime);
+
             await Awaitable.NextFrameAsync();
         }
     }
 
-    public static async void CrossFadeAnimation(this Animator animator, string animationName, float crossFadeTime, UnityAction onStarted)  {
+    public static async void CrossFadeAnimation(this Animator animator, string animationName, AnimationData data)
+    {
+        await AsyncCrossFadeAnimation(animator, data);
+    }
+
+    public static async void CrossFadeAnimation(this Animator animator, string animationName, float crossFadeTime, UnityAction onStarted) {
         await AsyncCrossFadeAnimation(animator, animationName, crossFadeTime, onStarted);
     }
     public static async void CrossFadeAnimation(this Animator animator, string animationName, float crossFadeTime, UnityAction onStarted, UnityAction onFinished) {
@@ -137,8 +207,6 @@ public static class AnimationManager {
         await AsyncCrossFadeAnimation(animator, clip, crossFadeTime, onStarted, onFinished);
     }
 
-
-
     public static async Awaitable<bool> AsyncCrossFadeAnimation(this Animator animator, string animationName, float crossFadeTime, UnityAction onStarted)
     {
         return await AsyncCrossFadeAnimation(animator, GetAnimationClip(animator, animationName), crossFadeTime, onStarted);
@@ -151,7 +219,7 @@ public static class AnimationManager {
     public static async Awaitable<bool> AsyncCrossFadeAnimation(this Animator animator, AnimationClip clip, float crossFadeTime, UnityAction onStarted)
     {
         if (onStarted != null) onStarted.Invoke();
-        return await AsyncCrossFadeAnimation(animator, clip, crossFadeTime);
+        return await AsyncCrossFadeAnimation(animator, clip, null, crossFadeTime);
     }
     public static async Awaitable<bool> AsyncCrossFadeAnimation(this Animator animator, AnimationClip clip, float crossFadeTime, UnityAction onStarted, UnityAction onFinished)
     {
@@ -205,11 +273,11 @@ public static class AnimationManager {
 
     public static string[] GetAnimationNames(this Animator animator)
     {
-         List<string> results = new List<string>();
-         if(animator == null) return results.ToArray();
+        List<string> results = new List<string>();
+        if (animator == null) return results.ToArray();
 
-        for(int i = 0; i < animator.layerCount; i++)
-            foreach(string animationName in animator.GetAnimationNames(i))
+        for (int i = 0; i < animator.layerCount; i++)
+            foreach (string animationName in animator.GetAnimationNames(i))
                 results.Add(animationName);
 
         return results.ToArray();
@@ -219,17 +287,6 @@ public static class AnimationManager {
     {
         List<string> results = new List<string>();
         return results.ToArray();
-    }
-
-    private static void AddAnimationNames(ref List<string> results) {
-
-
-    }
-
-    private static void AddAnimationName(AnimationClip clip, ref List<string> results)
-    {
-        if(results == null) results = new List<string>();
-        results.Add(clip == null ? string.Empty : clip.name);
     }
 
     public static bool HasAnimationClip(this Animator animator, AnimationClip clip)
@@ -248,10 +305,7 @@ public static class AnimationManager {
         return HasAnimationClip(animator, GetAnimationClip(animator, animationName), layer);
     }
     public static bool HasAnimationClip(this Animator animator, AnimationClip clip, int layer) {
-
-    
-        if (animator == null ||  layer < 0 || layer >= animator.layerCount) return false;
-
+        if (animator == null || layer < 0 || layer >= animator.layerCount) return false;
         return false;
     }
 
@@ -273,7 +327,7 @@ public static class AnimationManager {
 
     public static bool CompareCurrentAnimationName(this Animator animator, string animationName)
     {
-        if(animator == null || string.IsNullOrEmpty(animationName) || !currentAnimations.ContainsKey(animator))
+        if (animator == null || string.IsNullOrEmpty(animationName) || !currentAnimations.ContainsKey(animator))
             return false;
 
         return currentAnimations[animator].ToLower() == animationName.ToLower();
@@ -282,7 +336,7 @@ public static class AnimationManager {
 
     public static bool CompareCurrentAnimationName(this Animator animator, AnimationClip clip)
     {
-        if(animator == null || clip == null) return false;  
+        if (animator == null || clip == null) return false;
         return animator.CompareCurrentAnimationName(clip.name);
     }
 
@@ -319,22 +373,93 @@ public static class AnimationManager {
 
     private static void SetAnimationPlaying(Animator animator, string animationName)
     {
-        if (animator == null) return; 
+        if (animator == null || currentAnimations == null) return;
         if (!currentAnimations.ContainsKey(animator)) { currentAnimations.Add(animator, string.Empty); }
         currentAnimations[animator] = string.IsNullOrEmpty(animationName) ? string.Empty : animationName;
     }
 
+    public static AnimationClip GetCurrentClip(this Animator animator)
+    {
+        if (animator == null || currentAnimations == null || !currentAnimations.ContainsKey(animator)) 
+            return null;
+
+        return animator.GetAnimationClip(currentAnimations[animator]);
+    }
+
+
+    public static bool IsPlayingAnimationClip(this Animator animator, string clipName)
+    {
+
+        if (string.IsNullOrEmpty(clipName) || animator == null || currentAnimations == null)
+            return false;
+
+        if (currentAnimations.TryGetValue(animator, out string value))
+            return clipName.ToLower().Equals(value.ToLower());
+
+        return false;
+    }
+
+    public static bool IsPlayingAnimationClip(this Animator animator)
+    {
+
+        if (animator == null || currentAnimations == null)
+            return false;
+
+        if (currentAnimations.TryGetValue(animator, out string value))
+            return !string.IsNullOrEmpty(value.ToLower());
+
+        return true;
+    }
+
+    public static bool IsPlayingAnimationClip(this Animator animator, AnimationClip clip)
+    {
+        if (clip == null || animator == null) return false;
+        return animator.IsPlayingAnimationClip(clip.name);
+    }
+
     private static void ClearAnimationPlaying(Animator animator, AnimationClip clip)
     {
-        if(clip == null) return;
+        if (clip == null) return;
         ClearAnimationPlaying(animator, clip.name);
     }
 
     private static void ClearAnimationPlaying(Animator animator, string animationName)
     {
-        if (animator == null || !currentAnimations.ContainsKey(animator)) return;
+        if (animator == null  || currentAnimations == null || !currentAnimations.ContainsKey(animator)) return;
 
         string clipName = string.IsNullOrEmpty(animationName) ? string.Empty : animationName;
         if (currentAnimations[animator] == clipName) { SetAnimationPlaying(animator, string.Empty); }
     }
+
+
+    private static void UpdateAnimationTime(AnimationClip clip, ref AnimationTimestampEvent[] timestampEvents, ref float currentAnimationTime)
+    {
+        if (clip == null) return;
+        currentAnimationTime += Mathf.Clamp(currentAnimationTime + Time.deltaTime, 0f, clip.length);
+        UpdateAnimationTimestampEvents(ref timestampEvents, currentAnimationTime);
+
+        if (currentAnimationTime >= clip.length && clip.isLooping) {
+            currentAnimationTime = 0f;
+            ResetAnimationTimestampEvents(ref timestampEvents);
+        }
+    }
+
+    private static void UpdateAnimationTimestampEvents(ref AnimationTimestampEvent[] timestampEvents, float currentTime)
+    {
+        if (timestampEvents == null) return;
+
+        foreach (AnimationTimestampEvent timestampEvent in timestampEvents.Where(x => x.CanTrigger(currentTime)))
+            timestampEvent.Trigger(currentTime);
+    }
+
+    private static void ResetAnimationTimestampEvents(ref AnimationTimestampEvent[] timestampEvents)
+    {
+        if (timestampEvents != null) {
+            foreach (AnimationTimestampEvent timestampEvent in timestampEvents)
+                timestampEvent.Reset();
+        }
+    }
+
+    
+
 }

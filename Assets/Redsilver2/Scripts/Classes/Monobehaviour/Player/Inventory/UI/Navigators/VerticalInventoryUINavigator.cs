@@ -1,5 +1,6 @@
 using RedSilver2.Framework.Inputs;
 using RedSilver2.Framework.Interactions.Items;
+using RedSilver2.Framework.StateMachines.Controllers;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
@@ -22,14 +23,15 @@ namespace RedSilver2.Framework.Player.Inventories.UI
         protected int verticalIndex;
         public  int VerticalIndex => verticalIndex;
 
-        public const string NEXT_VERTICAL_INPUT_NAME     = "Next Vertical Navigator Input";
-        public const string PREVIOUS_VERTICAL_INPUT_NAME = "Previous Vertical Navigator Input";
 
-        private Item      [,] items;
+        private Item[,] items;
         private GameObject[,] models;
 
-        public Item      [,] Items  => items;
+        public Item[,] Items  => items;
         public GameObject[,] Models => models;
+
+        public const string NEXT_VERTICAL_INPUT_NAME     = "Next Vertical Navigator Input";
+        public const string PREVIOUS_VERTICAL_INPUT_NAME = "Previous Vertical Navigator Input";
 
         protected override void Awake()
         {

@@ -62,6 +62,12 @@ namespace RedSilver2.Framework.StateMachines.States
         }
 
 
+        public bool Check()
+        {
+            if (!isEnabled) { return false; }
+            return GetTransitionState();
+        }
+
         protected sealed override void OnStateAdded(MovementState state)
         {
             if (state == null) return;
@@ -78,10 +84,13 @@ namespace RedSilver2.Framework.StateMachines.States
             state?.RemoveTransitionCheck(ModuleName);
         }
 
-        public bool Check() {
-            if (!isEnabled) {  return false; }
-            return GetTransitionState();
+        protected sealed override bool CanAddOrRemoveState(State state)
+        {
+            if(state is MovementState && checkableStates != null)
+                return checkableStates.Where(x => x.type == (state as MovementState).Type).Count() > 0;
+            return false;
         }
+       
 
         public abstract bool GetTransitionState();
         protected abstract void OnStateModuleAdded(StateModule module);

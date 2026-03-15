@@ -15,7 +15,7 @@ namespace RedSilver2.Framework.Interactions.Collectibles
             if(uiParent != null) uiParent.SetActive(false);
         }
 
-        protected abstract void SetInformationsText(CollectibleData collectibleData);
+        protected abstract void SetInformationsText(IPickableInteractable pickable);
 
         private void SetViewModel(CollectibleData data, bool isShowingModel)
         {

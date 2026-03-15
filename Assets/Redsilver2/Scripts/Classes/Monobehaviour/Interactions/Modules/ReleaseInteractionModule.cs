@@ -7,7 +7,7 @@ namespace RedSilver2.Framework.Interactions
             if(handler != null && enabled)
             {
                 if (handler.IsInputReleased) {
-                    Interact();
+                    base.Interact(handler);
                 }
             }
         }

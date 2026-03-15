@@ -4,7 +4,6 @@ namespace RedSilver2.Framework.StateMachines.States
 {
     public class MovementGroundCheck3D : MovementGroundCheckExtension
     {
-
         protected sealed override void OnUpdate(float groundCheckRange, ref bool isGrounded, ref string groundTag, ref Vector3 hitPosition)
         {
             if (stateMachine == null || stateMachine.Controller == null)

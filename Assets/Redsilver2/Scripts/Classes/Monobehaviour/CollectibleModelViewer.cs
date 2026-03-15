@@ -79,9 +79,9 @@ namespace RedSilver2.Framework.Interactions.Collectibles
             }
         }
 
-        public static void AddCollectibleModel(CollectibleData data)
+        public static void AddCollectibleModel(IPickableInteractable pickable)
         {
-            if (data != null) AddCollectibleModel(data.Model);
+            if (pickable != null) AddCollectibleModel(pickable.GetModel());
         }
 
         private static void AddCollectibleModel(GameObject model)

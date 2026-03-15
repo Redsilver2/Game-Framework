@@ -1,5 +1,6 @@
 using RedSilver2.Framework.Inputs;
 using RedSilver2.Framework.Interactions.Items;
+using RedSilver2.Framework.StateMachines.Controllers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,8 +18,8 @@ namespace RedSilver2.Framework.Player.Inventories.UI
 
         protected int  horizontalIndex;
 
-        private UnityEvent       onUpdate, onLateUpdate, onEnable, onDisable;
-        private UnityEvent<int>  onHorizontalIndexChanged;
+        private UnityEvent                             onUpdate, onLateUpdate, onEnable, onDisable;
+        private UnityEvent<int>                        onHorizontalIndexChanged;
         private UnityEvent<Item> onItemSelected;
 
         protected Inventory inventory;
@@ -31,7 +32,7 @@ namespace RedSilver2.Framework.Player.Inventories.UI
 
         protected InventoryUINavigatorTransitionsHandler transitionsHandler;
 
-        public int HorizontalIndex      => horizontalIndex;
+        public int       HorizontalIndex      => horizontalIndex;
         public Transform ModelParentTransform => modelParentTransform;
 
         public static InventoryUINavigator Current => current;

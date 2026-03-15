@@ -5,7 +5,6 @@ namespace RedSilver2.Framework.StateMachines.States
     public sealed class JumpState : MovementState
     {
         private JumpStateInitializer initializer;
-        private const string PRESS_JUMP_INPUT = "Press Jump";
 
         public JumpState(MovementStateMachine owner, JumpStateInitializer initializer) : base(owner) {
             this.initializer = initializer;
@@ -35,11 +34,6 @@ namespace RedSilver2.Framework.StateMachines.States
 
         protected sealed override void SetPlayerStateType(ref MovementStateType type) {
             type = MovementStateType.Jump;
-        }
-
-        public static OverrideablePressInput GetPressInput()
-        {
-            return InputManager.GetOrCreateOverrideablePressInput(PRESS_JUMP_INPUT, KeyboardKey.Space, GamepadButton.ButtonSouth);
         }
     }
 }

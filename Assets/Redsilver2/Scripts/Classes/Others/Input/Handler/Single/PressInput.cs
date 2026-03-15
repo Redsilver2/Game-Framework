@@ -6,7 +6,26 @@ namespace RedSilver2.Framework.Inputs
         {
         }
 
-        public sealed override bool GetKeyboardKeyValue() => InputManager.GetKeyDown(KeyboardKey);
-        public sealed override bool GetGamepadKeyValue()  => InputManager.GetKeyDown(GamepadKey);
+        public PressInput(string inputHandlerName, MouseButton defaultMouseButton, GamepadButton defaultGamepadButton) : base(inputHandlerName, defaultMouseButton, defaultGamepadButton)
+        {
+        }
+
+        protected sealed override bool GetDefaultValue(InputControl control)
+        {
+            if (control == null) return false;
+            return control.GetKeyDown();
+        }
+
+        protected sealed override bool GetGamepadValue(InputControl control)
+        {
+            if (control == null) return false;
+            return control.GetKeyDown();
+        }
+
+        protected sealed override bool GetXRValue(InputControl control)
+        {
+            if (control == null) return false;
+            return control.GetKeyDown();
+        }
     }
 }

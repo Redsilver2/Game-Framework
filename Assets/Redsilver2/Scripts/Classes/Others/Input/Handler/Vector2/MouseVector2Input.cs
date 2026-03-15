@@ -8,7 +8,7 @@ namespace RedSilver2.Framework.Inputs
         {
         }
 
-        public MouseVector2Input(string name, Vector2GamepadStick stick) : base(name, stick)
+        public MouseVector2Input(string name, GamepadStick stick) : base(name, stick)
         {
         }
 

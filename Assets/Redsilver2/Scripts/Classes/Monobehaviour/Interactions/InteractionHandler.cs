@@ -1,21 +1,20 @@
 using RedSilver2.Framework.Inputs;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
 namespace RedSilver2.Framework.Interactions
 {
     public abstract class InteractionHandler 
     {
-        private KeyboardKey keyboardKey;
+        private KeyboardKey    keyboardKey;
         private GamepadButton  gamepadKey;
-        private readonly InteractionHandlerModule module;
-        private InteractionModule currentInteractionModule;
-
-        public bool IsInputHeld     => InputManager.GetKey(keyboardKey, gamepadKey); 
-        public bool IsInputPressed  => InputManager.GetKeyDown(keyboardKey, gamepadKey);
-        public bool IsInputReleased => InputManager.GetKeyUp(keyboardKey, gamepadKey);
-
+       
+        private readonly InteractionHandlerModule owner;
+        private          InteractionModule        currentInteractionModule;
+        public bool IsInputHeld     => InputManager.GetKey(gamepadKey) || InputManager.GetKey(gamepadKey); 
+        public bool IsInputPressed  => InputManager.GetKeyDown(keyboardKey) || InputManager.GetKeyDown(gamepadKey);
+        public bool IsInputReleased => InputManager.GetKeyUp(keyboardKey) || InputManager.GetKeyUp(gamepadKey);
+        public InteractionHandlerModule Owner => owner;
 
         private static Dictionary<Collider, InteractionModule> interactionModuleInstances = new Dictionary<Collider, InteractionModule>();
 
@@ -29,26 +28,30 @@ namespace RedSilver2.Framework.Interactions
         {
             this.keyboardKey = KeyboardKey.E;
             this.gamepadKey  = GamepadButton.ButtonEast;
-            this.module      = module;
+            this.owner      = module;
         }
 
         protected InteractionHandler(KeyboardKey keyboardKey, GamepadButton gamepadKey, InteractionHandlerModule module)
         {
             this.keyboardKey = keyboardKey;
             this.gamepadKey  = gamepadKey;
-            this.module      = module;
+            this.owner       = module;
         }
+
 
   
         public void Update()
         {
-            if (module != null)
+            if (owner != null)
             {
-                InteractionModule interactionModule = GetInteractionModuleInstance(GetCollider(module.InteractionRange));
-                ResetTimedInteractionModule(interactionModule);
+                InteractionModule interactionModule = GetInteractionModuleInstance(GetCollider(owner.InteractionRange));
 
+
+                ResetTimedInteractionModule(interactionModule);
                 currentInteractionModule = interactionModule;
-                if (interactionModule != null) interactionModule.Interact(this);
+
+                if(owner.CanInteract(interactionModule))
+                    interactionModule?.Interact(this);
             }
         }
 
@@ -57,8 +60,8 @@ namespace RedSilver2.Framework.Interactions
             if (currentInteractionModule == null || !currentInteractionModule.enabled)
                 return;
 
-            if (interactionModule != currentInteractionModule && currentInteractionModule is TimedHoldInteractionModule)
-               (currentInteractionModule as TimedHoldInteractionModule).Release();
+            if (interactionModule != currentInteractionModule && currentInteractionModule is AdvancedHoldInteractionModule)
+               (currentInteractionModule as AdvancedHoldInteractionModule).Release();
         }
 
         protected abstract Collider GetCollider(float interactionRange);
@@ -76,6 +79,15 @@ namespace RedSilver2.Framework.Interactions
             {
                 if (!interactionModuleInstances.ContainsKey(collider))
                     interactionModuleInstances.Add(collider, module);
+            }
+        }
+
+        public static void RemoveInteractionModuleInstance(Collider collider)
+        {
+            if (collider != null && interactionModuleInstances != null)
+            {
+                if (interactionModuleInstances.ContainsKey(collider))
+                    interactionModuleInstances.Remove(collider);
             }
         }
     }

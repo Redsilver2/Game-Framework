@@ -9,7 +9,7 @@ namespace RedSilver2.Framework.Player.Inventories.UI
         protected sealed override void DisplayItemInformation(ItemData data)
         {
             if(data != null) {
-                DisplayItemInformation(data.Description);
+                DisplayItemInformation(data.GetDescription());
             }
         }
     }

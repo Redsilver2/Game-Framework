@@ -1,6 +1,7 @@
 using RedSilver2.Framework.Inputs;
 using RedSilver2.Framework.Interactions.Items;
 using RedSilver2.Framework.Player.Inventories.UI;
+using RedSilver2.Framework.StateMachines.Controllers;
 using UnityEngine;
 
 namespace RedSilver2.Framework.Player.Inventories
@@ -37,7 +38,7 @@ namespace RedSilver2.Framework.Player.Inventories
             if (item == null) return;
 
             if (mainInventory == null) {
-                mainInventory.AddItem(item, out bool isItemAdded);
+                mainInventory?.AddItem(item);
             }
         }
 

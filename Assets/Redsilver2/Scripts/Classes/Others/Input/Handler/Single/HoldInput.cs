@@ -1,15 +1,34 @@
 using UnityEngine;
+using UnityEngine.InputSystem.Controls;
 
 namespace RedSilver2.Framework.Inputs
 {
     public class HoldInput : SingleInput
     {
-        public HoldInput(string name, KeyboardKey defaultKeyboardKey, GamepadButton defaultGamepadKey) : base(name, defaultKeyboardKey, defaultGamepadKey)
-        {
-
+        public HoldInput(string inputHandlerName, MouseButton defaultMouseButton, GamepadButton defaultGamepadButton) : base(inputHandlerName, defaultMouseButton, defaultGamepadButton) {
+       
         }
 
-        public sealed override bool GetKeyboardKeyValue() => InputManager.GetKey(KeyboardKey);
-        public sealed override bool GetGamepadKeyValue() => InputManager.GetKey(GamepadKey);
+        public HoldInput(string inputHandlerName, KeyboardKey defaultKeyboardKey, GamepadButton defaultGamepadButton) : base(inputHandlerName, defaultKeyboardKey, defaultGamepadButton) {
+       
+        }
+
+        protected sealed override bool GetDefaultValue(InputControl control)
+        {
+            if (control == null) return false;
+            return control.GetKey();
+        }
+
+        protected sealed override bool GetGamepadValue(InputControl control)
+        {
+            if(control == null) return false;
+            return control.GetKey();
+        }
+
+        protected sealed override bool GetXRValue(InputControl control)
+        {
+            if (control == null) return false;
+            return control.GetKey();
+        }
     }
 }

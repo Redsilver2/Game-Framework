@@ -7,10 +7,10 @@ namespace RedSilver2.Framework.Inputs
         {
         }
 
-        public OverrideableVector2Input(string name, Vector2GamepadStick gamepadStick) : base(name, gamepadStick)
+        public OverrideableVector2Input(string name, GamepadStick gamepadStick) : base(name, gamepadStick)
         {
         }
 
-        public void OverrideStick(Vector2GamepadStick gamepadStick) => this.gamepadStick = gamepadStick;
+        public void OverrideStick(GamepadStick gamepadStick) => this.gamepadStick = gamepadStick;
     }
 }

@@ -4,12 +4,30 @@ namespace RedSilver2.Framework.Inputs
 {
     public class ReleaseInput : SingleInput
     {
-        public ReleaseInput(string name, KeyboardKey defaultKeyboardKey, GamepadButton defaultGamepadKey) : base(name, defaultKeyboardKey, defaultGamepadKey)
+        public ReleaseInput(string inputHandlerName, KeyboardKey defaultKeyboardKey, GamepadButton defaultGamepadButton) : base(inputHandlerName, defaultKeyboardKey, defaultGamepadButton)
         {
-
         }
 
-        public sealed override bool GetKeyboardKeyValue() => InputManager.GetKeyUp(KeyboardKey);
-        public sealed override bool GetGamepadKeyValue()  => InputManager.GetKeyUp(GamepadKey);
+        public ReleaseInput(string inputHandlerName, MouseButton defaultMouseButton, GamepadButton defaultGamepadButton) : base(inputHandlerName, defaultMouseButton, defaultGamepadButton)
+        {
+        }
+
+        protected sealed override bool GetDefaultValue(InputControl control)
+        {
+            if (control == null) return false;
+            return control.GetKeyUp();
+        }
+
+        protected sealed override bool GetGamepadValue(InputControl control)
+        {
+            if (control == null) return false;
+            return control.GetKeyUp();
+        }
+
+        protected sealed override bool GetXRValue(InputControl control)
+        {
+            if (control == null) return false;
+            return control.GetKeyUp();
+        }
     }
 }

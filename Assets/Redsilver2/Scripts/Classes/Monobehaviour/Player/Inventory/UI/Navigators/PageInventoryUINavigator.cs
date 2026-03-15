@@ -1,4 +1,5 @@
 using RedSilver2.Framework.Interactions.Items;
+using RedSilver2.Framework.StateMachines.Controllers;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -424,7 +425,7 @@ namespace RedSilver2.Framework.Player.Inventories.UI
         {
             if(pages == null || pages.Count == 0) return null;
             if(pageIndex < 0 || verticalIndex < 0 || horizontalIndex < 0) return null;
-
+          
             Item[,] items = GetItems(pageIndex);
             if(items == null || verticalIndex >= items.GetLength(0) || horizontalIndex >= items.GetLength(1)) return null;
 

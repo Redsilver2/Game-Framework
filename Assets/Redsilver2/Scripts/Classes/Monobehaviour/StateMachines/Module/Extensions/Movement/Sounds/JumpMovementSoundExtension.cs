@@ -66,5 +66,10 @@ namespace RedSilver2.Framework.StateMachines.States
 
             Play(clips);
         }
+
+        protected sealed override bool CanAddOrRemoveState(State state)
+        {
+            return state is JumpState;
+        }
     }
 }
