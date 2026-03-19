@@ -9,7 +9,7 @@ using UnityEngine;
 namespace RedSilver2.Framework
 {
     [RequireComponent(typeof(SteamManager))]
-    public sealed class GameManager : MonoBehaviour
+    public class GameManager : MonoBehaviour
     {
         public const string GROUND_LAYER_NAME = "Ground";
 
@@ -19,7 +19,7 @@ namespace RedSilver2.Framework
         [SerializeField] private SettingManager settingManager;
         [SerializeField] private LightManager lightManager;
 
-        private static GameManager instance;
+        protected static GameManager instance;
 
         public static CollectibleNotificationManager CollectibleNotification {
             get {
@@ -68,7 +68,7 @@ namespace RedSilver2.Framework
         public const string PLAYER_LAYER = "Player";
 
 
-        private void Awake()
+        protected virtual void Awake()
         {
             if (instance != null) { Destroy(gameObject); return; }
             instance = this;
