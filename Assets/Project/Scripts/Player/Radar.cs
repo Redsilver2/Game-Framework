@@ -85,19 +85,15 @@ public class Radar : MonoBehaviour {
         SetCameraPosition(controller);
         SetCameraRotation(controller);
 
-
-        openCoroutine = OpenCoroutine();
-        StartCoroutine(openCoroutine);
+        CoroutineHandler.StartCoroutine(this, ref openCoroutine, OpenCoroutine());
     }
 
     public void Disable(float waitDelay) {
         if (!isWaitDelayFinished || !isActivated) return;
-        isActivated = false;
-       
+        isActivated = false;  
         lookInput?.Disable();
-        StopCoroutine(openCoroutine);
-       
-        openCoroutine = null;
+
+        CoroutineHandler.StopCoroutine(this, ref openCoroutine);
         StartCoroutine(WaitDelayCoroutine(waitDelay));
        
         SetBackgroundTopVisibility(false);

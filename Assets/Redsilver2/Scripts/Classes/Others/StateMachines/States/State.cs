@@ -187,15 +187,21 @@ namespace RedSilver2.Framework.StateMachines.States
         }
 
 
-        protected void UpdateStateTransition(State[] transitionStates)
+        protected async void UpdateStateTransition(State[] transitionStates)
         {
+            await Awaitable.BackgroundThreadAsync();
+
             var results = transitionStates.Where(x => x != null).Where(x => x.IsValidTransition());
 
             if (results.Count() > 0)
             {
                 State state = results.First();
+
+                await Awaitable.MainThreadAsync();
                 owner?.ChangeState(state.GetStateName());
             }
+
+            await Awaitable.MainThreadAsync();
         }
 
         public string[] GetTransitionStateNames() {

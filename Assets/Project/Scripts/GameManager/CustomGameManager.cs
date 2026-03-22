@@ -2,6 +2,7 @@ using RedSilver2.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -99,13 +100,18 @@ public sealed class CustomGameManager : GameManager
         }
     }
 
+    public int GetUnlockedGameModeIndex()
+    {
+        return PlayerPrefs.GetInt(UNLOCKED_GAMEMODE, 0);
+    }
+
     private void SetUnlockedGameMode(Gamemode gamemode)
     {
         SetUnlockedGameMode((int)gamemode);
     }
 
     private void SetUnlockedGameMode(int index) {
-        int maxIndex = Enum.GetValues(typeof(Gamemode)).Length - 1;
+        int maxIndex = GetMaxGameModeCount() - 1;
 
         if (PlayerPrefs.HasKey(UNLOCKED_GAMEMODE)) {
             if (PlayerPrefs.GetInt(UNLOCKED_GAMEMODE, 0) > maxIndex)  {
@@ -131,8 +137,30 @@ public sealed class CustomGameManager : GameManager
        return gameModeIndex <= PlayerPrefs.GetInt(UNLOCKED_GAMEMODE, 0);
     }
 
+    public int GetSelectedGameModeIndex()
+    {
+        return (int)GetSelectedGameMode();
+    }
+
     public Gamemode GetSelectedGameMode() {
         return (Gamemode)PlayerPrefs.GetInt(UNLOCKED_GAMEMODE, 0);
+    }
+
+    public static int GetMaxGameModeCount()
+    {
+        Gamemode[] gamemodes = GetGameModes();
+        if (gamemodes == null) return 0;
+        return gamemodes.Length;
+    }
+
+    public static string GetGameModeName(Gamemode gamemode)
+    {
+        return gamemode.ToString();
+    }
+
+    public static Gamemode[] GetGameModes()
+    {
+        return (Gamemode[])Enum.GetValues(typeof(Gamemode));
     }
 
     public static CustomGameManager GetInstance()
