@@ -9986,7 +9986,7 @@ MonoBehaviour:
     animationName: Turn_On_Flashlight
     crossFadeTime: 0.1
     timestampEvents: []
-  defaultTurnEventTriggerTime: 0.5
+  defaultTurnEventTriggerTime: 0.99
 --- !u!114 &1519345041
 MonoBehaviour:
   m_ObjectHideFlags: 0

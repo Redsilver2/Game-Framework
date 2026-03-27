@@ -72,6 +72,8 @@ namespace RedSilver2.Framework
             instance = this;
             DontDestroyOnLoad(instance);
             gameObject.name = "GameManager";
+
+            Debug.unityLogger.logEnabled = false;
         }
 
         public static int GetGroundLayer() {
