@@ -23,9 +23,7 @@ namespace RedSilver2.Framework.StateMachines.States
                 owner?.AddOnLateUpdateListener(LateUpdate);
             });
 
-            AddOnUpdateListener(() => {
-                UpdateStateTransition(TransitionStates);
-            });
+            AddOnUpdateListener(UpdateStateTransition);
         }
 
         private void Update() {

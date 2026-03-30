@@ -1,3 +1,4 @@
+using RedSilver2.Framework.Inputs.Settings;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -7,6 +8,8 @@ namespace RedSilver2.Framework.Player
 {
     public abstract class CameraControllerModule : MonoBehaviour
     {
+        [SerializeField] private MouseVector2InputSettings settings;
+
         private CameraController controller;
         public CameraController Controller => controller;
 
@@ -25,21 +28,23 @@ namespace RedSilver2.Framework.Player
             }
         }
 
-        private void Awake() {
-            SetCameraController(GetCameraController());
+        private async void Awake() {
         }
 
-        private void Start(){
+        private async void Start(){
+
+            controller = await GetCameraController(settings);
+
             if (current == null)
             {
                 current = this;
-                controller?.Enable();
             }
-        }
 
-        private void Update()
-        {
-            if (controller != null) controller.Update();
+            controller?.Enable();
+
+            Debug.Log(controller);
+
+            if (current != this) enabled = false;
         }
 
         private void LateUpdate()
@@ -70,7 +75,7 @@ namespace RedSilver2.Framework.Player
             Cursor.visible = isVisible;
         }
 
-        protected abstract CameraController GetCameraController();
+        protected abstract Awaitable<CameraController> GetCameraController(MouseVector2InputSettings settings);
 
         public static void SetCurrent(int index) {
             SetCurrent(GetModule(index));

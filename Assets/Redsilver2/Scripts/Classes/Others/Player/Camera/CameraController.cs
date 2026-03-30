@@ -1,3 +1,5 @@
+using RedSilver2.Framework.Inputs.Configurations;
+using RedSilver2.Framework.Settings;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -5,69 +7,93 @@ namespace RedSilver2.Framework.Player
 {
     public abstract class CameraController
     {
+        private bool isEnabled;
+
+        protected float rotationClampX;
+        protected float rotationClampY;
+
         protected readonly Transform head;
         protected readonly Transform body;
 
-        private   readonly UnityEvent onUpdate;
-        private   readonly UnityEvent onLateUpdate;
+        private   readonly UnityEvent<Vector2> onUpdate;
+        private   readonly UnityEvent          onLateUpdate;
 
+        private readonly MouseVector2InputConfiguration Configuration;
+
+        public bool IsEnabled => isEnabled;
         public Transform Head => head;
         public Transform Body => body;
 
-        protected CameraController() { }
-        protected CameraController(Transform body, Transform head)
+        protected CameraController(MouseVector2InputConfiguration configuration, Transform body, Transform head)
         {
+            Configuration = configuration;
+            this.isEnabled = false;
+
             this.body = body;
             this.head = head;
 
-            this.onUpdate     = new UnityEvent();
+            this.onUpdate     = new UnityEvent<Vector2>();
             this.onLateUpdate = new UnityEvent();
 
             AddOnUpdateListener(OnUpdate);
             AddOnLateUpdateListener(OnLateUpdate);
         }
 
-        protected abstract void OnUpdate();
-        protected abstract void OnLateUpdate();
+        protected virtual void OnUpdate(Vector2 input) {
+            rotationClampY += Time.deltaTime * SettingManager.GetSensitivityX() * input.x;
+            rotationClampX -= Time.deltaTime * SettingManager.GetSensivitityY() * input.y;
+        }
 
-        public void Update()
+        protected virtual void OnLateUpdate() {
+            if (body != null) body.localEulerAngles = Vector2.up    * rotationClampY;
+            if (head != null) head.localEulerAngles = Vector2.right * rotationClampX;
+        }
+
+        private void Update(Vector2 vector)
         {
-            onUpdate.Invoke();
+            onUpdate.Invoke(vector);
         }
         public void LateUpdate()
         {
             onLateUpdate.Invoke();
         }      
 
-        public void AddOnUpdateListener(UnityAction action) 
+        public void AddOnUpdateListener(UnityAction<Vector2> action) 
         {
-            if(onUpdate != null && action != null) onUpdate.AddListener(action);
+            if(action != null) onUpdate?.AddListener(action);
         }
-        public void RemoveOnUpdateListener(UnityAction action)
+        public void RemoveOnUpdateListener(UnityAction<Vector2> action)
         {
-            if (onUpdate != null && action != null) onUpdate.AddListener(action);
+            if (action != null) onUpdate?.RemoveListener(action);
         }
 
         public void AddOnLateUpdateListener(UnityAction action)
         {
-            if (onLateUpdate != null && action != null) onLateUpdate.AddListener(action);
+            if (action != null) onLateUpdate?.AddListener(action);
         }
         public void RemoveOnLateUpdateListener(UnityAction action)
         {
-            if (onLateUpdate != null && action != null) onLateUpdate.AddListener(action);
+            if (action != null) onLateUpdate?.AddListener(action);
         }
 
-        public abstract void Enable();
-        public abstract void Disable();
+        public virtual void Enable() {
+            if (!isEnabled)
+            {
+                isEnabled = true;
+                Debug.Log(Configuration);
 
-        public static float GetSensitivityX()
-        {
-            return 5f;
+                Configuration?.AddOnUpdatedListener(Update);
+                Configuration?.Enable();
+            }
         }
 
-        public static float GetSensitivityY()
-        {
-            return 5f;
+        public virtual void Disable() {
+            if (isEnabled)
+            {
+                isEnabled = false;
+                Configuration?.RemoveOnUpdatedListener(Update);
+                Configuration?.Disable();
+            }
         }
     }
 }

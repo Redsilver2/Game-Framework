@@ -18,6 +18,7 @@ namespace RedSilver2.Framework.Inputs {
 
             this.onEnabled  = new UnityEvent();
             this.onDisabled = new UnityEvent();
+           
             this.onExecuted = new UnityEvent();
             this.onReseted  = new UnityEvent();
 

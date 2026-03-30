@@ -36,7 +36,7 @@ namespace RedSilver2.Framework.StateMachines.States
 
             GameObject gameObject = hit.collider.gameObject;
 
-            if (gameObject.layer == GameManager.GetGroundLayer()) {
+            if (gameObject.layer == GameManager.GroundLayer) {
                 hitPosition = hit.point;
                 groundTag = gameObject.tag;
                 return true;

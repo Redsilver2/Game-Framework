@@ -1,24 +1,23 @@
+using RedSilver2.Framework.Inputs.Configurations;
 using UnityEngine;
 
 namespace RedSilver2.Framework.Player
 {
-    public class FPSCameraController : PlayerCameraController
+    public class FPSCameraController : CameraController
     {
         private readonly FPSCameraControllerModule module;
 
-        private FPSCameraController()
-        {
-        }
-
-        public FPSCameraController(Transform body, Transform head, FPSCameraControllerModule module) : base(body, head)
+        public FPSCameraController(MouseVector2InputConfiguration configuration, FPSCameraControllerModule module, Transform body, Transform head) : base(configuration, body, head)
         {
             this.module = module;
         }
 
-        protected override void InputUpdate(Vector2 input)
+        protected sealed override void OnUpdate(Vector2 input)
         {
-            base.InputUpdate(input);
-            if(module != null) rotationClampX = Mathf.Clamp(rotationClampX, module.MinRotationX, module.MaxRotationX);
+            base.OnUpdate(input);
+
+            if (module != null)
+                rotationClampX = Mathf.Clamp(rotationClampX, module.MinRotationX, module.MaxRotationX);
         }
     }
 }

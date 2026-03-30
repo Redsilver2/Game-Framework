@@ -40,8 +40,6 @@ namespace RedSilver2.Framework.Inputs
 
         protected sealed override bool CanExecute()
         {
-            Debug.Log(this + " " + inputs.Length);
-
             if (inputs == null || inputs.Length == 0) return false;
             return inputs.Where(x => x != null).Where(x => x.Value).Count() == inputs.Where(x => x != null).Count(); 
         }

@@ -1,3 +1,6 @@
+using RedSilver2.Framework.Inputs.Configurations;
+using RedSilver2.Framework.Inputs.Settings;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace RedSilver2.Framework.Player
@@ -10,10 +13,12 @@ namespace RedSilver2.Framework.Player
         public float MinRotationX => minRotationX;
         public float MaxRotationX => maxRotationX;
 
-        protected override CameraController GetCameraController()
+        protected override async Awaitable<CameraController> GetCameraController(MouseVector2InputSettings settings)
         {
-            if (Controller != null) return Controller;
-            return new FPSCameraController(transform.root, transform, this);
+            if      (settings == null)   return null;
+            else if (Controller != null) return Controller;
+
+            return new FPSCameraController(await settings.GetConfiguration(), this, transform.root, transform);
         }
     }
 }

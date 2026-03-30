@@ -1,6 +1,5 @@
 using RedSilver2.Framework.StateMachines.Controllers;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 

@@ -1,3 +1,5 @@
+using UnityEngine.Events;
+
 namespace RedSilver2.Framework.Inputs
 {
     public abstract class SingleInput : InputHandler
@@ -12,10 +14,7 @@ namespace RedSilver2.Framework.Inputs
         public bool Value
         {
             get {
-                if (!IsEnabled) return false;
-                    return GetDefaultPathValue()
-                        || GetGamepadPathValue()
-                        || GetXRPathValue();
+                return !IsEnabled ? false : GetDefaultPathValue() || GetGamepadPathValue() || GetXRPathValue();
             }
         }
 

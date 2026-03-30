@@ -6,11 +6,10 @@ namespace RedSilver2.Framework.Inputs
     public abstract class Vector2Input : InputHandler
     {
         protected GamepadStick gamepadStick;
-       
+
         public Vector2 Value { 
             get {
-                if (!IsEnabled) return Vector2.zero;
-                return GetInputVector2();
+                return !IsEnabled ? Vector2.zero : GetInputVector2();
             } 
         }
 
@@ -22,7 +21,17 @@ namespace RedSilver2.Framework.Inputs
             this.gamepadStick = GamepadStick.LeftStick;
         }
 
+        protected Vector2Input(string name, bool isEnabled) : base(name, isEnabled)
+        {
+            this.gamepadStick = GamepadStick.LeftStick;
+        }
+
         protected Vector2Input(string name, GamepadStick gamepadStick) : base(name)
+        {
+            this.gamepadStick = gamepadStick;
+        }
+
+        protected Vector2Input(string name, bool isEnabled, GamepadStick gamepadStick) : base(name, isEnabled)
         {
             this.gamepadStick = gamepadStick;
         }
@@ -41,7 +50,6 @@ namespace RedSilver2.Framework.Inputs
         {
             return "| Keys Paths | \n\n" + $"{GetGamepadStickInfos()}";
         }
-
 
         private bool TryGetGamepadVector2(out Vector2 result)
         {

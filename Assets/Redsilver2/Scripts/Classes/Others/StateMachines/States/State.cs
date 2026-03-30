@@ -51,7 +51,7 @@ namespace RedSilver2.Framework.StateMachines.States
             owner?.AddOnStateExitedListener (GetOnStateExitedListener());
 
             if (this is not UpdateableState) 
-                AddOnStateEnteredListener(() => { UpdateStateTransition(TransitionStates); });
+                AddOnStateEnteredListener(UpdateStateTransition);
 
 
             AddRequiredTransitionStates(owner);
@@ -187,8 +187,9 @@ namespace RedSilver2.Framework.StateMachines.States
         }
 
 
-        protected void UpdateStateTransition(State[] transitionStates)
+        protected async void UpdateStateTransition()
         {
+            if (transitionStates == null) { return; }
             var results = transitionStates.Where(x => x != null).Where(x => x.IsValidTransition());
 
             if (results.Count() > 0)
@@ -198,14 +199,17 @@ namespace RedSilver2.Framework.StateMachines.States
             }
         }
 
-        public string[] GetTransitionStateNames() {
+        public async Awaitable<string[]> GetTransitionStateNames() {
             List<string> results = new List<string>();
+
+            await Awaitable.BackgroundThreadAsync();
 
             if (transitionStates != null) {
                 foreach(State state in transitionStates)
                     results.Add(state.GetStateName());
             }
 
+            await Awaitable.MainThreadAsync();
             return results.ToArray();
         }
 
@@ -218,16 +222,17 @@ namespace RedSilver2.Framework.StateMachines.States
            return results.Count() == transitionChecks.Values.Count;
         }
 
-        public string GetTranstitionValidations()
+        public async Awaitable<string> GetTranstitionValidations()
         {
             string results = "Transition Checks: \n";
             if(transitionChecks == null) return results + "null";
 
-            foreach(KeyValuePair<string, StateTransition> valuePair in transitionChecks)
-            {
-                results += $"{valuePair.Key} | Is Valid: {valuePair.Value.GetTransitionResult()} \n";
-            }
+            await Awaitable.BackgroundThreadAsync();
 
+            foreach(KeyValuePair<string, StateTransition> valuePair in transitionChecks)
+                results += $"{valuePair.Key} | Is Valid: {valuePair.Value.GetTransitionResult()} \n";
+
+            await Awaitable.MainThreadAsync();
             return results;
         }
 

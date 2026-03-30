@@ -1,66 +1,78 @@
+using RedSilver2.Framework.Inputs;
 using RedSilver2.Framework.Interactions.Collectibles;
 using RedSilver2.Framework.Performance.Lights;
 using RedSilver2.Framework.Scenes;
 using RedSilver2.Framework.Settings;
-using RedSilver2.Framework.StateMachines.Controllers;
 using RedSilver2.Framework.Subtitles;
 using UnityEngine;
 
 namespace RedSilver2.Framework
 {
     [RequireComponent(typeof(SteamManager))]
-    public sealed class GameManager : MonoBehaviour
+    [RequireComponent(typeof(InputManager))]
+    public abstract class GameManager : MonoBehaviour
     {
-        public const string GROUND_LAYER_NAME = "Ground";
-
         [SerializeField] private CollectibleNotificationManager collectibleNotification;
         [SerializeField] private SceneLoaderManager sceneLoaderManager;
+        
         [SerializeField] private SubtitleManager subtitleManager;
         [SerializeField] private SettingManager settingManager;
-        [SerializeField] private LightManager lightManager;
+       
+        [SerializeField] private InputManager  inputManager;
+        [SerializeField] private LightManager  lightManager;
 
         private static GameManager instance;
+        public const string GROUND_LAYER_NAME = "Ground";
+
+
+        public static int GroundLayer
+        {
+            get {
+                return LayerMask.NameToLayer(GROUND_LAYER);
+            }
+        }
+
+        public static int PlayerLayer
+        {
+            get {
+                return LayerMask.NameToLayer(PLAYER_LAYER);
+            }
+        }
 
         public static CollectibleNotificationManager CollectibleNotification {
             get {
-                GameManager manager = instance;
-                if (manager != null) return manager.collectibleNotification;
-                return null;
+                return instance ? instance.collectibleNotification : null;
             }
         }
 
         public static SceneLoaderManager SceneLoaderManager {
             get {
-                GameManager manager = instance;
-                if (manager != null) return manager.sceneLoaderManager;
-                return null;
+                return instance ? instance.sceneLoaderManager : null;
             }
         }
 
         public static SubtitleManager SubtitleManager
         {
             get {
-                GameManager manager = instance;
-                if (manager != null) return manager.subtitleManager;
-                return null;
+                return instance ? instance.subtitleManager : null;
             }
         }
 
         public static SettingManager SettingManager
         {
-            get
-            {
-                GameManager manager = instance;
-                if (manager != null) return manager.settingManager;
-                return null;
+            get {
+                return instance ? instance.settingManager : null;
             }
+        }
+
+        public static InputManager InputManager
+        {
+            get {  return instance ? instance.inputManager : null; }
         }
 
         public static LightManager LightManager {
             get {
-                GameManager manager = instance;
-                if (manager != null) return manager.lightManager;
-                return null;
+                return instance ? instance.lightManager : null;
             }
         }
 
@@ -72,16 +84,20 @@ namespace RedSilver2.Framework
         {
             if (instance != null) { Destroy(gameObject); return; }
             instance = this;
-            DontDestroyOnLoad(instance);
+            inputManager = GetComponent<InputManager>();
+
             gameObject.name = "GameManager";
+            DontDestroyOnLoad(instance);
         }
 
-        public static int GetGroundLayer() {
-            return LayerMask.NameToLayer(GROUND_LAYER);
+        public static bool IsGroundLayer(GameObject gameObject)
+        {
+            if(gameObject == null) return false;
+            return gameObject.layer.Equals(GroundLayer);
         }
 
-        public static int GetPlayerLayer() {
-            return LayerMask.NameToLayer(PLAYER_LAYER);
+        protected static GameManager GetInstance() {
+            return instance;
         }
     }
 }

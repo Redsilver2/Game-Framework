@@ -28,7 +28,7 @@ namespace RedSilver2.Framework.Items
 
         private EquippableItem item;
 
-        private PlayerCameraController cameraController;
+        private CameraController       cameraController;
         private PlayerMovementHandler  handler;
 
         private Vector3 originalPosition;
@@ -62,6 +62,8 @@ namespace RedSilver2.Framework.Items
         private void EnableEvents()
         {
             item?.AddOnEquippedListener(OnEquipped);
+            item?.AddOnUnEquippedListener(OnUnEquipped);
+
             item?.AddOnUpdateListener(OnUpdate);
             item?.AddOnLateUpdateListener(OnLateUpdate);
         }
@@ -69,6 +71,9 @@ namespace RedSilver2.Framework.Items
         private void DisableEvents()
         {
             item?.RemoveOnEquippedListener(OnEquipped);
+            item?.RemoveOnUnEquippedListener(OnUnEquipped);
+
+
             item?.RemoveOnUpdateListener(OnUpdate);
             item?.RemoveOnLateUpdateListener(OnLateUpdate);
         }
@@ -84,12 +89,22 @@ namespace RedSilver2.Framework.Items
             cameraController = GetCameraController();
             handler          = GetMovementHandler();
 
+            cameraController?.AddOnUpdateListener(UpdateRotation);
+
         }
+
+        protected virtual void OnUnEquipped()
+        {
+            cameraController?.RemoveOnUpdateListener(UpdateRotation);
+        }
+
+
+
+
 
         private void OnUpdate()
         {
             if (item == null) return;
-            UpdateRotation();
             UpdatePosition();
         }
 
@@ -104,18 +119,13 @@ namespace RedSilver2.Framework.Items
             transform.localEulerAngles =  newRotation;
         }
 
-        private PlayerCameraController GetCameraController()
+        private CameraController GetCameraController()
         {
             if (item == null || item.transform.root == null) return null;
             CameraControllerModule module  = item.transform.root.GetComponentInChildren<CameraControllerModule>();
            
             if (module == null) return null;
-            
-            if(module.Controller is PlayerCameraController) {
-                return module.Controller as PlayerCameraController;
-            }
-
-            return null;
+            return module.Controller;
         }
 
         private PlayerMovementHandler GetMovementHandler()
@@ -134,11 +144,11 @@ namespace RedSilver2.Framework.Items
             return transform.root.GetComponentInChildren<EquippableItem>();
         }
 
-        private void UpdateRotation() {
+        private void UpdateRotation(Vector2 input) {
             if(cameraController == null) return;
        
             float x = 0f, y = 0f;
-            UpdateRotation(cameraController.MouseInput, ref x, ref y);
+            UpdateRotation(input, ref x, ref y);
 
             float newPositionX = Mathf.Lerp(desiredRotation.x, x, Time.deltaTime * rotationUpdateSpeed);
             float newPositionY = Mathf.Lerp(desiredRotation.y, y, Time.deltaTime * rotationUpdateSpeed);
@@ -146,14 +156,13 @@ namespace RedSilver2.Framework.Items
             desiredRotation = Vector2.right * newPositionX + Vector2.up * newPositionY;
         }
 
-        private void UpdateRotation(MouseVector2Input input, ref float x, ref float y)
+        private void UpdateRotation(Vector2 value, ref float x, ref float y)
         {
-            if (input == null || input.Value.magnitude <= 0f) {
+            if (value.magnitude <= 0f) {
                 x = originalRotation.x;
                 y = originalRotation.y;
             }
             else {
-                Vector2 value = input.Value;
                 x = Mathf.Clamp(desiredRotation.x - value.y * inputRotationStrenght, minRotation.x, maxRotation.x);
                 y = Mathf.Clamp(desiredRotation.y + value.x * inputRotationStrenght, minRotation.y, maxRotation.y); 
             }
