@@ -1,4 +1,3 @@
-using RedSilver2.Framework.StateMachines.States.Movement;
 using System;
 using System.Linq;
 
@@ -8,28 +7,12 @@ namespace RedSilver2.Framework.StateMachines.States
     {
         public readonly MovementStateType   Type;
         public readonly MovementStateType[] IncompatibleTransitionStates;
-        public readonly MovementHandler     MovementHandler;
 
         protected MovementState(MovementStateMachine owner) : base(owner) {
-            SetMovementHandler(owner, ref MovementHandler);
-
             SetPlayerStateType(ref Type);
             SetIncompatibleStateTransitions(ref IncompatibleTransitionStates);
-            
-            IncompatibleTransitionStates = IncompatibleTransitionStates.Distinct().ToArray();
-            owner?.AddState(Type, this);
+            IncompatibleTransitionStates = IncompatibleTransitionStates.Distinct().ToArray();;
         }
-
-
-        private void SetMovementHandler(MovementStateMachine stateMachine, ref MovementHandler handler) {
-            if (stateMachine != null) handler = stateMachine.MovementHandler;
-        }
-
-        public sealed override void AddTransitionState(State state)
-        {
-            if(state is MovementState) base.AddTransitionState(state);
-        }
-
 
         protected bool IsValidTransitionState(MovementStateType stateType)  {
             if (IncompatibleTransitionStates == null || owner == null) return false;
@@ -45,13 +28,14 @@ namespace RedSilver2.Framework.StateMachines.States
             return IsValidTransitionState(state.Type);
         }
 
-        protected sealed override void AddRequiredTransitionStates(StateMachine stateMachine) {
-           // AddRequiredTransitionStates(stateMachine as MovementStateMachine);
-        }
-
         public sealed override string GetStateName()
         {
             return Type.ToString();
+        }
+
+        public MovementStateMachine GetMovementStateMachine()
+        {
+            return owner as MovementStateMachine;
         }
 
         protected abstract void SetPlayerStateType(ref MovementStateType type);

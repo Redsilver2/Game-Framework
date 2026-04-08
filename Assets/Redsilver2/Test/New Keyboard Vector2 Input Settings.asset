@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 755cdab93dfbdd845a30ccdeab64f8e8, type: 3}
   m_Name: New Keyboard Vector2 Input Settings
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Inputs.Settings.KeyboardVector2InputSettings
-  InputName: 
+  InputName: MOVE
   isOverrideable: 0
   DefaultUpKey: 1
   DefaultDownKey: 11

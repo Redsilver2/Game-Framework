@@ -3,7 +3,6 @@ using RedSilver2.Framework.Inputs.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -15,35 +14,53 @@ namespace RedSilver2.Framework.Inputs
     {
         private void Awake()
         {
-            if (GameManager.InputManager == this) {
+            if (IsActifInputManager()) {
 
-            }
-
-            inputConfigurations   = new Dictionary<string, InputConfiguration>();
-            inputHandlers         = new Dictionary<string, InputHandler>();
+            }  
 
             keyboardKeysControls   = GetKeyboardKeysControls();
             mouseButtonsControls   = GetMouseButtonsControls();
             gamepadButtonsControls = GetGamepadButtonsControls();
         }
 
-        private async void Update() {
+        private void Update() {
+           // if (!IsActifInputManager()) return;
             UpdateInputConfigurations();
         }
 
-        private async void UpdateInputConfigurations()
-        {
-            InputConfiguration[] results = (await GetInputConfigurations()).Where(x => x != null).Where(x => x.IsEnabled).ToArray();
+        private void LateUpdate() {
+           // if (!IsActifInputManager()) return;
+            LateUpdateInputConfigurations();
+        }
 
-            foreach (InputConfiguration configuration in results)
+        private void UpdateInputConfigurations()
+        {
+            foreach (InputConfiguration configuration in GetActifConfigurations())
                 configuration?.Update();
+        }
+
+        private void LateUpdateInputConfigurations()
+        {
+            foreach (InputConfiguration configuration in GetActifConfigurations())
+                configuration?.LateUpdate();
+        }
+
+        private InputConfiguration[] GetActifConfigurations()
+        {
+            InputConfiguration[] configurations = GetInputConfigurations();
+            return configurations.Where(x => x != null).Where(x => x.IsEnabled).ToArray();
+        }
+
+        private bool IsActifInputManager()
+        {
+            return GameManager.InputManager == this;
         }
     }
 
     public sealed partial class InputManager : MonoBehaviour
     {
-        private static Dictionary<string, InputHandler>       inputHandlers;
-        private static Dictionary<string, InputConfiguration> inputConfigurations;
+        private static Dictionary<string, InputHandler> inputHandlers             = new Dictionary<string, InputHandler>();
+        private static Dictionary<string, InputConfiguration> inputConfigurations = new Dictionary<string, InputConfiguration>();
 
         private static Dictionary<KeyboardKey  , InputControl> keyboardKeysControls;
         private static Dictionary<MouseButton  , InputControl> mouseButtonsControls;
@@ -528,30 +545,25 @@ namespace RedSilver2.Framework.Inputs
 
         public static void AddInputHandler(string name, InputHandler handler)
         {
-            if (!string.IsNullOrEmpty(name) && handler != null && inputHandlers != null)
-            {
-                name = name.ToLower();
+            if (handler == null || inputHandlers == null || string.IsNullOrEmpty(name))
+                return;
 
-                if (!inputHandlers.ContainsKey(name))
-                    inputHandlers.Add(name, handler);
-            }
+            name = name.ToLower();
+
+            if (!inputHandlers.ContainsKey(name))
+                inputHandlers?.Add(name, handler);
         }
 
-        public async static Awaitable<string> GetInputHandlerName(InputHandler handler)
+        public static string GetInputHandlerName(InputHandler handler)
         {
             if (handler == null || inputHandlers == null) return string.Empty;
-            await Awaitable.BackgroundThreadAsync();
 
             foreach (KeyValuePair<string, InputHandler> pair in inputHandlers)
             {
                 if (IsSameInputHandler(pair.Value, handler))
-                {
-                    await Awaitable.MainThreadAsync();
                     return pair.Key;
-                }
             }
 
-            await Awaitable.MainThreadAsync();
             return string.Empty;
         }
 
@@ -567,86 +579,81 @@ namespace RedSilver2.Framework.Inputs
             return inputHandlers.Keys.Distinct().ToArray();
         }
 
-        public static async Awaitable<SingleInputConfiguration> GetSingleInputConfiguration(string name) {
-            return GetInputConfiguration(name, await GetMouseInputConfigurations()) as SingleInputConfiguration;
+        public static SingleInputConfiguration GetSingleInputConfiguration(string name) {
+            return GetInputConfiguration(name) as SingleInputConfiguration;
         }
 
-        public static async Awaitable<KeyboardVector2InputConfiguration> GetKeyboardInputConfiguration(string name) {
-            return GetInputConfiguration(name, await GetKeyboardInputConfigurations()) as KeyboardVector2InputConfiguration;
+        public static KeyboardVector2InputConfiguration GetKeyboardInputConfiguration(string name) {
+            return GetInputConfiguration(name) as KeyboardVector2InputConfiguration;
         }
 
-        public static async Awaitable<MouseVector2InputConfiguration> GetMouseInputConfiguration(string name) {
-            return GetInputConfiguration(name, await GetMouseInputConfigurations()) as MouseVector2InputConfiguration;
+        public static MouseVector2InputConfiguration GetMouseInputConfiguration(string name) {
+            return GetInputConfiguration(name) as MouseVector2InputConfiguration;
         }
 
-        public static async Awaitable<SingleInputConfiguration> GetOrCreateSingleInputConfiguration(string name, SingleInputSettings settings) {
+        public static SingleInputConfiguration GetOrCreateSingleInputConfiguration(string name, SingleInputSettings settings) {
             if (string.IsNullOrEmpty(name) || settings == null) return null;
 
-            SingleInputConfiguration configuration = await GetSingleInputConfiguration(name);
+            SingleInputConfiguration configuration =  GetSingleInputConfiguration(name);
             return configuration != null ? configuration : new SingleInputConfiguration(settings);
         }
 
-        public static async Awaitable<KeyboardVector2InputConfiguration> GetOrCreateKeyboardInputConfiguration(string name, KeyboardVector2InputSettings settings)
+        public static KeyboardVector2InputConfiguration GetOrCreateKeyboardInputConfiguration(string name, KeyboardVector2InputSettings settings)
         {
             if (string.IsNullOrEmpty(name) || settings == null) return null;
 
-            KeyboardVector2InputConfiguration configuration = await GetKeyboardInputConfiguration(name);
+            KeyboardVector2InputConfiguration configuration =  GetKeyboardInputConfiguration(name);
             return configuration != null ? configuration : new KeyboardVector2InputConfiguration(settings);
         }
 
 
-        public static async Awaitable<MouseVector2InputConfiguration> GetOrCreateMouseInputConfiguration(string name, MouseVector2InputSettings settings)
+        public static MouseVector2InputConfiguration GetOrCreateMouseInputConfiguration(string name, MouseVector2InputSettings settings)
         {
             if (string.IsNullOrEmpty(name) || settings == null) return null;
 
-            MouseVector2InputConfiguration configuration = await GetMouseInputConfiguration(name);
+            MouseVector2InputConfiguration configuration =  GetMouseInputConfiguration(name);
             return configuration != null ? configuration :  new MouseVector2InputConfiguration(settings);
         }
 
 
-        public static async Awaitable<SingleInputConfiguration[]> GetSingleInputConfigurations()
+        public static SingleInputConfiguration[] GetSingleInputConfigurations()
         {
             List<SingleInputConfiguration> result = new List<SingleInputConfiguration>();
-            await Awaitable.BackgroundThreadAsync();
 
-            foreach (var configuration in (await GetInputConfigurations()).Where(x => x is SingleInputConfiguration))
+            foreach (var configuration in GetInputConfigurations().Where(x => x is SingleInputConfiguration))
                 result.Add(configuration as SingleInputConfiguration);
 
-            await Awaitable.MainThreadAsync();
+
             return result.ToArray();
         }
 
-        public static async Awaitable<KeyboardVector2InputConfiguration[]> GetKeyboardInputConfigurations()
+        public static KeyboardVector2InputConfiguration[] GetKeyboardInputConfigurations()
         {
             List<KeyboardVector2InputConfiguration> result = new List<KeyboardVector2InputConfiguration>();
-            await Awaitable.BackgroundThreadAsync();
 
-            foreach (var configuration in (await GetInputConfigurations()).Where(x => x is KeyboardVector2InputConfiguration))
+
+            foreach (var configuration in GetInputConfigurations().Where(x => x is KeyboardVector2InputConfiguration))
                 result.Add(configuration as KeyboardVector2InputConfiguration);
 
-            await Awaitable.MainThreadAsync();
             return result.ToArray();
         }
 
-        public static async Awaitable<MouseVector2InputConfiguration[]> GetMouseInputConfigurations()
+        public static MouseVector2InputConfiguration[] GetMouseInputConfigurations()
         {
             List<MouseVector2InputConfiguration> result = new List<MouseVector2InputConfiguration>();
-            await Awaitable.BackgroundThreadAsync();
 
-            foreach (var configuration in (await GetInputConfigurations()).Where(x => x is MouseVector2InputConfiguration))
+            foreach (var configuration in GetInputConfigurations().Where(x => x is MouseVector2InputConfiguration))
                 result.Add(configuration as MouseVector2InputConfiguration);
 
-            await Awaitable.MainThreadAsync();
             return result.ToArray();
         }
 
 
-        private static async Awaitable<InputConfiguration[]> GetInputConfigurations()
+        private static InputConfiguration[] GetInputConfigurations()
         {
             List<InputConfiguration> results = new List<InputConfiguration>();
             
             if(inputConfigurations == null)  return results.ToArray();
-            await Awaitable.BackgroundThreadAsync();
 
             foreach(KeyValuePair<string, InputConfiguration>  valuePair in inputConfigurations) {
                 InputConfiguration configuration = valuePair.Value;
@@ -654,7 +661,6 @@ namespace RedSilver2.Framework.Inputs
                 results?.Add(configuration);
             }
 
-            await Awaitable.MainThreadAsync();
             return results.ToArray();
         }
 
@@ -667,6 +673,18 @@ namespace RedSilver2.Framework.Inputs
             results = configurations.Where(x => x != null).Where(x => x.InputName.ToLower().Equals(name)).ToArray();
 
             if (results.Length > 0) return results.First();
+            return null;
+        }
+
+        private static InputConfiguration GetInputConfiguration(string name)
+        {
+            if (string.IsNullOrEmpty(name) || inputConfigurations == null) return null;
+            name = name.ToLower();
+            
+
+            if(inputConfigurations.ContainsKey(name))
+                return inputConfigurations[name];
+
             return null;
         }
 

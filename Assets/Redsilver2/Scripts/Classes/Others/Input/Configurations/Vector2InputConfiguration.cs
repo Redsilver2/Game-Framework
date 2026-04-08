@@ -20,7 +20,7 @@ namespace RedSilver2.Framework.Inputs.Configurations
 
 
             if (settings != null) {
-                isOverrideable = settings.isOverrideable;
+                isOverrideable = settings.IsOverrideable;
             }
         }
 

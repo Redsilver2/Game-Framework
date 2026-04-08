@@ -25,7 +25,7 @@ namespace RedSilver2.Framework.Inputs.Configurations {
 
             if (settings != null)
             {
-                singleInput          = settings.SingleInput;
+                singleInput          = settings.GetInputType();
                 defaultKeyboardKey   = settings.DefaultKeyboardKey;
                 defaultMouseButton   = settings.DefaultMouseButton;
                 defaultGamepadButton = settings.DefaultGamepadButton;

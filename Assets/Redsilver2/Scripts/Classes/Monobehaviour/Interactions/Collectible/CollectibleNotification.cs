@@ -26,14 +26,14 @@ namespace RedSilver2.Framework.Interactions.Collectibles
         protected virtual void OnShowNotification(Collectible collectible)
         {
             PlayerController.Disable();
-            CameraControllerModule.Disable();
+            CameraController.Disable();
             if (collectible != null) CollectibleNotification.RegisterData(collectible.GetData());
         }
 
         protected virtual void OnHideNotification(Collectible collectible)
         {
             PlayerController.Enable();
-            CameraControllerModule.Enable();
+            CameraController.Enable();
         }
 
         public void AddOnShowNotificationListener(UnityAction<Collectible> action) {

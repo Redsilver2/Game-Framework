@@ -60,8 +60,8 @@ namespace RedSilver2.Framework.Dev
                 if (isActivated) PlayerController.Disable();
                 else             PlayerController.Enable();
 
-                if (isActivated) CameraControllerModule.Disable();
-                else             CameraControllerModule.Enable();
+                if (isActivated) CameraController.Disable();
+                else             CameraController.Enable();
 
                 await UpdateLoggedMessages();
             }

@@ -1,5 +1,4 @@
 using RedSilver2.Framework.Inputs.Settings;
-using RedSilver2.Framework.StateMachines.Settings;
 using UnityEngine;
 
 namespace RedSilver2.Framework.Inputs.Configurations
@@ -8,22 +7,22 @@ namespace RedSilver2.Framework.Inputs.Configurations
     public class MovementInputConfiguration : ScriptableObject
     {
         [Space]
-        [Header("Walk Input Setting")]
+        [Header("Walk Input Settings")]
         public KeyboardVector2InputSettings moveSetting;
 
         [Space]
-        [Header("Crouch Input Setting")]
-        [SerializeField] private KeyboardKey   keyboardCrouchKey = KeyboardKey.C;
-        [SerializeField] private GamepadButton gamepadCrouchButton     = GamepadButton.ButtonEast;
-
+        [Header("Run Input Settings")]
+        [SerializeField] private PressInputSettings pressRunSettings;
+        [SerializeField] private HoldInputSettings  holdRunSettings;
 
         [Space]
-        [Header("Jump Input Setting")]
-        [SerializeField] private KeyboardKey   keyboardJumpKey   = KeyboardKey.Space;
-        [SerializeField] private GamepadButton gamepadJumpButton = GamepadButton.ButtonSouth;
+        [Header("Crouch Input Settings")]
+        [SerializeField] private PressInputSettings pressCrouchSettings;
+        [SerializeField] private HoldInputSettings  holdCrouchSettings;
 
-
-        private MovementConfiguration configuration;
+        [Space]
+        [Header("Jump Input Settings")]
+        [SerializeField] private PressInputSettings pressJumpSettings;
         private const GamepadStick GAMEPAD_MOVE_STICK = GamepadStick.LeftStick;
 
         private const string MOVE_INPUT         = "MOVE INPUT";
@@ -36,11 +35,11 @@ namespace RedSilver2.Framework.Inputs.Configurations
         private const string PRESS_RUN_INPUT    = "PRESS RUN INPUT";
 
 
-        public void SetConfiguration(MovementConfiguration configuration) {
-            if (configuration == null || configuration == this.configuration) return;
-            ResetConfiguration();
+        //public void SetConfiguration(MovementStateConfiguration configuration) {
+        //    if (configuration == null || configuration == this.configuration) return;
+        //    ResetConfiguration();
 
-        } 
+        //} 
 
         private void ResetConfiguration() {
 
@@ -53,7 +52,7 @@ namespace RedSilver2.Framework.Inputs.Configurations
 
         public bool IsRunning()
         {
-            if(configuration == null || !configuration.IsRunningAllowed) 
+            //if(configuration == null || !configuration.IsRunningAllowed) 
                 return false;
 
             return false;

@@ -1,7 +1,6 @@
 using RedSilver2.Framework.Inputs;
+using RedSilver2.Framework.Inputs.Settings;
 using RedSilver2.Framework.Interactions.Items;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -10,8 +9,8 @@ namespace RedSilver2.Framework.Items
     public abstract class EquippableItemAction : MonoBehaviour {
 
         [SerializeField] private float actionDelay;
+        [SerializeField] private SingleInputSettings settings;
 
-        private List<InputAction> inputActions;
         private UnityEvent onEnabled, onDisabled;
 
 #if UNITY_EDITOR
@@ -24,7 +23,6 @@ namespace RedSilver2.Framework.Items
 
         protected virtual void Awake()
         {
-            inputActions = new List<InputAction>();
             onEnabled    = new UnityEvent();
             onDisabled   = new UnityEvent();
         }
@@ -46,22 +44,9 @@ namespace RedSilver2.Framework.Items
             onEnabled?.Invoke();
         }
 
-        public void UpdateActions(ref float actionDelay, out bool isExecuted) {
-            isExecuted = false;
-            if (inputActions == null || inputActions.Count == 0) return;
-
-            foreach(var action in inputActions) action?.Update();
-
-            if(inputActions.Where(x => x.IsExecuted).Count() == inputActions.Count()) {
-                actionDelay = this.actionDelay;
-                isExecuted = true;
-            }
-        }
-
         public void ResetActions()
         {
-            if (inputActions == null) return;
-            foreach (var action in inputActions) action?.Reset();
+
         }
 
         private EquippableItem GetEquippableItem()
@@ -93,37 +78,15 @@ namespace RedSilver2.Framework.Items
             if (action != null) onDisabled?.RemoveListener(action);
         }
 
-        protected void AddInputAction(InputAction action) {
-            if (!inputActions.Contains(action))
-            {
-                inputActions?.Add(action);
-            }
-        }
-
-        private bool ContainsSimilarAction(InputAction action)
-        {
-            if (action == null || string.IsNullOrEmpty(action.Name) || inputActions == null)
-                return true;
-
-            return inputActions.Where(x => x.Compare(action.Name)).Count() > 0;
-        }
-
 
         public void EnableActions()
         {
-           if(inputActions != null){
-                foreach (var action in inputActions)
-                    action?.Enable();
-           }
+            if (settings == null) return;
         }
 
         public void DisableActions()
         {
-            if (inputActions != null)
-            {
-                foreach (var action in inputActions)
-                    action?.Disable();
-            }
+            if (settings == null) return;
         }
 
 

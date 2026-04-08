@@ -11,9 +11,9 @@ namespace RedSilver2.Framework.Interactions
 
         private readonly InteractionHandlerModule owner;
         private          InteractionModule        currentInteractionModule;
-        public bool IsInputHeld     => InputManager.GetKey(gamepadKey)      || InputManager.GetKey(gamepadKey); 
-        public bool IsInputPressed  => InputManager.GetKeyDown(keyboardKey) || InputManager.GetKeyDown(gamepadKey);
-        public bool IsInputReleased => InputManager.GetKeyUp(keyboardKey)   || InputManager.GetKeyUp(gamepadKey);
+        public bool IsInputHeld     => owner == null ? false : owner.IsHeld();
+        public bool IsInputPressed  => owner == null ? false : owner.IsPressed();
+        public bool IsInputReleased => owner == null ? false : owner.IsReleased();
         public InteractionHandlerModule Owner => owner;
 
         private static Dictionary<Collider, InteractionModule> interactionModuleInstances = new Dictionary<Collider, InteractionModule>();
