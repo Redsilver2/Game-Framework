@@ -9,12 +9,19 @@ namespace RedSilver2.Framework.Settings
         [System.Serializable]
         public class SettingData {
             public int GraphicsQualityIndex  { get; set; }
+            
             public int FramerateLimitIndex   { get; set; }
             public int ResolutionIndex       { get; set; }
+            
             public int FullScreenModeIndex   { get; set; }
             public int ShadowQualityIndex    { get; set; }
+            
             public int ShadowProjectionIndex { get; set; }
             public int ShadowResolutionIndex { get; set; }
+          
+            public int SensivityX { get; set; }
+            public int SensitivityY { get; set; }
+
         }
 
         #region Data

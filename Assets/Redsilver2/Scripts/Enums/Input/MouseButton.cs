@@ -1,4 +1,4 @@
-namespace RedSilver2.Framework
+namespace RedSilver2.Framework.Inputs
 {
     public enum MouseButton 
     {

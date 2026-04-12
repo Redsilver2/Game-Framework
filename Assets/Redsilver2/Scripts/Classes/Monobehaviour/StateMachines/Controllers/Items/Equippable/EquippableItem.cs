@@ -1,10 +1,8 @@
 ﻿using RedSilver2.Framework.Animations;
-using RedSilver2.Framework.Inputs;
 using RedSilver2.Framework.Items;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -143,24 +141,8 @@ namespace RedSilver2.Framework.Interactions.Items
         {
             actionDelay = Mathf.Clamp(actionDelay -= Time.deltaTime, 0f, float.MaxValue);
 
-            if (actionDelay <= 0f)
-            {
+            if (actionDelay <= 0f) {
                 ResetActions();
-                UpdateActions();
-            }
-        }
-
-        private void UpdateActions()
-        {
-            if (actions == null) return;
-
-            foreach (var action in actions.Where(x => x.CanUpdate()))
-            {
-                if (action == null) continue;
-                action.UpdateActions(ref actionDelay, out bool isExecuted);
-
-                Debug.Log(isExecuted);
-                if (isExecuted) { canResetActions = true; break; }
             }
         }
 

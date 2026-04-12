@@ -1,11 +1,14 @@
-using RedSilver2.Framework.StateMachines.States.Movement;
+using RedSilver2.Framework.Inputs.Configurations;
+using RedSilver2.Framework.Inputs.Settings;
 
 namespace RedSilver2.Framework.StateMachines.Controllers
 {
-    public class PlayerTransformController : PlayerController
+    public class PlayerTransformController : PlayerMovementController
     {
-        protected sealed override PlayerMovementHandler GetPlayerMovementHandler() {
-            return new PlayerTransformMovementHandler(this);
+        protected override void SetStateMachineController(MovementStateMachineController controller, MovementInputSettings settings)
+        {
+            if (controller == null || controller == null) return;
+            controller?.SetStateMachine(new PlayerTransformMovementStateMachine(controller, settings));
         }
     }
 }

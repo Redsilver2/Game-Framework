@@ -1,5 +1,4 @@
 using UnityEngine;
-using static RedSilver2.Framework.Dev.DevConsole;
 
 namespace RedSilver2.Framework.Dev
 {
@@ -18,9 +17,7 @@ namespace RedSilver2.Framework.Dev
 
             public sealed override async Awaitable<bool> IsValid(string argument)
             {
-                if (!string.IsNullOrEmpty(argument)) 
-                    return float.TryParse(argument, out var value);
-
+                if (!string.IsNullOrEmpty(argument)) return float.TryParse(argument, out var value);
                 return false;
             }
         }

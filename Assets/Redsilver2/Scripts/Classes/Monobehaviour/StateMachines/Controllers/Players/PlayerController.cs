@@ -1,13 +1,18 @@
-using RedSilver2.Framework.StateMachines.States;
-using RedSilver2.Framework.StateMachines.States.Movement;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace RedSilver2.Framework.StateMachines.Controllers
 {
-    public abstract class PlayerController : MovementStateMachineController
+    public abstract class PlayerController : MonoBehaviour
     {
+         [SerializeField] private bool dontDestroyOnLoad;
+
+         private UnityEvent onEnabled;
+         private UnityEvent onDisabled;
+
+
         private static PlayerController current;
         private static List<PlayerController> instances = new List<PlayerController>();
 
@@ -20,31 +25,45 @@ namespace RedSilver2.Framework.StateMachines.Controllers
         }
         public  static PlayerController Current => current;
 
-        protected override void Awake() {
-            base.Awake();
-
-            StateMachine.AddOnStateEnteredListener(state => { Debug.Log("Current State: " + (state == null ? "Null" : state.GetType().ToString())); });
-            StateMachine.AddOnStateExitedListener(state => { Debug.Log("Previous State: " + (state == null ? "Null" : state.GetType().ToString())); });
+        protected virtual void Awake() {
+            if (dontDestroyOnLoad) {
+                DontDestroyOnLoad(this);
+            }
+            
+            onDisabled = new UnityEvent();
+            onEnabled = new UnityEvent();
 
             current = this;
             instances.Add(this);
         }
 
+        private void OnEnable() { onEnabled?.Invoke(); }
+        private void OnDisable() { onDisabled?.Invoke(); }
 
         protected void OnDestroy() {
-            if (instances.Contains(this)) instances.Remove(this);
+            if(instances != null)
+            {
+                if (instances.Contains(this)) instances.Remove(this);
+            }
         }
 
-        protected sealed override MovementHandler GetMovementHandler() {
-            return GetPlayerMovementHandler();
+        public void AddOnEnabledListener(UnityAction action)
+        {
+            if (action != null) onEnabled?.AddListener(action);
+        }
+        public void RemoveOnEnabledListener(UnityAction action)
+        {
+            if (action != null) onEnabled?.RemoveListener(action);
         }
 
-        protected sealed override MovementStateMachine GetStateMachine(MovementHandler movementHandler) {
-            return new MovementStateMachine(this, movementHandler);   
+        public void AddOnDisabledListener(UnityAction action)
+        {
+            if (action != null) onDisabled?.AddListener(action);
         }
-
-        protected abstract PlayerMovementHandler GetPlayerMovementHandler();
-
+        public void RemoveOnDisabledListener(UnityAction action)
+        {
+            if (action != null) onDisabled?.RemoveListener(action);
+        }
 
         public static void SetCurrent(int index) {
             SetCurrent(GetController(index));
@@ -70,6 +89,12 @@ namespace RedSilver2.Framework.StateMachines.Controllers
 
         public static void CleanControllers() {
             if(instances != null) instances = instances.Where(x => x != null).ToList();
+        }
+
+        public static bool IsCurrent(PlayerController controller)
+        {
+            if(controller == null) return false;
+            return controller.Equals(current);
         }
 
 

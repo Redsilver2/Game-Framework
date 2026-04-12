@@ -22,17 +22,38 @@ namespace RedSilver2.Framework.Inputs
             this.keyboardKeys = new Vector2Keyboard(DEFAULT_UP_KEY, DEFAULT_DOWN_KEY, DEFAULT_LEFT_KEY, DEFAULT_RIGHT_KEY);
         }
 
+        public KeyboardVector2Input(string name, bool isEnabled) : base(name, isEnabled)
+        {
+            this.keyboardKeys = new Vector2Keyboard(DEFAULT_UP_KEY, DEFAULT_DOWN_KEY, DEFAULT_LEFT_KEY, DEFAULT_RIGHT_KEY);
+        }
+
         public KeyboardVector2Input(string name, Vector2Keyboard keyboardKeys) : base(name)
         {
             this.keyboardKeys = keyboardKeys;
         }
+
+        public KeyboardVector2Input(string name, bool isEnabled, Vector2Keyboard keyboardKeys) : base(name, isEnabled)
+        {
+            this.keyboardKeys = keyboardKeys;
+        }
+
 
         public KeyboardVector2Input(string name, GamepadStick gamepadStick) : base(name, gamepadStick)
         {
             this.keyboardKeys = new Vector2Keyboard(DEFAULT_UP_KEY, DEFAULT_DOWN_KEY, DEFAULT_LEFT_KEY, DEFAULT_RIGHT_KEY);
         }
 
+        public KeyboardVector2Input(string name, bool isEnabled, GamepadStick gamepadStick) : base(name, isEnabled, gamepadStick)
+        {
+            this.keyboardKeys = new Vector2Keyboard(DEFAULT_UP_KEY, DEFAULT_DOWN_KEY, DEFAULT_LEFT_KEY, DEFAULT_RIGHT_KEY);
+        }
+
         public KeyboardVector2Input(string name, Vector2Keyboard keyboardKeys, GamepadStick gamepadStick) : base(name, gamepadStick) 
+        {
+            this.keyboardKeys = keyboardKeys;
+        }
+
+        public KeyboardVector2Input(string name, bool isEnabled, Vector2Keyboard keyboardKeys, GamepadStick gamepadStick) : base(name, isEnabled, gamepadStick)
         {
             this.keyboardKeys = keyboardKeys;
         }

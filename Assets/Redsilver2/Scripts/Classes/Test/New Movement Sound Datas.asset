@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47edc15c2f754934aba211c289433ae5, type: 3}
+  m_Name: New Movement Sound Datas
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.Extensions.MovementSoundData
+  groundTag: Snow
+  moveAudioClips:
+  - {fileID: 8300000, guid: 24f865c645829764b87dadb22fd82ee6, type: 3}
+  - {fileID: 8300000, guid: c0ee6b470d2709b408bdb31b7d773171, type: 3}
+  - {fileID: 8300000, guid: 1719e4b4ce9a5d04d813cfbf38742a38, type: 3}
+  - {fileID: 8300000, guid: 79b46cc975afd9f4786853c10056565a, type: 3}
+  - {fileID: 8300000, guid: 7e6fe04cc1c4bbd48a8d6ddb24de0d05, type: 3}
+  - {fileID: 8300000, guid: b2e0e0f1d1ec18c46a449c65339dd654, type: 3}
+  - {fileID: 8300000, guid: f1a812a732900fd40b0b391bd0ca5058, type: 3}
+  - {fileID: 8300000, guid: 0968b967f2fd5d2448ff89f596898449, type: 3}
+  - {fileID: 8300000, guid: 53a68c793df6ebe4682039607af9e426, type: 3}
+  - {fileID: 8300000, guid: be28c353ef94ca14092e028084fcaece, type: 3}
+  - {fileID: 8300000, guid: c64248910c5f56344b63a019303a29f8, type: 3}
+  - {fileID: 8300000, guid: 403507700ea14a34db53f1f7d689d326, type: 3}
+  - {fileID: 8300000, guid: c827862265190d24b8f7a4bc0ec2a8a6, type: 3}
+  - {fileID: 8300000, guid: 3608a12363cdf8646979afd30d7c50ec, type: 3}
+  - {fileID: 8300000, guid: ce16b72bddf61964fb239a1c31319a7f, type: 3}
+  - {fileID: 8300000, guid: 6b2f3dc19ac483940a9d109877d326fe, type: 3}
+  - {fileID: 8300000, guid: d2598b97c1216ae4b84175fb7fb37377, type: 3}
+  - {fileID: 8300000, guid: eea5c7fa973a1fe4fadfab49842c15b6, type: 3}
+  - {fileID: 8300000, guid: 4b833f755fdc7ac4baa23ab7e5ad4ac8, type: 3}
+  - {fileID: 8300000, guid: 83cdd37711c8e304a81fd2023efcbfcd, type: 3}
+  - {fileID: 8300000, guid: 559a02576f61634448103255d3549df9, type: 3}
+  landAudioClips: []

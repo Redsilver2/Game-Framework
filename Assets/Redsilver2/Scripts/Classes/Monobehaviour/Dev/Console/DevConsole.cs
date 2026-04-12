@@ -60,8 +60,8 @@ namespace RedSilver2.Framework.Dev
                 if (isActivated) PlayerController.Disable();
                 else             PlayerController.Enable();
 
-                if (isActivated) CameraControllerModule.Disable();
-                else             CameraControllerModule.Enable();
+                if (isActivated) CameraController.Disable();
+                else             CameraController.Enable();
 
                 await UpdateLoggedMessages();
             }
@@ -293,18 +293,24 @@ namespace RedSilver2.Framework.Dev
             inputField.onValueChanged.AddListener(async context =>
             {
                 if (displayer == null) return;
-                displayer.text = string.Empty;
+                string result = string.Empty;
+
+                await Awaitable.BackgroundThreadAsync();
 
                 if (string.IsNullOrEmpty(context)) {
                     foreach (DevConsoleCommand command in commands)
                         foreach (string preview in await command.GetActionPreviews())
-                            displayer.text += $"{preview}\n";
+                            result += $"{preview}\n";
                 }
                 else {
                     foreach (DevConsoleCommand command in await GetValidCommands(context))
                         foreach (string preview in await command.GetActionPreviews(context))
-                                 displayer.text += $"{preview}\n";
+                            result += $"{preview}\n";
                 }
+
+                await Awaitable.MainThreadAsync();
+
+                displayer.text = result;
             });
 
             inputField.onSubmit.AddListener(async context =>

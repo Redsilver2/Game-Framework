@@ -164,7 +164,7 @@ namespace RedSilver2.Framework.Player.Inventories
         public void EnableUI()
         {
             PlayerController.Disable();
-            CameraControllerModule.Disable();
+            CameraController.Disable();
 
             gameObject.SetActive(true);
             isUIOpened = true;
@@ -176,7 +176,7 @@ namespace RedSilver2.Framework.Player.Inventories
             isUIOpened = false;
 
             PlayerController.Enable();
-            CameraControllerModule.Enable();
+            CameraController.Enable();
         }
 
         protected virtual void OnOpenUI()

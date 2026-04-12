@@ -8,8 +8,10 @@ namespace RedSilver2.Framework.Settings
     {
         private readonly static UnityEvent<SettingManager> onAwakeHook = new UnityEvent<SettingManager>();
 
+        private const string SENSITIVITY_Y_SETTING = " SENSITIVITY Y";
+        private const string SENSITIVITY_X_SETTING = " SENSITIVITY Y";
 
-       // public static readonly Resolution[] screenResolutions = Screen.resolutions.Distinct().Reverse().ToArray();
+        // public static readonly Resolution[] screenResolutions = Screen.resolutions.Distinct().Reverse().ToArray();
 
         private void Awake() {
             data = Load();
@@ -18,7 +20,7 @@ namespace RedSilver2.Framework.Settings
 
         public static void AddOnAwakeHookListener(UnityAction<SettingManager> action)
         {
-            if(onAwakeHook != null)
+            if (onAwakeHook != null)
                 onAwakeHook.AddListener(action);
         }
 
@@ -50,7 +52,7 @@ namespace RedSilver2.Framework.Settings
         #endregion
 
         #region Shadows
-        public static readonly ShadowQuality   [] shadowQualities   = (ShadowQuality[])   Enum.GetValues(typeof(ShadowQuality));
+        public static readonly ShadowQuality[] shadowQualities = (ShadowQuality[])Enum.GetValues(typeof(ShadowQuality));
         public static readonly ShadowProjection[] shadowProjections = (ShadowProjection[])Enum.GetValues(typeof(ShadowProjection));
         public static readonly ShadowResolution[] shadowResolutions = (ShadowResolution[])Enum.GetValues(typeof(ShadowResolution));
 
@@ -76,13 +78,42 @@ namespace RedSilver2.Framework.Settings
 
         public static void SetShadowResolution(int index)
         {
-            if(index >= 0 && index < shadowResolutions.Length)
+            if (index >= 0 && index < shadowResolutions.Length)
                 SetShadowResolution(shadowResolutions[index]);
         }
         public static void SetShadowResolution(ShadowResolution shadowResolution)
         {
             QualitySettings.shadowResolution = shadowResolution;
-        } 
+        }
+        #endregion
+
+        #region Sensivity
+        public static float GetSensivitityY()
+        {
+            return 5;
+        }
+
+        public static float GetSensitivityX() {
+            return 5f;
+        }
+
+
+        public static void SetSensivitityY(float value)
+        {
+            SetSensitivity(SENSITIVITY_Y_SETTING, value);
+        }
+
+        public static void SetSensitivityX(float value)
+        {
+            SetSensitivity(SENSITIVITY_X_SETTING, value);
+        }
+
+        private static void SetSensitivity(string settingName, float value)
+        {
+            // Do Something here
+        }
+
+
         #endregion
     }
 }

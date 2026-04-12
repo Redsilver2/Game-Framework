@@ -17,7 +17,7 @@ namespace RedSilver2.Framework.Items
         {
             base.Awake();
             turnAnimationData?.AddTimestampEvent(defaultTurnEventTriggerTime, OnTurnEventTriggered);
-            AddInputAction(GetPressInputAction());
+            //AddInputAction(GetPressInputAction());
         }
 
         private void OnExecute()
@@ -27,14 +27,14 @@ namespace RedSilver2.Framework.Items
             }
         }
 
-        private PressInputAction GetPressInputAction()
-        {
-            PressInputAction pressInput = new PressInputAction("TURN_ACTION", InputManager.GetOrCreateOverrideablePressInput(
-                                                                "PRESS_FLASHLIGHT_TURN_ACTION", KeyboardKey.F, GamepadButton.RightStickPress));
+        //private PressInputAction GetPressInputAction()
+        //{
+        //    PressInputAction pressInput = new PressInputAction("TURN_ACTION", InputManager.GetOrCreateOverrideablePressInput(
+        //                                                        "PRESS_FLASHLIGHT_TURN_ACTION", KeyboardKey.F, GamepadButton.RightStickPress));
 
-            pressInput.AddOnExecutedListener(OnExecute);
-            return pressInput;
-        }
+        //    pressInput.AddOnExecutedListener(OnExecute);
+        //    return pressInput;
+        //}
 
         private void OnTurnEventTriggered()
         {

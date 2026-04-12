@@ -1,5 +1,6 @@
 using RedSilver2.Framework.StateMachines.Controllers;
 using RedSilver2.Framework.StateMachines.States;
+using RedSilver2.Framework.StateMachines.States.Configurations;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -9,72 +10,55 @@ using UnityEngine.Events;
 namespace RedSilver2.Framework.StateMachines
 {
     [System.Serializable]
-    public abstract partial class StateMachine : IUpdateable, ILateUpdateable
+    public abstract partial class StateMachine 
     {
         private bool isEnabled;
-        private State currentState;
-
-        private readonly List<StateModule> stateModules;
-
-        private readonly UnityEvent onUpdate;
-        private readonly UnityEvent onLateUpdate;
+        private StateConfiguration currentStateConfiguration;
 
         private readonly UnityEvent onDisabled;
         private readonly UnityEvent onEnabled;
 
-        private readonly UnityEvent<State> onStateAdded;
-        private readonly UnityEvent<State> onStateRemoved;
+        private readonly UnityEvent<StateConfiguration> onStateConfigurationAdded;
+        private readonly UnityEvent<StateConfiguration> onStateConfigurationRemoved;
 
-        private readonly UnityEvent<State> onStateEntered;
-        private readonly UnityEvent<State> onStateExited;
+        private readonly UnityEvent<StateConfiguration> onStateEntered;    
+        private readonly UnityEvent<StateConfiguration> onStateExited;
 
-        private readonly UnityEvent<StateModule> onStateModuleAdded;
-        private readonly UnityEvent<StateModule> onStateModuleRemoved;
+        private readonly List<StateConfiguration> stateConfigurations;
+        protected readonly StateMachineController Controller;
 
-        private readonly Dictionary<string, State> states;
-        public  readonly StateMachineController Controller;
-
-        public bool IsEnabled => isEnabled;
+        public bool  IsEnabled    => isEnabled;
+        public StateConfiguration CurrentStateConfiguration => currentStateConfiguration;
 
         protected StateMachine(StateMachineController controller) {
-            onStateAdded   = new UnityEvent<State>();
-            onStateRemoved = new UnityEvent<State>();
+            stateConfigurations         = new List<StateConfiguration>();
+          
+            onStateConfigurationAdded   = new UnityEvent<StateConfiguration>();
+            onStateConfigurationRemoved = new UnityEvent<StateConfiguration>();
 
-            onStateModuleAdded   = new UnityEvent<StateModule>();
-            onStateModuleRemoved = new UnityEvent<StateModule>();
+            onStateEntered = new UnityEvent<StateConfiguration>();
+            onStateExited  = new UnityEvent<StateConfiguration>();
 
-            onEnabled            = new UnityEvent();
-            onDisabled           = new UnityEvent();
-
-            onUpdate             = new UnityEvent();
-            onLateUpdate         = new UnityEvent();
-
-            onStateEntered       = new UnityEvent<State>();
-            onStateExited        = new UnityEvent<State>();
-
-            states               = new Dictionary<string, State>();  
-            stateModules         = new List<StateModule>();
+            onDisabled = new UnityEvent();
+            onEnabled  = new UnityEvent();
 
             Controller = controller;
 
             AddOnEnabledListener(()  => { isEnabled = true; });
             AddOnDisabledListener(() => { isEnabled = false; });
 
-            AddOnStateEnteredListener(state => { currentState = state; });
-            AddOnStateExitedListener (state => { currentState = null;  });
-
-            AddOnStateAddedListener(DefaultStateAddedListener);
-            AddOnStateRemovedListener(DefaultStateRemovedListener);
+            AddOnStateEnteredListener(configuration => { 
+                currentStateConfiguration = configuration;
+                currentStateConfiguration?.Enter();
+            });
+            AddOnStateExitedListener (configuration => {
+                if (currentStateConfiguration == configuration) {
+                    currentStateConfiguration?.Exit();
+                    currentStateConfiguration = null;
+                }
+            });
 
             isEnabled = false;
-        }
-
-        public void Update() { 
-           onUpdate?.Invoke();
-        }
-
-        public void LateUpdate() {
-           onLateUpdate?.Invoke();
         }
 
         public void Enable(){
@@ -85,263 +69,113 @@ namespace RedSilver2.Framework.StateMachines
             onDisabled?.Invoke();
         }
 
-        public void ChangeState(string stateName) {
-            if (string.IsNullOrEmpty(stateName) || states == null || !states.ContainsKey(stateName.ToLower())) return;
-
-            State state = states[stateName.ToLower()];
-            if (states == null || state == null || !states.ContainsValue(state) || !state.IsValidTransition()) return;
-
-            onStateExited?.Invoke(currentState);
-            onStateEntered?.Invoke(state);
+        public bool IsCurrentConfiguration(StateConfiguration configuration) {
+            if(currentStateConfiguration == null) return false;
+            return currentStateConfiguration.Equals(configuration);
         }
 
-        protected void ChangeState(State state) {
-
-
-            Debug.Log("New State: " + state + " " + state.IsValidTransition()); 
-
-            if(state != null) ChangeState(state.GetStateName());
+        public void ClearCurrentState() {
+            onStateExited?.Invoke(currentStateConfiguration);
         }
 
-        public virtual void AddStateModule(StateModule module)
+        public void ChangeState(StateConfiguration configuration) {
+            if (stateConfigurations == null || !stateConfigurations.Contains(configuration))
+                return;
+
+            onStateExited?.Invoke(currentStateConfiguration);
+            onStateEntered?.Invoke(configuration);
+        }
+
+        public virtual void AddStateConfiguration(StateConfiguration configuration) {
+            if (configuration == null || stateConfigurations == null || stateConfigurations.Contains(configuration))
+                return;
+
+            stateConfigurations?.Add(configuration);
+            onStateConfigurationAdded?.Invoke(configuration);   
+        }
+
+        public void RemoveStateConfiguration(StateConfiguration configuration) {
+            if(configuration == null || stateConfigurations == null || !stateConfigurations.Contains(configuration)) 
+                return;
+
+            stateConfigurations?.Remove(configuration);
+            onStateConfigurationRemoved?.Invoke(configuration);
+        }
+
+        public bool ContainsStateConfiguration(StateConfiguration configuration) {
+            return stateConfigurations == null ? false : stateConfigurations.Contains(configuration);
+        }
+
+        public void AddOnEnabledListener(UnityAction action)
         {
-            if (stateModules == null || module == null) return;
-
-            if (!stateModules.Contains(module)) {
-                stateModules?.Add(module);
-                onStateModuleAdded?.Invoke(module);
-            }
+            if (action != null)
+                onEnabled?.AddListener(action);
         }
-
-        public void RemoveStateModule(StateModule module)
+        public void RemoveOnEnabledListener(UnityAction action)
         {
-            if (stateModules == null || module == null) return;
-
-            if (stateModules.Contains(module)) {
-                stateModules?.Remove(module);
-                onStateModuleRemoved?.Invoke(module);
-            }
+            if (action != null)
+                onEnabled?.RemoveListener(action);
         }
 
-
-        public virtual void AddState(State state)
+        public void AddOnDisabledListener(UnityAction action)
         {
-            AddState(GetStateName(state), state);
+            if (action != null)
+                onDisabled?.AddListener(action);
         }
-
-
-        public virtual void AddState(string stateName, State state) {
-            if (states == null || state == null || string.IsNullOrEmpty(stateName)) return;
-            stateName = stateName.ToLower();
-
-            if (states.ContainsKey(stateName)) return;
-
-            states.Add(stateName, state);
-            onStateAdded?.Invoke(states[stateName]);
-        }
-
-        public  void RemoveState(State state)
+        public void RemoveOnDisabledListener(UnityAction action)
         {
-            RemoveState(GetStateName(state));
+            if (action != null)
+                onDisabled?.RemoveListener(action);
         }
 
-        public virtual void RemoveState(string stateName)
+        public void AddOnStateAddedListener(UnityAction<StateConfiguration> action)
         {
-            if (states == null || string.IsNullOrEmpty(stateName)) return;
-            stateName = stateName.ToLower();
-
-            if (!states.ContainsKey(stateName)) return;
-            onStateRemoved?.Invoke(states[stateName]);
-            states.Remove(stateName);
+            if(action != null)
+                onStateConfigurationAdded?.AddListener(action);
         }
-
-
-
-        protected virtual void DefaultStateAddedListener(State state)
+        public void RemoveOnStateAddedListener(UnityAction<StateConfiguration> action)
         {
-            if (state == null) return;
-            if (currentState == null) { ChangeState(state); }
-        }
-
-        protected virtual void DefaultStateRemovedListener(State state)
-        {
-            if (state == null) return;
-            // if (currentState == state) { ChangeState(null); }
-        }
-
-        public bool ContainsState(string stateName) {
-            if (states == null || string.IsNullOrEmpty(stateName)) return false;
-            return states.ContainsKey(stateName.ToLower());
-        }
-        public bool ContainsState(State state) {
-            if(states == null || state == null) return false;
-            return states.ContainsValue(state);
-        }
-
-        public void AddOnUpdateListener(UnityAction state)
-        {
-            if (state != null)
-                onUpdate?.AddListener(state);
-        }
-        public void RemoveOnUpdateListener(UnityAction state)
-        {
-            if (state != null)
-                onUpdate?.RemoveListener(state);
-        }
-
-        public void AddOnLateUpdateListener(UnityAction state)
-        {
-            if (state != null)
-                onLateUpdate?.AddListener(state);
-        }
-        public void RemoveOnLateUpdateListener(UnityAction state)
-        {
-            if (state != null)
-                onLateUpdate?.RemoveListener(state);
-        }
-
-        public void AddOnEnabledListener(UnityAction state)
-        {
-            if (state != null)
-                onEnabled?.AddListener(state);
-        }
-        public void RemoveOnEnabledListener(UnityAction state)
-        {
-            if (state != null)
-                onEnabled?.RemoveListener(state);
-        }
-
-        public void AddOnDisabledListener(UnityAction state)
-        {
-            if (state != null)
-                onDisabled?.AddListener(state);
-        }
-        public void RemoveOnDisabledListener(UnityAction state)
-        {
-            if (state != null)
-                onDisabled?.RemoveListener(state);
-        }
-
-        public void AddOnStateAddedListener(UnityAction<State> state)
-        {
-            if(state != null)
-                onStateAdded?.AddListener(state);
-        }
-        public void RemoveOnStateAddedListener(UnityAction<State> state)
-        {
-            if (state != null)
-                onStateAdded?.RemoveListener(state);
+            if (action != null)
+                onStateConfigurationAdded?.RemoveListener(action);
         }
       
-        public void AddOnStateRemovedListener(UnityAction<State> state)
+        public void AddOnStateRemovedListener(UnityAction<StateConfiguration> action)
         {
-            if (state != null)
-                onStateRemoved?.AddListener(state);
+            if (action != null)
+                onStateConfigurationRemoved?.AddListener(action);
         }
-        public void RemoveOnStateRemovedListener(UnityAction<State> state) {
-            if (state != null)
-                onStateRemoved?.RemoveListener(state);
+        public void RemoveOnStateRemovedListener(UnityAction<StateConfiguration> action) {
+            if (action != null)
+                onStateConfigurationRemoved?.RemoveListener(action);
         }
 
-        public void AddOnStateEnteredListener(UnityAction<State> state)
+        public void AddOnStateEnteredListener(UnityAction<StateConfiguration> action)
         {
-            if (state != null)
-                onStateEntered?.AddListener(state);
+            if (action != null)
+                onStateEntered?.AddListener(action);
         }
-        public void RemoveOnStateEnteredListener(UnityAction<State> state)
+        public void RemoveOnStateEnteredListener(UnityAction<StateConfiguration> action)
         {
-            if (state != null)
-                onStateEntered?.RemoveListener(state);
+            if (action != null)
+                onStateEntered?.RemoveListener(action);
         }
 
-        public void AddOnStateExitedListener(UnityAction<State> state)
+        public void AddOnStateExitedListener(UnityAction<StateConfiguration> action)
         {
-            if (state != null)
-                onStateExited?.AddListener(state);
+            if (action != null)
+                onStateExited?.AddListener(action);
         }
-        public void RemoveOnStateExitedListener(UnityAction<State> state)
+        public void RemoveOnStateExitedListener(UnityAction<StateConfiguration> action)
         {
-            if (state != null)
-                onStateExited?.RemoveListener(state);
+            if (action != null)
+                onStateExited?.RemoveListener(action);
         }
 
-        public void AddOnStateModuleAddedListener(UnityAction<StateModule> action)
+        public StateConfiguration[] GetStateConfigurations()
         {
-            if (action != null) onStateModuleAdded?.AddListener(action);
+            if(stateConfigurations == null) return new StateConfiguration[0];
+            return stateConfigurations.ToArray();   
         }
-        public void RemoveOnStateModuleAddedListener(UnityAction<StateModule> action)
-        {
-            if (action != null) onStateModuleAdded?.RemoveListener(action);
-        }
-
-        public void AddOnStateModuleRemovedListener(UnityAction<StateModule> action)
-        {
-            if (action != null) onStateModuleRemoved?.AddListener(action);
-        }
-        public void RemoveOnStateModuleRemovedListener(UnityAction<StateModule> action)
-        {
-            if (action != null) onStateModuleRemoved?.RemoveListener(action);
-        }
-
-        public string[] GetStateNames()
-        {
-            List<string> results = new List<string>();
-
-            if (this.states != null) {
-                foreach (var state in this.states) {
-                    results.Add(state.Key);
-                }
-            }
-
-            return results.ToArray();
-        }
-
-        public string GetStateName(State state)
-        {
-            if (state == null || states == null) return string.Empty;
-            var reuslts = states.Where(x => x.Value == state);
-
-            if (reuslts.Count() > 0) return reuslts.First().Key;
-            return string.Empty;
-        }
-
-        public State[] GetStates() {
-            List<State> results = new List<State>();
-           
-            if(this.states != null) {
-                foreach(var state in this.states)
-                    results.Add(state.Value);
-            }
-
-            return results.ToArray();
-        }
-
-        public StateModule[] GetModules()
-        {
-            if (stateModules != null)
-                return stateModules.ToArray();
-
-            return new StateModule[0];
-        }
-
-        public StateModule GetModule(string name)
-        {
-            if (string.IsNullOrEmpty(name) || stateModules == null) return null;
-
-            var results = stateModules.Where(x => x != null)
-                                      .Where(x => x.ModuleName.ToLower().Equals(name.ToLower()));
-
-            if(results.Count() > 0) return results.First();
-            return null;
-        }
-
-        public State GetState(string stateName) {
-            if (states == null || string.IsNullOrEmpty(stateName)) return null;
-            stateName = stateName.ToLower();
-
-            return states.ContainsKey(stateName) ? states[stateName] : null;
-        }
-
     }
 
 }

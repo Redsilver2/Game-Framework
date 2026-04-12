@@ -1,13 +1,11 @@
 using RedSilver2.Framework.StateMachines.States;
-using System.Threading.Tasks;
-using UnityEngine;
 using UnityEngine.Events;
 
 namespace RedSilver2.Framework.StateMachines.Controllers
 {
-    public abstract class MovementStateModule : StateModule
+    public abstract class MovementStateModule : StateConfigurationModule
     {
-        protected sealed override StateMachineController GetStateMachineStateMachine(StateMachineController controller)
+        protected sealed override UpdateableStateMachineController GetStateMachineStateMachine(UpdateableStateMachineController controller)
         {
             if (controller is not MovementStateMachineController) return null;
             return  base.GetStateMachineStateMachine(controller);
@@ -27,8 +25,5 @@ namespace RedSilver2.Framework.StateMachines.Controllers
                 OnStateRemoved(state as MovementState);
             };
         }
-
-        protected abstract void OnStateAdded(MovementState state);
-        protected abstract void OnStateRemoved(MovementState state);
     }
 }

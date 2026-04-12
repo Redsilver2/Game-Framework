@@ -226,9 +226,7 @@ namespace RedSilver2.Framework.Scenes
         public void LoadSingleScene(string sceneName)
         {
             SceneAsset asset = GetSceneData(sceneName);
-            if (asset != null) {
-                LoadSingleScene(asset.Data.SceneName); 
-            }
+            if (asset != null)  LoadSingleScene(asset.Data.SceneName); 
         }
 
         public void LoadSingleScene(int sceneIndex) 
