@@ -29,7 +29,9 @@ namespace RedSilver2.Framework.StateMachines.Controllers
             if (dontDestroyOnLoad) {
                 DontDestroyOnLoad(this);
             }
-
+            
+            onDisabled = new UnityEvent();
+            onEnabled = new UnityEvent();
 
             current = this;
             instances.Add(this);
@@ -43,6 +45,24 @@ namespace RedSilver2.Framework.StateMachines.Controllers
             {
                 if (instances.Contains(this)) instances.Remove(this);
             }
+        }
+
+        public void AddOnEnabledListener(UnityAction action)
+        {
+            if (action != null) onEnabled?.AddListener(action);
+        }
+        public void RemoveOnEnabledListener(UnityAction action)
+        {
+            if (action != null) onEnabled?.RemoveListener(action);
+        }
+
+        public void AddOnDisabledListener(UnityAction action)
+        {
+            if (action != null) onDisabled?.AddListener(action);
+        }
+        public void RemoveOnDisabledListener(UnityAction action)
+        {
+            if (action != null) onDisabled?.RemoveListener(action);
         }
 
         public static void SetCurrent(int index) {
@@ -69,6 +89,12 @@ namespace RedSilver2.Framework.StateMachines.Controllers
 
         public static void CleanControllers() {
             if(instances != null) instances = instances.Where(x => x != null).ToList();
+        }
+
+        public static bool IsCurrent(PlayerController controller)
+        {
+            if(controller == null) return false;
+            return controller.Equals(current);
         }
 
 

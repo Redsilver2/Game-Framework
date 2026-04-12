@@ -1,5 +1,5 @@
-using RedSilver2.Framework.Inputs.Configurations;
 using RedSilver2.Framework.Inputs.Settings;
+using RedSilver2.Framework.Player;
 using RedSilver2.Framework.StateMachines.Controllers;
 using RedSilver2.Framework.StateMachines.States.Configurations;
 using UnityEngine;
@@ -9,33 +9,51 @@ namespace RedSilver2.Framework.StateMachines
     [RequireComponent(typeof(MovementStateMachineController))]
     public abstract class PlayerMovementController : PlayerController
     {
-        [SerializeField] private KeyboardVector2InputSettings moveInputSettings;
+        [SerializeField] private MovementInputSettings inputSettings;
 
         [Space]
         [SerializeField] private int defaultSettingIndex;
         [SerializeField] private MovementStateSettings[] defaultSettings;
 
-        private MovementStateMachineController controller;
+        private MovementStateMachineController movementController;
+        private CameraController cameraController;
+
         public MovementStateMachine StateMachine {
             get
             {
-                if(controller == null) return null;
-                return controller.StateMachine as MovementStateMachine;
+                if(movementController == null) return null;
+                return movementController.StateMachine as MovementStateMachine;
             }
         }
 
         protected override void Awake()
         {
             base.Awake();
-            controller = GetComponent<MovementStateMachineController>();
+            movementController = GetComponent<MovementStateMachineController>();
+            cameraController = GetComponentInChildren<CameraController>();
+
+            inputSettings?.Enable();
+            CameraController.SetCursorVisibility(false);    
            
-            SetStateMachineController(controller, moveInputSettings == null ? null : moveInputSettings.GetConfiguration());
+            SetStateMachineController(movementController, inputSettings);
             SetDefaultConfigurations();
+
+            AddOnDisabledListener(() =>
+            {
+                if (movementController != null) movementController.enabled = false;
+                if(cameraController != null) cameraController.enabled = false;
+            });
+
+            AddOnEnabledListener(() =>
+            {
+                if(movementController != null) movementController.enabled = true;
+                if (cameraController != null) cameraController.enabled = true;
+            });
         }
 
         private void SetControllerState(bool isEnabled) {
-            if(controller != null)
-                controller.enabled = isEnabled;
+            if(movementController != null)
+                movementController.enabled = isEnabled;
         }
 
         private void SetDefaultConfigurations() {
@@ -49,6 +67,6 @@ namespace RedSilver2.Framework.StateMachines
             }
         }
 
-        protected abstract void SetStateMachineController(MovementStateMachineController controller, KeyboardVector2InputConfiguration configuration);
+        protected abstract void SetStateMachineController(MovementStateMachineController controller, MovementInputSettings inputSettings);
     }
 }

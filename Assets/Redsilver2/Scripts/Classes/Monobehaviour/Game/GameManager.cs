@@ -22,22 +22,30 @@ namespace RedSilver2.Framework
         [SerializeField] private LightManager  lightManager;
 
         private static GameManager instance;
-        public const string GROUND_LAYER_NAME = "Ground";
 
 
         public static int GroundLayer
         {
             get {
-                return LayerMask.NameToLayer(GROUND_LAYER);
+                return LayerMask.NameToLayer(GROUND_LAYER_NAME);
             }
         }
 
-        public static int PlayerLayer
+        public static int PLAYER_LAYER
         {
             get {
-                return LayerMask.NameToLayer(PLAYER_LAYER);
+                return LayerMask.NameToLayer(PLAYER_LAYER_NAME);
             }
         }
+
+        public static int AI_LAYER
+        {
+            get
+            {
+                return LayerMask.NameToLayer(AI_LAYER_NAME);
+            }
+        }
+
 
         public static CollectibleNotificationManager CollectibleNotification {
             get {
@@ -76,8 +84,9 @@ namespace RedSilver2.Framework
             }
         }
 
-        public const string GROUND_LAYER = "Ground";
-        public const string PLAYER_LAYER = "Player";
+        public const string GROUND_LAYER_NAME = "Ground";
+        public const string PLAYER_LAYER_NAME = "Player";
+        public const string AI_LAYER_NAME = "AI";
 
 
         private void Awake()

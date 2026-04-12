@@ -3,28 +3,24 @@ using UnityEngine;
 
 namespace RedSilver2.Framework.Items
 {
-    [RequireComponent(typeof(KeyboardPositionSwayMotion))]
+    [RequireComponent(typeof(SwayMotion))]
     public class EquippableItemSwayUpdater : MonoBehaviour {
 
-        private KeyboardPositionSwayMotion swayMotion;
+        private SwayMotion swayMotion;
         // Add Mouse Rotation Event;
         private EquippableItem item;
 
-        private void Start()
-        {
-            swayMotion = GetComponent<KeyboardPositionSwayMotion>();
+        private void Start() {
+            swayMotion = GetComponent<SwayMotion>();
             item       = transform.GetComponentInChildren<EquippableItem>();
-
             EnableEvents();
         }
 
-        private void OnEnable()
-        {
+        private void OnEnable() {
             EnableEvents();
         }
 
-        private void OnDisable()
-        {
+        private void OnDisable() {
             DisableEvents();
         }
 

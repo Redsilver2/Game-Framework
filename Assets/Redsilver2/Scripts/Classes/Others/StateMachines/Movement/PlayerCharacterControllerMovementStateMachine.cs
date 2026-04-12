@@ -1,4 +1,5 @@
 using RedSilver2.Framework.Inputs.Configurations;
+using RedSilver2.Framework.Inputs.Settings;
 using RedSilver2.Framework.StateMachines.Controllers;
 using UnityEngine;
 
@@ -9,7 +10,7 @@ namespace RedSilver2.Framework.StateMachines
     {
         private readonly CharacterController characterController;
 
-        public PlayerCharacterControllerMovementStateMachine(MovementStateMachineController controller, KeyboardVector2InputConfiguration configuration) : base(controller, configuration)
+        public PlayerCharacterControllerMovementStateMachine(MovementStateMachineController controller, MovementInputSettings settings) : base(controller, settings)
         {
             this.characterController = controller == null ? null : controller.GetComponent<CharacterController>();
         }

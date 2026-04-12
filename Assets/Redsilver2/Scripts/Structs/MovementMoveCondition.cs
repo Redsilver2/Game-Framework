@@ -26,14 +26,14 @@ namespace RedSilver2.Framework.StateMachines.States.Conditions {
         }
 
 
-        private static MovementMoveCondition GetCondition(MovementStateMachine movementStateMachine) {
-            var results = GetBaseConditions(movementStateMachine).Where(x => x is MovementMoveCondition);
+        private static MovementMoveCondition GetCondition(MovementStateMachine stateMachine) {
+            var results = GetBaseConditions(stateMachine).Where(x => x is MovementMoveCondition);
             if (results.Count() > 0) return results.First() as MovementMoveCondition;
             return null;
         }
 
-        public static bool IsMoving(MovementStateMachine configuration) {
-            MovementStateCondition condition = GetCondition(configuration);
+        public static bool IsMoving(MovementStateMachine stateMachine) {
+            MovementStateCondition condition = GetCondition(stateMachine);
             return condition == null ? false : condition.GetTransitionState();
         }
     }

@@ -1,4 +1,5 @@
-using RedSilver2.Framework.Inputs.Configurations;
+
+using RedSilver2.Framework.Inputs.Settings;
 using UnityEngine;
 
 namespace RedSilver2.Framework.StateMachines.Controllers
@@ -7,9 +8,9 @@ namespace RedSilver2.Framework.StateMachines.Controllers
 
     public class PlayerCharacterController : PlayerMovementController
     {
-        protected override void SetStateMachineController(MovementStateMachineController controller, KeyboardVector2InputConfiguration configuration) {
+        protected override void SetStateMachineController(MovementStateMachineController controller, MovementInputSettings inputSettings) {
             
-            controller?.SetStateMachine(new PlayerCharacterControllerMovementStateMachine(controller, configuration));
+            controller?.SetStateMachine(new PlayerCharacterControllerMovementStateMachine(controller, inputSettings));
         }
     }
 }

@@ -1,4 +1,5 @@
 using RedSilver2.Framework.Inputs.Configurations;
+using RedSilver2.Framework.Inputs.Settings;
 using RedSilver2.Framework.StateMachines.Controllers;
 using UnityEngine;
 
@@ -6,7 +7,7 @@ namespace RedSilver2.Framework.StateMachines
 {
     public class PlayerTransformMovementStateMachine : PlayerMovementStateMachine
     {
-        public PlayerTransformMovementStateMachine(MovementStateMachineController controller, KeyboardVector2InputConfiguration configuration) : base(controller, configuration) {
+        public PlayerTransformMovementStateMachine(MovementStateMachineController controller, MovementInputSettings settings) : base(controller, settings) {
 
         }
 

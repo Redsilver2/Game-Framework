@@ -6,14 +6,16 @@ namespace RedSilver2.Framework.StateMachines
     public class AIMovementStateMachine : MovementStateMachine
     {
         public AIMovementStateMachine(AIMovementController controller) : base(controller) {
-     
+            AddOnUpdateListener(() => {
+                controller?.SetAgentSpeed(GetMoveSpeed());
+            });
         }
 
         protected override void Move() {
             AIMovementController controller = GetAIMovementController();
 
-            if(controller != null) {
-                controller?.UpdateDestination();
+            if(controller != null && Transform != null) {
+                controller?.SetAgentSpeed(GetMoveSpeed());    
                 Move(controller.GetVelocity());
             } 
         }

@@ -24,6 +24,10 @@ namespace RedSilver2.Framework.StateMachines {
 
         public readonly  Transform           Transform;
         private readonly UnityEvent<Vector2> onMoved;
+        private readonly UnityEvent<string>  onGroundTagChanged;
+
+        public float MoveSpeed => moveSpeed;
+        public float FallSpeed => fallSpeed;
 
         public string GroundTag   => groundTag;
         public bool   IsMoving    => isMoving;
@@ -34,6 +38,8 @@ namespace RedSilver2.Framework.StateMachines {
 
         protected MovementStateMachine(UpdateableStateMachineController controller) : base(controller) {
             Transform  = controller == null ? null : controller.transform;
+            groundTag = string.Empty;
+            
             isGrounded = false;
             isCrouching = false;
 
@@ -43,26 +49,13 @@ namespace RedSilver2.Framework.StateMachines {
             fallSpeed = -10f;
             moveSpeed = 10f;
 
-            onMoved    = new UnityEvent<Vector2>();
-
-           AddOnStateEnteredListener(state => {
-                if (state == null) return;
-                Debug.LogWarning("Current State: " + state);
-           });
-
-            AddOnStateExitedListener(state => {
-                if (state == null) return;
-                Debug.LogWarning("Previous State: " + state);
-            });
+            onMoved            = new UnityEvent<Vector2>();
+            onGroundTagChanged = new UnityEvent<string>();
 
 
             AddOnMovedListener(input => {
-                if (Mathf.Abs(input.x) > 0f || Mathf.Abs(input.y) > 0f)
-                    this.isMoving = true;
-                else
-                    this.isMoving = false;
-
-                Debug.Log("Is Moving: " + isMoving);
+                if (Mathf.Abs(input.x) > 0f || Mathf.Abs(input.y) > 0f) this.isMoving = true;
+                else this.isMoving = false;
             });
 
             AddOnDisabledListener(()    => { 
@@ -74,21 +67,39 @@ namespace RedSilver2.Framework.StateMachines {
             });
 
             AddOnUpdateListener(() => {
-                if (controller != null) isGrounded = GetGroundCheckResult(out groundTag);
+                string currentGroundTag = string.Empty;
+
+                if (controller != null) isGrounded = GetGroundCheckResult(out currentGroundTag);
                 else                    isGrounded = false;
 
-                if (!isMoving || !isGrounded || isCrouching) isRunning = false;
+                currentGroundTag = currentGroundTag.ToLower();
+
+                if (!groundTag.ToLower().Equals(currentGroundTag)){
+                    onGroundTagChanged?.Invoke(currentGroundTag);
+                }
             });
 
-            AddOnLateUpdateListener(() => { Move(); });
+            AddOnLateUpdateListener(() => { Debug.Log("?? " + moveSpeed); Move(); });
+            AddOnGroundTagChangedListener(value => { groundTag = value; });
+
         }
 
         public void AddOnMovedListener(UnityAction<Vector2> action) {
             if (action != null) onMoved?.AddListener(action);
         }
 
-        public void RemoveOnMovedListener(UnityAction<Vector2> action) {
+        public void RemoveOnMoveListener(UnityAction<Vector2> action) {
              if(action != null) onMoved?.RemoveListener(action);
+        }
+
+        public void AddOnGroundTagChangedListener(UnityAction<string> action)
+        {
+            if (action != null) onGroundTagChanged?.AddListener(action);
+        }
+
+        public void RemoveOnGroundTagChangedListener(UnityAction<string> action)
+        {
+            if (action != null) onGroundTagChanged?.RemoveListener(action);
         }
 
         public override void AddStateConfiguration(StateConfiguration configuration)
@@ -124,12 +135,7 @@ namespace RedSilver2.Framework.StateMachines {
         }
 
         public void SetIsRunning(bool isRunning) {
-            this.isRunning = isRunning;
-        }
-
-        protected void SetIsMoving(bool isMoving)
-        {
-            this.isMoving = isMoving;
+            this.isRunning = CanRun() ? isRunning : false;
         }
 
         public float GetMoveSpeed() {
@@ -158,7 +164,7 @@ namespace RedSilver2.Framework.StateMachines {
             groundTag = string.Empty;
             if (Transform == null) return false;
 
-            if (Physics.Raycast(Transform.position, -Transform.up, out RaycastHit hitInfo, groundCheckRange, ~GameManager.PlayerLayer)) {
+            if (Physics.Raycast(Transform.position, -Transform.up, out RaycastHit hitInfo, groundCheckRange, ~GameManager.PLAYER_LAYER)) {
                 if (hitInfo.collider == null) return false;
 
                 if (hitInfo.collider.gameObject.layer == GameManager.GroundLayer) {
@@ -181,6 +187,15 @@ namespace RedSilver2.Framework.StateMachines {
 
         public virtual void Move(Vector3 nextPosition) {
             onMoved?.Invoke(Vector2.right * nextPosition.x + Vector2.up * nextPosition.z);  
+        }
+
+        protected virtual bool CanRun()
+        {
+            if(!isMoving || !isGrounded || isCrouching){
+                return false;
+            }
+
+            return true;
         }
     }
 }

@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47edc15c2f754934aba211c289433ae5, type: 3}
+  m_Name: New Movement Sound Datas 1
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.Extensions.MovementSoundData
+  groundTag: Tile
+  moveAudioClips:
+  - {fileID: 8300000, guid: 4286cc93f8d9b7d49bb3b607536f2ebb, type: 3}
+  - {fileID: 8300000, guid: 5cfdd71372e261c4a9658f77a8ab54c8, type: 3}
+  - {fileID: 8300000, guid: 5b401438a33b64f45812d4047509999a, type: 3}
+  - {fileID: 8300000, guid: d9d90feb668a41d46a0d2795d5768c1d, type: 3}
+  - {fileID: 8300000, guid: 99e2d869390d0724689a9f1e404cb99e, type: 3}
+  - {fileID: 8300000, guid: 744117ed23ba06a4ebd2c17575d8dd40, type: 3}
+  - {fileID: 8300000, guid: 712fc9f8bf055e54ca33cc1af12f834f, type: 3}
+  - {fileID: 8300000, guid: 06ccc003af071dc4f9763346ba4a8a5f, type: 3}
+  - {fileID: 8300000, guid: be3fec25ea53ef24fbbd59677a86f32d, type: 3}
+  - {fileID: 8300000, guid: d3fa6de1c3bf49044a5cec1159562e3d, type: 3}
+  - {fileID: 8300000, guid: 2b0484795cf49ea49b228cf90bdb806b, type: 3}
+  - {fileID: 8300000, guid: 7524f889caaa4d644836a543a4cd816f, type: 3}
+  - {fileID: 8300000, guid: 49587194ce760f64f80e156e45f0eb5d, type: 3}
+  - {fileID: 8300000, guid: 9f6fcc539b1742843959e2cfa7cfbbab, type: 3}
+  - {fileID: 8300000, guid: 46e0155b1638fbc4887b819727ffb137, type: 3}
+  - {fileID: 8300000, guid: 6633b3a57da3211439882ded264f97a4, type: 3}
+  - {fileID: 8300000, guid: b5aa388176d1af4429164265ee35fad8, type: 3}
+  - {fileID: 8300000, guid: cec40f8cb622f7c44a125f86c82eacb8, type: 3}
+  - {fileID: 8300000, guid: db7858afe5aa4a848bdc2fa568916b6c, type: 3}
+  - {fileID: 8300000, guid: e7d8f86e917cf41419b9a23136a725c1, type: 3}
+  - {fileID: 8300000, guid: df8807cf0cebf2a48aa432da9df0c551, type: 3}
+  - {fileID: 8300000, guid: 5fab51fc45e058f498dc4da02b7d21e6, type: 3}
+  landAudioClips: []

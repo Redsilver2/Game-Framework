@@ -1,7 +1,9 @@
+using RedSilver2.Framework.StateMachines.Handlers;
 using UnityEngine;
 
 namespace RedSilver2.Framework.StateMachines.Controllers
 {
+    [RequireComponent(typeof(MovementStateMachineEventHandler))]
     public class MovementStateMachineController : UpdateableStateMachineController
     {
         [SerializeField] private float groundCheckRange = 0f;

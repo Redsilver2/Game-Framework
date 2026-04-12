@@ -1,4 +1,5 @@
 using RedSilver2.Framework.Inputs.Configurations;
+using RedSilver2.Framework.Inputs.Settings;
 using RedSilver2.Framework.StateMachines.Controllers;
 using UnityEngine;
 
@@ -6,15 +7,15 @@ namespace RedSilver2.Framework.StateMachines
 {
     public abstract class PlayerMovementStateMachine : MovementStateMachine
     {
-        private KeyboardVector2InputConfiguration configuration;
+        private MovementInputSettings inputSettings;
 
-        protected PlayerMovementStateMachine(MovementStateMachineController controller, KeyboardVector2InputConfiguration configuration) : base(controller) {
-            this.configuration = configuration;
+        protected PlayerMovementStateMachine(MovementStateMachineController controller, MovementInputSettings settings) : base(controller) {
+            this.inputSettings = settings;
         }
 
         protected override void Move()
         {
-            Vector2 inputValue = configuration == null ? Vector2.zero : configuration.Value;
+            Vector2 inputValue = inputSettings == null ? Vector2.zero : inputSettings.GetMoveVector();
             inputValue.Normalize();
 
             if (Transform != null) {

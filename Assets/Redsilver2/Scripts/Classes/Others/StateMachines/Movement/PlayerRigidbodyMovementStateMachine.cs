@@ -1,4 +1,4 @@
-using RedSilver2.Framework.Inputs.Configurations;
+using RedSilver2.Framework.Inputs.Settings;
 using RedSilver2.Framework.StateMachines.Controllers;
 using UnityEngine;
 
@@ -8,7 +8,7 @@ namespace RedSilver2.Framework.StateMachines
     {
         private readonly Rigidbody Rigidbody;
 
-        public PlayerRigidbodyMovementStateMachine(MovementStateMachineController controller, KeyboardVector2InputConfiguration configuration) : base(controller, configuration)
+        public PlayerRigidbodyMovementStateMachine(MovementStateMachineController controller, MovementInputSettings settings) : base(controller, settings)
         {
             this.Rigidbody = controller == null ? null : Rigidbody.GetComponent<Rigidbody>();
         }

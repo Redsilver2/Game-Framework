@@ -1,4 +1,3 @@
-using RedSilver2.Framework.Inputs;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,9 +5,6 @@ namespace RedSilver2.Framework.Interactions
 {
     public abstract class InteractionHandler 
     {
-        private KeyboardKey    keyboardKey;
-        private GamepadButton  gamepadKey;
-
         private readonly InteractionHandlerModule owner;
         private          InteractionModule        currentInteractionModule;
         public bool IsInputHeld     => owner == null ? false : owner.IsHeld();
@@ -18,27 +14,10 @@ namespace RedSilver2.Framework.Interactions
 
         private static Dictionary<Collider, InteractionModule> interactionModuleInstances = new Dictionary<Collider, InteractionModule>();
 
-        protected InteractionHandler()
-        {
-            this.keyboardKey = KeyboardKey.E;
-            this.gamepadKey  = GamepadButton.ButtonEast;
-        }
 
-        protected InteractionHandler(InteractionHandlerModule module)
-        {
-            this.keyboardKey = KeyboardKey.E;
-            this.gamepadKey  = GamepadButton.ButtonEast;
+        protected InteractionHandler(InteractionHandlerModule module) {
             this.owner      = module;
         }
-
-        protected InteractionHandler(KeyboardKey keyboardKey, GamepadButton gamepadKey, InteractionHandlerModule module)
-        {
-            this.keyboardKey = keyboardKey;
-            this.gamepadKey  = gamepadKey;
-            this.owner       = module;
-        }
-
-
   
         public void Update()
         {

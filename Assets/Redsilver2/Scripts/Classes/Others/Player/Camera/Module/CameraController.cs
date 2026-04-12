@@ -21,7 +21,6 @@ namespace RedSilver2.Framework.Player
         private float bodyRotation;
 
         private Vector3 originalHeadRotation;
-        private Vector3 originalBodyRotation;
 
         public float HeadRotation => headRotation;
         public float BodyRotation => bodyRotation;
@@ -86,10 +85,11 @@ namespace RedSilver2.Framework.Player
 
 
         private bool IsActifCameraController() {
-            return current == this;
+            if (current == null) return false;
+            return current.Equals(this);
         }
 
-        private void SetCursorVisibility(bool isVisible)
+        public static void SetCursorVisibility(bool isVisible)
         {
             Cursor.lockState = isVisible ? CursorLockMode.Confined : CursorLockMode.Locked;
             Cursor.visible = isVisible;

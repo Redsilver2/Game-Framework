@@ -28,14 +28,19 @@ namespace RedSilver2.Framework.Player {
 
         private void OnTriggerEnter(Collider other) {
             if (other.TryGetComponent(out PlayerController controller))
-                if (PlayerController.Current == controller)
+                if (PlayerController.IsCurrent(controller))
                     onEnterTrigger.Invoke();
         }
 
         private void OnTriggerEnter2D(Collider2D collision) {
             if (collision.TryGetComponent(out PlayerController controller))
-                if (PlayerController.Current == controller)
+                if (PlayerController.IsCurrent(controller))
                     onEnterTrigger.Invoke();
+        }
+
+        private void OnTriggerExit(Collider other)
+        {
+            
         }
     }
 }

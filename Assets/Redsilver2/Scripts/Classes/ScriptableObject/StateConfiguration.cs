@@ -1,7 +1,6 @@
 using RedSilver2.Framework.StateMachines.States.Conditions;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 using UnityEngine.Events;
 
 namespace RedSilver2.Framework.StateMachines.States.Configurations
