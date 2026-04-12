@@ -21,7 +21,7 @@ namespace RedSilver2.Framework
         [SerializeField] private InputManager  inputManager;
         [SerializeField] private LightManager  lightManager;
 
-        private static GameManager instance;
+        protected static GameManager instance;
 
 
         public static int GroundLayer
@@ -89,13 +89,15 @@ namespace RedSilver2.Framework
         public const string AI_LAYER_NAME = "AI";
 
 
-        private void Awake()
+        protected virtual void Awake()
         {
             if (instance != null) { Destroy(gameObject); return; }
             instance = this;
             inputManager = GetComponent<InputManager>();
 
             gameObject.name = "GameManager";
+
+            Debug.unityLogger.logEnabled = false;
             DontDestroyOnLoad(instance);
         }
 
