@@ -9,16 +9,13 @@ using UnityEngine;
 namespace RedSilver2.Framework
 {
     [RequireComponent(typeof(SteamManager))]
-    [RequireComponent(typeof(InputManager))]
-    public abstract class GameManager : MonoBehaviour
+    public class GameManager : MonoBehaviour
     {
         [SerializeField] private CollectibleNotificationManager collectibleNotification;
         [SerializeField] private SceneLoaderManager sceneLoaderManager;
         
         [SerializeField] private SubtitleManager subtitleManager;
         [SerializeField] private SettingManager settingManager;
-       
-        [SerializeField] private InputManager  inputManager;
         [SerializeField] private LightManager  lightManager;
 
         protected static GameManager instance;
@@ -73,11 +70,6 @@ namespace RedSilver2.Framework
             }
         }
 
-        public static InputManager InputManager
-        {
-            get {  return instance ? instance.inputManager : null; }
-        }
-
         public static LightManager LightManager {
             get {
                 return instance ? instance.lightManager : null;
@@ -93,12 +85,19 @@ namespace RedSilver2.Framework
         {
             if (instance != null) { Destroy(gameObject); return; }
             instance = this;
-            inputManager = GetComponent<InputManager>();
 
             gameObject.name = "GameManager";
 
             Debug.unityLogger.logEnabled = false;
             DontDestroyOnLoad(instance);
+        }
+
+        private void Update() {
+            InputManager.Update();
+        }
+
+        private void LateUpdate() {
+            InputManager.LateUpdate();
         }
 
         public static bool IsGroundLayer(GameObject gameObject)
