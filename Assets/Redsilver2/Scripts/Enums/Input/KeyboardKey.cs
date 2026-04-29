@@ -42,14 +42,14 @@ namespace RedSilver2.Framework.Inputs
 
         #region Others
         NumpadPeriod, NumpadDivide, NumpadMultiply, NumpadMinus,
-        NumpadPlus, NumpadEnter, NumpadEquals,
+        NumpadPlus, NumpadEnter, NumpadEquals, Backslash,
         #endregion
 
         #endregion
 
         #region Special keys
-        Space    , Enter , Return, Tab , Escape,
-        Backspace, Delete, Insert, Home, End   , PageUp, PageDown,
+        Space , Enter , Return, Tab , Escape,
+        Backspace, Delete, Insert, Home,   End , PageUp, PageDown,
         #endregion
 
         #region Function keys

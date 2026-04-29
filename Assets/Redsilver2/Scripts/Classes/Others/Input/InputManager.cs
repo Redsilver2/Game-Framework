@@ -3,6 +3,7 @@ using RedSilver2.Framework.Inputs.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -10,62 +11,45 @@ using UnityEngine.InputSystem.Controls;
 
 namespace RedSilver2.Framework.Inputs
 {
-    public sealed partial class InputManager : MonoBehaviour
+    public static partial class InputManager
     {
-        private void Awake()
-        {
-            if (IsActifInputManager()) {
-
-            }  
-
-            keyboardKeysControls   = GetKeyboardKeysControls();
-            mouseButtonsControls   = GetMouseButtonsControls();
-            gamepadButtonsControls = GetGamepadButtonsControls();
-        }
-
-        private void Update() {
-           // if (!IsActifInputManager()) return;
+        public static void Update() {
             UpdateInputConfigurations();
         }
 
-        private void LateUpdate() {
-           // if (!IsActifInputManager()) return;
-            LateUpdateInputConfigurations();
+        public static void LateUpdate() {
+           LateUpdateInputConfigurations();
         }
 
-        private void UpdateInputConfigurations()
+        private static void UpdateInputConfigurations()
         {
             foreach (InputConfiguration configuration in GetActifConfigurations())
                 configuration?.Update();
         }
 
-        private void LateUpdateInputConfigurations()
+        private static void LateUpdateInputConfigurations()
         {
             foreach (InputConfiguration configuration in GetActifConfigurations())
                 configuration?.LateUpdate();
         }
 
-        private InputConfiguration[] GetActifConfigurations()
+        private static InputConfiguration[] GetActifConfigurations()
         {
             InputConfiguration[] configurations = GetInputConfigurations();
             return configurations.Where(x => x != null).Where(x => x.IsEnabled).ToArray();
         }
-
-        private bool IsActifInputManager()
-        {
-            return GameManager.InputManager == this;
-        }
     }
 
-    public sealed partial class InputManager : MonoBehaviour
+    public static partial class InputManager
     {
         private static Dictionary<string, InputHandler> inputHandlers             = new Dictionary<string, InputHandler>();
         private static Dictionary<string, InputConfiguration> inputConfigurations = new Dictionary<string, InputConfiguration>();
 
-        private static Dictionary<KeyboardKey  , InputControl> keyboardKeysControls;
-        private static Dictionary<MouseButton  , InputControl> mouseButtonsControls;
-        private static Dictionary<GamepadButton, InputControl> gamepadButtonsControls;
+        private static Dictionary<KeyboardKey  , InputControl> keyboardKeysControls   = GetKeyboardKeysControls();
+        private static Dictionary<MouseButton  , InputControl> mouseButtonsControls   = GetMouseButtonsControls();
+        private static Dictionary<GamepadButton, InputControl> gamepadButtonsControls = GetGamepadButtonsControls();
 
+        private static readonly KeyboardKey[] excludedWritingKeys = GetExcludedWritingKey();
 
         public static bool AnyKeyboardKey
         {
@@ -160,9 +144,6 @@ namespace RedSilver2.Framework.Inputs
 
         public const string GAMEPAD_ROOT_PATH       = "<Gamepad>/";
         public const string XR_CONTROLLER_ROOT_PATH = "<XRController>/";
-
-
-
         #region Input Datas
 
         public static InputControl GetInputControl(string path)
@@ -179,14 +160,38 @@ namespace RedSilver2.Framework.Inputs
             return null;
         }
 
+        private static KeyboardKey[] GetExcludedWritingKey()
+        {
+            string[] excluded = new string[] {
+                "F"    , "Alt"   , "Command" , "Ctrl", "Arrow", 
+                "Lock", "Print"  , "Pause"   , "Home", "End",
+                "Page", "Escape" , "Shift"   , "Tab", "Return"
+            };
+
+            return GetKeyboardKeys().Where(x => IsExcludedWritingKey(x, excluded))
+                                    .ToArray();
+        }
+
+        private static bool IsExcludedWritingKey(KeyboardKey key, string[] excluded) {
+            if (excluded == null || key == KeyboardKey.F) return false;
+
+            return excluded.Where(x => key.ToString().Contains(x))
+                           .Count() > 0;
+        }
+
+        public static bool IsExcludedWritingKey(KeyboardKey key) {
+            if(excludedWritingKeys == null) return false;
+            return excludedWritingKeys.Contains(key);
+        }
+
 
         #region Initialization
         private static Dictionary<KeyboardKey, InputControl> GetKeyboardKeysControls()
         {
             Dictionary<KeyboardKey, InputControl> results = new Dictionary<KeyboardKey, InputControl>();
 
-            foreach (KeyboardKey key in Enum.GetValues(typeof(KeyboardKey)))
-                results.Add(key, new InputButtonControl(GetFormattedKey(key), GetKeyIconFromResources(key.ToString(), KEYBOARD_ICONS_PATH)));
+            foreach (KeyboardKey key in GetKeyboardKeys())
+                results.Add(key, CreateKeyboardControl(key));
 
             return results;
         }
@@ -195,10 +200,10 @@ namespace RedSilver2.Framework.Inputs
         {
             Dictionary<MouseButton, InputControl> results = new Dictionary<MouseButton, InputControl>();
 
-            foreach (MouseButton key in Enum.GetValues(typeof(MouseButton)))
+            foreach (MouseButton key in GetMouseButtons())
             {
                 string keyString = key.ToString();
-                results.Add(key, new InputButtonControl($"{MOUSE_ROOT_PATH}{GetFormattedKey(keyString)}", GetKeyIconFromResources(keyString, MOUSE_ICONS_PATH)));
+                results.Add(key, new InputButtonControl($"{MOUSE_ROOT_PATH}{GetFormattedKey(keyString)}", null));
             }
 
             return results;
@@ -208,10 +213,140 @@ namespace RedSilver2.Framework.Inputs
         {
             Dictionary<GamepadButton, InputControl> results = new Dictionary<GamepadButton, InputControl>();
 
-            foreach (GamepadButton key in Enum.GetValues(typeof(GamepadButton)))
+            foreach (GamepadButton key in GetGamepadButtons())
                 AddGamepadButtonData(ref results, key);
 
             return results;
+        }
+
+        private static InputButtonControl CreateKeyboardControl(KeyboardKey key) {
+            string path = GetFormattedKey(key);
+
+            if (!IsExcludedWritingKey(key)) {
+                if (TryGetCharacterInputControl(path, key, out InputStringCharacter result01) || TryGetNumberInputControl(path, key, out result01))
+                    return result01;
+                else if (TryGetSpecialCharacterInputControl(path, key, out result01))
+                    return result01;
+                else if (key == KeyboardKey.Backspace || key == KeyboardKey.Delete)
+                    return new InputStringDelete(path);
+            }
+
+            return new InputButtonControl(path);
+        }
+
+        private static bool TryGetCharacterInputControl(string path, KeyboardKey key, out InputStringCharacter result) {
+            result = null;
+
+            if(key == KeyboardKey.Space) {
+                result = new InputStringCharacter(path, ' ');
+            }
+            if (IsCharacterKey(key)) {
+                char value = key.ToString().ToCharArray()[0];
+                result = new InputStringCharacter(path, value);
+            }
+          
+            return result != null;
+        }
+
+        private static bool TryGetSpecialCharacterInputControl(string path, KeyboardKey key, out InputStringCharacter result)
+        {
+            result = null;
+
+            switch (key) {
+                case KeyboardKey.Backquote:    result = new InputStringCharacter(path, '~', '`'); break;
+                case KeyboardKey.Quote:        result = new InputStringCharacter(path, '\"', '\''); break;
+                case KeyboardKey.LeftBracket:  result = new InputStringCharacter(path, '{', '['); break;    
+                case KeyboardKey.RightBracket: result = new InputStringCharacter(path, '}', ']'); break;
+                case KeyboardKey.Comma:        result = new InputStringCharacter(path, '<', ',');  break;   
+                case KeyboardKey.Semicolon:    result = new InputStringCharacter(path, ':', ';'); break;
+                case KeyboardKey.Minus:        result = new InputStringCharacter(path, '_', '-'); break;
+                case KeyboardKey.Equals:       result = new InputStringCharacter(path, '+', '='); break;
+                case KeyboardKey.Period:       result = new InputStringCharacter(path, '>', '.'); break;
+                case KeyboardKey.Slash:        result = new InputStringCharacter(path, '?', '/'); break;
+                case KeyboardKey.Backslash:    result = new InputStringCharacter(path, '|', '\\'); break;
+                case KeyboardKey.NumpadMinus:  result = new InputStringCharacter(path, '_', '-');  break;
+                case KeyboardKey.NumpadEquals: result = new InputStringCharacter(path, '+', '='); break;
+                case KeyboardKey.NumpadPeriod: result = new InputStringCharacter(path, '>', '.'); break;   
+            }
+
+            return result != null;
+        }
+
+        private static bool TryGetNumberInputControl(string path, KeyboardKey key, out InputStringCharacter result)
+        {
+            result = null;
+            if (!IsNumberKey(key)) return false;
+
+            if (TryGetNumberInputControl(path, key.ToString(), out result)){
+                return true;
+            }
+
+            return false;
+        }
+        private static bool TryGetNumberInputControl(string path, string key, out InputStringCharacter result)
+        {
+            char[] stringNumberExpressions = new char[] { ')', '!', '@', '#', '$', '%', '^', '&', '*', '(' };
+
+            for (int i = 0; i < stringNumberExpressions.Length; i++) {
+                char charNumber = i.ToString().ToCharArray()[0];
+
+                if (key.Contains(charNumber, StringComparison.OrdinalIgnoreCase)) {
+                    result = new InputStringCharacter(path, stringNumberExpressions[i], charNumber);
+                    return true;
+                }
+            }
+
+            result = null;
+            return false;
+        }
+
+        public static bool IsAlphaNumberKey(KeyboardKey key) {
+            return key >= KeyboardKey.Alpha0 && key <= KeyboardKey.Alpha9;
+        }
+
+        public static bool IsNumpadNumberKey(KeyboardKey key) {
+            return key >= KeyboardKey.Numpad0 && key <= KeyboardKey.Numpad9;
+        }
+
+        public static bool IsNumpadKey(KeyboardKey key) {
+            return IsNumberKey(key) ||
+                   (key >= KeyboardKey.NumpadPeriod && key <= KeyboardKey.NumpadEquals);
+        }
+
+        public static bool IsNumberKey(KeyboardKey key) {
+            return IsAlphaNumberKey(key) ||
+                   IsNumpadNumberKey(key);
+        }
+
+        public static bool IsCharacterKey(KeyboardKey key) {
+            return key >= KeyboardKey.Q && key <= KeyboardKey.M;
+        }
+
+        public static bool IsSpecialCharacterKey(KeyboardKey key) {
+            if (IsExcludedWritingKey(key) || IsNumberKey(key) || IsCharacterKey(key))
+                return false;
+
+            return true;             
+        }
+
+        public static KeyboardKey[] GetCharacterKeys() {
+            return GetKeyboardKeys().Where(x => IsCharacterKey(x)).ToArray();
+        }
+
+        public static KeyboardKey[] GetNumberKeys() {
+            return GetKeyboardKeys().Where(x => IsNumberKey(x)).ToArray();
+        }
+
+        public static KeyboardKey[] GetAlphaNumberKeys(){
+            return GetKeyboardKeys().Where(x => x.ToString().Contains("Alpha", StringComparison.OrdinalIgnoreCase))
+                                    .ToArray();
+        }
+
+
+        public static KeyboardKey[] GetNumpadNumberKeys()
+        {
+            return GetKeyboardKeys().Where(x => x.ToString().Contains("Numpad", StringComparison.OrdinalIgnoreCase))
+                                    .ToArray();
         }
 
         private static void AddGamepadButtonData(ref Dictionary<GamepadButton, InputControl> results, GamepadButton button)
@@ -219,12 +354,12 @@ namespace RedSilver2.Framework.Inputs
             if (results == null) results = new Dictionary<GamepadButton, InputControl>();
 
             string buttonString = button.ToString();
-            Sprite icon = GetKeyIconFromResources(buttonString, GAMEPAD_ICONS_PATH);
+         
 
             if (buttonString.Contains("Stick", StringComparison.OrdinalIgnoreCase))
-                AddGamepadStickButton(ref results, icon, buttonString, button);
+                AddGamepadStickButton(ref results, null, buttonString, button);
             else
-                AddGamepadButton(ref results, icon, button);
+                AddGamepadButton(ref results, null, button);
         }
 
 
@@ -532,6 +667,164 @@ namespace RedSilver2.Framework.Inputs
 
         #endregion
 
+
+        public static bool Write(ref string text) {
+           return Write(int.MaxValue, ref text);
+        }
+        public static bool Write(int wordslimit, ref string text)
+        {
+            return Write(InputManager.GetKey(KeyboardKey.LeftShift) || 
+                         InputManager.GetKey(KeyboardKey.RightShift), wordslimit, ref text);
+        }
+
+        public static bool Write(bool isUpperCase, int wordslimit, ref string text) {
+            if(keyboardKeysControls == null) return false;
+            return Write(GetActifWritteableInput(), isUpperCase, wordslimit, ref text);
+        }
+
+        public static bool Write(KeyboardKey key, bool isUpperCase, ref string text) {
+            return Write(key, isUpperCase, int.MaxValue, ref text);
+        }
+        public static bool Write(KeyboardKey key, bool isUpperCase, int wordslimit, ref string text) {
+            if (IsExcludedWritingKey(key)) return false;
+            return Write(GetWriteableInput(key), isUpperCase, wordslimit, ref text);
+        }
+
+        private static bool Write(IWriteableInput writteable, bool isUpperCase, int wordsLimit, ref string text) {
+            if(writteable == null) return false;
+
+            writteable.Write(isUpperCase, wordsLimit, ref text, out bool wasExecuted);
+            return wasExecuted;
+        }
+
+        public static char GetWriteableInputChar(KeyboardKey key, bool getUpperCase) {
+
+            if (keyboardKeysControls == null || IsExcludedWritingKey(key)) return '\0';
+
+            if (keyboardKeysControls.ContainsKey(key)) {
+                IWriteableInput writteable = keyboardKeysControls[key] as IWriteableInput;
+                if (writteable != null) return writteable.GetValue(getUpperCase);
+            }
+            
+            return '\0';
+        }
+
+        public static string GetWriteableInputString(KeyboardKey key, bool getUpperCase)
+        {
+            string result = InputManager.GetWriteableInputChar(key, getUpperCase).ToString();
+
+            if (string.IsNullOrEmpty(result) || result.Contains('\0') || result.Contains(' '))
+                return GetWriteableInputString(key);
+
+            return result;
+        }
+
+        private static string GetWriteableInputString(KeyboardKey key)
+        {
+            if      (key == KeyboardKey.Backspace || key == KeyboardKey.Delete) { return "Delete"; }
+            else if (key == KeyboardKey.Enter || key == KeyboardKey.Insert) { return "Enter"; }
+            else if (key == KeyboardKey.Space) { return "Space"; }
+
+
+
+            return key.ToString();
+        }
+
+        public static char GetInputChar(bool getUpperCase) {
+            if (keyboardKeysControls == null) return '\0';
+            IWriteableInput writteable = GetActifWritteableInput();
+
+            if (writteable != null) return writteable.GetValue(getUpperCase);
+            return '\0';
+        }
+
+        public static char GetInputChar() {
+            return GetInputChar(InputManager.GetKey(KeyboardKey.LeftShift) ||
+                                InputManager.GetKey(KeyboardKey.RightShift));
+        }
+
+        public static bool TryGetWritteableInputKey(IWriteableInput writteable, out KeyboardKey key)
+        {
+            key = default;
+
+            if (writteable == null || keyboardKeysControls == null) return false;
+            var results = keyboardKeysControls.Where(x => x.Value.Equals(writteable));
+
+            if (results.Count() > 0) {
+                key = results.First().Key;
+                return true;
+            }
+
+            return false;
+        }
+
+        public static bool TryGetActifWritteableInputKey(out KeyboardKey key) {
+            return TryGetWritteableInputKey(GetActifWritteableInput(), out key);
+        }
+
+
+        public static IWriteableInput GetActifWritteableInput()
+        {
+            var results = GetActifWriteableInputs();
+
+            return results == null || results.Count() <= 0 ? null :
+                   results.OrderBy(x => (int)x.GetStringOperationType())
+                          .First();  
+        }
+
+        public static IWriteableInput GetWriteableInput(KeyboardKey key)
+        {
+            if (keyboardKeysControls == null) return null;
+
+            if (keyboardKeysControls.ContainsKey(key)) return keyboardKeysControls[key] as IWriteableInput;
+            return null;
+        }
+
+        private static IWriteableInput[] GetActifWriteableInputs()
+        {
+            if(keyboardKeysControls == null) return new  IWriteableInput[0];
+            var pressedInputs = GetWritingKeys().Where(x => InputManager.GetKeyDown(x));
+
+            var dictonnary       = keyboardKeysControls.Where(x => pressedInputs.Contains(x.Key))
+                                                    .ToDictionary(x => x.Key, x => x.Value);
+
+            List<IWriteableInput> results = new List<IWriteableInput>();
+
+            foreach(InputControl control in dictonnary.Values)
+                 if(control is IWriteableInput) results.Add(control as IWriteableInput);
+                
+            return results.ToArray();   
+        }
+
+        public static IWriteableInput[] GetWriteableInputs()
+        {
+            if (keyboardKeysControls == null) return new IWriteableInput[0];
+            return keyboardKeysControls.Values.Where(x => x is IWriteableInput).ToArray() as IWriteableInput[];
+        }
+
+        public static KeyboardKey[] GetWritingKeys()
+        {
+            var results = GetKeyboardKeys();
+            if (excludedWritingKeys == null) return results;
+
+            return results.Where(x => !IsExcludedWritingKey(x))
+                          .ToArray();
+        }
+
+        public static KeyboardKey[] GetKeyboardKeys()
+        {
+            return Enum.GetValues(typeof(KeyboardKey)) as KeyboardKey[];  
+        }
+
+        public static MouseButton[] GetMouseButtons()
+        {
+            return Enum.GetValues(typeof(MouseButton)) as MouseButton[];
+        }
+
+        public static GamepadButton[] GetGamepadButtons() {
+            return Enum.GetValues(typeof(GamepadButton)) as GamepadButton[];
+        }
+
         public static void AddInputConfiguration(string name, InputConfiguration configuration)
         {
             if (string.IsNullOrEmpty(name) || configuration == null || inputConfigurations == null)
@@ -558,8 +851,7 @@ namespace RedSilver2.Framework.Inputs
         {
             if (handler == null || inputHandlers == null) return string.Empty;
 
-            foreach (KeyValuePair<string, InputHandler> pair in inputHandlers)
-            {
+            foreach (KeyValuePair<string, InputHandler> pair in inputHandlers) {
                 if (IsSameInputHandler(pair.Value, handler))
                     return pair.Key;
             }
@@ -618,53 +910,30 @@ namespace RedSilver2.Framework.Inputs
 
         public static SingleInputConfiguration[] GetSingleInputConfigurations()
         {
-            List<SingleInputConfiguration> result = new List<SingleInputConfiguration>();
-
-            foreach (var configuration in GetInputConfigurations().Where(x => x is SingleInputConfiguration))
-                result.Add(configuration as SingleInputConfiguration);
-
-
-            return result.ToArray();
+            return GetInputConfigurations().Where(x => x is SingleInputConfiguration)
+                   .ToArray() as SingleInputConfiguration[];
         }
 
         public static KeyboardVector2InputConfiguration[] GetKeyboardInputConfigurations()
         {
-            List<KeyboardVector2InputConfiguration> result = new List<KeyboardVector2InputConfiguration>();
-
-
-            foreach (var configuration in GetInputConfigurations().Where(x => x is KeyboardVector2InputConfiguration))
-                result.Add(configuration as KeyboardVector2InputConfiguration);
-
-            return result.ToArray();
+            return GetInputConfigurations().Where(x => x is KeyboardVector2InputConfiguration)
+                   .ToArray() as KeyboardVector2InputConfiguration[];
         }
 
         public static MouseVector2InputConfiguration[] GetMouseInputConfigurations()
         {
-            List<MouseVector2InputConfiguration> result = new List<MouseVector2InputConfiguration>();
-
-            foreach (var configuration in GetInputConfigurations().Where(x => x is MouseVector2InputConfiguration))
-                result.Add(configuration as MouseVector2InputConfiguration);
-
-            return result.ToArray();
+            return GetInputConfigurations().Where(x => x is MouseVector2InputConfiguration)
+                  .ToArray() as MouseVector2InputConfiguration[];
         }
 
 
         private static InputConfiguration[] GetInputConfigurations()
         {
-            List<InputConfiguration> results = new List<InputConfiguration>();
-            
-            if(inputConfigurations == null)  return results.ToArray();
-
-            foreach(KeyValuePair<string, InputConfiguration>  valuePair in inputConfigurations) {
-                InputConfiguration configuration = valuePair.Value;
-                if (valuePair.Value == null) continue;
-                results?.Add(configuration);
-            }
-
-            return results.ToArray();
+            if(inputConfigurations == null)  return new InputConfiguration[0];
+            return inputConfigurations.Values.Where(x => x != null).ToArray();
         }
 
-        private static InputConfiguration GetInputConfiguration(string name, InputConfiguration[] configurations)
+        public static InputConfiguration GetInputConfiguration(string name, InputConfiguration[] configurations)
         {
             if (string.IsNullOrEmpty(name) || configurations == null) return null;
             InputConfiguration[] results;
@@ -680,11 +949,8 @@ namespace RedSilver2.Framework.Inputs
         {
             if (string.IsNullOrEmpty(name) || inputConfigurations == null) return null;
             name = name.ToLower();
-            
 
-            if(inputConfigurations.ContainsKey(name))
-                return inputConfigurations[name];
-
+            if(inputConfigurations.ContainsKey(name)) return inputConfigurations[name];
             return null;
         }
 
@@ -879,6 +1145,7 @@ namespace RedSilver2.Framework.Inputs
 
             return result;
         }
+
         public static float GetAxis(bool readLeftStick, bool getAxisX)
         {
             Vector2 result = GetGamepadVector2(readLeftStick);

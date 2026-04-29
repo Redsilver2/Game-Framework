@@ -1,6 +1,5 @@
 using RedSilver2.Framework.Inputs.Configurations;
 using RedSilver2.Framework.Inputs.Settings;
-using System.Threading.Tasks;
 using UnityEngine;
 
 public abstract class Vector2KeyboardConfigurationEvent : Vector2InputConfigurationEvent
