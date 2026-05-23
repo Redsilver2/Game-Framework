@@ -132,8 +132,7 @@ namespace RedSilver2.Framework.Subtitles
             }
         }
 
-        public Subtitle GetSubtitle()
-        {
+        public Subtitle GetSubtitle() {
             if (subtitleModel != null) return Instantiate(subtitleModel);
             return null;
         }

@@ -130,25 +130,8 @@ namespace RedSilver2.Framework.Interactions.Items
 
         private void SetInteractionModuleEvent(InteractionModule module, bool isAddingEvent)
         {
-            if (module == null) return;
-            if (module is SingleInteractionModule) SetInteractionModuleEvent(module as SingleInteractionModule      , isAddingEvent);
-            else                                   SetInteractionModuleEvent(module as AdvancedHoldInteractionModule, isAddingEvent);
+         
         }
-
-        private void SetInteractionModuleEvent(SingleInteractionModule module, bool isAddingEvent)
-        {
-            if (module == null) return;
-            if (isAddingEvent)  module?.AddOnInteractListener(GetOnInteract(module));
-            else                module?.RemoveOnInteractListener(GetOnInteract(module));
-        }
-
-        private void SetInteractionModuleEvent(AdvancedHoldInteractionModule module, bool isAddingEvent)
-        {
-            if (module == null) return;
-            if (isAddingEvent) module?.AddOnProgressChanged(GetOnAdvancedInteract(module));
-            else module?.RemoveOnProgressChanged(GetOnAdvancedInteract(module));
-        }
-
         public void Add(Inventory inventory)
         {
             bool wasAdded = false;
@@ -164,21 +147,7 @@ namespace RedSilver2.Framework.Interactions.Items
                 InteractionHandlerModule owner = handler.Owner;
 
                 if (owner == null) return;
-                Add(owner.Inventory);
-            };
-        }
-
-        private UnityAction<float, InteractionHandler> GetOnAdvancedInteract(AdvancedHoldInteractionModule module)
-        {
-            if(module == null) return null;
-            UnityAction<InteractionHandler> result = GetOnInteract(module);
-         
-            if(result == null) return null; 
-
-            return (progress, handler) =>
-            {
-              //  if (progress == 1f && !isInInventory)
-               //     result?.Invoke(handler);
+                //Add(owner.Inventory);
             };
         }
 

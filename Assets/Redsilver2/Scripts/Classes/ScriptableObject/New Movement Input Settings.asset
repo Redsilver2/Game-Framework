@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d70f29dba2cbae7418968b1019fe2efb, type: 3}
   m_Name: New Movement Input Settings
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Inputs.Settings.MovementInputSettings
-  moveInputSettings: {fileID: 11400000, guid: b72410dec1d007443a2b55e09afb751c, type: 2}
+  moveInputSettings: {fileID: 11400000, guid: 34e9a3b820b865e438822ed3a624d62a, type: 2}
   pressRunSettings: {fileID: 0}
   holdRunInputSettings: {fileID: 0}
   pressCrouchInputSettings: {fileID: 0}

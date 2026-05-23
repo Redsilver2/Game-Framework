@@ -1,4 +1,4 @@
-using UnityEngine.Events;
+using UnityEngine;
 
 namespace RedSilver2.Framework.Inputs
 {
@@ -52,7 +52,7 @@ namespace RedSilver2.Framework.Inputs
 
         public bool GetDefaultPathValue()
         {
-            return GetXRValue(defaultControl);
+            return GetDefaultValue(defaultControl);
         }
         public bool GetGamepadPathValue()
         {

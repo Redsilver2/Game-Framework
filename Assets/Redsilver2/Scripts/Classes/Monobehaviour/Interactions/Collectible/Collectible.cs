@@ -23,30 +23,7 @@ namespace RedSilver2.Framework.Interactions.Collectibles
         {
             if (interactionModule == null) return;
 
-            if (interactionModule is SingleInteractionModule)
-                SetInteractionModuleEvents(interactionModule as SingleInteractionModule, isAddingEvents);
-            else if (interactionModule is AdvancedHoldInteractionModule)
-                SetInteractionModuleEvents(interactionModule as AdvancedHoldInteractionModule, isAddingEvents);
-        }
-
-        private void SetInteractionModuleEvents(SingleInteractionModule module, bool isAddingEvents) {
-            if (module == null) return;
-
-            if (isAddingEvents)
-                module.AddOnInteractListener(OnInteract);
-            else
-                module.RemoveOnInteractListener(OnInteract);
-        }
-
-        private void SetInteractionModuleEvents(AdvancedHoldInteractionModule module, bool isAddingEvents) {
-
-            if (module == null) return;
-
-            if (isAddingEvents)
-                module.AddOnInteractListener(OnInteract);
-            else
-                module.RemoveOnInteractListener(OnInteract);
-  
+       
         }
 
         protected virtual void OnInteract(InteractionHandler handler) {

@@ -17,6 +17,7 @@ namespace RedSilver2.Framework.Inputs.Configurations {
         private UnityEvent<MouseButton,   SingleInputConfiguration>   onMouseButtonOverrided;
         private UnityEvent<GamepadButton, SingleInputConfiguration>   onGamepadeButtonOverrided;
 
+        private readonly  bool isKeyboardInputDefault;
         public bool Value {  get; private set; }
 
         public SingleInputConfiguration(SingleInputSettings settings) : base(settings)
@@ -29,6 +30,7 @@ namespace RedSilver2.Framework.Inputs.Configurations {
                 defaultKeyboardKey   = settings.DefaultKeyboardKey;
                 defaultMouseButton   = settings.DefaultMouseButton;
                 defaultGamepadButton = settings.DefaultGamepadButton;
+                isKeyboardInputDefault = settings.IsKeyboardInputDefault;
 
                 Initialize();
             }
@@ -39,7 +41,7 @@ namespace RedSilver2.Framework.Inputs.Configurations {
             return () => {
                 SingleInput input = GetSingleInput();
               
-                if (input == null || !input.Value) {
+                if (input == null || !input.Value || !IsEnabled) {
                     Value = false;
                 }
                 else {
@@ -70,11 +72,12 @@ namespace RedSilver2.Framework.Inputs.Configurations {
         {
             if (string.IsNullOrEmpty(name)) return;
 
-            if (isKeyboardDefault)
+            if (isKeyboardInputDefault)
                 handler = InputManager.GetOrCreateSingleInput(name, defaultKeyboardKey, defaultGamepadButton, singleInput);
             else
                 handler = InputManager.GetOrCreateSingleInput(name, defaultMouseButton, defaultGamepadButton, singleInput);
         }
+
 
         public void OverrideKey(KeyboardKey key)
         {

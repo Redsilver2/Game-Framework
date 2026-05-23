@@ -7,7 +7,7 @@ namespace RedSilver2.Framework.Inputs.Settings
     public abstract class SingleInputSettings : InputSettings
     {
         [Space]
-        public bool IsKeyboardDefault;
+        [SerializeField] private bool isKeyboardInputDefault;
 
         [Space]
         public KeyboardKey DefaultKeyboardKey;
@@ -15,6 +15,8 @@ namespace RedSilver2.Framework.Inputs.Settings
 
         [Space]
         public GamepadButton DefaultGamepadButton;
+
+        public bool IsKeyboardInputDefault => isKeyboardInputDefault;
 
         public sealed override async void Disable()
         {

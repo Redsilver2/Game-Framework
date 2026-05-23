@@ -20,62 +20,20 @@ namespace RedSilver2.Framework
 
         protected static GameManager instance;
 
-
-        public static int GroundLayer
-        {
-            get {
-                return LayerMask.NameToLayer(GROUND_LAYER_NAME);
-            }
-        }
-
-        public static int PLAYER_LAYER
-        {
-            get {
-                return LayerMask.NameToLayer(PLAYER_LAYER_NAME);
-            }
-        }
-
-        public static int AI_LAYER
-        {
-            get
-            {
-                return LayerMask.NameToLayer(AI_LAYER_NAME);
-            }
-        }
+        public static int InteractionLayer => LayerMask.NameToLayer(INTERACTION_LAYER_NAME);
+        public static int GroundLayer      => LayerMask.NameToLayer(GROUND_LAYER_NAME);
+        public static int PlayerLayer      => LayerMask.NameToLayer(PLAYER_LAYER_NAME);
+        public static int AILayer          => LayerMask.NameToLayer(AI_LAYER_NAME);
 
 
-        public static CollectibleNotificationManager CollectibleNotification {
-            get {
-                return instance ? instance.collectibleNotification : null;
-            }
-        }
 
-        public static SceneLoaderManager SceneLoaderManager {
-            get {
-                return instance ? instance.sceneLoaderManager : null;
-            }
-        }
+        public static CollectibleNotificationManager CollectibleNotification  => instance ? instance.collectibleNotification : null;
+        public static SceneLoaderManager SceneLoaderManager  => instance ? instance.sceneLoaderManager : null;
+        public static SubtitleManager    SubtitleManager     => instance ? instance.subtitleManager    : null;
+        public static SettingManager     SettingManager      => instance ? instance.settingManager     : null;
+        public static LightManager       LightManager        => instance ? instance.lightManager       : null;
 
-        public static SubtitleManager SubtitleManager
-        {
-            get {
-                return instance ? instance.subtitleManager : null;
-            }
-        }
-
-        public static SettingManager SettingManager
-        {
-            get {
-                return instance ? instance.settingManager : null;
-            }
-        }
-
-        public static LightManager LightManager {
-            get {
-                return instance ? instance.lightManager : null;
-            }
-        }
-
+        public const string INTERACTION_LAYER_NAME = "Interaction";
         public const string GROUND_LAYER_NAME = "Ground";
         public const string PLAYER_LAYER_NAME = "Player";
         public const string AI_LAYER_NAME = "AI";
@@ -87,8 +45,6 @@ namespace RedSilver2.Framework
             instance = this;
 
             gameObject.name = "GameManager";
-
-            Debug.unityLogger.logEnabled = false;
             DontDestroyOnLoad(instance);
         }
 

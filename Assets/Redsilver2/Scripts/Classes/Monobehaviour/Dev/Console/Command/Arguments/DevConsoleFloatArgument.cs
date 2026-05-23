@@ -6,9 +6,7 @@ namespace RedSilver2.Framework.Dev
     {
         public sealed class DevConsoleFloatArgument : DevConsoleArgument
         {
-            public DevConsoleFloatArgument(string details) : base(details) {
-
-            }
+            public DevConsoleFloatArgument(string details) : base(details) { }
 
             public sealed override async Awaitable<string> GetPreview()
             {

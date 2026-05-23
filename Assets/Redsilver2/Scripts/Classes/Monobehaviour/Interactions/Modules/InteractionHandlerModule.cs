@@ -1,5 +1,4 @@
 using RedSilver2.Framework.Inputs.Settings;
-using RedSilver2.Framework.Player.Inventories;
 using RedSilver2.Framework.StateMachines.Controllers;
 using System.Linq;
 using UnityEngine;
@@ -18,17 +17,21 @@ namespace RedSilver2.Framework.Interactions
         [Space]
         [SerializeField] private InteractionType[] allowedInteractionTypes;
         private PlayerController owner;
-        private Inventory inventory;
 
         public float            InteractionRange => interactionRange;
-        public Inventory        Inventory        => inventory;
         public PlayerController Owner            => owner;
 
         private void Awake()
         {
             owner = transform.root.GetComponent<PlayerController>();
-            inventory = transform.root.GetComponentInChildren<Inventory>();
-            SetInteractionHandler(GetInteractionHandler()); 
+            SetInteractionHandler(GetInteractionHandler());
+        }
+
+        private void Start()
+        {
+            pressInteractionSettings?.Enable();
+            holdInteractionSettings?.Enable();
+            releaseInteractionSettings?.Enable();   
         }
 
         public bool CanInteract(InteractionModule module)
@@ -43,19 +46,19 @@ namespace RedSilver2.Framework.Interactions
 
         public bool IsPressed()
         {
-            var config = pressInteractionSettings == null ? null : pressInteractionSettings.GetConfiguration();
-            return config == null ? false : config.Value;
+            if (pressInteractionSettings == null) return false;
+            return pressInteractionSettings.GetConfiguration().Value;
         }
 
         public bool IsHeld()
         {
-            var config = holdInteractionSettings == null ? null : holdInteractionSettings.GetConfiguration();
-            return config == null ? false : config.Value;
+            if (holdInteractionSettings == null) return false;
+            return holdInteractionSettings.GetConfiguration().Value;
         }
 
         public bool IsReleased() {
-            var config = releaseInteractionSettings == null ? null : releaseInteractionSettings.GetConfiguration();
-            return config == null ? false : config.Value;
+            if (releaseInteractionSettings == null) return false;
+            return releaseInteractionSettings.GetConfiguration().Value;
         }
     }
 }

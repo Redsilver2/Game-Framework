@@ -1,6 +1,5 @@
 using RedSilver2.Framework.StateMachines.Controllers;
 using RedSilver2.Framework.StateMachines.States;
-using RedSilver2.Framework.StateMachines.States.Conditions;
 using RedSilver2.Framework.StateMachines.States.Configurations;
 using System.Linq;
 using UnityEngine;
@@ -79,7 +78,7 @@ namespace RedSilver2.Framework.StateMachines {
                 }
             });
 
-            AddOnLateUpdateListener(() => { Debug.Log("?? " + moveSpeed); Move(); });
+            AddOnLateUpdateListener(() => { Move(); });
             AddOnGroundTagChangedListener(value => { groundTag = value; });
 
         }
@@ -164,7 +163,7 @@ namespace RedSilver2.Framework.StateMachines {
             groundTag = string.Empty;
             if (Transform == null) return false;
 
-            if (Physics.Raycast(Transform.position, -Transform.up, out RaycastHit hitInfo, groundCheckRange, ~GameManager.PLAYER_LAYER)) {
+            if (Physics.Raycast(Transform.position, -Transform.up, out RaycastHit hitInfo, groundCheckRange, ~GameManager.PlayerLayer)) {
                 if (hitInfo.collider == null) return false;
 
                 if (hitInfo.collider.gameObject.layer == GameManager.GroundLayer) {

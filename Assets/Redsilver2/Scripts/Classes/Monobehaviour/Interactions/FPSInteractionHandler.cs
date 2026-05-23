@@ -1,4 +1,3 @@
-using RedSilver2.Framework.Inputs;
 using UnityEngine;
 
 namespace RedSilver2.Framework.Interactions
@@ -18,14 +17,14 @@ namespace RedSilver2.Framework.Interactions
         }
 
         protected sealed override Collider GetCollider(float interactionRange)
-        {
+ {
             Transform transform;
             if(camera == null) return null;
 
             transform = camera.transform;
             Debug.DrawRay(transform.position, transform.forward, Color.blue);
 
-            Physics.Raycast(transform.position, transform.forward, out RaycastHit hitInfo, 5f);
+            Physics.Raycast(transform.position, transform.forward, out RaycastHit hitInfo, 5f, ~GameManager.PlayerLayer);
             return hitInfo.collider;
         }
     }

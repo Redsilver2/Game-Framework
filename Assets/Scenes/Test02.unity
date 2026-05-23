@@ -429,7 +429,7 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1952758479}
   m_Enabled: 1
-  serializedVersion: 12
+  serializedVersion: 13
   m_Type: 1
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
   m_Intensity: 1
@@ -481,7 +481,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShadowRadius: 0
+  m_ShapeRadius: 0
   m_ShadowAngle: 0
   m_LightUnit: 1
   m_LuxAtDistance: 1
@@ -845,63 +845,6 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5649146700110542152}
   m_Enabled: 1
---- !u!1001 &6392015274098918866
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 4582368657992581496, guid: aec1d88c43d8dff44b425e1038a32260, type: 3}
-      propertyPath: m_Name
-      value: GAME CORE
-      objectReference: {fileID: 0}
-    - target: {fileID: 7587869929507207313, guid: aec1d88c43d8dff44b425e1038a32260, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -0.56618
-      objectReference: {fileID: 0}
-    - target: {fileID: 7587869929507207313, guid: aec1d88c43d8dff44b425e1038a32260, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 7.0619
-      objectReference: {fileID: 0}
-    - target: {fileID: 7587869929507207313, guid: aec1d88c43d8dff44b425e1038a32260, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 1.81258
-      objectReference: {fileID: 0}
-    - target: {fileID: 7587869929507207313, guid: aec1d88c43d8dff44b425e1038a32260, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7587869929507207313, guid: aec1d88c43d8dff44b425e1038a32260, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7587869929507207313, guid: aec1d88c43d8dff44b425e1038a32260, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7587869929507207313, guid: aec1d88c43d8dff44b425e1038a32260, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7587869929507207313, guid: aec1d88c43d8dff44b425e1038a32260, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7587869929507207313, guid: aec1d88c43d8dff44b425e1038a32260, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7587869929507207313, guid: aec1d88c43d8dff44b425e1038a32260, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: aec1d88c43d8dff44b425e1038a32260, type: 3}
 --- !u!1 &6870779049180596279
 GameObject:
   m_ObjectHideFlags: 0
@@ -1076,6 +1019,8 @@ GameObject:
   - component: {fileID: 1138828085344059527}
   - component: {fileID: 4631621921016151032}
   - component: {fileID: 8650058560553433718}
+  - component: {fileID: 8650058560553433720}
+  - component: {fileID: 8650058560553433719}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -1095,8 +1040,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 848cc657753e2854b8be185a3572225b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.Controllers.PlayerCharacterController
-  use2DMovement: 0
   dontDestroyOnLoad: 0
+  inputSettings: {fileID: 0}
+  defaultSettingIndex: 0
+  defaultSettings: []
+--- !u!114 &8650058560553433719
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8650058560553433717}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ad9f939892888347ba1a7c758dcc670, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.Controllers.MovementStateMachineController
+  groundCheckRange: 0
+  is2DMovement: 0
+--- !u!114 &8650058560553433720
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8650058560553433717}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c70105dee0a1ca3468c4f60db81a84be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.Handlers.MovementStateMachineEventHandler
 --- !u!114 &8796324671152929531
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1109,6 +1082,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3722fd76c2e948b4f83c20aa66601d08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  settings: {fileID: 0}
+  body: {fileID: 0}
+  head: {fileID: 0}
+  defaultSensitivityX: 0
+  defaultSensitivityY: 0
   minRotationX: -45
   maxRotationX: 45
 --- !u!114 &8796324671152929532
@@ -1165,6 +1143,5 @@ SceneRoots:
   m_Roots:
   - {fileID: 1952758482}
   - {fileID: 401203274}
-  - {fileID: 6392015274098918866}
   - {fileID: 574171984}
   - {fileID: 1138828085344059527}
