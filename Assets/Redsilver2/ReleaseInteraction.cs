@@ -14,7 +14,7 @@ namespace RedSilver2.Framework.Interactions
 
         public sealed override bool Interact(InteractionHandler handler)
         {
-            if(handler == null || !handler.IsReleased) {
+            if(handler == null || !handler.IsReleased()) {
                 return false;
             }
 

@@ -19,7 +19,6 @@ namespace RedSilver2.Framework.Interactions.Actions.Setups
 
         protected sealed override void SetInteractionModule(Door door)
         {
-            Debug.Log(door);
             this.door = door;
             OnEnable();
         }

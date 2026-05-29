@@ -21,13 +21,15 @@ namespace RedSilver2.Framework.Interactions
         private UnityEvent<Interaction> onInteractionAdded, onInteractionRemoved;
 
         public string InteractableName => interactableName;
-        public Transform UIParent => uiParent;
         public InteractionType Type { get; private set; }
 
+        public Transform UIParent => uiParent;
         public Collider Collider => _collider;
+
+
         public Interaction[] Interactions {
             get {
-                return interactions != null ? interactions.ToArray() : new Interaction[0];
+                return interactions != null ? interactions.ToArray() : null;
             }
         }
 
@@ -94,12 +96,10 @@ namespace RedSilver2.Framework.Interactions
             if (handler == null || interactions == null || interactions.Length <= 0)
                 return;
 
-            if (handler.IsSelectingNextInteraction) current++;
-            else if (handler.IsSelectingPreviousInteraction) current--;
+            //if (handler.IsSelectingNextInteraction) current++;
+            //else if (handler.IsSelectingPreviousInteraction) current--;
 
             current = Mathf.Clamp(current, 0, interactions.Length - 1);
-            Debug.Log(current + " " + interactions[current].Name);
-
             if (current != previous) onSelectionIndexChanged?.Invoke(current);
         }
 

@@ -37,10 +37,10 @@ namespace RedSilver2.Framework.Inputs.Configurations
             };
         }
 
-        public void AddOnUpdatedListener(UnityAction<Vector2> action) {
+        public void AddOnUpdateListener(UnityAction<Vector2> action) {
             if (action != null) onUpdated?.AddListener(action);
         }
-        public void RemoveOnUpdatedListener(UnityAction<Vector2> action) {
+        public void RemoveOnUpdateListener(UnityAction<Vector2> action) {
             if (action != null) onUpdated?.RemoveListener(action);
         }
 

@@ -43,8 +43,8 @@ namespace RedSilver2.Framework.Inputs.Configurations
 
             if (settings != null) {
                 InputName     = settings.InputName;
-                isEnabled     = settings.IsEnabled;
-                isInitialized = settings.IsInitialized;
+                isEnabled     = false;
+                isInitialized = false;
             }
 
             InputManager.AddInputConfiguration(InputName, this);

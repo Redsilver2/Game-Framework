@@ -10,36 +10,7 @@ using UnityEngine.InputSystem.Controls;
 
 namespace RedSilver2.Framework.Inputs
 {
-    public static partial class InputManager
-    {
-        public static void Update() {
-            UpdateInputConfigurations();
-        }
-
-        public static void LateUpdate() {
-           LateUpdateInputConfigurations();
-        }
-
-        private static void UpdateInputConfigurations()
-        {
-            foreach (InputConfiguration configuration in GetActifConfigurations())
-                configuration?.Update();
-        }
-
-        private static void LateUpdateInputConfigurations()
-        {
-            foreach (InputConfiguration configuration in GetActifConfigurations())
-                configuration?.LateUpdate();
-        }
-
-        private static InputConfiguration[] GetActifConfigurations()
-        {
-            InputConfiguration[] configurations = GetInputConfigurations();
-            return configurations.Where(x => x != null).Where(x => x.IsEnabled).ToArray();
-        }
-    }
-
-    public static partial class InputManager
+    public static class InputManager
     {
         private static Dictionary<string, InputHandler> inputHandlers             = new Dictionary<string, InputHandler>();
         private static Dictionary<string, InputConfiguration> inputConfigurations = new Dictionary<string, InputConfiguration>();
@@ -143,6 +114,36 @@ namespace RedSilver2.Framework.Inputs
 
         public const string GAMEPAD_ROOT_PATH       = "<Gamepad>/";
         public const string XR_CONTROLLER_ROOT_PATH = "<XRController>/";
+
+        public static void Update()
+        {
+            UpdateInputConfigurations();
+        }
+
+        public static void LateUpdate()
+        {
+            LateUpdateInputConfigurations();
+        }
+
+        private static void UpdateInputConfigurations()
+        {
+            foreach (InputConfiguration configuration in GetActifConfigurations())
+                configuration?.Update();
+        }
+
+        private static void LateUpdateInputConfigurations()
+        {
+            foreach (InputConfiguration configuration in GetActifConfigurations())
+                configuration?.LateUpdate();
+        }
+
+        private static InputConfiguration[] GetActifConfigurations()
+        {
+            InputConfiguration[] configurations = GetInputConfigurations();
+            return configurations.Where(x => x != null).Where(x => x.IsEnabled).ToArray();
+        }
+
+
         #region Input Datas
 
         public static InputControl GetInputControl(string path)
@@ -1175,7 +1176,6 @@ namespace RedSilver2.Framework.Inputs
         }
 
         public static Vector2 GetGamepadVector2(GamepadButton up, GamepadButton down, GamepadButton left, GamepadButton right) => Vector2.right * GetAxisX(left, right) + Vector2.up * GetAxisY(up, down);
-
         public static Vector2 GetGamepadVector2(GamepadStick stick)
         {
             return GetGamepadVector2(stick == GamepadStick.LeftStick ? true : false);

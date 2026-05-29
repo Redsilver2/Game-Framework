@@ -18,6 +18,8 @@ namespace RedSilver2.Framework.StateMachines
         private MovementStateMachineController movementController;
         private CameraController cameraController;
 
+        public MovementInputSettings InputSettings => inputSettings;
+
         public MovementStateMachine StateMachine {
             get
             {

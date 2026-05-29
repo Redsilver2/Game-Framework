@@ -1,4 +1,3 @@
-using RedSilver2.Framework.Inputs.Settings;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -10,6 +9,9 @@ namespace RedSilver2.Framework.Player
     {
 
         [Space]
+        [SerializeField] private string cameraName;
+
+        [Space]
         [SerializeField] private Transform body;
         [SerializeField] private Transform head;
 
@@ -17,14 +19,25 @@ namespace RedSilver2.Framework.Player
         [SerializeField] private float defaultSensitivityX;
         [SerializeField] private float defaultSensitivityY;
 
-        private float headRotation;
-        private float bodyRotation;
+
+        [Space]
+        [SerializeField] private bool canDragHead;
+        [SerializeField] private float dragHeadSpeed;
+
+        [Space]
+        [SerializeField] private bool canDragBody;
+        [SerializeField] private float dragBodySpeed; 
+
+        protected float headRotation;
+        protected float bodyRotation;
 
         private Vector3 originalHeadRotation;
 
         public float HeadRotation => headRotation;
         public float BodyRotation => bodyRotation;
 
+        public Transform Body => body;
+        public Transform Head => head;
 
         private static List<CameraController> modules;
 
@@ -40,53 +53,94 @@ namespace RedSilver2.Framework.Player
             }
         }
 
+        public void RotateBody(float rotation) {
+            Rotate(rotation, ref bodyRotation);
+        }
+
+        public void RotateHead(float rotation) {
+            Rotate(rotation, ref headRotation); 
+        }
+
+        private void Rotate(float rotation, ref float current)
+        {
+           current += Time.deltaTime * rotation;
+        }
+
         protected override void OnLateUpdate()
         {
-            if (head != null) head.localEulerAngles = Vector3.right * headRotation + Vector3.up * originalHeadRotation.y + Vector3.forward * originalHeadRotation.z;
-            if (body != null) body.localEulerAngles = Vector3.right * originalHeadRotation.x + Vector3.up * bodyRotation + Vector3.forward * originalHeadRotation.z;
+            Quaternion _headRotation = Quaternion.Euler(headRotation, originalHeadRotation.y, originalHeadRotation.z);
+            Quaternion _bodyRotation = Quaternion.Euler(originalHeadRotation.x, bodyRotation, originalHeadRotation.z);
+
+            UpdateTransform(canDragHead, dragHeadSpeed, _headRotation, head);
+            UpdateTransform(canDragBody, dragBodySpeed, _bodyRotation, body);
+        }
+
+        private void UpdateTransform(bool canDrag, float dragSpeed, Quaternion current, Transform transform)
+        {
+            if (transform != null)
+            {
+                if (canDrag) current = Quaternion.Slerp(transform.localRotation, current, Time.deltaTime * dragSpeed);
+                transform.localRotation = current;
+            }
         }
 
         protected override void OnUpdate(Vector2 vector)
         {
             base.OnUpdate(vector);
-            UpdateBodyRotation(body, ref bodyRotation);
-            UpdateHeadRotation(head, ref headRotation); 
+            UpdateBodyRotation(body);
+            UpdateHeadRotation(head); 
         }
 
-        protected virtual void UpdateBodyRotation(Transform body, ref float rotation) {
+        protected virtual void UpdateBodyRotation(Transform body) {
             if (body == null) {
-                rotation = 0f;
+                bodyRotation = 0f;
                 return;
             }
 
-            rotation += Time.deltaTime * Input.x * defaultSensitivityX;
+            bodyRotation += Time.deltaTime * Input.x * defaultSensitivityX;
         }
 
-        protected virtual void UpdateHeadRotation(Transform head, ref float rotation)
+        protected virtual void UpdateHeadRotation(Transform head)
         {
             if (head == null) {
-                rotation = 0f;
+                headRotation = 0f;
                 return;
             }
 
-            rotation += Time.deltaTime * -Input.y * defaultSensitivityY;
+            headRotation += Time.deltaTime * -Input.y * defaultSensitivityY;
         }
 
-        public void SetOriginalHeadRotation(Vector3 rotation)
-        {
+        public void SetOriginalHeadRotation(Vector3 rotation) {
             originalHeadRotation = rotation;
         }
 
-        public void SetOriginalBodyRotation(Vector3 rotation)
-        {
+        public void SetOriginalBodyRotation(Vector3 rotation) {
             originalHeadRotation = rotation;
         }
 
+        public void SetCanDragHead(bool canDragHead)
+        {
+            this.canDragHead = canDragHead;
+        }
 
+        public void SetCanDragBody(bool canDragBody)
+        {
+            this.canDragBody = canDragBody;
+        }
 
-        private bool IsActifCameraController() {
+        public void SetDragHeadSpeed(float dragHeadSpeed)
+        {
+            this.dragHeadSpeed = dragHeadSpeed;
+        }
+
+        public void SetDragBodySpeed(float dragBodySpeed)
+        {
+            this.dragBodySpeed = dragBodySpeed;
+        }
+
+        public bool IsActifCameraController(CameraController controller) {
             if (current == null) return false;
-            return current.Equals(this);
+            return current.Equals(controller);
         }
 
         public static void SetCursorVisibility(bool isVisible)
@@ -135,7 +189,8 @@ namespace RedSilver2.Framework.Player
             if (modules == null || string.IsNullOrEmpty(moduleName)) return null;
             
             var results = modules.Where(x => x != null)
-                                 .Where(x => x.name.ToLower() == moduleName.ToLower());
+                                 .Where(x => !string.IsNullOrEmpty(x.cameraName))
+                                 .Where(x => x.cameraName.ToLower().Equals(moduleName.ToLower()));
 
             if (results.Count() > 0) return results.First();
             return null;

@@ -9,7 +9,7 @@ namespace RedSilver2.Framework.Inputs.Settings
         [Space]
         public GamepadStick DefaultGamepadStick = GamepadStick.RightStick;
 
-        public sealed override Vector2InputConfiguration GetBaseConfiguration()
+        protected sealed override Vector2InputConfiguration GetBaseConfiguration()
         {
             return GetConfiguration();
         }

@@ -1,3 +1,4 @@
+using RedSilver2.Framework.Inputs.Settings;
 using UnityEngine;
 
 namespace RedSilver2.Framework.Interactions
@@ -6,25 +7,29 @@ namespace RedSilver2.Framework.Interactions
     {
         private Camera camera;
 
-        public FPSInteractionHandler(FPSInteractionHandlerModule module) : base(module)
+        protected sealed override void Awake()
         {
-            if (module != null) camera = module.GetComponent<Camera>();
+            camera = GetComponent<Camera>();
+            base.Awake();
         }
 
-        public FPSInteractionHandler(Camera camera, FPSInteractionHandlerModule module) : base(module)
-        {
+        public void SetCamera(Camera camera) {
             this.camera = camera;
         }
+        
+        protected sealed override Collider GetCollider(float interactionRange) {
+            return GetCollider(interactionRange, camera);
+        }
 
-        protected sealed override Collider GetCollider(float interactionRange)
- {
+        protected virtual Collider GetCollider(float interactionRange, Camera camera)
+        {
             Transform transform;
-            if(camera == null) return null;
+            if (camera == null) return null;
 
             transform = camera.transform;
             Debug.DrawRay(transform.position, transform.forward, Color.blue);
 
-            Physics.Raycast(transform.position, transform.forward, out RaycastHit hitInfo, 5f, ~GameManager.PlayerLayer);
+            Physics.Raycast(transform.position, transform.forward, out RaycastHit hitInfo, interactionRange, ~GameManager.PlayerLayer);
             return hitInfo.collider;
         }
     }

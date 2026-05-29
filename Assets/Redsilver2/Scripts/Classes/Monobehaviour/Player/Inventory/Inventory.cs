@@ -11,6 +11,7 @@ namespace RedSilver2.Framework.Player.Inventories
 {
     public abstract class Inventory : MonoBehaviour
     {
+        [SerializeField] private string inventoryName;
         [SerializeField] private Item[] defaultItems;
 
         [Space]
@@ -25,22 +26,15 @@ namespace RedSilver2.Framework.Player.Inventories
         private bool isUIOpened;
         private List<Item> items;
 
-        private static List<Inventory> instances = new List<Inventory>();
+
+        public static Inventory Current { get; private set; }
+        private readonly static List<Inventory> Instances = new List<Inventory>();
+       
         public bool IsUIOpened => isUIOpened;
-
-        public static Inventory[] Instances
-        {
-            get
-            {
-                if (instances == null) return new Inventory[0];
-                return instances.ToArray();
-            }
-        }
-
 
         protected virtual void Awake()
         {
-            instances.Add(this);
+            Instances.Add(this);
             items         = new List<Item>();
 
             onCloseUI     = new UnityEvent();
@@ -58,11 +52,6 @@ namespace RedSilver2.Framework.Player.Inventories
             AddOnItemRemovedListener(OnItemRemoved);
         }
 
-        protected void Start()
-        {
-            foreach(Item item in defaultItems)
-                item?.Add(this);
-        }
 
         public void Open() {
             if (onOpenUI != null) onOpenUI.Invoke();
@@ -270,37 +259,73 @@ namespace RedSilver2.Framework.Player.Inventories
         protected abstract void OnItemAdded(Item item);
         protected abstract void OnItemRemoved(Item item);
 
-        public static Inventory GetComponent(Transform root)
+        public bool IsCurrent(Inventory inventory)
         {
-            Inventory result;
-            if(root == null) return null;
-
-            result = root.GetComponent<Inventory>();
-            if(result == null) return GetComponent(root.parent); 
-
-            return result;
+            if (Current == null) return true;
+            return Current.Equals(inventory);
         }
 
-        public static Inventory GetInventory(string inventoryName)
-        {
-            if (instances == null) return null;
-
-            var results = instances.Where(x => x != null).Where(x => x.name.ToLower() == inventoryName.ToLower()).ToList();
-            if (results.Count > 0) return results.First();
-
-            return null;
-        }
-        public static Inventory GetInventory(int index)
-        {
-            if (instances == null || instances.Count == 0) return null;
-            return instances[index];
+        public static void SetCurrent(int index) {
+            SetCurrent(Get(index));
         }
 
-        public static Inventory GetInventoryWithItem(Item item)
+        public static void SetCurrent(string name) {
+            SetCurrent(Get(name));
+        }
+        public static void SetCurrent(Transform transform) {
+            SetCurrent(Get(transform));
+        }
+
+
+        public static void SetCurrent(Inventory inventory)
         {
-            if (instances == null) return null;
-            var results = instances.Where(x => x != null).Where(x => x.Contains(item));
+            Disable();
+            Current = inventory;
+            Enable();
+        }
+
+        public static void Enable()
+        {
+            SetEnabledState(true);
+        }
+        public static void Disable()
+        {
+            SetEnabledState(false);
+        }
+
+        private static void SetEnabledState(bool isEnabled)
+        {
+            if (Current != null) Current.enabled = isEnabled;
+        }
+
+        public static Inventory Get(string inventoryName)
+        {
+            if (Instances == null || string.IsNullOrEmpty(inventoryName)) return null;
+
+            var results = Instances.Where(x => x != null)
+                                   .Where(x => !string.IsNullOrEmpty(x.inventoryName))
+                                   .Where(x => x.inventoryName.ToLower().Equals(inventoryName.ToLower()));
+
             return results.Count() > 0 ? results.First() : null;
+        }
+
+        public static Inventory Get(int index)
+        {
+            if (Instances == null || Instances.Count == 0) return null;
+            return Instances[index];
+        }
+
+        public static Inventory Get(Transform transform) {
+            if (Instances == null || Instances.Count == 0) return null;
+            return Instances.Where(x => x != null).Where(x => x.transform.Equals(transform)).FirstOrDefault();
+        }
+
+        public static Inventory[] GetInventoriesWithItem(Item item)
+        {
+            if (Instances == null) return null;
+            return Instances.Where(x => x != null)
+                            .Where(x => x.Contains(item))
+                            .ToArray();
         }
     }
 }

@@ -58,7 +58,7 @@ namespace RedSilver2.Framework.Interactions
         }
 
         public sealed override bool Interact(InteractionHandler handler) {
-            if (handler == null || !handler.IsHeld || !IsEnabled) {
+            if (handler == null || !handler.IsHeld() || !IsEnabled) {
                 ResetInteractionTime();
                 return false;
             }

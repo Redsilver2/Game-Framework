@@ -19,7 +19,7 @@ namespace RedSilver2.Framework.Interactions.Actions
             if(door == null) return null;   
 
             return handler => {
-                if (handler == null || handler.Owner == null || door == null) return;
+                if (handler == null || door == null) return;
                 door?.SetOpenRotation(true ? desiredBackwardAngle : desiredForwardAngle);
                 door?.Open();
             };

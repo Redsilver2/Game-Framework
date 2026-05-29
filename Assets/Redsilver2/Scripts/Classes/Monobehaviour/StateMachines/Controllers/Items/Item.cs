@@ -7,31 +7,27 @@ using UnityEngine.Events;
 
 namespace RedSilver2.Framework.Interactions.Items
 {
-    public abstract class Item : MonoBehaviour
+    public abstract class Item : InteractionModule
     {
         [SerializeField] private ItemData data;
-        private Inventory inventory;
-
-        private InteractionModule interactionModule;
+        
+        private Inventory         inventory;
         private MeshRenderer[]    renderers;
 
         private UnityEvent onAdded, onRemoved, onDisabled, onEnabled;
-        private IEnumerator dropCoroutine;
-
         private ItemType type;
 
         public  ItemType Type => type; 
         public    ItemData Data => data;
         protected Inventory Inventory => inventory;
 
-        protected virtual void Awake() {
-            interactionModule = transform.root.GetComponentInChildren<InteractionModule>();
-            SetInteractionModuleEvent(interactionModule, true);
-
+        protected override void Awake() 
+        {
             onAdded       = new UnityEvent();
             onRemoved     = new UnityEvent();
-            onDisabled = new UnityEvent();
-            onEnabled = new UnityEvent();
+            
+            onDisabled    = new UnityEvent();
+            onEnabled     = new UnityEvent();
 
             type          = GetItemType();
             renderers     = transform.root.GetComponentsInChildren<MeshRenderer>();
@@ -39,7 +35,6 @@ namespace RedSilver2.Framework.Interactions.Items
             AddOnAddedListener(() => {
                 SetInteractionColliderVisibility(false);
                 SetMeshRenderersVisibility(false);
-                CancelDrop();
             });
 
             AddOnRemovedListener(() => {
@@ -62,25 +57,13 @@ namespace RedSilver2.Framework.Interactions.Items
             onDisabled?.Invoke();
         }
 
-        public void Inspect() {
-
-        }
-
-
         protected void SetInteractionColliderVisibility(bool isVisible) {
-            if (interactionModule == null || interactionModule.Collider == null) return;
-            interactionModule.Collider.enabled = isVisible;
+
         }
 
         public void SetMeshRenderersVisibility(bool isVisible) {
             foreach (MeshRenderer renderer in renderers.Where(x => x != null))
                 renderer.enabled = isVisible;
-        }
-
-        private void CancelDrop()
-        {
-            if (dropCoroutine != null) StopCoroutine(dropCoroutine);
-            dropCoroutine = null;
         }
 
         public MeshRenderer GetMeshRenderer(string name)
@@ -126,29 +109,6 @@ namespace RedSilver2.Framework.Interactions.Items
         public void RemoveOnEnabledListener(UnityAction action)
         {
             if (action != null) onEnabled?.RemoveListener(action);
-        }
-
-        private void SetInteractionModuleEvent(InteractionModule module, bool isAddingEvent)
-        {
-         
-        }
-        public void Add(Inventory inventory)
-        {
-            bool wasAdded = false;
-            inventory?.AddItem(this, out wasAdded);
-            if (wasAdded) onAdded.Invoke();
-        }
-
-        private UnityAction<InteractionHandler> GetOnInteract(InteractionModule module) {
-            if (module == null) return null;
-
-            return handler => {
-                if (handler == null || inventory != null) return;
-                InteractionHandlerModule owner = handler.Owner;
-
-                if (owner == null) return;
-                //Add(owner.Inventory);
-            };
         }
 
         protected abstract ItemType GetItemType();

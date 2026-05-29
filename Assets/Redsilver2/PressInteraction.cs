@@ -12,7 +12,7 @@ namespace RedSilver2.Framework.Interactions
         }
 
         public sealed override bool Interact(InteractionHandler handler) {
-            if (handler == null || !handler.IsPressed){
+            if (handler == null || !handler.IsPressed()){
                 return false;
             }
 

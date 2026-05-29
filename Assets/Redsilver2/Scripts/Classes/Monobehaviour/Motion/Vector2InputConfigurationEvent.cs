@@ -3,7 +3,8 @@ using UnityEngine;
 
 public abstract class Vector2InputConfigurationEvent : MonoBehaviour
 {
-    protected Vector2 Input { get; private set; }
+    private Vector2 input;
+    public Vector2 Input => input;
 
     protected virtual void Start()
     {
@@ -13,7 +14,7 @@ public abstract class Vector2InputConfigurationEvent : MonoBehaviour
 
     protected abstract void OnLateUpdate();
     protected virtual void OnUpdate(Vector2 vector) {
-        Input = vector;
+        input = vector;
     }
 
     private  void SetEvent(bool isAddingEvent)
@@ -24,11 +25,11 @@ public abstract class Vector2InputConfigurationEvent : MonoBehaviour
     protected virtual async void SetEvent(bool isAddingEvent, Vector2InputConfiguration configuration)
     {
         if (isAddingEvent) {
-            configuration?.AddOnUpdatedListener(OnUpdate);
+            configuration?.AddOnUpdateListener(OnUpdate);
             configuration?.AddOnLateUpdateListener(OnLateUpdate);
         }
         else {
-            configuration.RemoveOnUpdatedListener(OnUpdate);
+            configuration.RemoveOnUpdateListener(OnUpdate);
             configuration?.RemoveOnLateUpdateListener(OnLateUpdate);
         }
     }

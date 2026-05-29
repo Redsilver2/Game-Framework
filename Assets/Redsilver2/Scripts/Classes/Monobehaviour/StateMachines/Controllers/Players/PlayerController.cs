@@ -41,8 +41,7 @@ namespace RedSilver2.Framework.StateMachines.Controllers
         private void OnDisable() { onDisabled?.Invoke(); }
 
         protected void OnDestroy() {
-            if(instances != null)
-            {
+            if(instances != null) {
                 if (instances.Contains(this)) instances.Remove(this);
             }
         }
@@ -97,6 +96,13 @@ namespace RedSilver2.Framework.StateMachines.Controllers
             return controller.Equals(current);
         }
 
+        public static PlayerController GetController(Transform transform)
+        {
+            var results = instances.Where(x => x != null)
+                                   .Where(x => x.transform.Equals(transform));
+
+            return results.Count() > 0 ? results.First() : null;
+        }
 
         public static PlayerController GetController(int index) {
             if(instances.Count == 0 || index < 0 || index >= instances.Count)

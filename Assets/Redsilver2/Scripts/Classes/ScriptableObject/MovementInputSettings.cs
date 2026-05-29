@@ -33,14 +33,12 @@ namespace RedSilver2.Framework.Inputs.Settings
 
         public Vector2 GetMoveVector()
         {
-            var config = moveInputSettings == null ? null : moveInputSettings.GetConfiguration();
-            return config == null ? Vector2.zero : config.Value;
+            return moveInputSettings == null ? Vector2.zero : moveInputSettings.GetValue();
         }
 
         public bool IsRunning()
         {
-            var config = holdRunInputSettings == null ? null : holdRunInputSettings.GetConfiguration();
-            return config == null ? false : config.Value;
+            return holdRunInputSettings == null ? false : holdRunInputSettings.GetValue();
         }
     }
 }

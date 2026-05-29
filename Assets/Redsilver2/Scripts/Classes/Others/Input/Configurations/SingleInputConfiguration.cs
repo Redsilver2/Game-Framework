@@ -11,7 +11,7 @@ namespace RedSilver2.Framework.Inputs.Configurations {
         private MouseButton defaultMouseButton;
 
         private GamepadButton defaultGamepadButton;
-        private UnityEvent<bool> onUpdated;
+        private UnityEvent<bool> onUpdate;
 
         private UnityEvent<KeyboardKey,   SingleInputConfiguration>   onKeyboardKeyOverrided;
         private UnityEvent<MouseButton,   SingleInputConfiguration>   onMouseButtonOverrided;
@@ -22,7 +22,7 @@ namespace RedSilver2.Framework.Inputs.Configurations {
 
         public SingleInputConfiguration(SingleInputSettings settings) : base(settings)
         {
-            onUpdated = new UnityEvent<bool>();
+            onUpdate = new UnityEvent<bool>();
 
             if (settings != null)
             {
@@ -46,19 +46,19 @@ namespace RedSilver2.Framework.Inputs.Configurations {
                 }
                 else {
                     Value = true;
-                    onUpdated.Invoke(true); 
+                    onUpdate.Invoke(true); 
                 }
             };
         }
 
-        public void AddOnUpdatedListener(UnityAction<bool> action)
+        public void AddOnUpdateListener(UnityAction<bool> action)
         {
-            if(action != null) onUpdated?.AddListener(action); 
+            if(action != null) onUpdate?.AddListener(action); 
         }
 
-        public void RemoveOnUpdatedListener(UnityAction<bool> action)
+        public void RemoveOnUpdateListener(UnityAction<bool> action)
         {
-            if (action != null) onUpdated?.RemoveListener(action);
+            if (action != null) onUpdate?.RemoveListener(action);
         }
 
 

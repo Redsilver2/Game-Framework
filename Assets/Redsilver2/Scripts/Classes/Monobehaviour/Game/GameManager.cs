@@ -46,6 +46,8 @@ namespace RedSilver2.Framework
 
             gameObject.name = "GameManager";
             DontDestroyOnLoad(instance);
+
+            Application.targetFrameRate = 180;
         }
 
         private void Update() {

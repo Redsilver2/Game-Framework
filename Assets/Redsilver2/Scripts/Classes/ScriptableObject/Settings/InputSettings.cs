@@ -7,10 +7,6 @@ namespace RedSilver2.Framework.Inputs.Settings
 
         [Space]
         public bool IsOverrideable;
-
-        public  bool   IsEnabled => false;
-        public  bool   IsInitialized => false;
-
         public abstract void Enable();
         public abstract void Disable();
     }

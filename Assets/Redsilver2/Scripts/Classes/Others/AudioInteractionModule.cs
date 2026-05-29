@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
@@ -10,7 +11,10 @@ namespace RedSilver2.Framework.Interactions {
         [SerializeField][Range(0.1f, 1f)] private float volumeIncrementValue;
 
         private bool isPaused = false;
+        private float currentVolume;
         private AudioSource source;
+
+        private IEnumerator sourceVolumeUpdateCoroutine;
 
         private UnityEvent<AudioClip> onPlay;
         private UnityEvent onStop, onPause, onUnPause;
@@ -27,20 +31,24 @@ namespace RedSilver2.Framework.Interactions {
             onUnPause = new UnityEvent();   
             source    = GetComponent<AudioSource>();
 
-            AddOnInteractionAddedListener(i => { Debug.Log(i.Name); });
-            AddOnInteractionRemovedListener(i => { Debug.Log(i.Name); });
-
             volumeIncrementValue = 0.1f;
+            currentVolume = source.volume;
 
             AddOnPauseListener  (() => { isPaused = true;  });
             AddOnUnPauseListener(() => { isPaused = false; });
-            AddOnStopListener   (() => { isPaused = false; });
+            AddOnStopListener   (() => 
+            {
+                isPaused = false;
+                StartSourceVolumeUpdate(true);
+            });
             AddOnPlayListener   (clip => {
                 if (source == null || clip == null) return;
                 isPaused = false;
                 
                 source.clip = clip;
                 source?.Play();
+
+                StartSourceVolumeUpdate(false);
             });
         }
 
@@ -53,14 +61,18 @@ namespace RedSilver2.Framework.Interactions {
         }
 
         public void IncreaseVolume(float amount) {
-            if (source != null)  source.volume = Mathf.Clamp(source.volume + amount, 0f, 1f);    
+            if (source == null) return;  
+            source.volume = Mathf.Clamp(source.volume + amount, 0f, 1f);
+            currentVolume = source.volume;
         }
 
         public void DecreaseVolume() {
             DecreaseVolume(volumeIncrementValue);
         }
         public void DecreaseVolume(float amount) {
-            if (source != null) source.volume = Mathf.Clamp(source.volume - amount, 0f, 1f);
+            if (source == null) return;
+            source.volume = Mathf.Clamp(source.volume - amount, 0f, 1f);
+            currentVolume = source.volume;
         }
 
         public void UnPause() {
@@ -74,8 +86,39 @@ namespace RedSilver2.Framework.Interactions {
         }
 
         public void Stop() {
-            if (source != null) source.Stop();
+            if(source == null || !source.isPlaying) return;
             onStop?.Invoke();
+        }
+
+        private void StopSourceVolumeUpdate()
+        {
+            if (sourceVolumeUpdateCoroutine != null)
+                StopCoroutine(sourceVolumeUpdateCoroutine);
+
+            sourceVolumeUpdateCoroutine = null;
+        }
+
+        private void StartSourceVolumeUpdate(bool isMuting) {
+            StopSourceVolumeUpdate();
+            sourceVolumeUpdateCoroutine = SourceVolumeUpdate(isMuting, 0.005f);
+            StartCoroutine(sourceVolumeUpdateCoroutine);
+        }
+
+        private IEnumerator SourceVolumeUpdate(bool isMuting, float time) {
+            float current = source != null ? source.volume : 0f;
+            float target  = isMuting ? 0f : currentVolume;
+            float t = 0f;
+
+            while (t < time) {
+                if (source != null) source.volume = Mathf.Lerp(current, target, Mathf.Clamp01(t / time));
+                t += Time.deltaTime;
+                yield return null;
+            }
+
+            if(source != null) {
+               source.volume = target;
+               if(isMuting) source?.Stop();
+            }        
         }
 
         public void Play(AudioClip clip) {
