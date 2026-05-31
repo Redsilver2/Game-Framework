@@ -1,3 +1,4 @@
+using RedSilver2.Framework.Inputs;
 using RedSilver2.Framework.Inputs.Settings;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,8 +13,8 @@ namespace RedSilver2.Framework.Interactions
         [SerializeField] private float  interactionRange;
 
         [Space]
-        [SerializeField] private PressInputSettings pressSettings;
-        [SerializeField] private HoldInputSettings holdSettings;
+        [SerializeField] private PressInputSettings   pressSettings;
+        [SerializeField] private HoldInputSettings    holdSettings;
         [SerializeField] private ReleaseInputSettings releaseSettings;
 
         [Space]
@@ -26,6 +27,9 @@ namespace RedSilver2.Framework.Interactions
         private UnityEvent<InteractionModule> onUnselected;
 
         public float InteractionRange => interactionRange;
+        public bool IsSelectingNextInteraction => InputManager.GetKeyDown(KeyboardKey.UpArrow);
+        public bool IsSelectingPreviousInteraction => InputManager.GetKeyDown(KeyboardKey.DownArrow);
+
         public InteractionModule SelectedInteraction => selectedInteraction;
 
         public PressInputSettings   PressSettings   => pressSettings;

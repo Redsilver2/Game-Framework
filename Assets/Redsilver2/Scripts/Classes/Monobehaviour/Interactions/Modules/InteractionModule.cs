@@ -96,8 +96,8 @@ namespace RedSilver2.Framework.Interactions
             if (handler == null || interactions == null || interactions.Length <= 0)
                 return;
 
-            //if (handler.IsSelectingNextInteraction) current++;
-            //else if (handler.IsSelectingPreviousInteraction) current--;
+            if (handler.IsSelectingNextInteraction) current++;
+            else if (handler.IsSelectingPreviousInteraction) current--;
 
             current = Mathf.Clamp(current, 0, interactions.Length - 1);
             if (current != previous) onSelectionIndexChanged?.Invoke(current);
