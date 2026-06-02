@@ -623,7 +623,7 @@ MonoBehaviour:
   pressSettings: {fileID: 11400000, guid: c434259b728c22d45a14be5b75906396, type: 2}
   holdSettings: {fileID: 11400000, guid: 0511ed42ce24bfe4d80e0fc5df71aa34, type: 2}
   releaseSettings: {fileID: 0}
-  allowedInteractionTypes: 01000000
+  allowedInteractionTypes: 0100000000000000
 --- !u!114 &631413550
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -792,6 +792,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 765158605}
+  - component: {fileID: 765158606}
+  - component: {fileID: 765158607}
   m_Layer: 0
   m_Name: Head
   m_TagString: Untagged
@@ -815,6 +817,116 @@ Transform:
   - {fileID: 631413546}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &765158606
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 765158604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f039955311266f241b091e31f39e3596, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TestScript
+  clip: {fileID: 8300000, guid: 1123c0f9e245e7843854f01e9cd95154, type: 3}
+--- !u!82 &765158607
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 765158604}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &784613500
 GameObject:
   m_ObjectHideFlags: 0
@@ -827,7 +939,6 @@ GameObject:
   - component: {fileID: 784613503}
   - component: {fileID: 784613501}
   - component: {fileID: 784613505}
-  - component: {fileID: 784613506}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -896,23 +1007,10 @@ MonoBehaviour:
   defaultSubtitleSpacing: 60
   subtitleFadeDuration: 0.25
   positionLerpSpeed: 50
-  subtitleCatchupSpeed: 1.2
+  subtitleCatchupSpeed: 0.9
   canSubtitleUseWorldSpace: 0
   defaultScreenSubtitlePosition: {x: 0, y: 0, z: 0}
   screenSubtitleParent: {fileID: 1366130581}
---- !u!114 &784613506
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 784613500}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f039955311266f241b091e31f39e3596, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TestScript
-  subtitle: {fileID: 11400000, guid: 932f7241c6f9ec8449987afa30acd0b4, type: 2}
 --- !u!1 &889691530
 GameObject:
   m_ObjectHideFlags: 0

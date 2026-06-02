@@ -55,16 +55,23 @@ namespace RedSilver2.Framework.Subtitles
 
         public void Play(Subtitle subtitle) {
             if (subtitle == null) return;
+            SubtitleManager.RemoveSubtitleHandlerInstance(this);
             Stop();
-
+    
             if (!isUpdatingSubtitles) {
                 isUpdatingSubtitles = true;
                 StartSubtitleUpdate(subtitle);
             }
         }
 
+        public bool CompareSubtitle(Subtitle subtitle) {
+            if(currentSubtitle == null || subtitle == null) return false;
+            return currentSubtitle.Equals(subtitle);
+        }
+
         public void Play(Subtitle subtitle, int index) {
             if (subtitle == null) return;
+            SubtitleManager.RemoveSubtitleHandlerInstance(this);
             Stop();
 
             if (!isUpdatingSubtitles) {
@@ -76,6 +83,7 @@ namespace RedSilver2.Framework.Subtitles
         public void Play(Subtitle subtitle, int[] indexes)
         {
             if (subtitle == null) return;
+            SubtitleManager.RemoveSubtitleHandlerInstance(this);
             Stop();
 
             if (!isUpdatingSubtitles) {
@@ -87,6 +95,7 @@ namespace RedSilver2.Framework.Subtitles
         public void Stop() {
             if (currentSubtitle == null) return;
             StopSubtitleUpdate(currentSubtitle);
+            (currentSubtitle as IAudibleSubtitle)?.Stop();
 
             timeElapsed = 0f;
             currentSubtitle = null;
@@ -96,6 +105,9 @@ namespace RedSilver2.Framework.Subtitles
 
             isUpdatingSubtitles = false;
             RemoveAllCurrentSubtitle(false);
+
+            GameManager.SubtitleManager?.RemoveActifSubtitleHandler(this);
+            SubtitleManager.AddSubtitleHandlerInstance(this);
         }
 
         private void RemoveAllCurrentSubtitle(bool instantFade)
@@ -112,7 +124,7 @@ namespace RedSilver2.Framework.Subtitles
                     continue;
                 }
                            
-                StartCoroutine(FadeAlpha(displayer));
+                StartCoroutine(FadeAlpha(displayer, false));
             }
 
             actifDisplayers[this].Clear();
@@ -130,32 +142,32 @@ namespace RedSilver2.Framework.Subtitles
 
         protected virtual void StartSubtitleUpdate(Subtitle subtitle) {
             if (subtitle == null) return;
-            SubtitleData[] datas = subtitle.GetSubtitleDatas();
+           
+            SubtitleData[] datas = subtitle.GetDatas();
+            (subtitle as IAudibleSubtitle)?.Play();
 
             if (datas != null) {
+                subtitleDataToComplete = datas.Length;
+                subtitleDataProgress = 0;
+
                 StartSubtitleUpdate(subtitle, SubtitleDisplayerUpdate(transform));
+
+                for (int i = 0; i < subtitleDataToComplete; i++)
+                    StartSubtitleUpdate(subtitle, SubtitleUpdate(subtitle, i));
+
                 StartSubtitleUpdate(subtitle, UpdateTimeElapsed(datas[datas.Length - 1], 0f));
-
-                subtitleDataToComplete = datas.Where(x => x != null).Count();
-                subtitleDataProgress   = 0;
-
-                foreach (SubtitleData data in datas.Where(x => x != null))
-                    StartSubtitleUpdate(subtitle, SubtitleUpdate(subtitle, data));
             }
         }
         protected virtual void StartSubtitleUpdate(Subtitle subtitle, int index) {
             if (subtitle == null) return;
-            SubtitleData data = subtitle.GetSubtitleData(index);
+            SubtitleData data = subtitle.GetData(index);
 
-            if (data != null) {
-                subtitleDataToComplete = 1;
-                subtitleDataProgress = 0;
+            subtitleDataToComplete = 1;
+            subtitleDataProgress = 0;
 
-                UpdateTimeElapsed(data, data.StartTime);
-                StartSubtitleUpdate(subtitle, SubtitleDisplayerUpdate(transform));
-                StartSubtitleUpdate(subtitle, SubtitleUpdate(subtitle, data));
-
-            }
+            UpdateTimeElapsed(data, data.startTime);
+            StartSubtitleUpdate(subtitle, SubtitleDisplayerUpdate(transform));
+            StartSubtitleUpdate(subtitle, SubtitleUpdate(subtitle, index));
         }
 
         protected virtual void StartSubtitleUpdate(Subtitle subtitle, int[] indexes) {
@@ -170,7 +182,7 @@ namespace RedSilver2.Framework.Subtitles
             
             if (!actifSubtitles[subtitle].Contains(enumerator)) {
                 actifSubtitles[subtitle].Add(enumerator);   
-                StartCoroutine(enumerator);
+                StartCoroutine(actifSubtitles[subtitle].Last());
             }
         }
 
@@ -180,7 +192,6 @@ namespace RedSilver2.Framework.Subtitles
 
             if (!actifDisplayers[this].Contains(displayer))
                 actifDisplayers[this].Add(displayer);
-
 
             if (availableDisplayers != null) 
                 if (availableDisplayers.Contains(displayer)) 
@@ -219,33 +230,25 @@ namespace RedSilver2.Framework.Subtitles
         private IEnumerator UpdateTimeElapsed(SubtitleData lastData, float startTime) {
             timeElapsed = startTime;
 
-            while(lastData != null) {
+            while (timeElapsed <= lastData.startTime + lastData.duration) {
                 timeElapsed += Time.deltaTime;
-                if (timeElapsed >= lastData.EndTime) break;
                 yield return null;
-            }
-
-            if (lastData != null) {
-                timeElapsed = lastData.EndTime;
             }
         }
 
-        private  IEnumerator SubtitleUpdate(Subtitle subtitle, SubtitleData data) {
+        private  IEnumerator SubtitleUpdate(Subtitle subtitle, int index) {
             TextMeshProUGUI textDisplayer = GetDisplayer();
+
             AddActifDisplayer(textDisplayer);
             StartSubtitleUpdate(subtitle, UpdateAlpha(textDisplayer.canvasRenderer, 1f, 0.25f));
 
-
-            while(data != null && textDisplayer != null) {
-                if (timeElapsed >= data.StartTime) {
-                    yield return StartCoroutine(data.Update(textDisplayer));
-                    break;
-                }
-
+            while(timeElapsed < subtitle.GetData(index).startTime)
                 yield return null;
-            }
 
-            yield return StartCoroutine(FadeAlpha(textDisplayer));
+            if(subtitle != null) {
+                yield return StartCoroutine(subtitle.Update(index, textDisplayer));
+                yield return StartCoroutine(FadeAlpha(textDisplayer, true));
+            }
 
         }
 
@@ -274,16 +277,16 @@ namespace RedSilver2.Framework.Subtitles
             }
         }
 
-        protected IEnumerator FadeAlpha(TextMeshProUGUI displayer) {
+        protected IEnumerator FadeAlpha(TextMeshProUGUI displayer, bool countTowardsProgress) {
             if(displayer != null) {
-                yield return StartCoroutine(UpdateAlpha(displayer.canvasRenderer, 0f, 0.25f));
+                yield return StartCoroutine(UpdateAlpha(displayer.canvasRenderer, 0f, 0.05f));
                 displayer.text = string.Empty;
                 RemoveActifDisplayer(displayer);
 
-                subtitleDataProgress++;
-
-                if (subtitleDataProgress == subtitleDataToComplete) {
-                    Stop();
+                if (countTowardsProgress)
+                {
+                    subtitleDataProgress++;
+                    if (subtitleDataProgress == subtitleDataToComplete) Stop();
                 }
             }
         }

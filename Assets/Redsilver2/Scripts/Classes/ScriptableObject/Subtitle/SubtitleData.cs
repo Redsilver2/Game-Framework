@@ -6,64 +6,46 @@ using UnityEngine.Events;
 namespace RedSilver2.Framework.Subtitles.Datas
 {
     [System.Serializable]
-    public class SubtitleData 
+    public struct SubtitleData 
     {
-        [SerializeField] private float startTime;
-        [SerializeField] private float endTime;
+        public float startTime;
+        public float duration;
+        public float fadeDelayTime;
 
         [Space]
-        [SerializeField] [TextArea(3, 3)] private string textToDisplay;
-        private UnityEvent<string> onValueChanged;
+        [TextArea(3, 3)] public string textToDisplay;
 
-        public float StartTime => startTime;
-        public float EndTime   => endTime;
+        public SubtitleData(string textToDisplay) {
+            this.textToDisplay = textToDisplay;
 
-        public SubtitleData() {
-            onValueChanged = new UnityEvent<string>();
+            startTime = 0f;
+            duration = 0f;
+            fadeDelayTime = 0f;
         }
 
-        public IEnumerator Update(TextMeshProUGUI displayer) {
-            float t = 0f;
-            string previousText = string.Empty;
-            if (displayer != null) displayer.text = string.Empty;
 
-            while (t < GetDuration()) {
-                Update(displayer, GetTextToDisplay(t / GetDuration()), GameManager.SubtitleManager);
+        public SubtitleData(string textToDisplay, float startTime) {
+            this.textToDisplay = textToDisplay;
 
-                if(displayer != null) {
-                    if (!previousText.Equals(displayer.text)) {
-                        previousText = displayer.text;
-                        onValueChanged.Invoke(displayer.text);
-                    }
-                }
-
-                t += Time.deltaTime;
-                yield return null;
-            }
-
-
+            this.startTime = startTime;
+            duration = 0f;
+            fadeDelayTime = 0f;
         }
 
-        protected virtual void Update(TextMeshProUGUI displayer, string textToDisplay, SubtitleManager manager) {    
-            if(displayer != null) displayer.text = string.IsNullOrEmpty(textToDisplay) ? string.Empty : textToDisplay;
+        public SubtitleData(string textToDisplay, float startTime, float duration) {
+            this.textToDisplay = textToDisplay;
+
+            this.startTime = startTime;
+            this.duration  = duration;
+            fadeDelayTime  = 0f;
         }
 
-        public string GetTextToDisplay(float progression) {
-            progression = Mathf.Clamp01(progression);
-            if (string.IsNullOrEmpty(textToDisplay) || progression <= 0f) return string.Empty;
+        public SubtitleData(string textToDisplay, float startTime, float duration, float fadeDelayTime) {
+            this.textToDisplay = textToDisplay;
 
-            if (progression >= 1f) return textToDisplay;
-            string result = string.Empty;  
-
-            for(int i = 0; i < (textToDisplay.Length * progression); i++)
-                result += textToDisplay[i];
-
-            return result;
-        }
-
-        public float GetDuration() {
-            SubtitleManager manager = GameManager.SubtitleManager;
-            return Mathf.Clamp(endTime - startTime, 0f, float.MaxValue) * (manager != null ? manager.SubtitleCatchupSpeed : 1f);
+            this.startTime     = startTime;
+            this.duration      = duration;
+            this.fadeDelayTime = fadeDelayTime;
         }
     }
 }
