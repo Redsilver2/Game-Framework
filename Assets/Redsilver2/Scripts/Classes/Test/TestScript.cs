@@ -29,8 +29,6 @@ public class TestScript : MonoBehaviour
             new SubtitleData("Wished I was awesome sauceand epic just like him!", 20f, 2.5f, 1f),
             new SubtitleData("I wasn't really sure about going outside untile now, you know?!", 25f, 4f, 1f)
         }, "John"));
-
-
     }
 
     private void Update()

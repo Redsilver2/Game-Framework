@@ -8,7 +8,7 @@ namespace RedSilver2.Framework.Interactions.Collectibles
 
         public override CollectibleData GetData()
         {
-            return noteData;
+            return null;
         }
     }
 }

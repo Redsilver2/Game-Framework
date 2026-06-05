@@ -2,7 +2,6 @@ using RedSilver2.Framework.Subtitles.Datas;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -59,19 +58,24 @@ namespace RedSilver2.Framework.Subtitles
         {
             float t = 0f;
             string previousText   = string.Empty;
+            string currentText    = string.Empty;
           
-            SubtitleData data = GetData(index); 
+            SubtitleData data = GetData(index);
 
             while (t < GetDuration(data, false))
             {
-                if (displayer != null) {
-                    displayer.text = $"{GetCharacterName()}{GetTextToDisplay(data, t / GetDuration(index, true))}";
-                  
-                    if (!previousText.Equals(displayer.text)) {
-                        previousText = displayer.text;
-                        onValueChanged.Invoke(index, displayer.text);
-                    }
+                SubtitleManager manager = GameManager.SubtitleManager;
+                bool canDisplayByTime = manager ? manager.CanShowSubtitleByTime : false;
+
+                currentText = $"{GetCharacterName()}{GetTextToDisplay(data, t / GetDuration(index, true))}";
+
+                if (!previousText.Equals(currentText)) {
+                    previousText = currentText;
+                    onValueChanged.Invoke(index, displayer.text);
                 }
+
+                if (!canDisplayByTime) { currentText = $"{GetCharacterName()}{data.textToDisplay}";  }
+                if (displayer != null) { displayer.text = currentText; }
 
                 t += Time.deltaTime;
                 yield return null;

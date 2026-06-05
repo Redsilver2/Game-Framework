@@ -1,8 +1,6 @@
-using RedSilver2.Framework.Subtitles.Datas;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 
@@ -20,10 +18,13 @@ namespace RedSilver2.Framework.Subtitles
         [SerializeField] private float positionLerpSpeed;
 
         [Space]
-        [SerializeField] private float subtitleCatchupSpeed;
+        [SerializeField]                      private float subtitleCatchupSpeed;
+        [SerializeField][Range(0.25f, 0.01f)] private float subtitleFadeSpeed;
 
         [Space]
         [SerializeField] private bool  canSubtitleUseWorldSpace;
+        [SerializeField] private bool  canShowSubtitleByTime;
+
 
         [Space]
         [SerializeField] private Vector3   defaultScreenSubtitlePosition;
@@ -38,8 +39,14 @@ namespace RedSilver2.Framework.Subtitles
         private Dictionary<DialogData, List<SubtitleHandler>> actifDialogDatas;
         private readonly static List<SubtitleHandler> handlers = new List<SubtitleHandler>();
 
-        public float  SubtitleCatchupSpeed                    => subtitleCatchupSpeed;
-        public bool   CanSubtitleUseWorldSpace                => canSubtitleUseWorldSpace;
+        public float  SubtitleCatchupSpeed => subtitleCatchupSpeed;
+        public float  SubtitleFadeSpeed    => subtitleFadeSpeed;
+
+        
+        public bool CanSubtitleUseWorldSpace                => canSubtitleUseWorldSpace;
+        public bool CanShowSubtitleByTime => canShowSubtitleByTime;
+
+
         public float  SubtitleFadeDuration                    => subtitleFadeDuration;    
         public static SubtitleDisplayMode SubtitleDisplayMode => SubtitleDisplayMode.Instant;
 
@@ -59,8 +66,7 @@ namespace RedSilver2.Framework.Subtitles
 
             actifDialogDatas?.Add(data, new List<SubtitleHandler>());
 
-            foreach (Subtitle subtitle in data.GetSubtitles().Where(x => x != null))
-            {
+            foreach (Subtitle subtitle in data.GetSubtitles().Where(x => x != null))  {
                 Play(data, subtitle);
             }
         }
@@ -194,18 +200,17 @@ namespace RedSilver2.Framework.Subtitles
             {
                 foreach (KeyValuePair<DialogData, List<SubtitleHandler>> pair in copy)
                 {
-                    if (pair.Value.Contains(handler))
-                    {
-                        actifDialogDatas[pair.Key].Remove(handler);
+                    if (!pair.Value.Contains(handler)) continue;
+                    actifDialogDatas[pair.Key].Remove(handler);
 
-                        if (actifDialogDatas[pair.Key].Count <= 0) {
-                            actifDialogDatas?.Remove(pair.Key);
-                        }
-
-                        break;
-                    }
+                    if (actifDialogDatas[pair.Key].Count <= 0) actifDialogDatas?.Remove(pair.Key);
+                    break;
                 }
             }
+
+            if(availabeHandlers != null)
+                if(!availabeHandlers.Contains(handler))
+                    availabeHandlers?.Enqueue(handler);
         }
 
         private IEnumerator UpdateScreenSubtitles() {
@@ -260,8 +265,10 @@ namespace RedSilver2.Framework.Subtitles
         {
             List<TextMeshProUGUI> results = new List<TextMeshProUGUI>();
             if (displayers != null) {
-                for (int i = displayers.Length - 1; i >= 0; i--)
-                    if(displayers[i] != null) { results.Add(displayers[i]); }
+                for (int i = displayers.Length - 1; i >= 0; i--){
+                    if (displayers[i] == null || !displayers[i].gameObject.activeSelf) continue;
+                    results.Add(displayers[i]);
+                }
             }
 
             return results.ToArray();   
@@ -298,11 +305,9 @@ namespace RedSilver2.Framework.Subtitles
 
         public SubtitleHandler GetSubtitleHandler() 
         {
-            if (handlers != null) {
-                if (handlers.Count > 0) {
-                    SubtitleHandler handler = handlers[0];
-                    handlers.RemoveAt(0);
-                    return handler;
+            if (availabeHandlers != null) {
+                if (availabeHandlers.Count > 0) {
+                    return availabeHandlers.Dequeue();
                 }
             }
 

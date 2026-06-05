@@ -38,11 +38,14 @@ namespace RedSilver2.Framework.Subtitles
        
         public bool IsUpdatingSubtitles => isUpdatingSubtitles;
 
+        private Dictionary<TextMeshProUGUI, IEnumerator> displayerFadeCoroutines;
         private readonly static Dictionary<SubtitleHandler, List<TextMeshProUGUI>> actifDisplayers = new Dictionary<SubtitleHandler, List<TextMeshProUGUI>>(); 
         private readonly static Dictionary<Subtitle, List<IEnumerator>> actifSubtitles = new Dictionary<Subtitle, List<IEnumerator>>(); 
 
         private void Awake() {
             Canvas canvas = GetComponent<Canvas>();
+            displayerFadeCoroutines = new Dictionary<TextMeshProUGUI, IEnumerator>();
+
             canvas.renderMode  = RenderMode.WorldSpace;
             canvas.worldCamera = Camera.main;
 
@@ -53,9 +56,19 @@ namespace RedSilver2.Framework.Subtitles
             subtitleDataProgress   = 0;
         }
 
+        private void OnEnable()
+        {
+            SubtitleManager.AddSubtitleHandlerInstance(this);
+        }
+
+        private void OnDisable()
+        {
+            SubtitleManager.RemoveSubtitleHandlerInstance(this);
+        }
+
+
         public void Play(Subtitle subtitle) {
             if (subtitle == null) return;
-            SubtitleManager.RemoveSubtitleHandlerInstance(this);
             Stop();
     
             if (!isUpdatingSubtitles) {
@@ -71,7 +84,6 @@ namespace RedSilver2.Framework.Subtitles
 
         public void Play(Subtitle subtitle, int index) {
             if (subtitle == null) return;
-            SubtitleManager.RemoveSubtitleHandlerInstance(this);
             Stop();
 
             if (!isUpdatingSubtitles) {
@@ -83,7 +95,6 @@ namespace RedSilver2.Framework.Subtitles
         public void Play(Subtitle subtitle, int[] indexes)
         {
             if (subtitle == null) return;
-            SubtitleManager.RemoveSubtitleHandlerInstance(this);
             Stop();
 
             if (!isUpdatingSubtitles) {
@@ -107,7 +118,6 @@ namespace RedSilver2.Framework.Subtitles
             RemoveAllCurrentSubtitle(false);
 
             GameManager.SubtitleManager?.RemoveActifSubtitleHandler(this);
-            SubtitleManager.AddSubtitleHandlerInstance(this);
         }
 
         private void RemoveAllCurrentSubtitle(bool instantFade)
@@ -123,8 +133,8 @@ namespace RedSilver2.Framework.Subtitles
                     displayer.gameObject.SetActive(false);
                     continue;
                 }
-                           
-                StartCoroutine(FadeAlpha(displayer, false));
+
+                AddFadeCoroutine(displayer, FadeAlpha(displayer, false));
             }
 
             actifDisplayers[this].Clear();
@@ -210,6 +220,37 @@ namespace RedSilver2.Framework.Subtitles
                     availableDisplayers.Add(displayer);
         }
 
+        private void AddFadeCoroutine(TextMeshProUGUI displayer, IEnumerator enumerator)
+        {
+            RemoveFadeCoroutine(displayer);
+            if (displayerFadeCoroutines == null || enumerator == null || displayerFadeCoroutines.ContainsKey(displayer)) return;
+
+            displayerFadeCoroutines?.Add(displayer, enumerator);
+            StartCoroutine(displayerFadeCoroutines[displayer]);
+
+        }
+
+        private void RemoveFadeCoroutine(TextMeshProUGUI displayer)
+        {
+            if (displayerFadeCoroutines == null || !displayerFadeCoroutines.ContainsKey(displayer)) return;
+            StopCoroutine(displayerFadeCoroutines[displayer]);
+            displayerFadeCoroutines?.Remove(displayer);
+        }
+
+        private void RemoveAllFadeCoroutine()
+        {
+            if (displayerFadeCoroutines != null)
+            {
+                var copy = displayerFadeCoroutines;
+
+                foreach (var keyValue in copy)
+                    RemoveFadeCoroutine(keyValue.Key);
+
+                displayerFadeCoroutines?.Clear();
+            }
+        }
+
+
         private TextMeshProUGUI GetDisplayer() {
             TextMeshProUGUI result;
 
@@ -242,15 +283,14 @@ namespace RedSilver2.Framework.Subtitles
             AddActifDisplayer(textDisplayer);
             StartSubtitleUpdate(subtitle, UpdateAlpha(textDisplayer.canvasRenderer, 1f, 0.25f));
 
-            while(timeElapsed < subtitle.GetData(index).startTime)
-                yield return null;
+            while(timeElapsed < subtitle.GetData(index).startTime) yield return null;
 
             if(subtitle != null) {
                 yield return StartCoroutine(subtitle.Update(index, textDisplayer));
-                yield return StartCoroutine(FadeAlpha(textDisplayer, true));
+                AddFadeCoroutine(textDisplayer, FadeAlpha(textDisplayer, true));
             }
-
         }
+
 
         protected IEnumerator SubtitleDisplayerUpdate(Transform transform) {
             while (transform != null) {
@@ -279,16 +319,20 @@ namespace RedSilver2.Framework.Subtitles
 
         protected IEnumerator FadeAlpha(TextMeshProUGUI displayer, bool countTowardsProgress) {
             if(displayer != null) {
-                yield return StartCoroutine(UpdateAlpha(displayer.canvasRenderer, 0f, 0.05f));
+                SubtitleManager manager = GameManager.SubtitleManager;
+                yield return StartCoroutine(UpdateAlpha(displayer.canvasRenderer, 0f, manager ? manager.SubtitleFadeSpeed : 0.05f));
+                
                 displayer.text = string.Empty;
                 RemoveActifDisplayer(displayer);
 
-                if (countTowardsProgress)
-                {
+                if (countTowardsProgress) {
                     subtitleDataProgress++;
                     if (subtitleDataProgress == subtitleDataToComplete) Stop();
                 }
             }
+
+
+            RemoveFadeCoroutine(displayer);
         }
 
         private IEnumerator UpdateAlpha(CanvasRenderer renderer, float alpha, float duration) {
