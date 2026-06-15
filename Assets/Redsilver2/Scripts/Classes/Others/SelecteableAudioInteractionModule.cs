@@ -97,6 +97,11 @@ namespace RedSilver2.Framework.Interactions
             Play(currentIndex);
         }
 
+        public void Play(uint index)
+        {
+            Play((int)index);
+        }
+
         public void Play(int index) {
             Play(GetClip(index));
         }

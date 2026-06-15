@@ -4,19 +4,18 @@ using UnityEngine;
 
 namespace RedSilver2.Framework.Interactions.Settings
 {
-    [CreateAssetMenu(fileName = "New Press Interaction Setting", menuName = "Interaction/Setting/Press")]
     public sealed class PressInteractionSetting : InteractionSetting
     {
         public sealed override void Add(InteractionModule module, InteractionAction action) {
             if (module == null || action == null) return;
-            PressInteraction interaction = GetPressInteraction(module, action.GetInteractionName());
+            PressInteraction interaction = null; // GetPressInteraction(module, action.GetInteractionName());
 
             if (interaction != null) {
                 interaction?.Enable();
-                module?.AddInteraction(interaction);
+                // module?.AddInteraction(interaction);
             }
             else {
-                Add(module, new PressInteraction(action.GetInteractionName()));        
+                //  Add(module, new PressInteraction(action.GetInteractionName()));        
             }
         }
 

@@ -20,7 +20,7 @@ namespace RedSilver2.Framework.Interactions.Settings
             }
 
             if (!instances[module].Contains(interaction)) { 
-                module?.AddInteraction(interaction);
+              //  module?.AddInteraction(interaction);
                 instances[module].Add(interaction);
             }
         }
@@ -30,7 +30,7 @@ namespace RedSilver2.Framework.Interactions.Settings
             if(module == null || action == null || instances == null || !instances.ContainsKey(module))
                 return;
 
-            Remove(module, action.GetInteractionName());
+          //  Remove(module, action.GetInteractionName());
         }
 
         public void Remove(InteractionModule module, string interactionName)
@@ -46,7 +46,7 @@ namespace RedSilver2.Framework.Interactions.Settings
                 return;
 
             if (instances[module].Contains(interaction)) {
-                module?.RemoveInteraction(interaction);
+             //   module?.RemoveInteraction(interaction);
                 interaction?.Disable();
             }
         }
@@ -61,7 +61,8 @@ namespace RedSilver2.Framework.Interactions.Settings
         public static Interaction GetInteraction(InteractionModule module, InteractionAction action)
         {
             if(module == null || action == null) return null;
-            return GetInteraction(module, action.GetInteractionName());
+            return null;
+          //  return GetInteraction(module, action.GetInteractionName());
         }
 
         public static Interaction GetInteraction(InteractionModule module, string interactionName) {

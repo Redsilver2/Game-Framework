@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: New Scene Asset 1
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Scenes.SceneAsset
   sceneIndex: 1
-  sceneDescription: 
+  customSceneName: The Darkness
+  sceneDescription: Night version of the "The Light" scene :p
   defaultSceneUnlockedState: 1
   sceneThumbnails: []

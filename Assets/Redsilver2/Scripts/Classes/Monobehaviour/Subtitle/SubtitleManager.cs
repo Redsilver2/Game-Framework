@@ -101,7 +101,12 @@ namespace RedSilver2.Framework.Subtitles
 
         }
 
-        public void Stop(DialogData data) {
+        public void Stop(DialogData data)
+        {
+            Stop(data, true);
+        }
+
+        protected void Stop(DialogData data, bool canRemoveData) {
             if(actifDialogDatas == null || !actifDialogDatas.ContainsKey(data)) { return; }
             SubtitleHandler[] handlers = actifDialogDatas[data].Where(x => x != null).ToArray();
 
@@ -109,17 +114,14 @@ namespace RedSilver2.Framework.Subtitles
                 handler?.Stop();
             }
 
-            actifDialogDatas?.Remove(data); 
+            if(canRemoveData) actifDialogDatas?.Remove(data); 
         }
 
         public void Stop() {
-            Dictionary<DialogData, List<SubtitleHandler>> copy = actifDialogDatas;
+            DialogData[] copy = actifDialogDatas.Keys.ToArray();
             if(copy == null) return;
 
-            foreach (KeyValuePair<DialogData, List<SubtitleHandler>> keyValue in copy) {
-                Stop(keyValue.Key);
-            }
-
+            foreach (DialogData key in copy) Stop(key, false);
             actifDialogDatas?.Clear();
         }
 

@@ -1,8 +1,11 @@
 using RedSilver2.Framework.Inputs;
+using RedSilver2.Framework.Interactions;
 using RedSilver2.Framework.Interactions.Collectibles;
 using RedSilver2.Framework.Performance.Lights;
+using RedSilver2.Framework.Player;
 using RedSilver2.Framework.Scenes;
 using RedSilver2.Framework.Settings;
+using RedSilver2.Framework.StateMachines.Controllers;
 using RedSilver2.Framework.Subtitles;
 using UnityEngine;
 
@@ -11,12 +14,12 @@ namespace RedSilver2.Framework
     [RequireComponent(typeof(SteamManager))]
     public class GameManager : MonoBehaviour
     {
-        [SerializeField] private CollectibleNotificationManager collectibleNotification;
-        [SerializeField] private SceneLoaderManager sceneLoaderManager;
+        [SerializeField] private NotificationManager notification;
+        [SerializeField] private SceneLoaderManager  sceneLoaderManager;
         
         [SerializeField] private SubtitleManager subtitleManager;
-        [SerializeField] private SettingManager settingManager;
-        [SerializeField] private LightManager  lightManager;
+        [SerializeField] private SettingManager  settingManager;
+        [SerializeField] private LightManager    lightManager;
 
         protected static GameManager instance;
 
@@ -27,11 +30,12 @@ namespace RedSilver2.Framework
 
 
 
-        public static CollectibleNotificationManager CollectibleNotification  => instance ? instance.collectibleNotification : null;
-        public static SceneLoaderManager SceneLoaderManager  => instance ? instance.sceneLoaderManager : null;
-        public static SubtitleManager    SubtitleManager     => instance ? instance.subtitleManager    : null;
-        public static SettingManager     SettingManager      => instance ? instance.settingManager     : null;
-        public static LightManager       LightManager        => instance ? instance.lightManager       : null;
+        public static NotificationManager CollectibleNotification  => instance ? instance.notification : null;
+        public static SceneLoaderManager SceneLoaderManager        => instance ? instance.sceneLoaderManager : null;
+        public static SubtitleManager    SubtitleManager           => instance ? instance.subtitleManager    : null;
+        public static SettingManager     SettingManager            => instance ? instance.settingManager     : null;
+        public static LightManager       LightManager              => instance ? instance.lightManager       : null;
+
 
         public const string INTERACTION_LAYER_NAME = "Interaction";
         public const string GROUND_LAYER_NAME = "Ground";
@@ -47,7 +51,7 @@ namespace RedSilver2.Framework
             gameObject.name = "GameManager";
             DontDestroyOnLoad(instance);
 
-            Application.targetFrameRate = 180;
+            Application.targetFrameRate = 999;
         }
 
         private void Update() {
@@ -57,6 +61,20 @@ namespace RedSilver2.Framework
         private void LateUpdate() {
             InputManager.LateUpdate();
         }
+
+        public static void DisableControls()
+        {
+            PlayerController.Disable();
+            CameraController.Disable();
+            InteractionHandler.Disable();
+        }
+
+        public static void EnableControls()
+        {
+            PlayerController.Enable();
+            CameraController.Enable();
+            InteractionHandler.Enable();
+        }   
 
         public static bool IsGroundLayer(GameObject gameObject)
         {

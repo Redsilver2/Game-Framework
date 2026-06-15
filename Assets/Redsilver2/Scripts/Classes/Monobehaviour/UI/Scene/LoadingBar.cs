@@ -4,16 +4,16 @@ using UnityEngine.UI;
 namespace RedSilver2.Framework.Scenes.UI
 {
     [RequireComponent(typeof(Image))]
-    public class LoadingBar : LoadingProgressUI
+    public class LoadingBar : LoadingScreenImage
     {
         [SerializeField] private Sprite background;
 
         private Image loadingBar;
 
-        protected void Awake()
-        {
+        protected override void Awake() {
+            base.Awake();
             loadingBar = GetComponent<Image>();
-           
+        
             SetImage();
             FillLoadingBar(0f);
         }
@@ -28,14 +28,14 @@ namespace RedSilver2.Framework.Scenes.UI
             FillLoadingBar(1f);
         }
 
-        protected sealed override void OnSingleSceneLoadProgressChanged(int sceneIndex, float progress)
+        private void OnSingleSceneLoadProgressChanged(int sceneIndex, float progress)
         {
-            FillLoadingBar(Mathf.Clamp01(progress));
+            FillLoadingBar(progress);
         }
 
         private void FillLoadingBar(float progress)
         {
-            if (loadingBar != null) loadingBar.fillAmount = progress;
+            if (loadingBar != null) loadingBar.fillAmount = Mathf.Clamp01(progress);
         }
 
         private void SetImage()
@@ -48,8 +48,8 @@ namespace RedSilver2.Framework.Scenes.UI
         {
             base.DisableEvent(sceneLoader);
            
-            if(sceneLoader != null)
-            {
+            if(sceneLoader != null) {
+                sceneLoader.RemoveOnSingleSceneLoadProgressChangedListener(OnSingleSceneLoadProgressChanged);
                 sceneLoader.RemoveOnSingleSceneLoadFinishedListener(OnSingleSceneLoadFinished);
                 sceneLoader.RemoveOnSingleSceneLoadStartedListener(OnSingleSceneLoadStarted);
             }
@@ -59,8 +59,8 @@ namespace RedSilver2.Framework.Scenes.UI
         {
             base.EnableEvent(sceneLoader);
 
-            if (sceneLoader != null)
-            {
+            if (sceneLoader != null) {
+                sceneLoader.AddOnSingleSceneLoadProgressChangedListener(OnSingleSceneLoadProgressChanged);
                 sceneLoader.AddOnSingleSceneLoadFinishedListener(OnSingleSceneLoadFinished);
                 sceneLoader.AddOnSingleSceneLoadStartedListener(OnSingleSceneLoadStarted);
             }

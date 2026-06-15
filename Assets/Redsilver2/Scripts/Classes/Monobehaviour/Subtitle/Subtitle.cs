@@ -13,20 +13,20 @@ namespace RedSilver2.Framework.Subtitles
     public class Subtitle {
         [SerializeField] private List<SubtitleData> datas;
 
-        private readonly UnityEvent onPlay, onStop;
+        private readonly UnityEvent<int>         onPlay, onStop;
         private readonly UnityEvent<int, string> onValueChanged;
 
         public Subtitle() {
             datas = new List<SubtitleData>();
-            onPlay = new UnityEvent();
+            onPlay = new UnityEvent<int>();
            
-            onStop = new UnityEvent();
+            onStop = new UnityEvent<int>();
             onValueChanged = new UnityEvent<int, string>();
         }
 
         public Subtitle(List<SubtitleData> datas) {
-            onPlay = new UnityEvent();
-            onStop = new UnityEvent();
+            onPlay = new UnityEvent<int>();
+            onStop = new UnityEvent<int>();
            
             onValueChanged = new UnityEvent<int, string>();
             this.datas     = datas  != null ? datas : new List<SubtitleData>();
@@ -35,13 +35,38 @@ namespace RedSilver2.Framework.Subtitles
         }
 
         public Subtitle(SubtitleData[] datas) {
-            onPlay = new UnityEvent();
-            onStop = new UnityEvent();
+            onPlay = new UnityEvent<int>();
+            onStop = new UnityEvent<int>();
 
             onValueChanged = new UnityEvent<int, string>();
             this.datas = datas != null ? datas.ToList() : new List<SubtitleData>();
 
             SortDatasByTime();
+        }
+
+        public void AddOnValueChangedListener(UnityAction<int, string> action) {
+           if(action != null) onValueChanged?.AddListener(action);  
+        }
+
+        public void RemoveOnValueChangedListener(UnityAction<int, string> action) {
+            if (action != null) onValueChanged?.RemoveListener(action);
+        }
+
+        public void AddOnPlayListener(UnityAction<int> action){
+            if (action != null) onPlay?.AddListener(action);
+        }
+
+        public void RemoveOnPlayListener(UnityAction<int> action) {
+            if (action != null) onPlay?.RemoveListener(action);
+        }
+
+        public void AddOnStopListener(UnityAction<int> action)
+        {
+            if (action != null) onStop?.AddListener(action);
+        }
+
+        public void RemoveOnStopListener(UnityAction<int> action) {
+            if (action != null) onStop?.RemoveListener(action);
         }
 
         public void AddData(SubtitleData data) {
@@ -54,6 +79,11 @@ namespace RedSilver2.Framework.Subtitles
             SortDatasByTime();
         }
 
+        public void RemoveData(int index)
+        {
+            RemoveData(GetData(index));         
+        }
+
         public IEnumerator Update(int index, TextMeshProUGUI displayer)
         {
             float t = 0f;
@@ -61,6 +91,7 @@ namespace RedSilver2.Framework.Subtitles
             string currentText    = string.Empty;
           
             SubtitleData data = GetData(index);
+            onPlay?.Invoke(index);
 
             while (t < GetDuration(data, false))
             {
@@ -71,7 +102,7 @@ namespace RedSilver2.Framework.Subtitles
 
                 if (!previousText.Equals(currentText)) {
                     previousText = currentText;
-                    onValueChanged.Invoke(index, displayer.text);
+                    onValueChanged.Invoke(index, currentText);
                 }
 
                 if (!canDisplayByTime) { currentText = $"{GetCharacterName()}{data.textToDisplay}";  }
@@ -81,6 +112,7 @@ namespace RedSilver2.Framework.Subtitles
                 yield return null;
             }
 
+            onStop?.Invoke(index);
             if (displayer != null) { displayer.text = $"{GetCharacterName()}{data.textToDisplay}"; }
             yield return new WaitForSeconds(data.fadeDelayTime);
         }
@@ -102,8 +134,7 @@ namespace RedSilver2.Framework.Subtitles
             if (indexes == null) return null;
 
             for (int i = 0; i < indexes.Length; i++) {
-               results.Add(GetData(indexes[i]));
-               
+               results.Add(GetData(indexes[i]));         
             }
 
             return results.ToArray();

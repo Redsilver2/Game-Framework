@@ -131,9 +131,6 @@ GameObject:
   - component: {fileID: 113677288}
   - component: {fileID: 113677287}
   - component: {fileID: 113677286}
-  - component: {fileID: 113677289}
-  - component: {fileID: 113677291}
-  - component: {fileID: 113677290}
   m_Layer: 0
   m_Name: Cube (5)
   m_TagString: Untagged
@@ -234,50 +231,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 113677283}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &113677289
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 113677283}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7bb8fdbdbc252a3478173b389d061896, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Interactions.RotateableDoor
-  interactableName: Door
-  uiParent: {fileID: 0}
-  anchorPoint: {fileID: 2017805059}
-  doorSpeed: 10
---- !u!114 &113677290
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 113677283}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df01f454c6c8620468377faea4ed1b40, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Interactions.Actions.Setups.CloseDoorSetup
-  showWhenNecessary: 1
-  action: {fileID: 11400000, guid: 487978b930151754aa47d7bb2698bab3, type: 2}
---- !u!114 &113677291
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 113677283}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59c6745af5c88f44f8be4f0773edb786, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Interactions.Actions.Setups.OpenRotateableDoorSetup
-  showWhenNecessary: 1
-  action: {fileID: 11400000, guid: 64f8d217581218e4e88c6bea297ec4a8, type: 2}
 --- !u!1 &203844586
 GameObject:
   m_ObjectHideFlags: 0
@@ -794,6 +747,10 @@ GameObject:
   - component: {fileID: 765158605}
   - component: {fileID: 765158606}
   - component: {fileID: 765158607}
+  - component: {fileID: 765158611}
+  - component: {fileID: 765158610}
+  - component: {fileID: 765158609}
+  - component: {fileID: 765158608}
   m_Layer: 0
   m_Name: Head
   m_TagString: Untagged
@@ -927,6 +884,73 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &765158608
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 765158604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 848cc657753e2854b8be185a3572225b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.Controllers.PlayerCharacterController
+  dontDestroyOnLoad: 1
+  inputSettings: {fileID: 0}
+  defaultSettingIndex: 0
+  defaultSettings: []
+--- !u!114 &765158609
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 765158604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ad9f939892888347ba1a7c758dcc670, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.Controllers.MovementStateMachineController
+  groundCheckRange: 0
+  is2DMovement: 0
+--- !u!114 &765158610
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 765158604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c70105dee0a1ca3468c4f60db81a84be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.Handlers.MovementStateMachineEventHandler
+--- !u!143 &765158611
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 765158604}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Height: 2
+  m_Radius: 0.5
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &784613500
 GameObject:
   m_ObjectHideFlags: 0
@@ -939,6 +963,7 @@ GameObject:
   - component: {fileID: 784613503}
   - component: {fileID: 784613501}
   - component: {fileID: 784613505}
+  - component: {fileID: 784613506}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -958,8 +983,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cd016e737f4e764b8f70e0252569752, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.GameManager
-  collectibleNotification: {fileID: 0}
-  sceneLoaderManager: {fileID: 0}
+  notification: {fileID: 0}
+  sceneLoaderManager: {fileID: 784613506}
   subtitleManager: {fileID: 784613505}
   settingManager: {fileID: 0}
   lightManager: {fileID: 0}
@@ -989,6 +1014,8 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1947101429}
+  - {fileID: 1005815189}
+  - {fileID: 1799161808}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &784613505
@@ -1008,9 +1035,37 @@ MonoBehaviour:
   subtitleFadeDuration: 0.25
   positionLerpSpeed: 50
   subtitleCatchupSpeed: 0.9
+  subtitleFadeSpeed: 0.01
   canSubtitleUseWorldSpace: 0
+  canShowSubtitleByTime: 0
   defaultScreenSubtitlePosition: {x: 0, y: 0, z: 0}
   screenSubtitleParent: {fileID: 1366130581}
+--- !u!114 &784613506
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 784613500}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7417efb5bf80ada4fa155594d6c2458d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Scenes.SceneLoaderManager
+  sceneDatas:
+  - sceneIndex: 0
+    customSceneName: The Sun
+    sceneDescription: 
+    isUnlocked: 1
+    sceneThumbnails: []
+  - sceneIndex: 1
+    customSceneName: The Moon!
+    sceneDescription: 
+    isUnlocked: 1
+    sceneThumbnails: []
+  loadingScreens:
+  - {fileID: 1005815188}
+  defaultLoadingScreenIndex: 0
 --- !u!1 &889691530
 GameObject:
   m_ObjectHideFlags: 0
@@ -1074,6 +1129,119 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1038988025}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1005815187
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 784613504}
+    m_Modifications:
+    - target: {fileID: 1858596047907784096, guid: 6f391f54454841c439e705c0e5f99e25, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1858596047907784096, guid: 6f391f54454841c439e705c0e5f99e25, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1858596047907784096, guid: 6f391f54454841c439e705c0e5f99e25, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1858596047907784096, guid: 6f391f54454841c439e705c0e5f99e25, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1858596047907784096, guid: 6f391f54454841c439e705c0e5f99e25, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1858596047907784096, guid: 6f391f54454841c439e705c0e5f99e25, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1858596047907784096, guid: 6f391f54454841c439e705c0e5f99e25, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1858596047907784096, guid: 6f391f54454841c439e705c0e5f99e25, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1858596047907784096, guid: 6f391f54454841c439e705c0e5f99e25, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1858596047907784096, guid: 6f391f54454841c439e705c0e5f99e25, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1858596047907784096, guid: 6f391f54454841c439e705c0e5f99e25, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1858596047907784096, guid: 6f391f54454841c439e705c0e5f99e25, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1858596047907784096, guid: 6f391f54454841c439e705c0e5f99e25, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1858596047907784096, guid: 6f391f54454841c439e705c0e5f99e25, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1858596047907784096, guid: 6f391f54454841c439e705c0e5f99e25, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1858596047907784096, guid: 6f391f54454841c439e705c0e5f99e25, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1858596047907784096, guid: 6f391f54454841c439e705c0e5f99e25, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1858596047907784096, guid: 6f391f54454841c439e705c0e5f99e25, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1858596047907784096, guid: 6f391f54454841c439e705c0e5f99e25, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1858596047907784096, guid: 6f391f54454841c439e705c0e5f99e25, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5550901096800949754, guid: 6f391f54454841c439e705c0e5f99e25, type: 3}
+      propertyPath: m_Name
+      value: LoadingScreen
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 6f391f54454841c439e705c0e5f99e25, type: 3}
+--- !u!114 &1005815188 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7295884232204373893, guid: 6f391f54454841c439e705c0e5f99e25, type: 3}
+  m_PrefabInstance: {fileID: 1005815187}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9893c3525969cef4eb9e4b5c848f82e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Scenes.LoadingScreen
+--- !u!224 &1005815189 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 1858596047907784096, guid: 6f391f54454841c439e705c0e5f99e25, type: 3}
+  m_PrefabInstance: {fileID: 1005815187}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1038988024
 GameObject:
   m_ObjectHideFlags: 0
@@ -1477,8 +1645,6 @@ GameObject:
   - component: {fileID: 1667245356}
   - component: {fileID: 1667245355}
   - component: {fileID: 1667245359}
-  - component: {fileID: 1667245361}
-  - component: {fileID: 1667245360}
   m_Layer: 0
   m_Name: Cube (5)
   m_TagString: Untagged
@@ -1588,41 +1754,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1667245353}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7bb8fdbdbc252a3478173b389d061896, type: 3}
+  m_Script: {fileID: 11500000, guid: dc1407d2c16506d409a2e0243923d752, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Interactions.RotateableDoor
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Interactions.GenericRotateableDoor
   interactableName: Door
   uiParent: {fileID: 0}
   anchorPoint: {fileID: 889691531}
   doorSpeed: 10
---- !u!114 &1667245360
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1667245353}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59c6745af5c88f44f8be4f0773edb786, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Interactions.Actions.Setups.OpenRotateableDoorSetup
-  showWhenNecessary: 1
-  action: {fileID: 11400000, guid: fc9e6007dd0928544ad100496649da0a, type: 2}
---- !u!114 &1667245361
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1667245353}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df01f454c6c8620468377faea4ed1b40, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Interactions.Actions.Setups.CloseDoorSetup
-  showWhenNecessary: 1
-  action: {fileID: 11400000, guid: 487978b930151754aa47d7bb2698bab3, type: 2}
 --- !u!1 &1799161805
 GameObject:
   m_ObjectHideFlags: 0
@@ -1695,12 +1833,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1799161805}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 1032.7261, y: -1165.7261, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 784613504}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1799674067
 GameObject:
@@ -1955,8 +2093,6 @@ GameObject:
   - component: {fileID: 2141544505}
   - component: {fileID: 2141544512}
   - component: {fileID: 2141544511}
-  - component: {fileID: 2141544510}
-  - component: {fileID: 2141544509}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -2057,32 +2193,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2141544509
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2141544503}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 98715b12e9146ee41afc67fdee9d6639, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayAudioSetup
-  action: {fileID: 11400000, guid: 3da1ba6fac81c2348bd70ef2fd8a44fc, type: 2}
---- !u!114 &2141544510
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2141544503}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa0e17885ead1c44ea6bc5f09a110778, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Interactions.Actions.Setups.StopAudioSetup
-  action: {fileID: 11400000, guid: 92d1b663d1deb2a4695ccae030c4f657, type: 2}
 --- !u!114 &2141544511
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2356,4 +2466,3 @@ SceneRoots:
   - {fileID: 2017805059}
   - {fileID: 765158605}
   - {fileID: 1799674072}
-  - {fileID: 1799161808}

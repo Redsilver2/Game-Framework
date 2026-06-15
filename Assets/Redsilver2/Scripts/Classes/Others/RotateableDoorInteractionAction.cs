@@ -2,14 +2,11 @@ using UnityEngine;
 using UnityEngine.Events;
 namespace RedSilver2.Framework.Interactions.Actions
 {
+    [System.Serializable]
     public abstract class RotateableDoorInteractionAction : DoorInteractionAction
     {
-        protected sealed override UnityAction<InteractionHandler> GetBaseEvent(Door door)
+        protected RotateableDoorInteractionAction(RotateableDoor module, Interaction interaction) : base(module, interaction)
         {
-            if(door == null) return null;
-            return GetBaseEvent(door as RotateableDoor);
         }
-
-        protected abstract UnityAction<InteractionHandler> GetBaseEvent(RotateableDoor door);
     }
 }

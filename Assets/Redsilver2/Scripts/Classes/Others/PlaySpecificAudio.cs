@@ -2,20 +2,13 @@ using UnityEngine;
 using UnityEngine.Events;
 
 namespace RedSilver2.Framework.Interactions.Actions {
-    [CreateAssetMenu(fileName = "New Play Specific Audio Interaction Action", menuName = "Interaction/Audio/Selecteable/Play (Specific)")]
-    public class PlaySpecificAudio : SelecteableAudioInteractionAction
+    public class PlaySpecificAudio : AudioInteractionAction
     {
         [Space]
-        [SerializeField] private int clipIndex;
-        [SerializeField] private string clipName;
+        [SerializeField] private uint clipIndex;
 
-        public sealed override string GetInteractionName() {
-            return "Play " + clipName;
-        }
-
-        protected override UnityAction<InteractionHandler> GetBaseEvent(SelecteableAudioInteractionModule module) {
-            if (module == null) return null;
-            return handler => { module?.Play(clipIndex); };
+        public PlaySpecificAudio(SelecteableAudioInteractionModule module, Interaction interaction) : base(module, interaction) {
+            interaction?.AddOnInteractedListener(handler => { module?.Play(clipIndex); });
         }
     }
 }

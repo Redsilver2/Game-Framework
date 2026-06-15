@@ -33,7 +33,7 @@ public class TestScript : MonoBehaviour
 
     private void Update()
     {
-        if (InputManager.GetKeyDown(KeyboardKey.Space)) {
+        if (InputManager.GetKeyDown(KeyboardKey.A)) {
             flip = !flip;
 
             if (flip) {

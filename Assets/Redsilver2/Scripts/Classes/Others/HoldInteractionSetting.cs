@@ -9,16 +9,16 @@ namespace RedSilver2.Framework.Interactions.Settings
         public sealed override void Add(InteractionModule module, InteractionAction action)
         {
             if (module == null || action == null) return;
-            HoldInteraction interaction = GetHoldInteraction(module, action.GetInteractionName());
+            HoldInteraction interaction = null; //  GetHoldInteraction(module, action.GetInteractionName());
 
             if (interaction != null)
             {
                 interaction?.Enable();
-                module?.AddInteraction(interaction);
+                //   module?.AddInteraction(interaction);
             }
             else
             {
-                Add(module, new HoldInteraction(action.GetInteractionName()));
+                //  Add(module, new HoldInteraction(action.GetInteractionName()));
             }
         }
 

@@ -1,5 +1,4 @@
 using RedSilver2.Framework.Scenes.UI;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -8,55 +7,70 @@ namespace RedSilver2.Framework.Scenes
 {
     public class LoadingScreen : MonoBehaviour
     {
-        private List<LoadingFade> loadingFades;
+        private List<LoadingScreenUI> loadingOperations;
   
         private void Awake()
         {
-            loadingFades = GetComponentsInChildren<LoadingFade>(true).ToList();
+            loadingOperations = GetComponentsInChildren<LoadingScreenUI>(true).ToList();
+        }
+
+        private void Start()
+        {
+            SetLoadingOperationsActifState(false);
             gameObject.SetActive(false);
         }
 
-        public void CancelAllFades()
+        private void OnDisable()
         {
-            foreach (LoadingFade fade in GetCleanArray()) { fade.CancelFade(); }
+            SetLoadingOperationsActifState(false);
         }
 
-        private void SetAllAlpha(bool isVisible)
+        private void OnEnable()
         {
-            foreach (LoadingFade fade in GetCleanArray()) { fade.SetAlpha(isVisible); }
-        }
-
-        public bool IsUIVisibilitySet()
-        {
-            if(loadingFades == null || loadingFades.Count == 0) return false;
-            return loadingFades.Where(x => x.IsFadeCompleted).Count() == loadingFades.Count;
-        }
-
-        public void Show()
-        {
-            Fade(true);
-        }
-
-        public void Hide()
-        {
-            Fade(false);
-        }
-
-        private void Fade(bool isFadeIn)
-        {
-            foreach (LoadingFade fade in GetCleanArray()) { fade.StartFade(isFadeIn); }
+            SetLoadingOperationsActifState(true);
         }
 
 
-        private LoadingFade[] GetCleanArray()
+        private void SetLoadingOperationsActifState(bool isActif)
         {
-            if (loadingFades != null)
+            if (loadingOperations != null)
             {
-               loadingFades = loadingFades.Where(x => x != null).ToList();
-               return loadingFades.ToArray();
+                foreach (LoadingScreenUI operation in loadingOperations) {
+                    operation?.CancelFade();
+                    operation?.SetAlpha(0f);
+                    if (operation != null) operation.gameObject.SetActive(isActif);
+                }
+            }
+        }
+
+        public void Show() {
+            StartFade(true);
+        }
+
+        public void Hide() {
+            StartFade(false);
+        }
+
+        private void StartFade(bool isFadeIn) {
+            LoadingScreenUI[] operations = GetOperations();
+            foreach (LoadingScreenUI operation in operations) operation?.StartFade(isFadeIn);
+        }
+
+        public bool IsDoneFading(bool isFadeIn)
+        {
+            var cleanOperations = GetOperations();
+            var results = cleanOperations.Where(x => x.IsTargetedAlpha(isFadeIn ? 1f : 0f)).ToArray();
+            return results.Length == cleanOperations.Length;
+        }
+
+        private LoadingScreenUI[] GetOperations()
+        {
+            if (loadingOperations != null) {
+               loadingOperations = loadingOperations.Where(x => x != null).ToList();
+               return loadingOperations.ToArray();
             }
 
-            return new LoadingFade[0];
+            return new LoadingScreenUI[0];
         }
     }
 }
