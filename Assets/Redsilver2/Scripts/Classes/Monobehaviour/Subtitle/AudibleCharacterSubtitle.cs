@@ -1,24 +1,45 @@
-using RedSilver2.Framework.Subtitles.Datas;
+using RedSilver2.Framework.Dialogs.Datas;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace RedSilver2.Framework.Subtitles
+namespace RedSilver2.Framework.Dialogs
 {
+    [System.Serializable]
     public class AudibleCharacterSubtitle : CharacterSubtitle, IAudibleSubtitle {
         [Space]
         [SerializeField] private AudioClip clip;
         private AudioSource source;
 
-        public AudibleCharacterSubtitle(string characterName, AudioClip clip) : base(characterName) { this.clip = clip; }
+        public AudibleCharacterSubtitle(string characterName, AudioClip clip) : base(characterName) {
+            this.clip = clip;
+            AddOnPlayListener(() => { Play(0f); });
+            AddOnStopListener(() => { this.source?.Stop(); });
+        }
      
-        public AudibleCharacterSubtitle(List<SubtitleData> datas, string characterName, AudioClip clip) : base(datas, characterName) { }
-        public AudibleCharacterSubtitle(SubtitleData[] datas, string characterName, AudioClip clip) : base(datas, characterName) { }
+        public AudibleCharacterSubtitle(List<SubtitleData> datas, string characterName, AudioClip clip) : base(datas, characterName) {
+            this.clip = clip;
+            AddOnPlayListener(() => { Play(0f); });
+            AddOnStopListener(() => { this.source?.Stop(); });
+        }
+        public AudibleCharacterSubtitle(SubtitleData[] datas, string characterName, AudioClip clip) : base(datas, characterName) {
+            this.clip = clip;
+            AddOnPlayListener(() => { Play(0f); });
+            AddOnStopListener(() => { this.source?.Stop(); });
+        }
       
-        public AudibleCharacterSubtitle(List<SubtitleData> datas, string characterName, AudioSource source, AudioClip clip) : base(datas, characterName) { this.source = source; }
-        public AudibleCharacterSubtitle(SubtitleData[] datas, string characterName, AudioSource source, AudioClip clip) : base(datas, characterName) { this.source = source; }
-
-        public void Play() {
-            Play(0f);
+        public AudibleCharacterSubtitle(List<SubtitleData> datas, string characterName, AudioSource source, AudioClip clip) : base(datas, characterName) {
+            this.source = source;
+            this.clip = clip;
+          
+            AddOnPlayListener(() => { Play(0f); });
+            AddOnStopListener(() => { this.source?.Stop(); });
+        }
+        public AudibleCharacterSubtitle(SubtitleData[] datas, string characterName, AudioSource source, AudioClip clip) : base(datas, characterName) {
+            this.source = source;
+            this.clip = clip;
+          
+            AddOnPlayListener(() => { Play(0f); });
+            AddOnStopListener(() => { this.source?.Stop(); });
         }
 
         public void Play(float time)
@@ -28,11 +49,6 @@ namespace RedSilver2.Framework.Subtitles
                 source?.Play();
                 source.time = time;
             }
-        }
-
-        public void Stop()
-        {
-            source?.Stop();
         }
 
         public void SetAudioSource(AudioSource source) {

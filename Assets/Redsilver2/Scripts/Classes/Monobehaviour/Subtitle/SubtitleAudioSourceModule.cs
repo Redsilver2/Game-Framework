@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace RedSilver2.Framework.Subtitles {
+namespace RedSilver2.Framework.Dialogs {
 
     [RequireComponent(typeof(AudioSource))]
     public class SubtitleAudioSourceModule : MonoBehaviour {

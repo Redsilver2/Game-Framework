@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace RedSilver2.Framework.Subtitles {
+namespace RedSilver2.Framework.Dialogs {
     [RequireComponent(typeof(AudioSource))]
 
     [CreateAssetMenu(fileName = "New Subtitle Audio Source", menuName = "Subtitle/Audio Source")]

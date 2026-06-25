@@ -13,11 +13,7 @@ namespace RedSilver2.Framework.Interactions.Actions
 
         public OpenRotateableDoorAction(RotateableDoor module, Interaction interaction) : base(module, interaction)
         {
-            Debug.Log(interaction + " waw");
-
             interaction?.AddOnInteractedListener(handler => {
-                Debug.Log(module + " wow");
-
                 module?.SetOpenRotation(true ? desiredBackwardAngle : desiredForwardAngle);
                 module?.Open();
             });

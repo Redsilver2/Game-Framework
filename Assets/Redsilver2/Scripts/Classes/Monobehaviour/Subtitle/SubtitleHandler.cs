@@ -1,371 +1,225 @@
-using RedSilver2.Framework.StateMachines.Controllers;
-using RedSilver2.Framework.Subtitles.Datas;
+using RedSilver2.Framework.Dialogs.Datas;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 
 
-namespace RedSilver2.Framework.Subtitles
+namespace RedSilver2.Framework.Dialogs
 {
-    [RequireComponent(typeof(Canvas))]
+    [RequireComponent(typeof(CanvasGroup))]
     public class SubtitleHandler : MonoBehaviour
     {
-        [SerializeField] private Vector3 defaultPosition;
-
-        [Space]
-        [SerializeField] private float maxDistanceCheck;
-        [SerializeField] private float distanceBetweenSubtitles;
-
-        [Space]
-        [SerializeField] private bool isExcludedFromWorldSpaceCheck;
-
-        [Space]
         [SerializeField] private TextMeshProUGUI textDisplayer;
 
+        private bool isUpdateStarted;
+        private bool isUpdateFinished;
+        private bool canTextDisplayShowCharacterName;
+
+        private CanvasGroup group;
+        private IEnumerator fadeUpdater;
+
+        private float timeElpased;
+
+        private UnityEvent<SubtitleData> onUpdateStarted;
+        private UnityEvent<SubtitleData> onUpdateFinished;
+        private UnityEvent<SubtitleData, float> onProgressUpdate;
+        public bool IsUpdateStarted => isUpdateStarted;
+        public bool IsUpdateFinished => isUpdateFinished;
+
+        public int LineCount => textDisplayer == null ? 0 : textDisplayer.textInfo.lineCount;
+        protected Subtitle CurrentSubtitle { get; private set; }
 
 
-        private bool     isUpdatingSubtitles;
-        private float    timeElapsed = 0f;
+        protected virtual void Awake() {
+            group = GetComponent<CanvasGroup>();
+            canTextDisplayShowCharacterName = true;
 
-        private int subtitleDataToComplete = 0;
-        private int subtitleDataProgress   = 0;
+            onUpdateStarted  = new UnityEvent<SubtitleData>();
+            onUpdateFinished = new UnityEvent<SubtitleData>();
+            onProgressUpdate = new UnityEvent<SubtitleData, float>();
 
-        private Subtitle currentSubtitle;
+            AddOnUpdateStartedListener(OnUpdateStarted);
+            AddOnUpdateFinishedListener(OnUpdateFinished);
+            AddOnProgressUpdateListener(UpdateTextDisplayer);
 
-        private List<TextMeshProUGUI> availableDisplayers;
-       
-        public bool IsUpdatingSubtitles => isUpdatingSubtitles;
+            isUpdateStarted  = false;
+            isUpdateFinished = false;   
 
-        private Dictionary<TextMeshProUGUI, IEnumerator> displayerFadeCoroutines;
-        private readonly static Dictionary<SubtitleHandler, List<TextMeshProUGUI>> actifDisplayers = new Dictionary<SubtitleHandler, List<TextMeshProUGUI>>(); 
-        private readonly static Dictionary<Subtitle, List<IEnumerator>> actifSubtitles = new Dictionary<Subtitle, List<IEnumerator>>(); 
-
-        private void Awake() {
-            Canvas canvas = GetComponent<Canvas>();
-            displayerFadeCoroutines = new Dictionary<TextMeshProUGUI, IEnumerator>();
-
-            canvas.renderMode  = RenderMode.WorldSpace;
-            canvas.worldCamera = Camera.main;
-
-            availableDisplayers = new List<TextMeshProUGUI>();
-            actifDisplayers?.Add(this, new List<TextMeshProUGUI>());
-
-            subtitleDataToComplete = 0;
-            subtitleDataProgress   = 0;
+            group.alpha = 0;
         }
 
-        private void OnEnable()
+        private void OnEnable() {
+            DialogManager.AddSubtitleHandlerInstance(this);
+        }
+
+        private void OnDisable() {
+            DialogManager.RemoveSubtitleHandlerInstance(this);
+        }
+
+        public void AddOnUpdateStartedListener(UnityAction<SubtitleData> action) {
+            if (action != null) onUpdateStarted?.AddListener(action);
+        }
+        public void RemoveOnUpdateStartedListener(UnityAction<SubtitleData> action) {
+            if (action != null) onUpdateStarted?.RemoveListener(action);
+        }
+
+        public void AddOnUpdateFinishedListener(UnityAction<SubtitleData> action)
         {
-            SubtitleManager.AddSubtitleHandlerInstance(this);
+            if (action != null) onUpdateFinished?.AddListener(action);
+        }
+        public void RemoveOnUpdateFinishedListener(UnityAction<SubtitleData> action) {
+            if (action != null) onUpdateFinished?.RemoveListener(action);
         }
 
-        private void OnDisable()
+        public void AddOnProgressUpdateListener(UnityAction<SubtitleData, float> action)
         {
-            SubtitleManager.RemoveSubtitleHandlerInstance(this);
+            if (action != null) onProgressUpdate?.AddListener(action);
+        }
+        public void RemoveOnProgressUpdateListener(UnityAction<SubtitleData, float> action)
+        {
+            if (action != null) onProgressUpdate?.RemoveListener(action);
         }
 
+        protected void SetCanTextDisplayShowCharacterName(bool canTextDisplayShowCharacterName)
+        {
+            this.canTextDisplayShowCharacterName = canTextDisplayShowCharacterName;
+        }
 
-        public void Play(Subtitle subtitle) {
-            if (subtitle == null) return;
+        protected virtual void OnUpdateStarted(SubtitleData data) {
+            isUpdateStarted = true;
+            timeElpased = 0f;
+
+            StartFade(false);
+            GameManager.DialogManager?.AddActifSubtitleHandler(this);
+        }
+
+        protected virtual void OnUpdateFinished(SubtitleData data) {
+            isUpdateFinished = true;
+            timeElpased = 0f;
+
+            UpdateTextDisplayer(data, 1f);
             Stop();
-    
-            if (!isUpdatingSubtitles) {
-                isUpdatingSubtitles = true;
-                StartSubtitleUpdate(subtitle);
+        }
+
+        private void UpdateTextDisplayer(SubtitleData data, float progress) {
+            DialogManager manager = GameManager.DialogManager;
+            if (manager == null || textDisplayer == null) return;
+           
+            string result = data.textToDisplay;
+            progress = Mathf.Clamp01(progress);
+           
+            UpdateTextDisplayer(manager, data.textToDisplay, Mathf.Clamp01(progress), ref result);
+            UpdateTextDisplayer(manager, CurrentSubtitle as CharacterSubtitle, ref result);
+
+           textDisplayer.text = result;
+        }
+
+        private void UpdateTextDisplayer(DialogManager manager, string textToDisplay, float progress, ref string result)
+        {
+            if (manager == null) return;
+
+            if (manager.CanShowSubtitleByTime) {
+                char[] characters = textToDisplay.ToCharArray();
+                result = string.Empty;
+
+                for (int i = 0; i < characters.Length * progress; i++)
+                    result += characters[i];
             }
         }
 
-        public bool CompareSubtitle(Subtitle subtitle) {
-            if(currentSubtitle == null || subtitle == null) return false;
-            return currentSubtitle.Equals(subtitle);
+        private void UpdateTextDisplayer(DialogManager manager, CharacterSubtitle subtitle,  ref string result)
+        {
+            if(manager == null || subtitle == null) return;
+            string characterName = subtitle.CharacterName;
+
+            if (!string.IsNullOrEmpty(characterName) && manager.CanDisplayCharacterName)
+                result =  $"{characterName}: " + result;
+        }
+
+
+
+        public void UpdateDisplayers(DialogManager manager, Subtitle subtitle, int dataIndex, float timeElapsed) {
+            CurrentSubtitle = subtitle;
+            if (manager == null || subtitle == null || isUpdateFinished) return;
+
+            UpdateDisplayers(manager, subtitle.GetData(dataIndex), timeElapsed);
+        }
+
+        private void UpdateDisplayers(DialogManager manager, SubtitleData data, float timeElapsed)
+        {
+            if(manager == null || isUpdateFinished || timeElapsed < data.StartTime) return;
+            if (!isUpdateStarted) onUpdateStarted?.Invoke(data);
+
+            float progress = Mathf.Clamp01(this.timeElpased / (data.Duration * manager.SubtitleCatchupSpeed));
+
+            if (progress < 1f)
+                onProgressUpdate?.Invoke(data, progress);
+            else {
+                onProgressUpdate?.Invoke(data, 1f);
+                if(timeElapsed >= data.EndTime) onUpdateFinished?.Invoke(data);
+            }
+
+            this.timeElpased += Time.deltaTime;
         }
 
         public void Play(Subtitle subtitle, int index) {
-            if (subtitle == null) return;
-            Stop();
 
-            if (!isUpdatingSubtitles) {
-                isUpdatingSubtitles = true;
-                StartSubtitleUpdate(subtitle, index);
-            }
         }
 
         public void Play(Subtitle subtitle, int[] indexes)
         {
-            if (subtitle == null) return;
-            Stop();
 
-            if (!isUpdatingSubtitles) {
-                isUpdatingSubtitles = true;
-                StartSubtitleUpdate(subtitle, indexes);
-            }
         }
 
-        public void Stop() {
-            if (currentSubtitle == null) return;
-            StopSubtitleUpdate(currentSubtitle);
-            (currentSubtitle as IAudibleSubtitle)?.Stop();
+        public virtual void Stop() {
+            CurrentSubtitle  = null;
 
-            timeElapsed = 0f;
-            currentSubtitle = null;
+            if (group != null) group.alpha = 0f;
+            if (textDisplayer != null) textDisplayer.text = string.Empty;
 
-            subtitleDataToComplete = 0;
-            subtitleDataProgress = 0;
-
-            isUpdatingSubtitles = false;
-            RemoveAllCurrentSubtitle(false);
-
-            GameManager.SubtitleManager?.RemoveActifSubtitleHandler(this);
+            GameManager.DialogManager?.RemoveActifSubtitleHandler(this);
         }
 
-        private void RemoveAllCurrentSubtitle(bool instantFade)
+
+        private void StartFade(bool isFadingIn){
+            CancelFade();
+            fadeUpdater = Fade(isFadingIn);
+            StartCoroutine(fadeUpdater);
+        }
+
+        private void CancelFade()
         {
-            if (actifDisplayers == null || !actifDisplayers.ContainsKey(this)) return;
+            if (fadeUpdater != null) StopCoroutine(fadeUpdater);
+            fadeUpdater = null;
+        }
 
-            foreach (TextMeshProUGUI displayer in actifDisplayers[this].Where(x => x != null)) {
-                if (displayer == null) continue;
+        public bool IsFadedIn()
+        {
+            return group != null ? group.alpha == 0f : false; 
+        }
 
-                if (instantFade) {
-                    displayer.text = string.Empty;
-                    displayer.canvasRenderer.SetAlpha(0);
-                    displayer.gameObject.SetActive(false);
-                    continue;
+        private IEnumerator Fade(bool isFadingIn) {
+            float t = 0f, currentAlpha = group != null ? group.alpha : 0f;
+            float desiredAlpha = isFadingIn ? 0f : 1f;
+
+            while (group != null) {
+                DialogManager manager = GameManager.DialogManager;
+                if (manager == null || group == null) break;
+
+                float progress = Mathf.Clamp01(t / manager.SubtitleFadeDuration);
+                group.alpha = Mathf.Lerp(currentAlpha, desiredAlpha, t);
+
+                if (progress >= 1f) {
+                    group.alpha = desiredAlpha;
+                    break;
                 }
 
-                AddFadeCoroutine(displayer, FadeAlpha(displayer, false));
-            }
-
-            actifDisplayers[this].Clear();
-        }
-
-        private void StopSubtitleUpdate(Subtitle subtitle) {
-            if (actifSubtitles == null || subtitle == null || !actifSubtitles.ContainsKey(subtitle))
-                return;
-
-            foreach (IEnumerator enumerator in actifSubtitles[subtitle].ToArray())
-                StopCoroutine(enumerator);
-
-            actifSubtitles?.Remove(subtitle);
-        }
-
-        protected virtual void StartSubtitleUpdate(Subtitle subtitle) {
-            if (subtitle == null) return;
-           
-            SubtitleData[] datas = subtitle.GetDatas();
-            (subtitle as IAudibleSubtitle)?.Play();
-
-            if (datas != null) {
-                subtitleDataToComplete = datas.Length;
-                subtitleDataProgress = 0;
-
-                StartSubtitleUpdate(subtitle, SubtitleDisplayerUpdate(transform));
-
-                for (int i = 0; i < subtitleDataToComplete; i++)
-                    StartSubtitleUpdate(subtitle, SubtitleUpdate(subtitle, i));
-
-                StartSubtitleUpdate(subtitle, UpdateTimeElapsed(datas[datas.Length - 1], 0f));
-            }
-        }
-        protected virtual void StartSubtitleUpdate(Subtitle subtitle, int index) {
-            if (subtitle == null) return;
-            SubtitleData data = subtitle.GetData(index);
-
-            subtitleDataToComplete = 1;
-            subtitleDataProgress = 0;
-
-            UpdateTimeElapsed(data, data.startTime);
-            StartSubtitleUpdate(subtitle, SubtitleDisplayerUpdate(transform));
-            StartSubtitleUpdate(subtitle, SubtitleUpdate(subtitle, index));
-        }
-
-        protected virtual void StartSubtitleUpdate(Subtitle subtitle, int[] indexes) {
-            if (subtitle == null) return;
-        }
-
-        private void StartSubtitleUpdate(Subtitle subtitle, IEnumerator enumerator) {
-            if (actifSubtitles == null || subtitle == null || enumerator == null) return;
-            currentSubtitle = subtitle;
-
-            if (!actifSubtitles.ContainsKey(subtitle)) actifSubtitles.Add(subtitle, new List<IEnumerator>());
-            
-            if (!actifSubtitles[subtitle].Contains(enumerator)) {
-                actifSubtitles[subtitle].Add(enumerator);   
-                StartCoroutine(actifSubtitles[subtitle].Last());
-            }
-        }
-
-        protected void AddActifDisplayer(TextMeshProUGUI displayer) {
-            if (actifDisplayers == null || displayer == null || !actifDisplayers.ContainsKey(this)) 
-                return;
-
-            if (!actifDisplayers[this].Contains(displayer))
-                actifDisplayers[this].Add(displayer);
-
-            if (availableDisplayers != null) 
-                if (availableDisplayers.Contains(displayer)) 
-                    availableDisplayers.Remove(displayer);
-        }
-
-        protected void RemoveActifDisplayer(TextMeshProUGUI displayer) {
-            if (actifDisplayers == null || displayer == null || !actifDisplayers.ContainsKey(this))
-                return;
-
-            if (actifDisplayers[this].Contains(displayer))
-                actifDisplayers[this].Remove(displayer);
-
-            if (availableDisplayers != null) 
-                if (!availableDisplayers.Contains(displayer)) 
-                    availableDisplayers.Add(displayer);
-        }
-
-        private void AddFadeCoroutine(TextMeshProUGUI displayer, IEnumerator enumerator)
-        {
-            RemoveFadeCoroutine(displayer);
-            if (displayerFadeCoroutines == null || enumerator == null || displayerFadeCoroutines.ContainsKey(displayer)) return;
-
-            displayerFadeCoroutines?.Add(displayer, enumerator);
-            StartCoroutine(displayerFadeCoroutines[displayer]);
-
-        }
-
-        private void RemoveFadeCoroutine(TextMeshProUGUI displayer)
-        {
-            if (displayerFadeCoroutines == null || !displayerFadeCoroutines.ContainsKey(displayer)) return;
-            StopCoroutine(displayerFadeCoroutines[displayer]);
-            displayerFadeCoroutines?.Remove(displayer);
-        }
-
-        private void RemoveAllFadeCoroutine()
-        {
-            if (displayerFadeCoroutines != null)
-            {
-                var copy = displayerFadeCoroutines;
-
-                foreach (var keyValue in copy)
-                    RemoveFadeCoroutine(keyValue.Key);
-
-                displayerFadeCoroutines?.Clear();
-            }
-        }
-
-
-        private TextMeshProUGUI GetDisplayer() {
-            TextMeshProUGUI result;
-
-            if (availableDisplayers == null || availableDisplayers.Count <= 0){
-                result = Instantiate(textDisplayer); 
-            }
-            else { 
-                result = availableDisplayers[0];
-                availableDisplayers?.RemoveAt(0);
-            }
-
-            result.canvasRenderer.SetAlpha(0f);
-            result.text = string.Empty;
-
-            return result;
-        }
-
-        private IEnumerator UpdateTimeElapsed(SubtitleData lastData, float startTime) {
-            timeElapsed = startTime;
-
-            while (timeElapsed <= lastData.startTime + lastData.duration) {
-                timeElapsed += Time.deltaTime;
-                yield return null;
-            }
-        }
-
-        private  IEnumerator SubtitleUpdate(Subtitle subtitle, int index) {
-            TextMeshProUGUI textDisplayer = GetDisplayer();
-
-            AddActifDisplayer(textDisplayer);
-            StartSubtitleUpdate(subtitle, UpdateAlpha(textDisplayer.canvasRenderer, 1f, 0.25f));
-
-            while(timeElapsed < subtitle.GetData(index).startTime) yield return null;
-
-            if(subtitle != null) {
-                yield return StartCoroutine(subtitle.Update(index, textDisplayer));
-                AddFadeCoroutine(textDisplayer, FadeAlpha(textDisplayer, true));
-            }
-        }
-
-
-        protected IEnumerator SubtitleDisplayerUpdate(Transform transform) {
-            while (transform != null) {
-                PlayerController controller = PlayerController.Current;
-                SubtitleManager manager = GameManager.SubtitleManager;
-
-                if(manager == null) {
-                    yield return null;
-                    continue;
-                }
-
-                Vector3 currentPosition = transform.position;
-                Vector3 playerPosition  = controller == null ? Vector3.zero : controller.transform.position;
-
-                if (manager.CanSubtitleUseWorldSpace)  {
-                    if (!isExcludedFromWorldSpaceCheck && maxDistanceCheck < Vector3.Distance(currentPosition, playerPosition))  {
-                        yield return StartCoroutine(WorldSpaceSubtitleUpdate(controller, manager));
-                        continue;
-                    }
-
-                }
-
-                yield return StartCoroutine(ScreenSpaceSubtitleUpdate(manager));
-            }
-        }
-
-        protected IEnumerator FadeAlpha(TextMeshProUGUI displayer, bool countTowardsProgress) {
-            if(displayer != null) {
-                SubtitleManager manager = GameManager.SubtitleManager;
-                yield return StartCoroutine(UpdateAlpha(displayer.canvasRenderer, 0f, manager ? manager.SubtitleFadeSpeed : 0.05f));
-                
-                displayer.text = string.Empty;
-                RemoveActifDisplayer(displayer);
-
-                if (countTowardsProgress) {
-                    subtitleDataProgress++;
-                    if (subtitleDataProgress == subtitleDataToComplete) Stop();
-                }
-            }
-
-
-            RemoveFadeCoroutine(displayer);
-        }
-
-        private IEnumerator UpdateAlpha(CanvasRenderer renderer, float alpha, float duration) {
-            float t = 0f;
-            float current = renderer == null ? 0f : renderer.GetAlpha();
-
-            alpha = Mathf.Clamp01(alpha);   
-
-            while(renderer != null && t < duration) {
-                renderer.SetAlpha(Mathf.Lerp(current, alpha, t/duration));
                 t += Time.deltaTime;
                 yield return null;
             }
-
-            if (renderer != null) renderer.SetAlpha(alpha);
+            
         }
 
-
-
-
-        private IEnumerator ScreenSpaceSubtitleUpdate(SubtitleManager subtitleManager) {
-            foreach (TextMeshProUGUI displayer in actifDisplayers[this].Where(x => x != null).ToArray()) { 
-                subtitleManager?.AddScreenSubtitle(displayer);
-            }
-
-            yield return null;
-        }
-
-        private IEnumerator WorldSpaceSubtitleUpdate(PlayerController player, SubtitleManager subtitleManager)  {
-            TextMeshProUGUI[] displayers = actifDisplayers[this].Where(x => x != null).ToArray();
-            if (displayers == null || player == null || subtitleManager == null) yield return null;
-
-            yield return StartCoroutine(subtitleManager.UpdateScreenSubtitles(distanceBetweenSubtitles, defaultPosition, transform, displayers)); 
-        }
     } 
 }

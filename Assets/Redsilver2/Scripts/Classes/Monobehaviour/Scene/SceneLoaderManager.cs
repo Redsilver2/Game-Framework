@@ -134,7 +134,7 @@ namespace RedSilver2.Framework.Scenes
             Debug.Log("Single scene load started. " + sceneIndex);
 
             GameManager.DisableControls();
-            GameManager.SubtitleManager?.Stop();
+            GameManager.DialogManager?.Stop();
 
             StopAllSceneLoadingOperations();
             IsLoadingSingleScene = true;

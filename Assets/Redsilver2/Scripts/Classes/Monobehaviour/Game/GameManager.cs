@@ -6,7 +6,7 @@ using RedSilver2.Framework.Player;
 using RedSilver2.Framework.Scenes;
 using RedSilver2.Framework.Settings;
 using RedSilver2.Framework.StateMachines.Controllers;
-using RedSilver2.Framework.Subtitles;
+using RedSilver2.Framework.Dialogs;
 using UnityEngine;
 
 namespace RedSilver2.Framework
@@ -17,7 +17,7 @@ namespace RedSilver2.Framework
         [SerializeField] private NotificationManager notification;
         [SerializeField] private SceneLoaderManager  sceneLoaderManager;
         
-        [SerializeField] private SubtitleManager subtitleManager;
+        [SerializeField] private DialogManager subtitleManager;
         [SerializeField] private SettingManager  settingManager;
         [SerializeField] private LightManager    lightManager;
 
@@ -32,10 +32,9 @@ namespace RedSilver2.Framework
 
         public static NotificationManager CollectibleNotification  => instance ? instance.notification : null;
         public static SceneLoaderManager SceneLoaderManager        => instance ? instance.sceneLoaderManager : null;
-        public static SubtitleManager    SubtitleManager           => instance ? instance.subtitleManager    : null;
+        public static DialogManager    DialogManager           => instance ? instance.subtitleManager    : null;
         public static SettingManager     SettingManager            => instance ? instance.settingManager     : null;
         public static LightManager       LightManager              => instance ? instance.lightManager       : null;
-
 
         public const string INTERACTION_LAYER_NAME = "Interaction";
         public const string GROUND_LAYER_NAME = "Ground";

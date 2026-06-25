@@ -44,7 +44,6 @@ namespace RedSilver2.Framework.Scenes {
 #if UNITY_EDITOR
        public void Validate() {
             int sceneCount = SceneManager.sceneCountInBuildSettings;
-            Debug.Log(sceneCount);
 
             if (sceneCount > 0) {
                 string path = SceneUtility.GetScenePathByBuildIndex(sceneIndex);

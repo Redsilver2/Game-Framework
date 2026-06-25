@@ -1,0 +1,376 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4881ec947a7201b43a1b37e81f58ac96, type: 3}
+  m_Name: New Audible Subtitle Info
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Dialogs.AudibleSubtitleInfo
+  subtitle:
+    datas:
+    - startTime:
+        hours: 0
+        minutes: 0
+        seconds: 19
+      endTime:
+        hours: 0
+        minutes: 0
+        seconds: 21
+      textToDisplay: Hello? Hello hello?
+    - startTime:
+        hours: 0
+        minutes: 0
+        seconds: 21
+      endTime:
+        hours: 0
+        minutes: 0
+        seconds: 27
+      textToDisplay: Uh, I wanted to record a message for you, to help you get settled
+        in on your first night.
+    - startTime:
+        hours: 0
+        minutes: 0
+        seconds: 27
+      endTime:
+        hours: 0
+        minutes: 0
+        seconds: 34
+      textToDisplay: "Um, I actually worked in that office before you, I\u2019m finishing
+        up my last week now as a matter of fact. "
+    - startTime:
+        hours: 0
+        minutes: 0
+        seconds: 34
+      endTime:
+        hours: 0
+        minutes: 0
+        seconds: 42
+      textToDisplay: "So, I know it can be a bit overwhelming, but I\u2019m here
+        to tell you there\u2019s nothing to worry about, Uh, you\u2019ll do fine. "
+    - startTime:
+        hours: 0
+        minutes: 0
+        seconds: 42
+      endTime:
+        hours: 0
+        minutes: 0
+        seconds: 47
+      textToDisplay: "So, let\u2019s just focus on getting you through your first
+        week, okay?"
+    - startTime:
+        hours: 0
+        minutes: 0
+        seconds: 47
+      endTime:
+        hours: 0
+        minutes: 0
+        seconds: 53
+      textToDisplay: "Uh, let\u2019s see, first there\u2019s an introductory greeting
+        from the company, that I\u2019m supposed to read."
+    - startTime:
+        hours: 0
+        minutes: 0
+        seconds: 53
+      endTime:
+        hours: 0
+        minutes: 0
+        seconds: 56
+      textToDisplay: "Uh, it\u2019s kind of a legal thing, you know. "
+    - startTime:
+        hours: 0
+        minutes: 0
+        seconds: 57
+      endTime:
+        hours: 0
+        minutes: 1
+        seconds: 4
+      textToDisplay: "Um, \u201CWelcome to Freddy Fazbear\u2019s Pizza, a magical
+        place for kids and grown-ups alike, where fantasy and fun come to life. "
+    - startTime:
+        hours: 0
+        minutes: 1
+        seconds: 4
+      endTime:
+        hours: 0
+        minutes: 1
+        seconds: 9
+      textToDisplay: Fazbear Entertainment is not responsible for damage to property
+        or person.
+    - startTime:
+        hours: 0
+        minutes: 1
+        seconds: 9
+      endTime:
+        hours: 0
+        minutes: 1
+        seconds: 19
+      textToDisplay: "Upon discovering that damage or death has occurred, a missing
+        person report will be filed within 90 days, or as soon property and premises
+        have been thoroughly cleaned and bleached, and the carpets have been replaced.\u201D "
+    - startTime:
+        hours: 0
+        minutes: 1
+        seconds: 19
+      endTime:
+        hours: 0
+        minutes: 1
+        seconds: 21
+      textToDisplay: Blah blah blah.
+    - startTime:
+        hours: 0
+        minutes: 1
+        seconds: 21
+      endTime:
+        hours: 0
+        minutes: 1
+        seconds: 23
+      textToDisplay: Now that might sound bad, I know.
+    - startTime:
+        hours: 0
+        minutes: 1
+        seconds: 23
+      endTime:
+        hours: 0
+        minutes: 1
+        seconds: 26
+      textToDisplay: "But, there\u2019s really nothing to worry about."
+    - startTime:
+        hours: 0
+        minutes: 1
+        seconds: 26
+      endTime:
+        hours: 0
+        minutes: 1
+        seconds: 32
+      textToDisplay: Uh, the animatronic characters here, do get a bit quirky at
+        night, but do I blame them? No.
+    - startTime:
+        hours: 0
+        minutes: 1
+        seconds: 33
+      endTime:
+        hours: 0
+        minutes: 1
+        seconds: 38
+      textToDisplay: If I were forced to sing those same stupid songs for twenty
+        years and I never got a bath?
+    - startTime:
+        hours: 0
+        minutes: 1
+        seconds: 38
+      endTime:
+        hours: 0
+        minutes: 1
+        seconds: 41
+      textToDisplay: "I\u2019d probably be a bit irritable at night too."
+    - startTime:
+        hours: 0
+        minutes: 1
+        seconds: 41
+      endTime:
+        hours: 0
+        minutes: 1
+        seconds: 47
+      textToDisplay: So, remember, these characters hold a special place in the hearts
+        of children and we need to show them a little respect, right?
+    - startTime:
+        hours: 0
+        minutes: 1
+        seconds: 48
+      endTime:
+        hours: 0
+        minutes: 1
+        seconds: 49
+      textToDisplay: Okay.
+    - startTime:
+        hours: 0
+        minutes: 1
+        seconds: 49
+      endTime:
+        hours: 0
+        minutes: 1
+        seconds: 53
+      textToDisplay: So, just be aware, the characters do tend to wander a bit.
+    - startTime:
+        hours: 0
+        minutes: 1
+        seconds: 54
+      endTime:
+        hours: 0
+        minutes: 2
+        seconds: 7
+      textToDisplay: "Uh, they\u2019re left in some kind of free roaming mode at
+        night, uh, something about their servos locking up if they get turned off
+        for too long?"
+    - startTime:
+        hours: 0
+        minutes: 2
+        seconds: 3
+      endTime:
+        hours: 0
+        minutes: 2
+        seconds: 8
+      textToDisplay: "Uh, they used to be allowed to walk around during the day too,
+        but then there was The Bite of \u201987."
+    - startTime:
+        hours: 0
+        minutes: 2
+        seconds: 8
+      endTime:
+        hours: 0
+        minutes: 2
+        seconds: 14
+      textToDisplay: "Yeah. I-It\u2019s amazing that the human body can live without
+        the frontal lobe, you know?"
+    - startTime:
+        hours: 0
+        minutes: 2
+        seconds: 14
+      endTime:
+        hours: 0
+        minutes: 2
+        seconds: 16
+      textToDisplay: Uh, now concerning your safety.
+    - startTime:
+        hours: 0
+        minutes: 2
+        seconds: 16
+      endTime:
+        hours: 0
+        minutes: 2
+        seconds: 28
+      textToDisplay: "The only real risk to you as a night watchman here, if any,
+        is the fact that these characters, uh, if they happen to see you after hours
+        probably won\u2019t recognize you as a person."
+    - startTime:
+        hours: 0
+        minutes: 2
+        seconds: 28
+      endTime:
+        hours: 0
+        minutes: 2
+        seconds: 33
+      textToDisplay: "They\u2019ll pr-They\u2019ll most likely see you as a metal
+        endoskeleton without its costume on."
+    - startTime:
+        hours: 0
+        minutes: 2
+        seconds: 34
+      endTime:
+        hours: 0
+        minutes: 2
+        seconds: 43
+      textToDisplay: "Now, since that\u2019s against the rules here at Freddy Fazbear\u2019s
+        Pizza, they\u2019ll probably try to\u2026forcefully stuff you inside a Freddy
+        Fazbear suit."
+    - startTime:
+        hours: 0
+        minutes: 2
+        seconds: 43
+      endTime:
+        hours: 0
+        minutes: 2
+        seconds: 52
+      textToDisplay: "Um, now, that wouldn\u2019t be so bad, if the suits themselves
+        weren\u2019t filled with crossbeams, wires, and animatronic devices."
+    - startTime:
+        hours: 0
+        minutes: 2
+        seconds: 52
+      endTime:
+        hours: 0
+        minutes: 2
+        seconds: 54
+      textToDisplay: Especially around the facial area.
+    - startTime:
+        hours: 0
+        minutes: 0
+        seconds: 0
+      endTime:
+        hours: 0
+        minutes: 0
+        seconds: 0
+      textToDisplay: So you could imagine how having your head forcefully pressed
+        inside one of those could cause a bit of discomfort, and death.
+    - startTime:
+        hours: 0
+        minutes: 2
+        seconds: 55
+      endTime:
+        hours: 0
+        minutes: 3
+        seconds: 7
+      textToDisplay: Uh, the only parts of you that would likely see the light of
+        day again would be your eyeballs and teeth when they pop out the front of
+        the mask.
+    - startTime:
+        hours: 0
+        minutes: 3
+        seconds: 7
+      endTime:
+        hours: 0
+        minutes: 3
+        seconds: 8
+      textToDisplay: 'Heh. '
+    - startTime:
+        hours: 0
+        minutes: 3
+        seconds: 9
+      endTime:
+        hours: 0
+        minutes: 3
+        seconds: 12
+      textToDisplay: "Yeah, they don\u2019t tell you these things when you sign up."
+    - startTime:
+        hours: 0
+        minutes: 3
+        seconds: 12
+      endTime:
+        hours: 0
+        minutes: 3
+        seconds: 14
+      textToDisplay: But hey, first day should be a breeze.
+    - startTime:
+        hours: 0
+        minutes: 3
+        seconds: 14
+      endTime:
+        hours: 0
+        minutes: 3
+        seconds: 15
+      textToDisplay: "I\u2019ll chat with you tomorrow."
+    - startTime:
+        hours: 0
+        minutes: 3
+        seconds: 15
+      endTime:
+        hours: 0
+        minutes: 3
+        seconds: 20
+      textToDisplay: Uh, check those cameras, and remember to close the doors only
+        if absolutely necessary.
+    - startTime:
+        hours: 0
+        minutes: 3
+        seconds: 21
+      endTime:
+        hours: 0
+        minutes: 3
+        seconds: 22
+      textToDisplay: Gotta conserve power.
+    - startTime:
+        hours: 0
+        minutes: 3
+        seconds: 22
+      endTime:
+        hours: 0
+        minutes: 3
+        seconds: 23
+      textToDisplay: Alright, good night.
+    clip: {fileID: 8300000, guid: 1123c0f9e245e7843854f01e9cd95154, type: 3}

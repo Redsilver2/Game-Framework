@@ -1,8 +1,8 @@
-using RedSilver2.Framework.Subtitles.Datas;
+using RedSilver2.Framework.Dialogs.Datas;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace RedSilver2.Framework.Subtitles {
+namespace RedSilver2.Framework.Dialogs {
     [System.Serializable]
     public class CharacterSubtitle : Subtitle {
 
@@ -19,11 +19,6 @@ namespace RedSilver2.Framework.Subtitles {
             if (subtitle is not CharacterSubtitle) return base.IsSimilar(subtitle);
             return (subtitle as CharacterSubtitle).CharacterName
                    .Contains(characterName, System.StringComparison.OrdinalIgnoreCase);
-        }
-
-        protected sealed override string GetCharacterName()
-        {
-            return $"{characterName}: ";
         }
     }
 }

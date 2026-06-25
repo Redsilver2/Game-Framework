@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2057038078024576850}
-  - component: {fileID: 583965651609025364}
   - component: {fileID: 8455128434494285444}
+  - component: {fileID: 6099023542735039035}
   m_Layer: 0
   m_Name: --
   m_TagString: Untagged
@@ -38,30 +38,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 3840, y: 2160}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!223 &583965651609025364
-Canvas:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4278747684397688586}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_RenderMode: 2
-  m_Camera: {fileID: 0}
-  m_PlaneDistance: 100
-  m_PixelPerfect: 0
-  m_ReceivesEvents: 1
-  m_OverrideSorting: 0
-  m_OverridePixelPerfect: 0
-  m_SortingBucketNormalizedSize: 0
-  m_VertexColorAlwaysGammaSpace: 0
-  m_UseReflectionProbes: 0
-  m_AdditionalShaderChannelsFlag: 25
-  m_UpdateRectTransformForStandalone: 0
-  m_SortingLayerID: 0
-  m_SortingOrder: 0
-  m_TargetDisplay: 0
 --- !u!114 &8455128434494285444
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -74,11 +50,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d1155033d6d2484a8218f36e235db07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Subtitles.SubtitleHandler
-  defaultPosition: {x: -4.72, y: 0, z: 0}
-  maxDistanceCheck: 50
-  distanceBetweenSubtitles: 5
-  isExcludedFromWorldSpaceCheck: 0
   textDisplayer: {fileID: 1665729183710487014}
+  defaultWorldSpacePosition: {x: 0, y: 0, z: 0}
+  maxDistanceCheck: 50
+  isExcludeWorldSpaceUIUpdate: 0
+  spacingTop: 0
+  spacingBottom: 0
+--- !u!225 &6099023542735039035
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4278747684397688586}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &5286269787844619769
 GameObject:
   m_ObjectHideFlags: 0

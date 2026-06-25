@@ -19,15 +19,12 @@ namespace RedSilver2.Framework.Scenes.UI
         [SerializeField] private bool useCharProgressionPlaceholder;
         private const string PROGRESSION_PLACEHOLDER = "{progression}";
 
-        private void OnSingleSceneLoadStarted(int sceneIndex)
-        {
-            Debug.Log("BBB");
+        private void OnSingleSceneLoadStarted(int sceneIndex) {
             SetText(GetProgression(0f));
         }
 
         private void OnSingleSceneLoadProgressChanged(int sceneIndex, float progress)
         {
-            Debug.Log("AAA");
             SetText(GetProgression(progress));
         }
 
