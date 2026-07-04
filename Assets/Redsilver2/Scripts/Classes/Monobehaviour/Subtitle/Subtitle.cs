@@ -1,5 +1,4 @@
 using RedSilver2.Framework.Dialogs.Datas;
-using RedSilver2.Framework.StateMachines.Controllers;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -12,8 +11,10 @@ namespace RedSilver2.Framework.Dialogs
     public class Subtitle {
         [SerializeField] private List<SubtitleData> datas;
        
-        private Transform parent; 
+        private RectTransform parent; 
         private readonly UnityEvent onPlay, onStop;
+
+        public RectTransform Parent => parent;
         private const string PATH = "Subtitle/";
 
         public Subtitle() {
@@ -22,7 +23,7 @@ namespace RedSilver2.Framework.Dialogs
             datas  = new List<SubtitleData>();
         }
 
-        public Subtitle(Transform parent)
+        public Subtitle(RectTransform parent)
         {
             onPlay = new UnityEvent();
             onStop = new UnityEvent();
@@ -38,7 +39,7 @@ namespace RedSilver2.Framework.Dialogs
             SortDatasByTime();
         }
 
-        public Subtitle(List<SubtitleData> datas, Transform parent)
+        public Subtitle(List<SubtitleData> datas, RectTransform parent)
         {
             onPlay = new UnityEvent();
             onStop = new UnityEvent();
@@ -56,7 +57,7 @@ namespace RedSilver2.Framework.Dialogs
             SortDatasByTime();
         }
 
-        public Subtitle(SubtitleData[] datas, Transform parent)
+        public Subtitle(SubtitleData[] datas, RectTransform parent)
         {
             onPlay = new UnityEvent();
             onStop = new UnityEvent();
@@ -99,6 +100,10 @@ namespace RedSilver2.Framework.Dialogs
             RemoveData(GetData(index));         
         }
 
+        public void SetParent(RectTransform parent) { 
+            this.parent = parent; 
+        }
+
         public SubtitleData GetData(int index)
         {
             SubtitleData[] results = GetDatas();
@@ -126,25 +131,14 @@ namespace RedSilver2.Framework.Dialogs
             return datas.ToArray();
         }
 
+        public bool ContainsData(SubtitleData data) {
+            if (datas == null) return false;
+            return datas.Contains(data);
+        }
+
         public virtual bool IsSimilar(Subtitle subtitle) {
             if(subtitle == null) return false;
             return subtitle.Equals(this);
-        }
-
-        public bool IsWorldSpace()
-        {
-            PlayerController controller = PlayerController.Current;
-            DialogManager manager = GameManager.DialogManager;
-
-            if(parent == null || manager == null || controller == null || !manager.CanSubtitleUseWorldSpace) 
-                return false;
-
-            if(Vector3.Distance(parent.position, controller.transform.position) <=  manager.SubtitleWorldSpaceDistance)
-            {
-
-            }
-
-            return false;
         }
 
 #if UNITY_EDITOR

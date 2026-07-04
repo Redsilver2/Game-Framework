@@ -14,12 +14,10 @@ namespace RedSilver2.Framework
     [RequireComponent(typeof(SteamManager))]
     public class GameManager : MonoBehaviour
     {
-        [SerializeField] private NotificationManager notification;
-        [SerializeField] private SceneLoaderManager  sceneLoaderManager;
-        
-        [SerializeField] private DialogManager subtitleManager;
-        [SerializeField] private SettingManager  settingManager;
-        [SerializeField] private LightManager    lightManager;
+        [SerializeField] private SceneLoaderManager sceneLoaderManager;    
+        [SerializeField] private DialogManager      subtitleManager;
+        [SerializeField] private SettingManager     settingManager;
+        [SerializeField] private LightManager       lightManager;
 
         protected static GameManager instance;
 
@@ -29,17 +27,15 @@ namespace RedSilver2.Framework
         public static int AILayer          => LayerMask.NameToLayer(AI_LAYER_NAME);
 
 
-
-        public static NotificationManager CollectibleNotification  => instance ? instance.notification : null;
-        public static SceneLoaderManager SceneLoaderManager        => instance ? instance.sceneLoaderManager : null;
-        public static DialogManager    DialogManager           => instance ? instance.subtitleManager    : null;
-        public static SettingManager     SettingManager            => instance ? instance.settingManager     : null;
-        public static LightManager       LightManager              => instance ? instance.lightManager       : null;
+        public static SceneLoaderManager SceneLoaderManager => instance ? instance.sceneLoaderManager : null;
+        public static DialogManager      DialogManager      => instance ? instance.subtitleManager    : null;
+        public static SettingManager     SettingManager     => instance ? instance.settingManager     : null;
+        public static LightManager       LightManager       => instance ? instance.lightManager       : null;
 
         public const string INTERACTION_LAYER_NAME = "Interaction";
-        public const string GROUND_LAYER_NAME = "Ground";
-        public const string PLAYER_LAYER_NAME = "Player";
-        public const string AI_LAYER_NAME = "AI";
+        public const string GROUND_LAYER_NAME      = "Ground";
+        public const string PLAYER_LAYER_NAME      = "Player";
+        public const string AI_LAYER_NAME          = "AI";
 
 
         protected virtual void Awake()

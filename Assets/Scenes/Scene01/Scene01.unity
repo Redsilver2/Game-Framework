@@ -502,8 +502,8 @@ Camera:
   m_GameObject: {fileID: 631413542}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -1037,6 +1037,7 @@ GameObject:
   - component: {fileID: 765158610}
   - component: {fileID: 765158609}
   - component: {fileID: 765158608}
+  - component: {fileID: 765158612}
   m_Layer: 0
   m_Name: Head
   m_TagString: Untagged
@@ -1073,7 +1074,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TestScript
   info: {fileID: 11400000, guid: a143cd622b259a244a222f7161aae6ff, type: 2}
-  subtitleInfo: {fileID: 11400000, guid: a06f6912a4e01674bb9b1a3614f11030, type: 2}
+  parent: {fileID: 1348669850}
 --- !u!82 &765158607
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1238,6 +1239,19 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &765158612
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 765158604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f90685cd6cf10649860081d418f7c7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Dialogs.SubtitleAudioSetup
+  audioInfo: {fileID: 11400000, guid: 9367748c14e547a4eb86ad8ac9a3cd2d, type: 2}
 --- !u!1 &784613500
 GameObject:
   m_ObjectHideFlags: 0
@@ -1252,10 +1266,12 @@ GameObject:
   - component: {fileID: 784613506}
   - component: {fileID: 784613505}
   - component: {fileID: 784613507}
-  - component: {fileID: 784613508}
   - component: {fileID: 784613510}
   - component: {fileID: 784613511}
   - component: {fileID: 784613512}
+  - component: {fileID: 784613513}
+  - component: {fileID: 784613514}
+  - component: {fileID: 784613515}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -1275,7 +1291,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cd016e737f4e764b8f70e0252569752, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.GameManager
-  notification: {fileID: 0}
   sceneLoaderManager: {fileID: 784613506}
   subtitleManager: {fileID: 784613505}
   settingManager: {fileID: 0}
@@ -1301,7 +1316,7 @@ Transform:
   m_GameObject: {fileID: 784613500}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1032.7261, y: 1165.7261, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1324,10 +1339,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Subtitles.SubtitleManager
   template: {fileID: 1657152450}
   choiceManager: {fileID: 784613507}
+  subtitleDisplayMode: 2
   subtitleFadeDuration: 0.25
   subtitleWorldSpaceDistance: 10
   subtitleCatchupSpeed: 0.9
-  subtitleFadeSpeed: 0.01
+  subtitleFadeWaitTime: 0.15
   canSubtitleUseWorldSpace: 1
   canShowSubtitleByTime: 1
   canDisplayCharacterName: 0
@@ -1373,23 +1389,6 @@ MonoBehaviour:
   parent: {fileID: 994856212}
   canMakeRandomChoices: 0
   useMouseForChoices: 1
---- !u!114 &784613508
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 784613500}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 39bf66d50de971e4ba71b87e63d9b87f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Dialogs.ScreenSpaceSubtitleUIHandler
-  defaultScreenSubtitlePosition: {x: 0, y: -300, z: 0}
-  screenSubtitleParent: {fileID: 1366130581}
-  subtitleLineSpacing: 10
-  spacingMultiplier: 10
-  subtitleLerpSpeed: 10
 --- !u!114 &784613510
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1437,6 +1436,55 @@ MonoBehaviour:
   deselectedVerticalSpacing: 50
   selectedVerticalSpacing: 50
   horizontalSpacingIncrement: -75
+--- !u!114 &784613513
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 784613500}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0594db448583ff949b2b188f445eecd8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Dialogs.ScreenSpaceSubtitlePositionHandler
+  defaultPosition: {x: 0, y: 0, z: 0}
+  subtitleLineSpacing: 10
+  spacingMultiplier: 15
+  subtitleLerpSpeed: 10
+  parent: {fileID: 1366130581}
+--- !u!114 &784613514
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 784613500}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19badce8c91590a4d85e0d756545ba9a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Dialogs.WorldSpaceSubtitlePositionHandler
+  defaultPosition: {x: 0, y: 0, z: 0}
+  subtitleLineSpacing: 0.01
+  spacingMultiplier: 1
+  subtitleLerpSpeed: 10
+  subtitleLookSpeed: 10
+--- !u!114 &784613515
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 784613500}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fda0fadbb1041914b9d010c7c1f1c653, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Dialogs.SubtitleSizeHandler
+  screenSpaceSubtitleSize: {x: 0.3, y: 0.3, z: 1}
+  worldSpaceSubtitleSize: {x: 0.01, y: 0.01, z: 1}
+  sizeUpdateSpeed: 10
 --- !u!1 &889691530
 GameObject:
   m_ObjectHideFlags: 0
@@ -1665,14 +1713,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1038988025
-Transform:
+--- !u!224 &1038988025
+RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1038988024}
-  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -1685,6 +1732,11 @@ Transform:
   - {fileID: 604118979}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1125867316
 GameObject:
   m_ObjectHideFlags: 0
@@ -1861,6 +1913,81 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1038988025}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1348669847
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1348669850}
+  - component: {fileID: 1348669849}
+  - component: {fileID: 1348669848}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1348669848
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1348669847}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b0d4e2cb311c26479b753c59dd91510, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Dialogs.SubtitleParentSetup
+  info: {fileID: 11400000, guid: 592a436d17875e7459e008b6d263e0e6, type: 2}
+  parent: {fileID: 1348669850}
+--- !u!223 &1348669849
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1348669847}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 631413545}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
+  m_UseReflectionProbes: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_UpdateRectTransformForStandalone: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
+--- !u!224 &1348669850
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1348669847}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 9.05}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 1.07, y: 2.55}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1366130580
 GameObject:
   m_ObjectHideFlags: 0
@@ -1886,7 +2013,7 @@ RectTransform:
   m_GameObject: {fileID: 1366130580}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 3, y: 3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1657152449}
@@ -2069,7 +2196,7 @@ RectTransform:
   m_GameObject: {fileID: 1657152448}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 3, y: 3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1366130581}
@@ -3033,6 +3160,7 @@ SceneRoots:
   - {fileID: 666335367}
   - {fileID: 1424593662}
   - {fileID: 1125867321}
+  - {fileID: 1348669850}
   - {fileID: 1038988025}
   - {fileID: 784613504}
   - {fileID: 889691531}

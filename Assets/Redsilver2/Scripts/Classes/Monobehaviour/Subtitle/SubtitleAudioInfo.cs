@@ -3,8 +3,8 @@ using UnityEngine.Audio;
 
 namespace RedSilver2.Framework.Dialogs
 {
-    [CreateAssetMenu(fileName = "New Subtitle Audio Info", menuName = "Dialog/Subtitle/Audio/Info")]
-    public class SubtitleAudioInfo {
+    [CreateAssetMenu(fileName = "New Subtitle Audio Info", menuName = "Dialog/Subtitle/Audio Info")]
+    public sealed class SubtitleAudioInfo : ScriptableObject {
         [SerializeField] private AudibleSubtitleInfo[] audibleSubtitleInfos;
         [SerializeField] private AudibleCharacterSubtitleInfo[] audibleCharacterSubtitlesInfos;
 

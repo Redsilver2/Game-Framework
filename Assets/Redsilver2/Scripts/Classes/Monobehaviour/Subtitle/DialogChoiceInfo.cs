@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace RedSilver2.Framework.Dialogs
 {
@@ -10,6 +11,13 @@ namespace RedSilver2.Framework.Dialogs
         [Space]
         [SerializeField] private DialogInfo nextDialogInfo;
         private DialogChoice choice = null;
+
+        public void AddOnChoosedListener(UnityAction action) {
+            GetChoice()?.AddOnChoosedListener(action);
+        }
+        public void RemoveOnChoosedListener(UnityAction action) {
+            GetChoice()?.RemoveOnChoosedListener(action);
+        }
 
         public DialogChoice GetChoice() {
             if (choice != null) return choice; 

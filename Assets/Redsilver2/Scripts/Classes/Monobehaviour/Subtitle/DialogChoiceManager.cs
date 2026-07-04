@@ -139,13 +139,12 @@ namespace RedSilver2.Framework.Dialogs
             foreach(DialogChoiceHandler handler in actifChoiceHandlers.ToArray()) {
                 if (handler == null) continue;
                 handler.gameObject.SetActive(false);
+                actifChoiceHandlers?.Remove(handler);
                 availableChoiceHandlers?.Enqueue(handler);
             }
 
             isChoiceMade    = false;
             isMakingChoices = false;
-
-            actifChoiceHandlers?.Clear();
         }
 
         public void Stop() {

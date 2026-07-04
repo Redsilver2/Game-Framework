@@ -2,13 +2,8 @@ using UnityEngine;
 
 namespace RedSilver2.Framework.Interactions.Collectibles
 { 
-    public class Note : Collectible
+    public class Note : MonoBehaviour
     {
         [SerializeField] private NoteData noteData;
-
-        public override CollectibleData GetData()
-        {
-            return null;
-        }
     }
 }

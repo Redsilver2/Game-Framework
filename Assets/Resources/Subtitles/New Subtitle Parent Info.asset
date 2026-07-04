@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72b9f5722f7095e45ae93f9c77e11f9f, type: 3}
+  m_Name: New Subtitle Parent Info
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Dialogs.SubtitleParentInfo
+  infos:
+  - {fileID: 11400000, guid: a06f6912a4e01674bb9b1a3614f11030, type: 2}
+  - {fileID: 11400000, guid: 066a1a8d46ea0c94bb2f8990ae5d17c2, type: 2}
