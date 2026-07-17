@@ -27,11 +27,8 @@ namespace RedSilver2.Framework.UI
 
         protected override IEnumerator UpdateCoroutine()
         {
-            while(button != null)
-            {
-                if(GameUIController.GetConfirmState())
-                    button?.onClick.Invoke();
-
+            while(button != null) {
+                if(GameUIController.GetConfirmState()) button?.onClick.Invoke();
                 yield return null;
             }
         }

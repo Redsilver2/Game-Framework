@@ -1,18 +1,24 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
 namespace RedSilver2.Framework.UI
 {
-    public abstract class UISelection : MonoBehaviour
+    public abstract class UISelection : MonoBehaviour, IPointerEnterHandler
     {
+        private bool isSelected;
+ 
         private UnityEvent onSelect;
         private UnityEvent onDeselect;
 
         private UnityEvent onDisable;
         private UnityEvent onEnable;
 
+        private UISelector owner;
         private IEnumerator updateCoroutine;
+
+        public bool IsSelected => isSelected;
 
         protected virtual void Awake()
         {
@@ -24,9 +30,23 @@ namespace RedSilver2.Framework.UI
 
             updateCoroutine = UpdateCoroutine();
 
-            AddOnSelectListener  (() => { if (updateCoroutine != null) StartCoroutine(updateCoroutine); });
-            AddOnDeselectListener(() => { if (updateCoroutine != null) StopCoroutine(updateCoroutine); });
-            AddOnDisableListener (() => { if (updateCoroutine != null) StopCoroutine(updateCoroutine); });
+            AddOnSelectListener  (() => {
+                isSelected = true;
+                if (updateCoroutine != null) StartCoroutine(updateCoroutine); 
+            });
+            AddOnDeselectListener(() => {
+                isSelected = false;
+                if (updateCoroutine != null) StopCoroutine(updateCoroutine); 
+            });
+
+            AddOnDisableListener (() => { 
+                isSelected = false;
+                if (updateCoroutine != null) StopCoroutine(updateCoroutine);
+            });
+        }
+
+        public void SetOwner(UISelector owner) {
+            this.owner = owner;
         }
 
         private void OnDisable()
@@ -41,12 +61,12 @@ namespace RedSilver2.Framework.UI
 
         public void Select()
         {
-            onSelect?.Invoke();
+            if(!isSelected) onSelect?.Invoke();
         }
 
         public void Deselect()
         {
-            onDeselect?.Invoke();
+            if (isSelected) onDeselect?.Invoke();
         }
 
         public void AddOnSelectListener(UnityAction action)
@@ -84,7 +104,7 @@ namespace RedSilver2.Framework.UI
         {
             if (action != null) onDisable?.RemoveListener(action);
         }
-
+        public void OnPointerEnter(PointerEventData eventData) { owner?.Select(this); }
         protected abstract IEnumerator UpdateCoroutine();
     }
 }

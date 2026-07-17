@@ -27,7 +27,6 @@ namespace RedSilver2.Framework.Dialogs
         }
 
         private void UpdateWorldSpaceSubtitle(SubtitleHandler[] handlers){
-            Debug.Log(handlers);
             UpdateSubtitleHandlers(handlers, worldSpaceSubtitleSize);
         }
 

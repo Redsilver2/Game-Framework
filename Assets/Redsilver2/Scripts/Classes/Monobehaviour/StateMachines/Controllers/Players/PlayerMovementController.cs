@@ -10,19 +10,19 @@ namespace RedSilver2.Framework.StateMachines
     public abstract class PlayerMovementController : PlayerController
     {
         [SerializeField] private MovementInputSettings inputSettings;
+        [SerializeField] private CameraController defaultCameraController;
 
         [Space]
         [SerializeField] private int defaultSettingIndex;
         [SerializeField] private MovementStateSettings[] defaultSettings;
 
         private MovementStateMachineController movementController;
-        private CameraController cameraController;
 
         public MovementInputSettings InputSettings => inputSettings;
+        public CameraController DefaultCameraController => defaultCameraController;
 
         public MovementStateMachine StateMachine {
-            get
-            {
+            get {
                 if(movementController == null) return null;
                 return movementController.StateMachine as MovementStateMachine;
             }
@@ -32,7 +32,6 @@ namespace RedSilver2.Framework.StateMachines
         {
             base.Awake();
             movementController = GetComponent<MovementStateMachineController>();
-            cameraController = GetComponentInChildren<CameraController>();
 
             inputSettings?.Enable();
             CameraController.SetCursorVisibility(false);    
@@ -40,33 +39,33 @@ namespace RedSilver2.Framework.StateMachines
             SetStateMachineController(movementController, inputSettings);
             SetDefaultConfigurations();
 
-            AddOnDisabledListener(() =>
-            {
+            AddOnDisabledListener(() => {
                 if (movementController != null) movementController.enabled = false;
-                if(cameraController != null) cameraController.enabled = false;
+                if (defaultCameraController != null) defaultCameraController.enabled = false;
             });
 
-            AddOnEnabledListener(() =>
-            {
+            AddOnEnabledListener(() => {
                 if(movementController != null) movementController.enabled = true;
-                if (cameraController != null) cameraController.enabled = true;
+                if (defaultCameraController != null) defaultCameraController.enabled = true;
             });
+        }
+
+        protected virtual void Start()
+        {
+            if (defaultCameraController != null)
+                defaultCameraController.enabled = true;
         }
 
         private void SetControllerState(bool isEnabled) {
-            if(movementController != null)
-                movementController.enabled = isEnabled;
+            if(movementController != null) movementController.enabled = isEnabled;
         }
 
         private void SetDefaultConfigurations() {
-            foreach(var settings in defaultSettings) {
-                if (settings == null) continue;
-                settings.Register(StateMachine);
-            }
+            foreach(var settings in defaultSettings)
+                settings?.Register(StateMachine);
 
-            if(defaultSettingIndex >= 0 && defaultSettingIndex < defaultSettings.Length - 1) {
+            if(defaultSettingIndex >= 0 && defaultSettingIndex < defaultSettings.Length - 1)
                 StateMachine?.ChangeState(defaultSettings[defaultSettingIndex].GetBaseConfiguration(StateMachine));
-            }
         }
 
         protected abstract void SetStateMachineController(MovementStateMachineController controller, MovementInputSettings inputSettings);

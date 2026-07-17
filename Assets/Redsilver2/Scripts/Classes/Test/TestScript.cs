@@ -1,13 +1,16 @@
 using RedSilver2.Framework.Inputs;
 using RedSilver2.Framework.Dialogs;
 using UnityEngine;
+using RedSilver2.Framework.Quests.Datas;
+using RedSilver2.Framework.Quests;
 
 public class TestScript : MonoBehaviour
 {
     [SerializeField] private DialogInfo info;
     [SerializeField] private Transform parent;
 
-    private bool flip = false;
+    [Space]
+    [SerializeField] private QuestData data;
     private int count = 0;
 
     private readonly string[] tests = new string[] {
@@ -18,6 +21,25 @@ public class TestScript : MonoBehaviour
         "This is a lot of dedication and work, you know"
     };
 
+    private void Start()
+    {
+
+        data?.Instantiate();
+
+        Quest quest = data.Quest;
+
+
+        quest?.AddOnStateChangedlistener(state => {
+            if (state == QuestState.Completed)
+            {
+
+                DialogManager.PlayScreenSpace("I've reached the targeted destination and I am going to go take a nap that will last decades because why not...", 1.5f, 3f);
+            }
+        });
+
+        quest?.Start();
+    }
+
     private void Update()
     {
         if (InputManager.GetKeyDown(KeyboardKey.A)) {
@@ -27,6 +49,8 @@ public class TestScript : MonoBehaviour
         }
         else if (InputManager.GetKeyDown(KeyboardKey.Q)) {
             DialogManager.GetInstance()?.Play(info);
+        }
+        else if (InputManager.GetKeyDown(MouseButton.LeftButton)) {
         }
     }
 }

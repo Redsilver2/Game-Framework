@@ -6,6 +6,9 @@ namespace RedSilver2.Framework.UI
 {
     public sealed class GameUIController : MonoBehaviour
     {
+        [SerializeField] private UISelector selector;
+        private UISelector mainUISelector;
+
         private const KeyboardKey   KEYBOARD_NAVIGATE_UP_KEY      = KeyboardKey.W;
         private const GamepadButton GAMEPAD_NAVIGATE_UP_BUTTON    = GamepadButton.DpadUp;
 
@@ -21,6 +24,22 @@ namespace RedSilver2.Framework.UI
 
         private const KeyboardKey   KEYBOARD_CONFIRM_KEY          = KeyboardKey.Enter;
         private const GamepadButton GAMEPAD_CONFIRM_BUTTON        = GamepadButton.ButtonSouth;
+
+        private void Start()
+        {
+            UpdateUI(selector);
+        }
+
+
+        public void UpdateUI() {
+
+        }
+
+        public void UpdateUI(UISelector selector) {
+            mainUISelector?.StopUpdate();
+            mainUISelector = selector;
+            mainUISelector?.StartUpdate();
+        }
 
 
         public static bool GetNavigateUpState(bool getKeyDown)

@@ -13,11 +13,10 @@ namespace RedSilver2.Framework.Settings
                30, 60, 100, 120, 144, 165, 180, 240, 360, uint.MaxValue
             }).Distinct().OrderBy(x => x).ToArray();
 
+            public int CurrentFramerate => Application.targetFrameRate;
             public static readonly FramerateSetting Instance = new FramerateSetting();
 
-            private FramerateSetting() {
-                SetFrameRateLimit(this.index);
-            }
+            private FramerateSetting() { SetFrameRateLimit(this.index); }
 
             public override void SetUI(UnityEngine.UI.Slider slider, UnityEngine.UI.Text displayer, int[] excludedIndexes)
             {

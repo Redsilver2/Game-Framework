@@ -7,19 +7,18 @@ namespace RedSilver2.Framework.StateMachines.Handlers
     public class MovementStateMachineEventHandler : UpdateableStateEventHandler
     {
         public void AddOnMoveListener(UnityAction<Vector2> action) {
-            (stateMachine as MovementStateMachine)?.AddOnMovedListener(action);
+            GetMovementStateMachine()?.AddOnMovedListener(action);
         }
 
         public void RemoveOnMoveListener(UnityAction<Vector2> action) {
-            (stateMachine as MovementStateMachine)?.RemoveOnMoveListener(action);
+            GetMovementStateMachine()?.RemoveOnMoveListener(action);
         }
 
-        public void AddOnGroundTagChangedListener(UnityAction<string> action)
-        {
-            (stateMachine as MovementStateMachine)?.AddOnGroundTagChangedListener(action);
+        public void AddOnGroundTagChangedListener(UnityAction<string> action) {
+            GetMovementStateMachine()?.AddOnGroundTagChangedListener(action);
         }
         public void RemoveOnGroundTagChangedListener(UnityAction<string> action) {
-            (stateMachine as MovementStateMachine)?.RemoveOnGroundTagChangedListener(action);
+            GetMovementStateMachine()?.RemoveOnGroundTagChangedListener(action);
         }
 
         protected override void SetStateMachine(StateMachine stateMachine) {
@@ -28,15 +27,20 @@ namespace RedSilver2.Framework.StateMachines.Handlers
         }
 
         public bool IsMoving() {
-            return MovementMoveCondition.IsMoving(stateMachine as MovementStateMachine);
+            return MovementMoveCondition.IsMoving(GetMovementStateMachine());
         }
 
         public bool IsRunning() {
-            return MovementRunCondition.IsRunning(stateMachine as MovementStateMachine);
+            return MovementRunCondition.IsRunning(GetMovementStateMachine());
         }
 
         public bool IsGrounded() {
-            return MovementGroundCondition.IsGrounded(stateMachine as MovementStateMachine);
+            return MovementGroundCondition.IsGrounded(GetMovementStateMachine());
+        }
+
+        private MovementStateMachine GetMovementStateMachine()
+        {
+            return stateMachine as MovementStateMachine;
         }
     }
 }

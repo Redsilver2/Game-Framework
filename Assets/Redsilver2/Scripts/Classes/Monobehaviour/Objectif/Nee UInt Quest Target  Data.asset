@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e2a4673f13da6c42883fca450402edd, type: 3}
+  m_Name: Nee UInt Quest Target  Data
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Quests.Datas.UIntQuestTargetData
+  target:
+    targetName: REACH_TARGET_DRIVE
+    isIncrementing: 1
+    value: 1

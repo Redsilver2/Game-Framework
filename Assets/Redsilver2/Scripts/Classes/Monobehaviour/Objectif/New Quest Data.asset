@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38d45ad4818bb7246a57940f5c4d15d0, type: 3}
+  m_Name: New Quest Data
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Quests.Datas.QuestData
+  questName: What's up suckers!
+  questDescription: Reach the Drive
+  isRepeatable: 1
+  datas:
+  - {fileID: 11400000, guid: a8938ed7f849e854698f2b0d24b60170, type: 2}

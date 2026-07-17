@@ -215,7 +215,6 @@ namespace RedSilver2.Framework.Dialogs
 
             isUpdateFinished = false;
             isUpdateStarted  = false;
-            Debug.Log("B");
 
             if (resetAvailability) {
                 DialogManager manager = DialogManager.GetInstance();

@@ -13,7 +13,7 @@ namespace RedSilver2.Framework.Dialogs {
             this.Description = description;
 
             this.onChoosed = new UnityEvent();
-            AddOnChoosedListener(() => { GameManager.DialogManager?.Play(this.dialog); });
+            AddOnChoosedListener(OnChoosed);
         }
 
         public DialogChoice(string name, string description, Dialog dialog)
@@ -24,7 +24,7 @@ namespace RedSilver2.Framework.Dialogs {
             this.dialog = dialog;
             this.onChoosed = new UnityEvent();
 
-            AddOnChoosedListener(() => { GameManager.DialogManager?.Play(this.dialog); });
+            AddOnChoosedListener(OnChoosed);
         }
 
         public void AddOnChoosedListener(UnityAction action) {
@@ -35,5 +35,9 @@ namespace RedSilver2.Framework.Dialogs {
             if (action != null) onChoosed?.AddListener(action);
         }
         public void Choose() { onChoosed?.Invoke(); }
+
+        private void OnChoosed()  {
+            GameManager.DialogManager?.Play(this.dialog);
+        }
     }
 }

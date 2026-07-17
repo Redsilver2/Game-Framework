@@ -7,7 +7,7 @@ using UnityEngine.Events;
 
 namespace RedSilver2.Framework.Dialogs
 {
-    public class DialogManager : MonoBehaviour
+    public sealed class DialogManager : MonoBehaviour
     {
         [SerializeField] private SubtitleHandler template;
         [SerializeField] private DialogChoiceManager choiceManager;
@@ -368,18 +368,6 @@ namespace RedSilver2.Framework.Dialogs
             yield return null;
         }
 
-        private void AddHandlerDisplayer(SubtitleHandler handler, ref List<SubtitleHandler> handlers)
-        {
-            if (handlers == null || handler == null || handlers.Contains(handler)) return;
-            handlers?.Add(handler);
-        }
-
-        private void RemoveHandlerDisplayer(SubtitleHandler handler, ref List<SubtitleHandler> handlers)
-        {
-            if (handlers == null || handler == null || !handlers.Contains(handler)) return;
-            handlers?.Remove(handler);
-        }
-
         public SubtitleHandler GetAvailableSubtitleHandler()
         {
             SubtitleHandler current = null;
@@ -398,17 +386,25 @@ namespace RedSilver2.Framework.Dialogs
             return current;
         }
 
-        public static void AddSubtitleHandlerInstance(SubtitleHandler handler)
-        {
+        public static void AddSubtitleHandlerInstance(SubtitleHandler handler) {
             if (handler == null || subtitleHandlers == null) return;
             if (!subtitleHandlers.Contains(handler)) subtitleHandlers?.Add(handler);
         }
-
-
-        public static void RemoveSubtitleHandlerInstance(SubtitleHandler handler)
-        {
+        public static void RemoveSubtitleHandlerInstance(SubtitleHandler handler) {
             if (handler == null || subtitleHandlers == null) return;
             else if (subtitleHandlers.Contains(handler)) subtitleHandlers?.Remove(handler);
+        }
+
+        public static void PlayScreenSpace(string textToDisplay, float duration, float waitTime) {
+            GetInstance()?.Play(textToDisplay, duration, waitTime);
+        }
+
+        public static void PlayWorldSpace(Transform transform, string textToDisplay, float duration, float waitTime) {
+            GetInstance()?.Play(transform, textToDisplay, duration, waitTime);
+        }
+
+        public static void PlayDialog(Dialog dialog) {
+            GetInstance()?.Play(dialog);
         }
 
         public static DialogManager GetInstance() {
