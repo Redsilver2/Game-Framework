@@ -4,18 +4,10 @@ namespace RedSilver2.Framework.StateMachines.Controllers
 {
     public class UpdateableStateMachineController : StateMachineController
     {
-        private void Update() { GetStateMachine()?.Update(); }
-        private void LateUpdate() { GetStateMachine()?.LateUpdate(); }
+        public UpdateableStateMachine UpdateableStateMachine => StateMachine as UpdateableStateMachine;
 
-        public override void SetStateMachine(StateMachine stateMachine)
-        {
-            if(stateMachine is UpdateableStateMachine)
-                 base.SetStateMachine(stateMachine);
-        }
-
-        public UpdateableStateMachine GetStateMachine() {
-            return StateMachine as UpdateableStateMachine;
-        }
+        private void Update() { UpdateableStateMachine?.Update(); }
+        private void LateUpdate() { UpdateableStateMachine?.LateUpdate(); }
     }
 
 }

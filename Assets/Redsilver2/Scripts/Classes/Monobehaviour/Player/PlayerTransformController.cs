@@ -5,10 +5,10 @@ namespace RedSilver2.Framework.StateMachines.Controllers
 {
     public class PlayerTransformController : PlayerMovementController
     {
-        protected override void SetStateMachineController(MovementStateMachineController controller, MovementInputSettings settings)
+        protected override void SetStateMachineController(PlayerMovementStateMachineController controller, MovementInputSettings inputSettings)
         {
-            if (controller == null || controller == null) return;
-            controller?.SetStateMachine(new PlayerTransformMovementStateMachine(controller, settings));
+            if (controller == null || controller == null || inputSettings == null) return;
+            controller?.SetStateMachine(new PlayerTransformMovementStateMachine(controller, inputSettings));
         }
     }
 }

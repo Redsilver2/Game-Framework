@@ -1,4 +1,3 @@
-using RedSilver2.Framework.UI;
 using System.Collections;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -6,7 +5,7 @@ using UnityEngine.UI;
 namespace RedSilver2.Framework.UI
 {
 
-    public abstract class ToggleUISelection : UISelection
+    public sealed class ToggleUISelection : UISelection
     {
         private Toggle toggle;
 
@@ -14,6 +13,11 @@ namespace RedSilver2.Framework.UI
         {
             base.Awake();
             toggle = GetComponentInChildren<Toggle>();
+        }
+
+        public void SetValue(bool value)
+        {
+            if (toggle != null) toggle.isOn = value;
         }
 
         public void AddOnValueChangeListener(UnityAction<bool> action)
@@ -27,11 +31,8 @@ namespace RedSilver2.Framework.UI
         }
 
         protected override IEnumerator UpdateCoroutine() {
-            while(toggle != null)
-            {
-                if(GameUIController.GetConfirmState())
-                    toggle.isOn = !toggle.isOn;
-
+            while(toggle != null) {
+                if(GameUIController.GetConfirmState()) toggle.isOn = !toggle.isOn;
                 yield return null;
             }
         }

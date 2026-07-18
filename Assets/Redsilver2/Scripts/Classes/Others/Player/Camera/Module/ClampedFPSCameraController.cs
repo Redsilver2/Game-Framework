@@ -11,7 +11,6 @@ public class ClampedFPSCameraController : FPSCameraController
     [SerializeField] private bool canLerpBodyRotation;
     [SerializeField] private float bodyRotationReturnSpeed;
 
-
     public void SetMinBodyRotation(float minBodyRotation)
     {
         minBodyRotation = Mathf.Clamp(minBodyRotation, float.MaxValue, 0f);

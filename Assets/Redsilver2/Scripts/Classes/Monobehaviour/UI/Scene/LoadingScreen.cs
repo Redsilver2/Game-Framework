@@ -38,7 +38,6 @@ namespace RedSilver2.Framework.Scenes
                 foreach (LoadingScreenUI operation in loadingOperations) {
                     operation?.CancelFade();
                     operation?.SetAlpha(0f);
-                    if (operation != null) operation.gameObject.SetActive(isActif);
                 }
             }
         }

@@ -7,10 +7,10 @@ namespace RedSilver2.Framework.StateMachines.Controllers
     [RequireComponent(typeof(Rigidbody))]
     public class PlayerRigidbodyController : PlayerMovementController
     {
-
-        protected override void SetStateMachineController(MovementStateMachineController controller, MovementInputSettings settings)
+        protected override void SetStateMachineController(PlayerMovementStateMachineController controller, MovementInputSettings inputSettings)
         {
-            controller?.SetStateMachine(new PlayerRigidbodyMovementStateMachine(controller, settings));
+            if (controller == null || inputSettings == null) return;
+            controller?.SetStateMachine(new PlayerRigidbodyMovementStateMachine(controller, inputSettings));
         }
     }
 }

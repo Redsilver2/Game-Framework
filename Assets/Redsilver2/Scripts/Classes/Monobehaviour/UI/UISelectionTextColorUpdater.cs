@@ -6,38 +6,21 @@ using UnityEngine.PlayerLoop;
 
 namespace RedSilver2.Framework.UI
 {
-    public class UISelectionTextColorUpdater : UISelectionUpdater
+    public sealed class UISelectionTextColorUpdater : UISelectionColorUpdater
     {
-        [SerializeField] private float colorUpdateDuration = 0.1f;
-
-        [Space]
-        [SerializeField] private Color selectedColor;
-        [SerializeField] private Color deselectedColor;
-
         [Space]
         [SerializeField] private TextMeshProUGUI displayer;
 
-        protected sealed override IEnumerator UpdateUISelection(bool isSelected)
+        protected sealed override Color GetCurrentColor()
         {
-            yield return StartCoroutine(UpdateColor(isSelected ? selectedColor : deselectedColor));
+            if (displayer == null) return Color.white;
+            return displayer.color;
         }
 
-        private IEnumerator UpdateColor(Color color)
+        protected sealed override void UpdateColor(Color color)
         {
-            Color currentColor = displayer != null ? displayer.color : Color.white;
-            float t = 0f;
-
-            while (true)
-            {
-                float progress = Mathf.Clamp01(t / colorUpdateDuration);
-
-                if (displayer != null)
-                    displayer.color = progress < 1f ? Color.Lerp(currentColor, color, progress) : color;
-
-                if (progress >= 1f) break;
-                t += Time.deltaTime;
-                yield return null;
-            }
+            if (displayer == null) return;
+            displayer.color = color;
         }
     }
 }

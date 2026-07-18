@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class SwayMotion : MovementStateExtension
+public class MovementSwayMotion : MovementStateExtension
 {
     [SerializeField] private float defaultLerpSpeed;
 
@@ -21,6 +21,7 @@ public class SwayMotion : MovementStateExtension
     protected override void Start()
     {
         SetOriginal(transform.localPosition);
+
         eventHandler?.AddOnMoveListener(OnUpdate);
         eventHandler?.AddOnLateUpdateListener(OnLateUpdate);
     }

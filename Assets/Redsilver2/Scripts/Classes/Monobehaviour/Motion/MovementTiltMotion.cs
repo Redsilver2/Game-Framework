@@ -51,13 +51,18 @@ public class MovementTiltMotion : MovementStateExtension
         input.Normalize();
 
         if (Mathf.Abs(input.x) > 0f) { 
-               x = GetAxis(desired.z + (Time.deltaTime * -Mathf.Sign(input.x) * directionUpdateSpeed), MinX, MaxX); }
-        else { x = Mathf.Lerp(desired.z, Original.z, Time.deltaTime * DefaultLerpSpeed); }
+               x = GetAxis(desired.z + (Time.deltaTime * -Mathf.Sign(input.x) * directionUpdateSpeed), MinX, MaxX);
+        }
+        else { 
+            x = Mathf.Lerp(desired.z, Original.z, Time.deltaTime * DefaultLerpSpeed);
+        }
 
         if (Mathf.Abs(input.y) > 0f) { 
             y = GetAxis(desired.x + (Time.deltaTime * -Mathf.Sign(input.y) * directionUpdateSpeed), MinY, MaxY); 
         }
-        else { y = Mathf.Lerp(desired.x, Original.x, Time.deltaTime * DefaultLerpSpeed); }
+        else {
+            y = Mathf.Lerp(desired.x, Original.x, Time.deltaTime * DefaultLerpSpeed);
+        }
 
         desired = Vector3.right * y + Vector3.up * Original.y + Vector3.forward * x;
     }

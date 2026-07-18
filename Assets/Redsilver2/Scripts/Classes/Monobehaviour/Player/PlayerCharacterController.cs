@@ -8,9 +8,10 @@ namespace RedSilver2.Framework.StateMachines.Controllers
 
     public class PlayerCharacterController : PlayerMovementController
     {
-        protected override void SetStateMachineController(MovementStateMachineController controller, MovementInputSettings inputSettings) {
-            
+        protected sealed override void SetStateMachineController(PlayerMovementStateMachineController controller, MovementInputSettings inputSettings) {
+            if (controller == null || inputSettings == null) return;
             controller?.SetStateMachine(new PlayerCharacterControllerMovementStateMachine(controller, inputSettings));
         }
+
     }
 }

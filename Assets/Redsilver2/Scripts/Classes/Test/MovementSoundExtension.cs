@@ -1,4 +1,5 @@
 using RedSilver2.Framework.StateMachines.Controllers;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -14,13 +15,23 @@ namespace RedSilver2.Framework.StateMachines.Extensions
         private AudioSource source;
         private MovementSoundData currentData;
 
+        private Dictionary<string, MovementSoundData> tagSoundDatas;
+
 
         private float currentMoveSoundTriggerTime;
 
-        protected sealed override void Start() {        
+        protected sealed override void Start() {
             source = GetComponent<AudioSource>();
+            tagSoundDatas = new Dictionary<string, MovementSoundData>();
+
             eventHandler?.AddOnUpdateListener(OnUpdate);
             eventHandler?.AddOnGroundTagChangedListener(OnGroundTagChanged);
+
+            foreach (MovementSoundData data in movementSoundDatas) {
+                if (data == null || tagSoundDatas.ContainsKey(data.groundTag.ToLower())) return;
+                tagSoundDatas?.Add(data.groundTag.ToLower(), data);
+            }
+
         }
 
         private void OnUpdate() {
@@ -57,10 +68,12 @@ namespace RedSilver2.Framework.StateMachines.Extensions
         }
 
         private MovementSoundData GetMovementSoundData(string groundTag) {
-            var results = movementSoundDatas.Where(x => x != null)
-                                            .Where(x => x.groundTag.ToLower().Equals(groundTag));
+            if(string.IsNullOrEmpty(groundTag) || tagSoundDatas == null) return null;
 
-            return results.Count() > 0 ? results.First() : null;    
+            if(tagSoundDatas.ContainsKey(groundTag.ToLower()))
+                return tagSoundDatas[groundTag.ToLower()];
+
+            return null;
         }
 
         protected override void OnDisable() {

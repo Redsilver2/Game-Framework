@@ -98,11 +98,13 @@ namespace RedSilver2.Framework.Quests.Progressions
         public void SetDistanceHoldDuration(float value) { distanceHoldDuration = Mathf.Clamp(value, 0f, float.MaxValue); }
         public void SetCanResetProgress(bool canResetProgress) { this.canResetProgress = canResetProgress; }
 
+#if UNITY_EDITOR
         public override void Validate()
         {
             distanceHoldDuration = Mathf.Clamp(distanceHoldDuration, Mathf.Epsilon, float.MaxValue);
             base.Validate();
         }
+#endif
 
         public override void Reset() {
             currentDistanceHoldDuration = 0f;

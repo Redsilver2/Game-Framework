@@ -24,16 +24,15 @@ namespace RedSilver2.Framework.StateMachines.Controllers
             SetStateMachine(GetMovementStateMachine());
 
             SetDefaultConfigurations();
-            (GetStateMachine() as MovementStateMachine)?.AddOnUpdateListener(OnUpdate);
+            MovementStateMachine?.AddOnUpdateListener(OnUpdate);
 
             if (agent != null) agent.updateRotation = false;
         }
 
-        public sealed override void SetStateMachine(StateMachine stateMachine)
-        {
-            if(stateMachine is AIMovementStateMachine)
-                 base.SetStateMachine(stateMachine);
+        public void SetStateMachine(AIMovementStateMachine stateMachine) {
+            SetStateMachine(stateMachine as StateMachine);
         }
+
 
         public void SetTarget(Transform target) {
             this.target = target;
@@ -62,24 +61,19 @@ namespace RedSilver2.Framework.StateMachines.Controllers
 
         public void SetSpeed(float speed)
         {
-            (GetStateMachine() as MovementStateMachine)?.SetMovementSpeed(speed);
+            MovementStateMachine?.SetMovementSpeed(speed);
         }
 
         public void SetAgentSpeed(float speed) {
-            if(agent != null) {
-                agent.speed = speed;
-            }
+            if(agent != null) { agent.speed = speed; }
         }
 
         public void SetNextPosition(Vector3 nextPosition)
         {
-            if(agent != null)
-                agent.nextPosition = nextPosition;
+            if(agent != null) agent.nextPosition = nextPosition;
         }
 
-        public void SetWaypoints(Transform[] waypoints) {
-            this.waypoints = waypoints;
-        }
+        public void SetWaypoints(Transform[] waypoints) { this.waypoints = waypoints; }
 
         public Vector3 GetVelocity()
         {

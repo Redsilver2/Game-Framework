@@ -32,12 +32,6 @@ namespace RedSilver2.Framework.Scenes.UI
         protected virtual void Awake()
         {
             SetAlpha(0f);
-        }
-
-        protected virtual void OnDisable() {
-            DisableEvent(GameManager.SceneLoaderManager);
-        }
-        protected virtual void OnEnable() {
             EnableEvent(GameManager.SceneLoaderManager);
         }
 

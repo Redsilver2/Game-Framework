@@ -11,32 +11,34 @@ public class UISelector : MonoBehaviour
 
     private uint veritcalIndex;
     private uint horizontalIndex;
-
     private bool isUpdating;
 
     private UISelection selectedSelection;
     private List<List<UISelection>> selections;
 
-    public uint VerticalIndex => veritcalIndex;
-    public uint HorizontalIndex => horizontalIndex;
-
-    public float VerticalProgress
-    {
-        get
-        {
-            return selections == null ? 1f : Mathf.Clamp01(veritcalIndex / selections.Count);
-        }
-    }
-
+    public uint VerticalIndex    => veritcalIndex;
+    public uint HorizontalIndex  => horizontalIndex;
+    public uint MaxVerticalIndex => selections != null ? (uint)selections.Count : 1;
     public UISelection SelectedSelection => selectedSelection;
 
-
-    private void Awake() {
+    protected virtual void Awake() {
         this.selections = new List<List<UISelection>>();
 
         foreach (UISelectorData data in datas)
             AddRow(data.selections);
 
+    }
+
+    public void UpdateSelector() {
+        UpdateSelector(0f);
+    }
+
+    public void UpdateSelector(float waitTime) {
+        GameUIController.UpdateSelector(this, waitTime);
+    }
+
+    public void StopSelectorUpdate() {
+        GameUIController.StopActifSelector(this);
     }
 
     public void AddRow() {
@@ -114,44 +116,47 @@ public class UISelector : MonoBehaviour
     private bool CanSelect()
     {
         if (selectedSelection is DropdownUISelection)
-        {
             return false;
-        }
 
         return true;
     }
 
     public void StopUpdate()
     {
-        isUpdating = false;
-    }
-
-    public void StartUpdate()
-    {
-        if (!isUpdating) {
-            StartCoroutine(UpdateUI());
+        if (isUpdating) {
+            selectedSelection?.Deselect();
+            isUpdating = false;
         }
     }
 
-
-    private IEnumerator UpdateUI()
+    public void ResetIndexes()
     {
-        selectedSelection?.Select();
+        veritcalIndex   = 0; 
+        horizontalIndex = 0;
+    }
+
+    public IEnumerator UpdateSelections(float enableTime) {
+
         isUpdating = true;
+        yield return new WaitForSeconds(enableTime);
 
-        while (selections != null && isUpdating)
-        {
-            if (CanSelect())
-            {
-                Select();
-                UpdateVericalIndex();
-                UpdateHorizontalIndex();
-            }
+        selectedSelection?.Select();
 
+        while (selections != null && isUpdating) {
+            UpdateSelections();
             yield return null;
         }
 
         selectedSelection?.Deselect();
+    }
+
+    protected virtual void UpdateSelections()
+    {
+        if (CanSelect()) {
+            Select();
+            UpdateVericalIndex();
+            UpdateHorizontalIndex();
+        }
     }
 
     private void UpdateVericalIndex()

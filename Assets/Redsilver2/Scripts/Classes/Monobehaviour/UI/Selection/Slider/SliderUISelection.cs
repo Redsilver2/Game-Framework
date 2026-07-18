@@ -5,38 +5,33 @@ using UnityEngine.UI;
 
 namespace RedSilver2.Framework.UI {
     public abstract class SliderUISelection : UISelection {
-        [SerializeField] private float incrementValue = 0.1f;
-        private Slider slider;
+        protected Slider Slider { get; private set; }
 
-        protected override void Awake()
-        {
+        protected sealed override void Awake() {
             base.Awake();
-            slider = transform.GetComponentInChildren<Slider>();
+            Slider = transform.GetComponentInChildren<Slider>();
+
+            SetWholeNumber();
         }
 
         public void AddOnValueChangeListener(UnityAction<float> action) 
         {
-            if(action != null) slider?.AddOnValueChangedListener(action);
+            if(action != null) Slider?.AddOnValueChangedListener(action);
         }
         public void RemoveOnValueChangeListener(UnityAction<float> action)
         {
-            if (action != null) slider?.RemoveOnValueChangedListener(action);
+            if (action != null) Slider?.RemoveOnValueChangedListener(action);
         }
 
         protected override IEnumerator UpdateCoroutine()
         {
-            while(slider != null) {
+            while(Slider != null) {
                 OnUpdate();
                 yield return null;
             }
         }
 
-        private void OnUpdate()
-        {
-            if(slider == null) return;  
-
-            if (GameUIController.GetNavigateLeftState(false))        slider.value -= incrementValue;
-            else if (GameUIController.GetNavigateRightState(false))  slider.value += incrementValue;
-        }
+        protected abstract void SetWholeNumber();
+        protected abstract void OnUpdate();
     }
 }

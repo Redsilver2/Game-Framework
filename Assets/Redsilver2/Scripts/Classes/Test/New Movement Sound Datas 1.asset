@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47edc15c2f754934aba211c289433ae5, type: 3}
   m_Name: New Movement Sound Datas 1
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.Extensions.MovementSoundData
-  groundTag: Tile
+  groundTag: Untagged
   moveAudioClips:
   - {fileID: 8300000, guid: 4286cc93f8d9b7d49bb3b607536f2ebb, type: 3}
   - {fileID: 8300000, guid: 5cfdd71372e261c4a9658f77a8ab54c8, type: 3}

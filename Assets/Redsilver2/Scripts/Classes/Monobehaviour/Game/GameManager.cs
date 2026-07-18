@@ -1,6 +1,5 @@
 using RedSilver2.Framework.Inputs;
-using RedSilver2.Framework.Interactions;
-using RedSilver2.Framework.Interactions.Collectibles;
+using RedSilver2.Framework.Interactions; 
 using RedSilver2.Framework.Performance.Lights;
 using RedSilver2.Framework.Player;
 using RedSilver2.Framework.Scenes;
@@ -8,6 +7,7 @@ using RedSilver2.Framework.Settings;
 using RedSilver2.Framework.StateMachines.Controllers;
 using RedSilver2.Framework.Dialogs;
 using UnityEngine;
+using RedSilver2.Framework.UI;
 
 namespace RedSilver2.Framework
 {
@@ -18,6 +18,8 @@ namespace RedSilver2.Framework
         [SerializeField] private DialogManager      subtitleManager;
         [SerializeField] private SettingManager     settingManager;
         [SerializeField] private LightManager       lightManager;
+
+        [SerializeField] private GameUIController   uiController;
 
         protected static GameManager instance;
 
@@ -31,6 +33,7 @@ namespace RedSilver2.Framework
         public static DialogManager      DialogManager      => instance ? instance.subtitleManager    : null;
         public static SettingManager     SettingManager     => instance ? instance.settingManager     : null;
         public static LightManager       LightManager       => instance ? instance.lightManager       : null;
+        public static GameUIController   UIController       => instance ? instance.uiController       : null;
 
         public const string INTERACTION_LAYER_NAME = "Interaction";
         public const string GROUND_LAYER_NAME      = "Ground";
@@ -49,11 +52,11 @@ namespace RedSilver2.Framework
             Application.targetFrameRate = 999;
         }
 
-        private void Update() {
+        protected virtual void Update() {
             InputManager.Update();
         }
 
-        private void LateUpdate() {
+        protected virtual void LateUpdate() {
             InputManager.LateUpdate();
         }
 

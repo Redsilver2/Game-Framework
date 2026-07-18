@@ -7,7 +7,7 @@ using UnityEngine.EventSystems;
 
 namespace RedSilver2.Framework.UI
 {
-    public class TMP_DropdownUISelection : UISelection
+    public class TMPDropdownUISelection : UISelection
     {
         private bool isDropdownClosed;
 

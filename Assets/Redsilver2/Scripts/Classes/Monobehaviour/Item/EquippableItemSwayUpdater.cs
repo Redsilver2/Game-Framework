@@ -3,15 +3,15 @@ using UnityEngine;
 
 namespace RedSilver2.Framework.Items
 {
-    [RequireComponent(typeof(SwayMotion))]
+    [RequireComponent(typeof(MovementSwayMotion))]
     public class EquippableItemSwayUpdater : MonoBehaviour {
 
-        private SwayMotion swayMotion;
+        private MovementSwayMotion swayMotion;
         // Add Mouse Rotation Event;
         private EquippableItem item;
 
         private void Start() {
-            swayMotion = GetComponent<SwayMotion>();
+            swayMotion = GetComponent<MovementSwayMotion>();
             item       = transform.GetComponentInChildren<EquippableItem>();
             EnableEvents();
         }

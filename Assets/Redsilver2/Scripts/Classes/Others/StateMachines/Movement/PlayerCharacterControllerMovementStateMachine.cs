@@ -1,6 +1,7 @@
 using RedSilver2.Framework.Inputs.Configurations;
 using RedSilver2.Framework.Inputs.Settings;
 using RedSilver2.Framework.StateMachines.Controllers;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -10,9 +11,9 @@ namespace RedSilver2.Framework.StateMachines
     {
         private readonly CharacterController characterController;
 
-        public PlayerCharacterControllerMovementStateMachine(MovementStateMachineController controller, MovementInputSettings settings) : base(controller, settings)
+        public PlayerCharacterControllerMovementStateMachine(PlayerMovementStateMachineController controller, MovementInputSettings settings) : base(controller, settings)
         {
-            this.characterController = controller == null ? null : controller.GetComponent<CharacterController>();
+            this.characterController = controller == null ? null : controller.GetOrAddComponent<CharacterController>();
         }
 
         public sealed override void Move(Vector3 nextPosition)

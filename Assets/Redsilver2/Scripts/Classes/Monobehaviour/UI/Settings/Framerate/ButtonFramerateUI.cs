@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace RedSilver2.Framework.UI
 {
-    public class ButtonFramerateUI : FramerateUI {
+    public class ButtonFramerateUI : FramerateSettingUI {
 
         [SerializeField] private ButtonUISelection previous;
         [SerializeField] private ButtonUISelection next;
@@ -31,8 +31,8 @@ namespace RedSilver2.Framework.UI
         public override void Apply() {
             base.Apply();
 
-            if(framerateSetting != null && displayer != null) {
-                uint frames = framerateSetting.FramerateLimits[(int)Index];
+            if(displayer != null) {
+                uint frames = CurrentFramerate();
                 displayer.text = frames == uint.MaxValue ? "Unlimited" : $"{frames} FPS";
             }
 

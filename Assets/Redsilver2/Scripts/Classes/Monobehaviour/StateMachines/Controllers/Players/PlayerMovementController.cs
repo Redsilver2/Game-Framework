@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace RedSilver2.Framework.StateMachines
 {
-    [RequireComponent(typeof(MovementStateMachineController))]
+    [RequireComponent(typeof(PlayerMovementStateMachineController))]
     public abstract class PlayerMovementController : PlayerController
     {
         [SerializeField] private MovementInputSettings inputSettings;
@@ -16,7 +16,7 @@ namespace RedSilver2.Framework.StateMachines
         [SerializeField] private int defaultSettingIndex;
         [SerializeField] private MovementStateSettings[] defaultSettings;
 
-        private MovementStateMachineController movementController;
+        private PlayerMovementStateMachineController movementController;
 
         public MovementInputSettings InputSettings => inputSettings;
         public CameraController DefaultCameraController => defaultCameraController;
@@ -31,7 +31,7 @@ namespace RedSilver2.Framework.StateMachines
         protected override void Awake()
         {
             base.Awake();
-            movementController = GetComponent<MovementStateMachineController>();
+            movementController = GetComponent<PlayerMovementStateMachineController>();
 
             inputSettings?.Enable();
             CameraController.SetCursorVisibility(false);    
@@ -68,6 +68,6 @@ namespace RedSilver2.Framework.StateMachines
                 StateMachine?.ChangeState(defaultSettings[defaultSettingIndex].GetBaseConfiguration(StateMachine));
         }
 
-        protected abstract void SetStateMachineController(MovementStateMachineController controller, MovementInputSettings inputSettings);
+        protected abstract void SetStateMachineController(PlayerMovementStateMachineController controller, MovementInputSettings inputSettings);
     }
 }

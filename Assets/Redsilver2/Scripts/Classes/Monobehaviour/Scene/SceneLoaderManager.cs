@@ -80,11 +80,11 @@ namespace RedSilver2.Framework.Scenes
 
         private void Awake()
         {
-            onSingleSceneLoadStarted = new UnityEvent<int>();
+            onSingleSceneLoadStarted         = new UnityEvent<int>();
             onSingleSceneLoadProgressChanged = new UnityEvent<int, float>();
-            onSingleSceneLoadFinished = new UnityEvent<int>();
+            onSingleSceneLoadFinished        = new UnityEvent<int>();
 
-            onSceneDataAdded = new UnityEvent<SceneData>();
+            onSceneDataAdded   = new UnityEvent<SceneData>();
             onSceneDataRemoved = new UnityEvent<SceneData>();
 
             AddOnSingleSceneLoadStartedListener(OnSingleSceneLoadStarted);
@@ -93,18 +93,16 @@ namespace RedSilver2.Framework.Scenes
             if (loadingScreens.Length > 0) currentLoadingScreen = loadingScreens[defaultLoadingScreenIndex];
         }
 
-        private void Start()
-        {
+        private void Start() {
             foreach (SceneData sceneData in sceneDatas) sceneData?.Enable();
         }
 
-        private void Update() {
-            if (InputManager.GetKeyDown(KeyboardKey.Space)) {
-                bool isDefaultSceneLoaded = IsSceneLoaded(0);
-                LoadSingleScene(isDefaultSceneLoaded ? 1 : 0);
+        private void Update()
+        {
+            if(InputManager.GetKeyDown(KeyboardKey.Space) || InputManager.GetKeyDown(GamepadButton.Select)) {
+                LoadScene(0);
             }
         }
-
 
         public void AddSceneData(SceneData sceneData) {
             if(sceneData == null) return;
@@ -131,26 +129,27 @@ namespace RedSilver2.Framework.Scenes
 
         private void OnSingleSceneLoadStarted(int sceneIndex)
         {
-            Debug.Log("Single scene load started. " + sceneIndex);
+            if (currentLoadingScreen) currentLoadingScreen.gameObject.SetActive(true);
 
             GameManager.DisableControls();
             GameManager.DialogManager?.Stop();
 
             StopAllSceneLoadingOperations();
             IsLoadingSingleScene = true;
+
+            StartSceneLoad(sceneIndex, true);
         }
 
         private void OnSingleSceneLoadFinished(int sceneIndex) {
-
             IsLoadingSingleScene = false;
         }
 
-        private void StartSceneLoad(int sceneIndex)
+        private void StartSceneLoad(int sceneIndex, bool isLoadingSingleScene)
         {
             IEnumerator operation;
             StopSceneLoadingOperation(sceneIndex);
 
-            operation = SceneLoadingOperation(sceneIndex, IsLoadingSingleScene);
+            operation = SceneLoadingOperation(sceneIndex, isLoadingSingleScene);
             sceneLoadingOperations.Add(sceneIndex, operation);
           
             StartCoroutine(operation);
@@ -310,12 +309,8 @@ namespace RedSilver2.Framework.Scenes
 
         public void LoadSingleScene(int sceneIndex) 
         {
-            if (IsValidSceneIndex(sceneIndex) && CanLoadScene(sceneIndex))
-            {
-                if (currentLoadingScreen) currentLoadingScreen.gameObject.SetActive(true);
-               
+            if (IsValidSceneIndex(sceneIndex) && CanLoadScene(sceneIndex)) {   
                 onSingleSceneLoadStarted?.Invoke(sceneIndex);
-                StartSceneLoad(sceneIndex);
             }
         }
 

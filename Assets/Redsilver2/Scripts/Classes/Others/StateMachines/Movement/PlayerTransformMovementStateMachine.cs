@@ -7,15 +7,13 @@ namespace RedSilver2.Framework.StateMachines
 {
     public class PlayerTransformMovementStateMachine : PlayerMovementStateMachine
     {
-        public PlayerTransformMovementStateMachine(MovementStateMachineController controller, MovementInputSettings settings) : base(controller, settings) {
+        public PlayerTransformMovementStateMachine(PlayerMovementStateMachineController controller, MovementInputSettings settings) : base(controller, settings) {
 
         }
 
         public sealed override void Move(Vector3 nextPosition)
         {
-            if (Transform != null)
-                Transform.localPosition += nextPosition;
-
+            if (Transform != null) Transform.localPosition += nextPosition;
             base.Move(Transform == null ? Vector3.zero : nextPosition);
         }
     }

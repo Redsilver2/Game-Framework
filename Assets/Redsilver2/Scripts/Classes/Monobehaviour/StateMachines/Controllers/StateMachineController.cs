@@ -14,25 +14,22 @@ public abstract class StateMachineController : MonoBehaviour
         onStateMachineChanged = new UnityEvent<StateMachine>();
     }
 
-    public virtual void SetStateMachine(StateMachine stateMachine) {
-        this.stateMachine = stateMachine;
+    protected void SetStateMachine(StateMachine stateMachine) {
+        if(stateMachine != this.stateMachine) {
+            this.stateMachine = stateMachine;
+            onStateMachineChanged?.Invoke(stateMachine);
+        }
     }
 
     private void OnDisable() { stateMachine?.Disable(); }
     private void OnEnable()  { stateMachine?.Enable();  }
 
     public void AddOnStateMachineChanged(UnityAction<StateMachine> action){
-        if (action != null)
-            onStateMachineChanged?.AddListener(action);
+        if (action != null) onStateMachineChanged?.AddListener(action);
     }
 
     public void RemoveOnStateMachineChanged(UnityAction<StateMachine> action)
     {
-        if(action != null)
-            onStateMachineChanged?.RemoveListener(action); 
+        if(action != null) onStateMachineChanged?.RemoveListener(action); 
     }
-
-
-    public bool IsStateMachineNull() { return stateMachine == null; }
-
 }

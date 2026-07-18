@@ -9,7 +9,7 @@ namespace RedSilver2.Framework.StateMachines
     {
         private MovementInputSettings inputSettings;
 
-        protected PlayerMovementStateMachine(MovementStateMachineController controller, MovementInputSettings settings) : base(controller) {
+        protected PlayerMovementStateMachine(PlayerMovementStateMachineController controller, MovementInputSettings settings) : base(controller) {
             this.inputSettings = settings;
         }
 

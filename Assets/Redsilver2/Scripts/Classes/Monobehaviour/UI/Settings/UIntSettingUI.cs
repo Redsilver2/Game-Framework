@@ -3,7 +3,7 @@ using UnityEngine.Events;
 
 namespace RedSilver2.Framework.UI
 {
-    public abstract class IntSettingUI : MonoBehaviour
+    public abstract class UIntSettingUI : MonoBehaviour
     {
         [SerializeField] private bool applyAutomaticallyNewValue;
 
@@ -21,11 +21,28 @@ namespace RedSilver2.Framework.UI
                 if (applyAutomaticallyNewValue) Apply();
             });
 
-            Apply();
+            Load();
         }
 
         public virtual void Apply() {
+            string dataName = GetDataName();
+
+            if (!string.IsNullOrEmpty(dataName)) {
+                PlayerPrefs.SetInt(dataName, (int)index);
+                PlayerPrefs.Save();
+            }
+
+
             wasValueChangedApplied = true;
+        }
+
+        public void Load() {
+            string dataName = GetDataName();
+
+            if (!string.IsNullOrEmpty(dataName)) { index = (uint)PlayerPrefs.GetInt(dataName, (int)uint.MinValue); }
+            else { index = 0; }
+
+            Apply();
         }
 
         protected void SetIndex(uint index) {
@@ -43,5 +60,6 @@ namespace RedSilver2.Framework.UI
             if (action != null) onValueChanged?.RemoveListener(action);
         }
         protected abstract uint GetMaxIndex();
+        protected abstract string GetDataName();
     }
 }

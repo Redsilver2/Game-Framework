@@ -7,7 +7,7 @@ public abstract class MovementStateExtension : MonoBehaviour
 
     private void Awake()
     {
-        eventHandler = transform.parent != null ? transform.parent.GetComponentInChildren<MovementStateMachineEventHandler>()
+        eventHandler = transform.root != null ? transform.root.GetComponentInChildren<MovementStateMachineEventHandler>()
                                                 : GetComponentInChildren<MovementStateMachineEventHandler>();
     }
 

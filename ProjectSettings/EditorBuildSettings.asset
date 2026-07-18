@@ -6,10 +6,10 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Transition/Transition01.unity
-    guid: 5088b7cfccf9f724892ac9d73378b197
+    path: Assets/Redsilver2/Test/The Bunker/Scenes/Bunker_Demo_MainMenu.unity
+    guid: 5cf7864a5665ac84995e292ca272d68a
   - enabled: 1
-    path: Assets/Scenes/Transition/Transition02.unity
-    guid: cf7f6e6526f9c794bb0026825d25a3e8
+    path: Assets/Redsilver2/Test/The Bunker/Scenes/Bunker_Demo_Scene01.unity
+    guid: 18e449c9c9839a84d80b12c3a89ec7ca
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
