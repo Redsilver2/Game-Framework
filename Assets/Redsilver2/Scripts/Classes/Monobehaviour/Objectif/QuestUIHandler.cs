@@ -27,7 +27,6 @@ namespace RedSilver2.Framework.Quests.UI {
             mainDisplayer = GetComponent<TextMeshProUGUI>();
             if (template != null) template.gameObject.SetActive(false);
 
-            Debug.Log("what");
             AddOnUpdateProgressionUIHandlers(OnUpdateProgressionUIHandlers);
         }
         

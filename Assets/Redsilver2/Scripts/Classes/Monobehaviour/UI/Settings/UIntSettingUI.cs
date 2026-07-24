@@ -18,13 +18,13 @@ namespace RedSilver2.Framework.UI
             onValueChanged = new UnityEvent<uint>();
             AddOnValueChangedEvent(value => {
                 wasValueChangedApplied = false;
-                if (applyAutomaticallyNewValue) Apply();
+                if (applyAutomaticallyNewValue) ApplySetting();
             });
 
-            Load();
+            LoadSetting();
         }
 
-        public virtual void Apply() {
+        public virtual void ApplySetting() {
             string dataName = GetDataName();
 
             if (!string.IsNullOrEmpty(dataName)) {
@@ -36,13 +36,18 @@ namespace RedSilver2.Framework.UI
             wasValueChangedApplied = true;
         }
 
-        public void Load() {
+        public void LoadSetting() {
             string dataName = GetDataName();
 
             if (!string.IsNullOrEmpty(dataName)) { index = (uint)PlayerPrefs.GetInt(dataName, (int)uint.MinValue); }
             else { index = 0; }
 
-            Apply();
+            ApplySetting();
+        }
+
+        public void ResetSetting() {
+            index = 0;
+            ApplySetting();
         }
 
         protected void SetIndex(uint index) {

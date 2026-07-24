@@ -284,7 +284,7 @@ namespace RedSilver2.Framework.Dialogs
                 return;
             }
 
-            progress = Mathf.Clamp01(timeElapsed / manager.SubtitleFadeDuration);
+            progress    = Mathf.Clamp01(timeElapsed / manager.SubtitleFadeDuration);
             group.alpha = Mathf.Lerp(currentAlpha, desiredAlpha, timeElapsed);
 
             if (progress >= 1f) group.alpha = desiredAlpha;

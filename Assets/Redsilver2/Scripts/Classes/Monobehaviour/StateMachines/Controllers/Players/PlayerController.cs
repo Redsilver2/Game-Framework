@@ -33,8 +33,8 @@ namespace RedSilver2.Framework.StateMachines.Controllers
             onDisabled = new UnityEvent();
             onEnabled = new UnityEvent();
 
-            current = this;
             instances.Add(this);
+            this.enabled = false;
         }
 
         private void OnEnable() { onEnabled?.Invoke(); }

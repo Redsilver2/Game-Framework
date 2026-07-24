@@ -4,6 +4,7 @@
   <Project Path="Unity.PlasticSCM.Editor.csproj" />
   <Project Path="Unity.ShaderGraph.Editor.csproj" />
   <Project Path="Unity.ProBuilder.csproj" />
+  <Project Path="Assembly-CSharp.csproj" />
   <Project Path="Unity.RenderPipelines.Core.Runtime.csproj" />
   <Project Path="Unity.Mathematics.csproj" />
   <Project Path="Unity.Timeline.Editor.csproj" />
@@ -27,7 +28,6 @@
   <Project Path="Unity.ProBuilder.Csg.csproj" />
   <Project Path="Unity.VisualStudio.Editor.csproj" />
   <Project Path="Unity.InputSystem.csproj" />
-  <Project Path="Assembly-CSharp.csproj" />
   <Project Path="Mirror.Editor.csproj" />
   <Project Path="Unity.Searcher.Editor.csproj" />
   <Project Path="Unity.ProBuilder.Editor.csproj" />

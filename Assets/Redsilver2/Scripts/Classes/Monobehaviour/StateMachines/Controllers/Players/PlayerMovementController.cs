@@ -32,21 +32,23 @@ namespace RedSilver2.Framework.StateMachines
         {
             base.Awake();
             movementController = GetComponent<PlayerMovementStateMachineController>();
-
-            inputSettings?.Enable();
-            CameraController.SetCursorVisibility(false);    
            
             SetStateMachineController(movementController, inputSettings);
             SetDefaultConfigurations();
 
+            inputSettings?.Enable();
+
             AddOnDisabledListener(() => {
+                CameraController.SetCursorVisibility(true);
+                CameraController.SetCurrent(null as CameraController);
                 if (movementController != null) movementController.enabled = false;
-                if (defaultCameraController != null) defaultCameraController.enabled = false;
             });
 
             AddOnEnabledListener(() => {
+                CameraController.SetCursorVisibility(false);
+                CameraController.SetCurrent(defaultCameraController);
+
                 if(movementController != null) movementController.enabled = true;
-                if (defaultCameraController != null) defaultCameraController.enabled = true;
             });
         }
 

@@ -7,9 +7,9 @@ namespace RedSilver2.Framework.UI
     {
         private readonly FullScreenMode[] fullScreenModes = Enum.GetValues(typeof(FullScreenMode)) as FullScreenMode[];
         private const string FULLSCREEN_MODE_KEY = "FULLSCREEN_MODE";
-        public override void Apply()
+        public override void ApplySetting()
         {
-            base.Apply();
+            base.ApplySetting();
             Screen.fullScreenMode = GetFullscreenMode();
         }
 

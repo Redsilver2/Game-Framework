@@ -8,8 +8,8 @@ namespace RedSilver2.Framework.Settings
         private readonly uint[] framerateValues = new uint[] { 30, 60, 75, 100, 120, 144, 180, 240, 360, uint.MaxValue };
         private readonly string FRAMERATE_KEY = "FRAMERATE";
 
-        public override void Apply() {
-            base.Apply();
+        public override void ApplySetting() {
+            base.ApplySetting();
             Application.targetFrameRate = (int)CurrentFramerate();
         }
 

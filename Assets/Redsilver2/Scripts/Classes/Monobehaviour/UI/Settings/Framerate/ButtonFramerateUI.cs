@@ -6,8 +6,8 @@ namespace RedSilver2.Framework.UI
 {
     public class ButtonFramerateUI : FramerateSettingUI {
 
-        [SerializeField] private ButtonUISelection previous;
-        [SerializeField] private ButtonUISelection next;
+        [SerializeField] private UISelectionButton previous;
+        [SerializeField] private UISelectionButton next;
 
         [Space]
         [SerializeField] private TextMeshProUGUI displayer;
@@ -28,8 +28,8 @@ namespace RedSilver2.Framework.UI
             });
         }
 
-        public override void Apply() {
-            base.Apply();
+        public override void ApplySetting() {
+            base.ApplySetting();
 
             if(displayer != null) {
                 uint frames = CurrentFramerate();

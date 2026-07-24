@@ -10,10 +10,18 @@ namespace RedSilver2.Framework.UI
         [SerializeField] private Vector3 selectedSize;
         [SerializeField] private Vector3 deselectedSize;
 
+        [Space]
+        [SerializeField] private Transform target;
+
+        private void Awake()
+        {
+            if(target == null) target = transform;
+        }
+
         protected sealed override IEnumerator UpdateUISelection(bool isSelected)
         {
-            UISelection selection = Selection;
-            yield return StartCoroutine(UpdateSize(selection != null ? selection.transform : null,
+ 
+            yield return StartCoroutine(UpdateSize(target,
                                                    isSelected ? selectedSize : deselectedSize));
         }
 

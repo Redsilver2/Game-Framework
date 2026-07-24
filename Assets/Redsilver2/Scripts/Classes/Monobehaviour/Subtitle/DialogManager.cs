@@ -1,3 +1,4 @@
+using RedSilver2.Framework.Inputs;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -78,6 +79,9 @@ namespace RedSilver2.Framework.Dialogs
 
         private IEnumerator UpdateSubtitleHandlers() {
             while (true) {
+                if (InputManager.GetKeyDown(KeyboardKey.Q) || InputManager.GetKeyDown(GamepadButton.Start))
+                    PlayScreenSpace("Quick Subtitle Test :D", 0.5f, 3);
+
                 UpdateActifSubtitles();
                 yield return null;
             }

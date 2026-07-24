@@ -3,19 +3,21 @@ using UnityEngine.Events;
 
 namespace RedSilver2.Framework.Interactions
 {
+    [System.Serializable]
     public abstract class Interaction {
-        private string name;
-        private string description;
+        [SerializeField] private string name;
+        [SerializeField] private string description;
 
-        private bool isEnabled;
+        [Space]
+        [SerializeField] private bool isEnabled;
 
         private Sprite icon;
         private UnityEvent<InteractionHandler> onInteracted;
 
-        public string Name => name;
+        public string Name        => name;
         public string Description => description;
-        public bool IsEnabled => isEnabled; 
-        public Sprite Icon => icon;
+        public bool   IsEnabled   => isEnabled; 
+        public Sprite Icon        => icon;
 
         protected Interaction(string name) {
             this.name         = name;
@@ -27,7 +29,17 @@ namespace RedSilver2.Framework.Interactions
             this.isEnabled = false;
         }
 
-        protected Interaction(string name, string description)
+        protected Interaction(string name, string description) {
+            this.name        = name;
+            this.description = description;
+
+            this.icon         = null;
+            this.onInteracted = new UnityEvent<InteractionHandler>();
+
+            this.isEnabled    = false;
+        }
+
+        protected Interaction(string name, string description, UnityAction<InteractionHandler> onInteracted)
         {
             this.name = name;
             this.description = description;
@@ -35,8 +47,21 @@ namespace RedSilver2.Framework.Interactions
             this.icon = null;
             this.onInteracted = new UnityEvent<InteractionHandler>();
 
+            this.isEnabled    = false;
+            AddOnInteractedListener(onInteracted); 
+        }
+
+        protected Interaction(string name, string description, UnityEvent<InteractionHandler> onInteracted)
+        {
+            this.name = name;
+            this.description = description;
+
+            this.icon = null;
+            this.onInteracted = onInteracted != null ? onInteracted : new UnityEvent<InteractionHandler>();
+
             this.isEnabled = false;
         }
+
 
         public void Enable()
         {
@@ -61,8 +86,7 @@ namespace RedSilver2.Framework.Interactions
             return true;
         }
         
-        public void AddOnInteractedListener(UnityAction<InteractionHandler> action)
-        {
+        public void AddOnInteractedListener(UnityAction<InteractionHandler> action) {
             if (action != null) onInteracted?.AddListener(action);
         }
 

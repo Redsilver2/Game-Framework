@@ -20,36 +20,49 @@ namespace RedSilver2.Framework.UI
         [SerializeField] private float positionUpdateSpeed;
 
         private Vector3 currentPosition;
+        private int previousVerticalIndex;
 
         protected sealed override void Awake() {
             base.Awake();
 
-            currentPosition = minPosition;
+            currentPosition       = minPosition;
+            previousVerticalIndex = -1;
+
             if (scrollbar != null) scrollbar.onValueChanged.AddListener(Scroll);
         }
+
+
+        public override void ResetIndexes()
+        {
+            base.ResetIndexes();
+            previousVerticalIndex = -1;
+        }
+       
 
         protected sealed override void UpdateSelections()
         {
             base.UpdateSelections();
+            int currentVeriticalIndex = (int)VerticalIndex;
 
-            if (GameUIController.GetNavigateDownState(true) || GameUIController.GetNavigateUpState(true)) {
-                if(MaxVerticalIndex > 0 && scrollbar != null)
-                   scrollbar.value = Mathf.Clamp01(VerticalIndex / MaxVerticalIndex);
+
+            if (previousVerticalIndex != currentVeriticalIndex) {
+                if (MaxVerticalIndex > 0) {
+                    float progress = Mathf.Clamp01((float)VerticalIndex / (float)MaxVerticalIndex);
+                    if (scrollbar != null) scrollbar.value = progress;
+                    else Scroll(progress);
+                }
+
+                previousVerticalIndex = currentVeriticalIndex;
             }
 
-            if(scrollParent != null)
+            if (scrollParent != null)
               scrollParent.localPosition = Vector3.Lerp(scrollParent.localPosition, currentPosition, Time.deltaTime * positionUpdateSpeed);
         }
 
         private void Scroll(float value)
         {
-            Vector3 nextPosition;
-
-            if(value >= 1f)       { nextPosition = maxPosition; }
-            else if (value <= 0f) { nextPosition = minPosition; }
-            else                  { nextPosition = Vector3.Lerp(minPosition, maxPosition, Mathf.Clamp01(value)); }
-
-            currentPosition = nextPosition;
+            Debug.Log(value);
+            currentPosition = Vector3.Lerp(minPosition, maxPosition, Mathf.Clamp01(value));
         }
     }
 }

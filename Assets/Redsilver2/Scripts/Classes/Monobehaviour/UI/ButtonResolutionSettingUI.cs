@@ -4,7 +4,8 @@ using UnityEngine;
 namespace RedSilver2.Framework.UI
 {
     public class ButtonResolutionSettingUI : ResolutionSettingUI {
-        [SerializeField] private ButtonUISelection previous, next;
+        [Space]
+        [SerializeField] private UISelectionButton previous, next;
 
         [Space]
         [SerializeField] private TextMeshProUGUI displayer;
@@ -22,9 +23,9 @@ namespace RedSilver2.Framework.UI
             });
         }
 
-        public sealed override void Apply()
+        public sealed override void ApplySetting()
         {
-            base.Apply();
+            base.ApplySetting();
             Resolution resolution = GetResolution();
             if (displayer != null) displayer.text = $"{resolution.width}x{resolution.height}";
         }

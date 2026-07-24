@@ -5,6 +5,8 @@ namespace RedSilver2.Framework.UI
 {
     public abstract class ResolutionSettingUI : UIntSettingUI
     {
+        [SerializeField] private bool useFullScreenMode;
+
         private Resolution[] resolutions;
         private const string RESOLUTION_KEY = "RESOLUTION";
 
@@ -14,11 +16,13 @@ namespace RedSilver2.Framework.UI
             base.Awake();
         }
 
-        public override void Apply()
+        public override void ApplySetting()
         {
-            base.Apply();
+            base.ApplySetting();
             Resolution resolution = GetResolution();
-            Screen.SetResolution(resolution.height, resolution.width, Screen.fullScreen);
+
+            if(useFullScreenMode) Screen.SetResolution(resolution.height, resolution.width, Screen.fullScreenMode);
+            else Screen.SetResolution(resolution.height, resolution.width, Screen.fullScreen);
         }
 
         protected Resolution GetResolution() {

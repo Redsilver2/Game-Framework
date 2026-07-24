@@ -1,161 +1,90 @@
-using RedSilver2.Framework.Interactions.Actions;
-using System.Collections;
+using UnityEditor.Callbacks;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace RedSilver2.Framework.Interactions {
     public abstract class Door : InteractionModule {
+
         [Space]
-        [SerializeField] private Transform anchorPoint;
-        [SerializeField] private float doorSpeed;
+        [SerializeField] private DoorState state;
 
         private bool isOpen;
         private bool isLocked;
 
-        private Vector3 originalTarget;
+        private UnityEvent<DoorState> onStateChanged;
 
-        private IEnumerator doorUpdateCoroutine;
-        private UnityEvent  onOpen, onClose;
+        public bool IsOpen => isOpen;
+        public bool IsLocked => isLocked;
 
-        private UnityEvent<bool, float, Transform>     onProgressionUpdate;
-        private UnityEvent<bool, Transform> onUpdateStarted, onUpdateEnded;
-
-
-        public bool  IsOpen => isOpen;
-        public bool  IsLocked => isLocked;
-        public float DoorSpeed => doorSpeed;
-  
-        public Vector3 OriginalTarget => originalTarget;
-        public Transform AnchorPoint => anchorPoint;
+        public DoorState State       => state;
 
         protected override void Awake()
         {
             base.Awake();
+            onStateChanged = new UnityEvent<DoorState>();
+
             SetInteractionType(InteractionType.Door);
-
-            onOpen  = new UnityEvent();
-            onClose = new UnityEvent();
-
-            onUpdateStarted     = new UnityEvent<bool, Transform>();
-            onUpdateEnded       = new UnityEvent<bool, Transform>();
-            onProgressionUpdate = new UnityEvent<bool, float, Transform>();
-
-            AddOnOpenListener(OnOpen);
-            AddOnCloseListener(OnClose);
-
-            AddOnUpdateStartedListener(OnUpdateStarted);
-            AddOnUpdateEndedListener(OnUpdateEnded);
-            
-            AddOnProgressionUpdateListener(OnProgressionUpdate);
-
-
-            CloseDoorAction action = new CloseDoorAction(this, new PressInteraction("Close Door"));
-            action?.Enable();
-            AddInteractionAction(action);
+            AddOnStateChangedListener(OnStateChanged);
         }
 
-        public void SetAnchorPoint(Transform anchorPoint)     { this.anchorPoint = anchorPoint; }
-        public void SetOriginalTarget(Vector3 originalTarget) { this.originalTarget = originalTarget; }
+        protected virtual void Start() {
+            onStateChanged?.Invoke(state);
+        }
 
-        public void SetOpenState(bool isOpen)   { this.isOpen = isOpen; }
-        public void SetLockState(bool isLocked) { this.isLocked = isLocked; }
+        private void SetDoorState(DoorState state) {
+            if (this.state != state) {
+                this.state = state;
+                onStateChanged?.Invoke(state);
+            }
+        }
 
-        public void Open() {
-            if (isOpen || isLocked) return;
-            onOpen?.Invoke();
+        public  void Open() {
+            if (state == DoorState.Closed) { OnOpen(); }
         }
 
         public void Close() {
-            if (!isOpen) return;
-            onClose?.Invoke();  
+            if (state == DoorState.Opened) { OnClose(); }
         }
 
-        private void OnOpen()
+        public void Lock() {
+            if (state != DoorState.Locked) { SetDoorState(DoorState.Locked); }
+        }
+        public void Unlock() {
+            if (state == DoorState.Locked) { SetDoorState(DoorState.Unlocked); }
+        }
+
+        protected virtual void OnOpen() {
+            SetDoorState(DoorState.Opened);
+        }
+
+        protected virtual void OnClose() {
+            SetDoorState(DoorState.Closed);
+        }
+
+        public void AddOnStateChangedListener(UnityAction<DoorState> action)
         {
-            isOpen = true;
-            StartDoorUpdate();
+            if (action != null) onStateChanged?.AddListener(action);
         }
-
-        private void OnClose()
+        public void RemoveOnStateChangedListener(UnityAction<DoorState> action)
         {
-            isOpen = false;
-            StartDoorUpdate();
+            if (action != null) onStateChanged?.RemoveListener(action);
         }
-
-        protected abstract void OnUpdateStarted(bool isOpen, Transform anchor);
-        protected abstract void OnUpdateEnded(bool isOpen, Transform anchor);
-        protected abstract void OnProgressionUpdate(bool isOpen, float progress, Transform anchor);
-
-
-        public void AddOnOpenListener(UnityAction action)
-        {
-            if (action != null) onOpen?.AddListener(action);
-        }
-        public void RemoveOnOpenListener(UnityAction action)
-        {
-            if (action != null) onOpen?.RemoveListener(action);
-        }
-
-        public void AddOnCloseListener(UnityAction action)
-        {
-            if (action != null) onClose?.AddListener(action);
-        }
-        public void RemoveOnCloseListener(UnityAction action)
-        {
-            if (action != null) onClose?.RemoveListener(action);
-        }
-
-        public void AddOnUpdateStartedListener(UnityAction<bool, Transform> action)
-        {
-            if(action != null) onUpdateStarted?.AddListener(action);    
-        }
-        public void RemoveOnUpdateStartedListener(UnityAction<bool, Transform> action){
-            if (action != null) onUpdateStarted?.RemoveListener(action);
-        }
-
-        public void AddOnUpdateEndedListener(UnityAction<bool, Transform> action)
-        {
-            if (action != null) onUpdateEnded?.AddListener(action); 
-        }
-        public void RemoveOnUpdateEndedListener(UnityAction<bool, Transform> action)
-        {
-            if (action != null) onUpdateEnded?.RemoveListener(action);
-        }
-
-        public void AddOnProgressionUpdateListener(UnityAction<bool, float, Transform> action)
-        {
-            if (action != null) onProgressionUpdate?.AddListener(action);
-        }
-        public void RemoveOnProgressionUpdateListener(UnityAction<bool, float, Transform> action)
-        {
-            if (action != null) onProgressionUpdate?.RemoveListener(action);
-        }
-
-        private void StopDoorUpdate()
-        {
-            if (doorUpdateCoroutine != null) StopCoroutine(doorUpdateCoroutine);
-            doorUpdateCoroutine = null;
-        }
-
-        private void StartDoorUpdate() {
-            StopDoorUpdate();
-            doorUpdateCoroutine = DoorUpdate();
-            StartCoroutine(doorUpdateCoroutine);
-        }
-
-        protected IEnumerator DoorUpdate() {
-            float t = 0;
-            onUpdateStarted?.Invoke(isOpen, anchorPoint);
-
-            while (anchorPoint != null) {
-                t += Time.deltaTime * DoorSpeed;
-                onProgressionUpdate?.Invoke(isOpen, Mathf.Clamp01(t/1f), anchorPoint);
-
-                if (t >= 1f || isLocked) break;
-                yield return null;
+        protected virtual void OnStateChanged(DoorState state) {
+            if (state == DoorState.Closed) {
+                isOpen = false;
+                isLocked = false;
             }
-
-            onUpdateEnded?.Invoke(isOpen, anchorPoint);    
+            else if (state == DoorState.Opened) {
+                isOpen = true;
+                isLocked = false;
+            }
+            else if (state == DoorState.Locked) {
+                isLocked = true;
+            }
+            else if (state == DoorState.Unlocked) {
+                isLocked = false;
+                SetDoorState(isOpen ? DoorState.Opened : DoorState.Closed);
+            }
         }
 
     }

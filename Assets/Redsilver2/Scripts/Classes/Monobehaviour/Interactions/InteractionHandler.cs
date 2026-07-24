@@ -40,8 +40,8 @@ namespace RedSilver2.Framework.Interactions
         private readonly static List<InteractionHandler> Instances = new List<InteractionHandler>();
 
         private readonly static Dictionary<Collider, InteractionModule> interactionModuleInstances = new Dictionary<Collider, InteractionModule>();
-        private readonly static UnityEvent<InteractionModule> onInteractionModuleAdded             = new UnityEvent<InteractionModule>();
-        private readonly static UnityEvent<InteractionModule> onInteractionModuleRemoved           = new UnityEvent<InteractionModule>();
+        private readonly static UnityEvent<InteractionModule>           onInteractionModuleAdded   = new UnityEvent<InteractionModule>();
+        private readonly static UnityEvent<InteractionModule>           onInteractionModuleRemoved = new UnityEvent<InteractionModule>();
 
         protected virtual void Awake() {
             this.isEmptySelectedInteraction = true;
@@ -102,7 +102,7 @@ namespace RedSilver2.Framework.Interactions
 
         public bool CanInteract(InteractionModule module)
         {
-            if (module == null || allowedInteractionTypes == null) return false;
+            if (module == null || !module.IsInteractable || allowedInteractionTypes == null) return false;
             return allowedInteractionTypes.Contains(module.Type);
         }
 

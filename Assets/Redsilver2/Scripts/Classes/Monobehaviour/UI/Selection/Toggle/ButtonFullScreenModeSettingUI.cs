@@ -4,7 +4,8 @@ using UnityEngine;
 namespace RedSilver2.Framework.UI
 {
     public sealed class ButtonFullScreenModeSettingUI : FullScreenModeSettingUI {
-        [SerializeField] private ButtonUISelection previous, next;
+        [Space]
+        [SerializeField] private UISelectionButton previous, next;
 
         [Space]
         [SerializeField] private TextMeshProUGUI displayer;
@@ -22,8 +23,8 @@ namespace RedSilver2.Framework.UI
             });
         }
 
-        public sealed override void Apply() {
-            base.Apply();
+        public sealed override void ApplySetting() {
+            base.ApplySetting();
             if (displayer != null) displayer.text = GetFullscreenMode().ToString();
         }
     }

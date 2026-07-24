@@ -1,7 +1,6 @@
 using RedSilver2.Framework.Interactions.Actions;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -12,6 +11,9 @@ namespace RedSilver2.Framework.Interactions
         [SerializeField] private string interactableName;
         [SerializeField] private Transform uiParent;
 
+        [Space]
+        [SerializeField] private bool isInteractable;
+
         private int currentSelectedIndex = 0, previousSelectedIndex = -1;
 
         private Collider _collider;
@@ -20,25 +22,27 @@ namespace RedSilver2.Framework.Interactions
         private List<InteractionAction> actions;
 
         private UnityEvent<int> onSelectionIndexChanged;
-        private UnityEvent<InteractionAction> onInteracionActionAdded, onInteracionActionRemoved;
+        private UnityEvent<InteractionAction> onInteractionActionAdded, onInteractionActionRemoved;
         private UnityEvent<InteractionHandler> onSelected, onUnselected;
 
         public string InteractableName => interactableName;
+        public bool   IsInteractable   => isInteractable;
+
         public InteractionType Type { get; private set; }
 
         public Transform UIParent => uiParent;
         public Collider Collider => _collider;
 
-        protected virtual void Awake()
-        {
-            _collider    = GetComponent<Collider>();
-            actions      = new List<InteractionAction>();
 
-            onSelected   = new UnityEvent<InteractionHandler>();
-            onUnselected = new UnityEvent<InteractionHandler>();
+        protected virtual void Awake() {
+            _collider                 = GetComponent<Collider>();
+            actions                   = new List<InteractionAction>();
 
-            onInteracionActionAdded = new UnityEvent<InteractionAction>();
-            onInteracionActionRemoved = new UnityEvent<InteractionAction>();
+            onSelected                = new UnityEvent<InteractionHandler>();
+            onUnselected              = new UnityEvent<InteractionHandler>();
+
+            onInteractionActionAdded   = new UnityEvent<InteractionAction>();
+            onInteractionActionRemoved = new UnityEvent<InteractionAction>();
 
             AddOnSelectedListener(StartSelectionUpdate);
             AddOnUnselectedListener(StopSelectionUpdate);
@@ -55,6 +59,11 @@ namespace RedSilver2.Framework.Interactions
             InteractionHandler.RemoveInteractionModuleInstance(_collider);
         }
 
+        public virtual void SetIsInteractable(bool isInteractable)
+        {
+            this.isInteractable = isInteractable;
+        }
+
         private void StartSelectionUpdate(InteractionHandler handler) {
             StopSelectionUpdate(handler);
             selectionUpdateCoroutine = SelectionUpdate(handler);
@@ -62,39 +71,35 @@ namespace RedSilver2.Framework.Interactions
         }
 
         private void StopSelectionUpdate(InteractionHandler handler) {
-            if (selectionUpdateCoroutine != null)
-                StopCoroutine(selectionUpdateCoroutine);
-
-            selectionUpdateCoroutine = null;
+            if (selectionUpdateCoroutine != null) StopCoroutine(selectionUpdateCoroutine);
+            selectionUpdateCoroutine      = null;
         }
 
         private IEnumerator SelectionUpdate(InteractionHandler handler) {
             onSelectionIndexChanged?.Invoke(currentSelectedIndex);
 
-            while (handler != null) {
-                Interaction[] interactions = GetInteractions(true);
-
-                if (interactions ==  null || interactions.Length <= 0) {
+            while (handler != null && actions != null) {
+                if (this.actions.Count <= 0) {
                     yield return null;
                     continue;
                 }
 
-                UpdateSelectionIndex(handler, interactions);
-                interactions[currentSelectedIndex]?.Interact(handler);
-
-                Debug.Log(interactions[currentSelectedIndex].Name);
+                UpdateSelectionIndex(handler, this.actions.ToArray());
+                this.actions[currentSelectedIndex]?.UpdateAction(handler);
                 yield return null;
             }
         }
 
-        private void UpdateSelectionIndex(InteractionHandler handler, Interaction[] interactions) {
-            if (handler == null || interactions == null || interactions.Length <= 0)
+        private void UpdateSelectionIndex(InteractionHandler handler, InteractionAction[] actions) {
+            if (handler == null || actions == null || actions.Length <= 0)
                 return;
 
             if (handler.IsSelectingNextInteraction) currentSelectedIndex++;
             else if (handler.IsSelectingPreviousInteraction) currentSelectedIndex--;
 
-            currentSelectedIndex = Mathf.Clamp(currentSelectedIndex, 0, interactions.Length - 1);
+            currentSelectedIndex = Mathf.Clamp(currentSelectedIndex, 0, actions.Length - 1);
+
+            Debug.Log(actions.Length);
            
             if (previousSelectedIndex != currentSelectedIndex) {
                 previousSelectedIndex = currentSelectedIndex;
@@ -106,37 +111,39 @@ namespace RedSilver2.Framework.Interactions
             this.Type = type;
         }
 
-        public virtual void AddInteractionAction(InteractionAction interaction) {
-            if (interaction == null || actions == null || actions.Contains(interaction))
+        public virtual void AddInteractionAction(InteractionAction action) {
+            if (action == null || actions == null || actions.Contains(action))
                 return;
 
-            actions?.Add(interaction);
+            actions?.Add(action);
+            onInteractionActionAdded?.Invoke(action);
         }
 
-        public virtual void RemoveInteractionAction(InteractionAction interaction)
+        public virtual void RemoveInteractionAction(InteractionAction action)
         {
-            if (interaction == null || actions == null || !actions.Contains(interaction))
+            if (action == null || actions == null || !actions.Contains(action))
                 return;
 
-            actions?.Remove(interaction);
+            actions?.Remove(action);
+            onInteractionActionRemoved?.Invoke(action);
         }
 
-        public void AddOnInteracionActionAdded(UnityAction<InteractionAction> action)
+        public void AddOnInteractionActionAdded(UnityAction<InteractionAction> action)
         {
-            if(action != null) onInteracionActionAdded?.AddListener(action);
+            if(action != null) onInteractionActionAdded?.AddListener(action);
         }
-        public void RemoveOnInteracionActionAdded(UnityAction<InteractionAction> action)
+        public void RemoveOnInteractionActionAdded(UnityAction<InteractionAction> action)
         {
-            if (action != null) onInteracionActionAdded?.RemoveListener(action);
+            if (action != null) onInteractionActionAdded?.RemoveListener(action);
         }
 
-        public void AddOnInteracionActionRemoved(UnityAction<InteractionAction> action)
+        public void AddOnInteractionActionRemoved(UnityAction<InteractionAction> action)
         {
-            if (action != null) onInteracionActionRemoved?.AddListener(action);
+            if (action != null) onInteractionActionRemoved?.AddListener(action);
         }
-        public void RemoveOnInteracionActionRemoved(UnityAction<InteractionAction> action)
+        public void RemoveOnInteractionActionRemoved(UnityAction<InteractionAction> action)
         {
-            if (action != null) onInteracionActionRemoved?.RemoveListener(action);
+            if (action != null) onInteractionActionRemoved?.RemoveListener(action);
         }
 
         public void AddOnSelectionIndexChangedListener(UnityAction<int> action)
@@ -171,28 +178,6 @@ namespace RedSilver2.Framework.Interactions
         }
         public void Unselect(InteractionHandler handler) {
             onUnselected?.Invoke(handler);
-        }
-
-        public Interaction[] GetInteractions() {
-            List<Interaction> interactions = new List<Interaction>();
-            if (actions == null) return interactions.ToArray(); 
-
-            foreach(InteractionAction action in actions.Where(x => x != null)) {
-                if (action == null) continue;
-                interactions?.Add(action.Interaction);
-            }
-
-            return interactions.ToArray();
-        }
-
-        public Interaction[] GetInteractions(bool getEnabledInteractions) {
-            Interaction[] interactions = GetInteractions();
-          
-            if (interactions == null) return new Interaction[0];
-            else if (getEnabledInteractions) return interactions.Where(x => x != null).Where(x => x.IsEnabled).ToArray();
-            
-            return interactions;
-           
         }
     }
 }

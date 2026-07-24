@@ -1,6 +1,4 @@
 using RedSilver2.Framework.Items;
-using RedSilver2.Framework.Player.Inventories;
-using System.Collections;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
@@ -9,17 +7,14 @@ namespace RedSilver2.Framework.Interactions.Items
 {
     public abstract class Item : InteractionModule
     {
-        [SerializeField] private ItemData data;
-        
-        private Inventory         inventory;
         private MeshRenderer[]    renderers;
-
         private UnityEvent onAdded, onRemoved, onDisabled, onEnabled;
+
+        private Transform model;
         private ItemType type;
 
-        public  ItemType Type => type; 
-        public    ItemData Data => data;
-        protected Inventory Inventory => inventory;
+        public Transform Module => model;
+        public  ItemType ItemType => type; 
 
         protected override void Awake() 
         {
