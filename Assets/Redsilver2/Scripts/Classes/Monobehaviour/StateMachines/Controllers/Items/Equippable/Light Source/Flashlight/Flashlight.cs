@@ -1,15 +1,12 @@
-using RedSilver2.Framework.Animations;
-using RedSilver2.Framework.Inputs;
 using RedSilver2.Framework.Items;
-using UnityEngine;
 
 namespace RedSilver2.Framework.Interactions.Items
 {
     public class Flashlight : LightSourceItem
     {
-        protected override void Start()
+        protected virtual void Start()
         {
-            base.Start();
+
             SetLightState();
         }
 

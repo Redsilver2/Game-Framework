@@ -1,57 +1,60 @@
 ﻿using RedSilver2.Framework.Animations;
-using RedSilver2.Framework.Items;
+using RedSilver2.Framework.Inventories;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace RedSilver2.Framework.Interactions.Items
+namespace RedSilver2.Framework.Items
 {
+    [RequireComponent(typeof(Animator))]
     public abstract class EquippableItem : Item {
 
         [Space]
-        [SerializeField] private AnimationData equippedAnimationData;
-        [SerializeField] private AnimationData unequippedAnimationData;
+        [SerializeField] private RuntimeAnimatorController animatorController;
+
+        [Space]
+        [SerializeField] private AnimationData equippedAnimation;
+
+        [Space]
+        [SerializeField] private AnimationData unequippedAnimation;
+
+        [Space]
+        [SerializeField] private AnimationData droppedAnimation;
 
         [Space]
         [SerializeField] private Vector3 parentRotation;
         [SerializeField] private Vector3 parentPosition;
 
-        private bool    isEquipped;
 
-        private float   actionDelay;
-        private bool    canResetActions;
+        private float animationTime;
 
-        private float   animationLenght;
 
-        private Vector3 originalRotation;
+        private bool isEquipped;
+        private bool isInputActionsActivated;
 
         private Animator                   animator;
-        private UnityEvent                 onEquipped, onUnEquipped, onUpdate, onLateUpdate;
-        private List<EquippableItemAction> actions;
+        private UnityEvent                 onEquipped, onUnEquipped, onUpdate;
 
-        public Vector3 ParentPosition => parentPosition;
-        public Vector3 ParentRotation => parentRotation;
+        private IEnumerator updateCoroutine;
+        public bool IsEquipped => isEquipped;
+        public float AnimationTime => animationTime;
 
-        public bool  IsEquipped => isEquipped;
-        public float AnimationLenght => animationLenght;
-        public Animator Animator => animator;
+        public Vector3    OriginalParentPosition => parentPosition;
+        public Quaternion OriginalParentRotation => Quaternion.Euler(parentRotation);
+      
 
 
         #if UNITY_EDITOR
-        protected virtual void OnValidate()
+        protected override void OnValidate()
         {
-           // ValideAnimationDatas(equippedAnimationDatas);
-            //ValideAnimationDatas(unequippedAnimationDatas);
+            ValidateAnimationDatas(animatorController);
         }
 
-        protected void ValideAnimationDatas(AnimationData[] animationDatas)
+        protected virtual void ValidateAnimationDatas(RuntimeAnimatorController animatorController)
         {
-            if(animationDatas != null) {
-                foreach (AnimationData animationData in animationDatas)
-                    animationData?.Validate(animator);
-            }
+            equippedAnimation?.Validate(animatorController);
+            unequippedAnimation?.Validate(animatorController);
+            droppedAnimation?.Validate(animatorController);
         }
 
         #endif
@@ -60,36 +63,42 @@ namespace RedSilver2.Framework.Interactions.Items
         protected override void Awake()
         {
             base.Awake();
+            animator = GetComponent<Animator>();
 
-            animator = GetAnimator();
-            if(animator) animator.enabled = false;
+            if (animator) {
+                animator.enabled = false;
+                animator.runtimeAnimatorController = animatorController;
+            }
+
+            isEquipped              = false;
+            isInputActionsActivated = false;
            
-            isEquipped       = false;
-            originalRotation = transform.localEulerAngles;
+            onEquipped              = new UnityEvent();  
+            onUnEquipped            = new UnityEvent();     
+           
+            onUpdate                = new UnityEvent();
+            updateCoroutine         = UpdateCoroutine();
 
-            onEquipped       = new UnityEvent();
-            onUnEquipped     = new UnityEvent();
-            
-            onUpdate        = new UnityEvent();
-            onLateUpdate    = new UnityEvent();
-
-            actions          = new List<EquippableItemAction>();
-
-            AddOnRemovedListener(OnRemove);
-            AddOnEquippedListener(OnEquipped);
-
+            AddOnEquippedListener(OnEquipped);  
             AddOnUnEquippedListener(OnUnEquipped);
+           
             AddOnUpdateListener(OnUpdate);
-        }
+            AddOnAddedListener(() =>
+            {
+                transform.localPosition = parentPosition;
+                transform.localRotation = Quaternion.Euler(parentRotation);
+            });
 
-        private void Update()
-        {
-            onUpdate?.Invoke();
-        }
+            equippedAnimation?.AddOnStartedListener(()   =>  {
+                StartCoroutine(updateCoroutine);
+                SetMeshRenderersVisibility(true);
+                Debug.Log("?!");
+            });
 
-        private void LateUpdate()
-        {
-            onLateUpdate?.Invoke();
+            unequippedAnimation?.AddOnFinishedListener(() => {
+                StopCoroutine(updateCoroutine);
+                SetMeshRenderersVisibility(false);
+            });
         }
 
         public void Equip()
@@ -102,96 +111,76 @@ namespace RedSilver2.Framework.Interactions.Items
             if (isEquipped) onUnEquipped?.Invoke();
         }
 
-        public void Drop() {
-            SetTransformParent(null);
+        protected override IEnumerator DropCoroutine() {
+            float t = 0f;     
+            if(droppedAnimation != null) PlayAnimation(droppedAnimation.AnimationName, droppedAnimation.CrossFadeTime);
+
+
+            while (droppedAnimation != null)  {
+                if (t >= droppedAnimation.CrossFadeTime) {
+                    if (!AnimationManager.IsCurrentClipPlaying(animator, droppedAnimation.AnimationName)) break;
+                }
+                else { t += Time.deltaTime; }
+
+                yield return null;
+            }
+
+            if (animator != null) animator.enabled = false;
+            yield return StartCoroutine(base.DropCoroutine());
         }
 
-        protected virtual void OnRemove() {
-            if (animator != null) animator.enabled = true;
-            PlayAnimation(unequippedAnimationData);
+        protected override void RemoveFromInventory(Inventory inventory)
+        {
             isEquipped = false;
+            isInputActionsActivated = false;
+
+            StopCoroutine(updateCoroutine);
+            base.RemoveFromInventory(inventory);
         }
 
         protected virtual void OnEquipped() {
-            if (animator != null) animator.enabled = true;
-
-            SetMeshRenderersVisibility(true);
-            PlayAnimation(equippedAnimationData);
-
-            foreach (var action in actions)
-                action?.EnableActions();
-
-            enabled = true;
             isEquipped = true;
+            if (animator != null) animator.enabled = true;
+            PlayAnimation(equippedAnimation);
         }
 
         protected virtual void OnUnEquipped()
         {
-            if (animator != null) animator.enabled = true;
-
-            foreach (var action in actions)
-                action?.DisableActions();
-
-            PlayAnimation(unequippedAnimationData);
-            enabled = false;
             isEquipped = false;
+            if (animator != null) animator.enabled = true;
+            PlayAnimation(unequippedAnimation);
         }
 
-        protected virtual void OnUpdate()
-        {
-            actionDelay = Mathf.Clamp(actionDelay -= Time.deltaTime, 0f, float.MaxValue);
+        protected virtual void OnUpdate() {
 
-            if (actionDelay <= 0f) {
-                ResetActions();
-            }
         }
 
-        private void ResetActions()
-        {
-            if (canResetActions && actions != null)
-            {
-                foreach (var action in actions) action?.ResetActions();
-                canResetActions = false;
-            }
-        }
-
-        private IEnumerator DropCoroutine()
-        {
-            while (true) { 
-
+        private IEnumerator UpdateCoroutine() {
+            while (true) {
+                onUpdate?.Invoke();
                 yield return null;
             }
         }
 
-        private Animator GetAnimator()
-        {
-            if (transform.root == null) return transform.GetComponentInChildren<Animator>();
-            return transform.root.GetComponentInChildren<Animator>();   
-        }
-
         public void PlayAnimation(AnimationData data)
         {
-            if(data == null) return;
-            AnimationClip clip = animator.GetAnimationClip(data.AnimationName);
-
-            if(clip == null) return;
-            animationLenght = clip.length + data.CrossFadeTime;
-
             animator?.CrossFadeAnimation(data);
+            if(data != null) SetPositionUpdaterTimer(data.AnimationName, data.CrossFadeTime);
         }
 
 
-
-        public virtual void SetTransformParent(Transform parent) {
-            transform.SetParent(parent);
-
-            if (parent != null)
-            {
-                transform.localEulerAngles = parentRotation;
-                transform.localPosition    = parentPosition;
-            }
+        public void PlayAnimation(string animationName, float crossFadeTime)
+        {
+            animator?.CrossFadeAnimation(animationName, crossFadeTime);
+            SetPositionUpdaterTimer(animationName, crossFadeTime);
         }
 
+        private void SetPositionUpdaterTimer(string animationName, float crossFadeTime) {
+            float lenght = AnimationManager.GetClipLenght(animator, animationName);
+
+            if (lenght > 0f) animationTime = lenght + crossFadeTime;
+            else animationTime = 0f;
+        }
 
         public void AddOnEquippedListener(UnityAction action)
         {
@@ -219,34 +208,17 @@ namespace RedSilver2.Framework.Interactions.Items
             if (action != null) onUpdate?.AddListener(action);
         }
 
-        public void RemoveOnUpdateListener(UnityAction action)
-        {
+        public void RemoveOnUpdateListener(UnityAction action) {
             if (action != null) onUpdate?.RemoveListener(action);
         }
-        public void AddOnLateUpdateListener(UnityAction action)
-        {
-            if (action != null) onLateUpdate?.AddListener(action);
-        }
-
-        public void RemoveOnLateUpdateListener(UnityAction action)
-        {
-            if (action != null) onLateUpdate?.RemoveListener(action);
-        }
-
 
         public virtual void AddAction(EquippableItemAction action) {
-            if(action != null && actions != null) {
-                if (!actions.Contains(action))
-                    actions?.Add(action);
-            }
+
         }
 
         public virtual void RemoveAction(EquippableItemAction action)
         {
-            if (action != null && actions != null) {
-                if (actions.Contains(action)) 
-                    actions?.Remove(action);
-            }
+
         }
 
     }

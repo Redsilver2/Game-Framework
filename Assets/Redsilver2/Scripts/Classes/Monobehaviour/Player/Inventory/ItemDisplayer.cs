@@ -1,4 +1,4 @@
-using RedSilver2.Framework.Interactions.Items;
+using RedSilver2.Framework.Items;
 using System.Collections.Generic;
 using UnityEngine;
 

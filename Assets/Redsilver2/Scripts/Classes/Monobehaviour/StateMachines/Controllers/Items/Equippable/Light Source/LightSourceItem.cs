@@ -1,3 +1,4 @@
+using RedSilver2.Framework.Animations;
 using RedSilver2.Framework.Items;
 using UnityEngine;
 using UnityEngine.Events;
@@ -6,6 +7,12 @@ namespace RedSilver2.Framework.Interactions.Items
 {
     public abstract class LightSourceItem : EquippableItem
     {
+        [Space]
+        [SerializeField] private AnimationData openLightData;
+
+        [Space]
+        [SerializeField] private AnimationData closeLightData;
+
         protected bool isOn;
         private Light _light;
         private UnityEvent<bool> onStateChanged;
@@ -16,19 +23,11 @@ namespace RedSilver2.Framework.Interactions.Items
         protected override void Awake()
         {
             base.Awake();
-            _light = GetLight();
+            _light = transform.GetComponentInChildren<Light>();
 
             onStateChanged = new UnityEvent<bool>();
 
-            AddOnStateChangedListener(isOn => {
-                SetLightState();
-            });
-        }
-
-        private Light GetLight()
-        {
-            if (transform.root == null) return transform.GetComponent<Light>();
-            return transform.root.GetComponentInChildren<Light>();  
+            AddOnStateChangedListener(isOn => { SetLightState(); });
         }
 
         public void AddOnStateChangedListener(UnityAction<bool> action)
@@ -50,8 +49,7 @@ namespace RedSilver2.Framework.Interactions.Items
             }
         }
 
-        protected void SetLightState()
-        {
+        protected virtual void SetLightState() {
             if (_light != null) _light.enabled = isOn;
         }
 

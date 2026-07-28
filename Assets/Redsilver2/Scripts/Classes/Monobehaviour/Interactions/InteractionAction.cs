@@ -50,16 +50,16 @@ namespace RedSilver2.Framework.Interactions.Actions
 
         private void Start()
         {
-            SetInteractionEvent(interaction, true);
+            //SetInteractionEvent(interaction, true);
         }
 
         private void OnDisable() {
             interaction?.Disable();
-            SetInteractionEvent(interaction, false);
+            if(didStart) SetInteractionEvent(interaction, false);
         }
 
         private void OnEnable() {
-            interaction?.Enable();
+                interaction?.Enable();
             SetInteractionEvent(interaction, true);
         }
 

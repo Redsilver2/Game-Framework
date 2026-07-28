@@ -1,4 +1,3 @@
-using RedSilver2.Framework.Interactions.Items;
 using RedSilver2.Framework.Items;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,13 +8,14 @@ namespace RedSilver2.Framework.Inventories
 {
     public class Inventory : MonoBehaviour
     {
+        [Space]
         [SerializeField] private InventoryType type;
 
         [Space]
         [SerializeField] private ItemType[] itemTypesAllowed;
 
         [Space]
-        [SerializeField] private List<Item> defaultItems;
+        [SerializeField] private Transform itemParent;
 
         [Space]
         [SerializeField] private bool allowDuplicateItem = true;
@@ -36,13 +36,11 @@ namespace RedSilver2.Framework.Inventories
 
         private void ValidateRowAndColumnCount()
         {
-            if (type == InventoryType.Vertical)
-            {
+            if (type == InventoryType.Vertical) {
                 maxRowCount    = uint.MaxValue;
                 maxColumnCount = 1;
             }
-            else if (type == InventoryType.Horizontal)
-            {
+            else if (type == InventoryType.Horizontal) {
                 maxRowCount    = 1;
                 maxColumnCount = uint.MaxValue;
             }
@@ -55,39 +53,38 @@ namespace RedSilver2.Framework.Inventories
 
 
         protected virtual void Awake() {
+            items = new List<List<Item>>();
+
             onItemAdded    = new UnityEvent<Item>();
             onItemRemoved  = new UnityEvent<Item>();
             onItemsUpdated = new UnityEvent<Item[][]>();
+            
+            AddOnItemAddedListner(OnItemAdded);
+            AddOnItemRemovedListner(OnItemRemoved);
         }
 
-        private void Start()
+
+
+        protected virtual void OnItemAdded(Item item)
         {
-            InitializeItemArray();
+            if (item != null) item.transform.SetParent(itemParent);
         }
 
-        private void InitializeItemArray() {
-            items = new List<List<Item>>();
+        protected virtual void OnItemRemoved(Item item)
+        {
 
-            if (items != null)
-                for (int i = 0; i < maxRowCount; i++) items?.Add(new List<Item>((int)maxColumnCount));
-
-            onItemsUpdated?.Invoke(GetItems());
-
-            if(defaultItems != null)
-                for (int i = 0; i < defaultItems.Count; i++) AddItem(defaultItems[i]);
         }
 
         public virtual void AddItem(Item item) {
-            if (items == null || item == null) return;
+            if (items == null || item == null) { return; }
             else if (type == InventoryType.Vertical)   { AddVerticalItem(item); }
             else if (type == InventoryType.Horizontal) { AddHorizontalItem(item); }
-            else if (type == InventoryType.Hybrid)     {   }
         }
 
         public void RemoveItem(Item item) {
             if (items == null || item == null) return;
 
-            int rowIndex = GetRowIndex(item);
+            int rowIndex    = GetRowIndex(item);
             int columnIndex = GetColumnIndex(item);
 
             if (TryGetIndexes(item, out int row, out int column)) {
@@ -98,9 +95,13 @@ namespace RedSilver2.Framework.Inventories
             }
         }
 
+
+
         private void AddVerticalItem(Item item) {
+
             if (items == null) return;
-            else if (ContainsItem(item)) {
+            else if (!ContainsItem(item)) {
+
                 items?.Add(new List<Item>());
                 items[items.Count - 1].Add(item);
 
@@ -111,7 +112,7 @@ namespace RedSilver2.Framework.Inventories
 
         private void AddHorizontalItem(Item item) {
             if (items == null) return;
-            else if (ContainsItem(item)) {
+            else if (!ContainsItem(item)) {
                 if (items.Count != 1) items.Add(new List<Item>());
                 items[items.Count - 1].Add(item);
 
@@ -167,14 +168,22 @@ namespace RedSilver2.Framework.Inventories
             return item != null;
         }
 
-        public bool ContainsItem(Item item) {
-            List<List<Item>> copies = items;
-            if (copies == null) return false;
+        public bool IsFull()
+        {
+            if(items == null) return true;
 
-            for (int i = 0; i < copies.Count; i++) {
-                if (copies[i] == null) continue;
-                else if (copies[i].Contains(item)) {
-                    return false;
+            for(int i = 0; i < items.Count; i++) 
+                if(!IsRowFull(i)) return false;
+            return true;
+        }
+
+        public bool ContainsItem(Item item) {
+            if (items == null) return false;
+
+            for (int i = 0; i < items.Count; i++) {
+                if (items[i] == null) continue;
+                else if (items[i].Contains(item)) {
+                    return true;
                 }
             }
 

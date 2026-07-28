@@ -1,5 +1,5 @@
 
-using RedSilver2.Framework.Interactions.Items;
+using RedSilver2.Framework.Items;
 using RedSilver2.Framework.UI;
 using System.Collections;
 using UnityEngine;

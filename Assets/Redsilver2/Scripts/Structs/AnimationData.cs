@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.InputSystem.XR;
 
 namespace RedSilver2.Framework.Animations
 {
@@ -9,15 +10,22 @@ namespace RedSilver2.Framework.Animations
     public class  AnimationData 
     {
         [SerializeField] private string animationName;
+
+        [Space]
+        [SerializeField] private int animationIndex;
+
+        [Space]
         [SerializeField] private float  crossFadeTime;
         [SerializeField] private List<AnimationTimestampEvent> timestampEvents;
+
+        [Space]
+        [SerializeField] private UnityEvent onStarted, onFinished;
 
         public string AnimationName => animationName;
         public float CrossFadeTime => crossFadeTime;
         public AnimationTimestampEvent[] TimestampEvents
         {
-            get
-            {
+            get {
                 if(timestampEvents == null) return new AnimationTimestampEvent[0];
                 return timestampEvents.ToArray();
             }
@@ -45,7 +53,6 @@ namespace RedSilver2.Framework.Animations
              AnimationTimestampEvent timestampEvent = GetTimestampEvent(time);
              timestampEvent?.RemoveAction(action);
         }
-
         public void ResetTimeStampEvents()
         {
             if(timestampEvents == null) return; 
@@ -54,27 +61,53 @@ namespace RedSilver2.Framework.Animations
                 timestampEvent?.Reset();
         }
 
-        #if UNITY_EDITOR
-        public void Validate(Animator animator)
+        public void AddOnStartedListener(UnityAction action)
         {
-            MergeList();
-
-            if (animator == null || timestampEvents.Count == 0f) return;
-            AnimationClip clip = animator.GetAnimationClip(animationName); 
-          
-            if (clip == null) return;
-            foreach (AnimationTimestampEvent timestampEvent in timestampEvents)
-                timestampEvent?.Validate(clip);
+            if (action != null) onStarted?.AddListener(action);
+        }
+        public void RemoveOnStartedListener(UnityAction action)
+        {
+            if (action != null) onStarted?.RemoveListener(action);
         }
 
-        private void MergeList() { 
-             List<float> triggerTimes = new List<float>();
+        public void AddOnFinishedListener(UnityAction action)
+        {
+            if (action != null) onFinished?.AddListener(action);
+        }
+        public void RemoveOnFinishedListener(UnityAction action)
+        {
+            if (action != null) onFinished?.AddListener(action);
+        }
 
-            for (int i = 0; i < timestampEvents.Count; i++)
-                triggerTimes.Add(timestampEvents[i].TriggerTime);
+        public void Finish() { onFinished?.Invoke(); }
+        public void Start()  { onStarted?.Invoke(); }
 
-            foreach(float triggerTime in triggerTimes.Distinct())
-                timestampEvents = AnimationTimestampEvent.MergeArray(TimestampEvents, triggerTime).ToList();
+#if UNITY_EDITOR
+        public void Validate(RuntimeAnimatorController controller)
+        {
+            ValidateAnimationName(controller);
+            ValidateAnimationTimeStamps(AnimationManager.GetClip(controller, animationName));
+        }
+
+        private void ValidateAnimationName(RuntimeAnimatorController controller)
+        {
+            string[] animationNames = AnimationManager.GetClipNames(controller);
+
+            if (animationNames == null || animationNames.Length == 0) animationIndex = -1;
+            else animationIndex = Mathf.Clamp(animationIndex, 0, animationNames.Length - 1);
+   
+            animationName = AnimationManager.GetClipName(controller, animationIndex);
+        }
+
+        private void ValidateAnimationTimeStamps(AnimationClip current)
+        {
+            if (current != null && timestampEvents != null) {
+                foreach (AnimationTimestampEvent timestampEvent in timestampEvents)
+                    timestampEvent?.Validate(current);
+
+                crossFadeTime = Mathf.Clamp(crossFadeTime, 0f, current.length);
+            }
+            else { crossFadeTime = 0f; }
         }
         #endif
     }

@@ -1,6 +1,4 @@
-using RedSilver2.Framework.Inputs;
 using RedSilver2.Framework.Inputs.Settings;
-using RedSilver2.Framework.Interactions.Items;
 using UnityEngine;
 using UnityEngine.Events;
 

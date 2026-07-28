@@ -8,7 +8,7 @@ namespace RedSilver2.Framework.Interactions {
 
         private void Awake()
         {
-            door = transform.root != null ? transform.root.GetComponentInChildren<Door>() : GetComponentInChildren<Door>();
+            door = GetComponentInChildren<Door>();
             door?.SetIsInteractable(false);
         }
 

@@ -1,5 +1,6 @@
 using RedSilver2.Framework.Inputs;
 using RedSilver2.Framework.Inputs.Settings;
+using RedSilver2.Framework.Inventories;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -21,7 +22,8 @@ namespace RedSilver2.Framework.Interactions
         [SerializeField] private InteractionType[] allowedInteractionTypes;
         private bool isEmptySelectedInteraction;
 
-        private          InteractionModule        selectedInteraction;
+        private  InteractionModule        selectedInteraction;
+        private  Inventory inventory;
 
         private UnityEvent<InteractionModule> onSelected;
         private UnityEvent<InteractionModule> onUnselected;
@@ -31,10 +33,12 @@ namespace RedSilver2.Framework.Interactions
         public bool IsSelectingPreviousInteraction => InputManager.GetKeyDown(KeyboardKey.DownArrow);
 
         public InteractionModule SelectedInteraction => selectedInteraction;
+        public Inventory Inventory => inventory;
 
         public PressInputSettings   PressSettings   => pressSettings;
         public HoldInputSettings    HoldSettings    => holdSettings;
         public ReleaseInputSettings ReleaseSettings => releaseSettings;
+        
 
         protected static InteractionHandler Current {  get; private set; }
         private readonly static List<InteractionHandler> Instances = new List<InteractionHandler>();
@@ -45,6 +49,7 @@ namespace RedSilver2.Framework.Interactions
 
         protected virtual void Awake() {
             this.isEmptySelectedInteraction = true;
+            inventory = GetComponent<Inventory>();
 
             this.onSelected   = new UnityEvent<InteractionModule>();
             this.onUnselected = new UnityEvent<InteractionModule>();

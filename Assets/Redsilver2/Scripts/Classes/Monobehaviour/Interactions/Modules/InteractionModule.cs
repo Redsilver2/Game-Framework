@@ -51,11 +51,11 @@ namespace RedSilver2.Framework.Interactions
             InteractionHandler.AddInteractionModuleInstance(_collider, this);
         }
 
-        private void OnEnable() {
+        protected virtual void OnEnable() {
             InteractionHandler.AddInteractionModuleInstance(_collider, this);
         }
 
-        private void OnDisable() {
+        protected virtual void OnDisable() {
             InteractionHandler.RemoveInteractionModuleInstance(_collider);
         }
 
@@ -98,8 +98,6 @@ namespace RedSilver2.Framework.Interactions
             else if (handler.IsSelectingPreviousInteraction) currentSelectedIndex--;
 
             currentSelectedIndex = Mathf.Clamp(currentSelectedIndex, 0, actions.Length - 1);
-
-            Debug.Log(actions.Length);
            
             if (previousSelectedIndex != currentSelectedIndex) {
                 previousSelectedIndex = currentSelectedIndex;
