@@ -10,7 +10,7 @@ namespace RedSilver2.Framework.StateMachines.States
 
         protected sealed override bool CanTransition(MovementStateMachine stateMachine)
         {
-            if (stateMachine == null) return false;
+            if (stateMachine == null || stateMachine.IsCurrentState(TYPE)) return false;
             return stateMachine.IsGrounded && stateMachine.IsCurrentState(FallState.TYPE);
         }
 
@@ -33,8 +33,10 @@ namespace RedSilver2.Framework.StateMachines.States
         protected override void ValidateIncompatibleTransitionStates(ref MovementStateType[] stateTypes)
         {
             List<MovementStateType> results = stateTypes == null ? new List<MovementStateType>() : stateTypes.ToList();
-            if (!results.Contains(TYPE)) results?.Add(TYPE);
-            if(!results.Contains(FallState.TYPE)) results?.Add(FallState.TYPE);
+
+            foreach(MovementStateType type in new MovementStateType[]{ TYPE, FallState.TYPE, JumpState.TYPE }) {
+                if (!results.Contains(type)) results?.Add(type);
+            }
 
             stateTypes = results.ToArray();
         }

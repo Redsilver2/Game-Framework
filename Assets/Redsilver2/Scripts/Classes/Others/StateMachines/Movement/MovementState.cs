@@ -17,6 +17,7 @@ namespace RedSilver2.Framework.StateMachines.States
 
         private List<MovementState> transitionStates;
         public MovementStateType Type => type;
+        protected MovementStateMachine StateMachine => stateMachine;
 
 #if UNITY_EDITOR
 
@@ -66,7 +67,7 @@ namespace RedSilver2.Framework.StateMachines.States
             if (transitionStates != null) {
                 foreach(MovementState state in transitionStates) {
                     if (state == null || !state.CanTransition()) continue;
-                    stateMachine?.ChangeState(state);   
+                    stateMachine?.ChangeState(state.type);   
                     break;
                 }
             }
@@ -74,7 +75,7 @@ namespace RedSilver2.Framework.StateMachines.States
             OnUpdate(stateMachine);
         }
 
-        private void OnStateAdded(MovementState state) {
+        protected virtual void OnStateAdded(MovementState state) {
             if (stateMachine == null || transitionStates == null) return;
             MovementState[] states = stateMachine.States;
 
@@ -84,7 +85,7 @@ namespace RedSilver2.Framework.StateMachines.States
             }
         }
 
-        private void OnStateRemoved(MovementState state) {
+        protected virtual void OnStateRemoved(MovementState state) {
             if(stateMachine == null) return;
             MovementState[] states = stateMachine.States;
 
@@ -94,6 +95,7 @@ namespace RedSilver2.Framework.StateMachines.States
         }
 
         private bool CanTransition() {
+            if (enabled == false) return false;
             return CanTransition(stateMachine); 
         }
 

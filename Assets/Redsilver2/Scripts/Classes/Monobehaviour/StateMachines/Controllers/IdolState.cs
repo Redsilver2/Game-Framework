@@ -14,10 +14,10 @@ namespace RedSilver2.Framework.StateMachines.States
 
         protected sealed override bool CanTransition(MovementStateMachine stateMachine)
         {
-            if (stateMachine == null) return false;
+            if (stateMachine == null || stateMachine.IsCurrentState(TYPE)) return false;
            
             return !stateMachine.IsMoving && stateMachine.IsGrounded
-                && !stateMachine.IsRunning;     
+                && !RunState.GetIsRunningValue(stateMachine);     
         }
 
         protected sealed override void OnUpdate(MovementStateMachine stateMachine) {

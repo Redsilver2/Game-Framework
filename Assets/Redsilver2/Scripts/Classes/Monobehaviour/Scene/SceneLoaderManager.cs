@@ -99,7 +99,7 @@ namespace RedSilver2.Framework.Scenes
 
         private void Update()
         {
-            if(InputManager.GetKeyDown(KeyboardKey.Space) || InputManager.GetKeyDown(GamepadButton.Select)) {
+            if(InputManager.GetKeyDown(KeyboardKey.P) || InputManager.GetKeyDown(GamepadButton.Select)) {
                 LoadScene(0);
             }
         }

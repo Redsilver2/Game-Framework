@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace RedSilver2.Framework.StateMachines.States
 {
+    [RequireComponent(typeof(IdolState))]
     public sealed class WalkState : MovementState
     {
         [Space]
@@ -14,8 +15,8 @@ namespace RedSilver2.Framework.StateMachines.States
         public const MovementStateType TYPE = MovementStateType.Walk;
 
         protected sealed override bool CanTransition(MovementStateMachine stateMachine) {
-            if (stateMachine == null) return false;
-            return stateMachine.IsMoving && !stateMachine.IsRunning
+            if (stateMachine == null || stateMachine.IsCurrentState(TYPE)) return false;
+            return stateMachine.IsMoving && !RunState.GetIsRunningValue(stateMachine)
                    && !stateMachine.IsCrouching && stateMachine.IsGrounded;
         }
 
@@ -45,7 +46,7 @@ namespace RedSilver2.Framework.StateMachines.States
 #if UNITY_EDITOR
         protected sealed override void ValidateIncompatibleTransitionStates(ref MovementStateType[] stateTypes)
         {
-            List<MovementStateType> results = stateTypes.ToList();
+            List<MovementStateType> results = stateTypes != null ? stateTypes.ToList() : new List<MovementStateType>();
             if (!results.Contains(TYPE)) results.Add(TYPE);
 
             stateTypes = results.ToArray();

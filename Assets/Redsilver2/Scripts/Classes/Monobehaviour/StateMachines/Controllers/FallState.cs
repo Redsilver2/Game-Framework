@@ -15,25 +15,45 @@ namespace RedSilver2.Framework.StateMachines.States
 
         [Space]
         [SerializeField] private float fallSpeed;
-        [SerializeField] private float falltransitionSpeed;
+        [SerializeField] private float fallTransitionSpeed;
 
 
         public const MovementStateType TYPE = MovementStateType.Fall;
 
         protected sealed override bool CanTransition(MovementStateMachine stateMachine)
         {
-            return stateMachine != null ? !stateMachine.IsGrounded : false;
+            return stateMachine != null ? !stateMachine.IsGrounded && !stateMachine.IsCurrentState(TYPE) : false;
         }
 
         protected sealed override void OnUpdate(MovementStateMachine stateMachine)
         {
             if (stateMachine == null) return;
             stateMachine?.SetMoveSpeed(walkSpeed, moveTransitionSpeed);
-            stateMachine?.SetFallSpeed(fallSpeed, falltransitionSpeed);
+            stateMachine?.SetFallSpeed(fallSpeed, fallTransitionSpeed);
         }
 
         protected sealed override void SetMovementStateType(ref MovementStateType type) {
             type = MovementStateType.Fall;
+        }
+
+        public void SetWalkSpeed(float walkSpeed)
+        {
+            this.walkSpeed = walkSpeed;
+        }
+
+        public void SetMoveTransitionSpeed(float moveTransitionSpeed)
+        {
+            this.moveTransitionSpeed = moveTransitionSpeed;
+        }
+
+        public void SetFallSpeed(float fallSpeed)
+        {
+            this.fallSpeed = fallSpeed;
+        }
+
+        public void SetFallTransitionSpeed(float falltransitionSpeed)
+        {
+            this.fallTransitionSpeed = falltransitionSpeed;
         }
 
         public static FallState GetState(MovementStateMachine stateMachine)
@@ -46,14 +66,17 @@ namespace RedSilver2.Framework.StateMachines.States
 
 #if UNITY_EDITOR
         protected override void ValidateIncompatibleTransitionStates(ref MovementStateType[] stateTypes) {
-            if (stateTypes.Length > 0 && !stateTypes.Contains(MovementStateType.Land)) { 
-                return;
+
+            if (stateTypes != null)
+            {
+                if (stateTypes.Length > 0 && !stateTypes.Contains(LandState.TYPE)) 
+                   return;
             }
 
             List<MovementStateType> results  = new List<MovementStateType>();
 
             foreach(MovementStateType stateType in Enum.GetValues(typeof(MovementStateType))) {
-                if (stateType == MovementStateType.Land) continue;
+                if (stateType == LandState.TYPE) continue;
                 results?.Add(stateType);
             }
 

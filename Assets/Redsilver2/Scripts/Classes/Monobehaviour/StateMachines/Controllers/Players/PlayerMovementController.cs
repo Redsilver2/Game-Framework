@@ -9,27 +9,29 @@ namespace RedSilver2.Framework.StateMachines
     {
         [SerializeField] private CameraController defaultCameraController;
 
-        private PlayerMovementStateMachine movementController;
+        private PlayerMovementStateMachine stateMachine;
         public CameraController DefaultCameraController => defaultCameraController;
 
 
         protected override void Awake()
         {
             base.Awake();
-            movementController = GetComponent<PlayerMovementStateMachine>();
+            stateMachine = GetComponent<PlayerMovementStateMachine>();
 
             AddOnDisabledListener(() => {
                 CameraController.SetCursorVisibility(true);
                 CameraController.SetCurrent(null as CameraController);
-                if (movementController != null) movementController.enabled = false;
+                if (stateMachine != null) stateMachine.enabled = false;
             });
 
             AddOnEnabledListener(() => {
                 CameraController.SetCursorVisibility(false);
                 CameraController.SetCurrent(defaultCameraController);
 
-                if(movementController != null) movementController.enabled = true;
+                if(stateMachine != null) stateMachine.enabled = true;
             });
+
+            if (stateMachine != null) stateMachine.enabled = enabled;
         }
 
         protected virtual void Start()
@@ -39,7 +41,7 @@ namespace RedSilver2.Framework.StateMachines
         }
 
         private void SetControllerState(bool isEnabled) {
-            if(movementController != null) movementController.enabled = isEnabled;
+            if(stateMachine != null) stateMachine.enabled = isEnabled;
         }
     }
 }

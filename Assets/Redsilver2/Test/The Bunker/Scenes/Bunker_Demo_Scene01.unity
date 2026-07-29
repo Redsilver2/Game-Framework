@@ -2241,6 +2241,8 @@ GameObject:
   - component: {fileID: 9091687914289102629}
   - component: {fileID: 9091687914289102633}
   - component: {fileID: 9091687914289102634}
+  - component: {fileID: 9091687914289102635}
+  - component: {fileID: 9091687914289102636}
   m_Layer: 3
   m_Name: FPS Camera Controller
   m_TagString: Player
@@ -2625,7 +2627,7 @@ MonoBehaviour:
   is2DMovement: 0
   defaultFallSpeed: 5
   defaultState: 0
-  inputSetting: {fileID: 11400000, guid: 8f8cb524c208924489c4921a67233508, type: 2}
+  inputSetting: {fileID: 11400000, guid: 34e9a3b820b865e438822ed3a624d62a, type: 2}
 --- !u!114 &9091687914289102633
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2638,7 +2640,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 347c2b3b1305e834e97c75a9e284cf59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.States.LandState
-  incompatibleTransitionStates: 0600000005000000
+  incompatibleTransitionStates: 060000000500000004000000
 --- !u!114 &9091687914289102634
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2656,6 +2658,39 @@ MonoBehaviour:
   moveTransitionSpeed: 10
   fallSpeed: -20
   falltransitionSpeed: 10
+--- !u!114 &9091687914289102635
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1057482895335304216}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 070b354e01e35f04b8a1757a68ff46b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.States.PlayerJumpState
+  incompatibleTransitionStates: 0000000001000000020000000300000004000000060000000700000000000000010000000200000003000000040000000600000007000000
+  jumpForce: 10
+  inputSetting: {fileID: 11400000, guid: a9d391630c40d6943945932a946a9df0, type: 2}
+--- !u!114 &9091687914289102636
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1057482895335304216}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1af91e7a48eb974d8f148a0ff6e161d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.States.PlayerRunState
+  incompatibleTransitionStates: 02000000
+  runSpeed: 10
+  runTransitionSpeed: 5
+  hasToHoldInput: 1
+  pressRun: {fileID: 11400000, guid: 4c71ffb6cf65a0b49964f02a90a49771, type: 2}
+  holdRun: {fileID: 11400000, guid: cd01e6854305f9c42a71654f72ddbaf6, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

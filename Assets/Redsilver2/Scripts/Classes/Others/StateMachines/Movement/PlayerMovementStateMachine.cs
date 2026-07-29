@@ -7,18 +7,41 @@ namespace RedSilver2.Framework.StateMachines.Controllers {
     public abstract class PlayerMovementStateMachine : MovementStateMachine
     {
         [Space]
-        [SerializeField] private MovementInputSettings inputSetting;
+        [SerializeField] private KeyboardVector2InputSettings inputSetting;
 
         protected override void Awake()
         {
             base.Awake();
+            if(enabled) inputSetting?.Enable();
+        }
+
+
+        protected override void OnEnabled() {
+
+            base.OnEnabled();
             inputSetting?.Enable();
+        }
+
+        protected override void OnDisabled()
+        {
+            base.OnDisabled();
+            inputSetting?.Disable();
+        }
+
+        public void SetInputSetting(KeyboardVector2InputSettings inputSetting) {
+            this.inputSetting?.Disable();
+            this.inputSetting = inputSetting;
+
+            if (inputSetting != null){
+                if (enabled) inputSetting?.Enable();
+                else         inputSetting?.Disable();
+            }
         }
 
         protected sealed override void Move()
         {
 
-            Vector2 inputValue = inputSetting != null ? inputSetting.GetMoveVector() : Vector2.zero;
+            Vector2 inputValue = inputSetting != null ? inputSetting.GetValue() : Vector2.zero;
             SetIsMoving(inputValue.magnitude > 0f ? true : false);
 
             inputValue.Normalize();
