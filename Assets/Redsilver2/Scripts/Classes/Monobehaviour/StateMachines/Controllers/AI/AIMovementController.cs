@@ -1,16 +1,15 @@
 using UnityEngine;
 using UnityEngine.AI;
-using RedSilver2.Framework.StateMachines.States.Configurations;
 using System.Linq;
+using Unity.VisualScripting;
 
 namespace RedSilver2.Framework.StateMachines.Controllers
 {
     [RequireComponent(typeof(NavMeshAgent))]
-    public abstract class AIMovementController : MovementStateMachineController
+    public abstract class AIMovementController : MovementStateMachine
     {
         [Space]
         [SerializeField] private int defaultSettingIndex;
-        [SerializeField] private MovementStateSettings[] defaultSettings;
 
         private Transform    target;
         private NavMeshAgent agent;
@@ -20,77 +19,32 @@ namespace RedSilver2.Framework.StateMachines.Controllers
         protected override void Awake() {
             base.Awake();   
 
-            agent = GetComponent<NavMeshAgent>();
-            SetStateMachine(GetMovementStateMachine());
-
-            SetDefaultConfigurations();
-            MovementStateMachine?.AddOnUpdateListener(OnUpdate);
-
+            agent = gameObject.GetOrAddComponent<NavMeshAgent>();
             if (agent != null) agent.updateRotation = false;
         }
-
-        public void SetStateMachine(AIMovementStateMachine stateMachine) {
-            SetStateMachine(stateMachine as StateMachine);
-        }
-
 
         public void SetTarget(Transform target) {
             this.target = target;
         }
 
-        protected virtual void OnUpdate()
+        protected override void Move()
         {
-            UpdateDestination();
-            if(agent == null) return;
-
-            if (agent.velocity.sqrMagnitude > 0.1f)
-            {
+            if (agent == null) return;
+            else if (agent.velocity.sqrMagnitude > 0.1f) {
                 Quaternion targetRotation = Quaternion.LookRotation(agent.velocity.normalized);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation,  1000f * Time.deltaTime);
-            }
-        }
-
-        private void UpdateDestination() {
-            if(target == null) {
-                agent.destination = transform.position;
-                return;
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 1000f * Time.deltaTime);
             }
 
-            agent.destination = target.position;
-        }
 
-        public void SetSpeed(float speed)
-        {
-            MovementStateMachine?.SetMovementSpeed(speed);
-        }
+            if (!IsCloseToTarget()) {
+                agent?.SetDestination(target != null ? target.position : transform.position);
+                Move(agent.nextPosition);
+            }
 
-        public void SetAgentSpeed(float speed) {
-            if(agent != null) { agent.speed = speed; }
-        }
 
-        public void SetNextPosition(Vector3 nextPosition)
-        {
-            if(agent != null) agent.nextPosition = nextPosition;
         }
 
         public void SetWaypoints(Transform[] waypoints) { this.waypoints = waypoints; }
-
-        public Vector3 GetVelocity()
-        {
-            return agent == null ? Vector3.zero : agent.velocity; 
-        }
-
-        private void SetDefaultConfigurations() {
-            foreach (var settings in defaultSettings) {
-                if (settings == null) continue;
-                settings.Register(StateMachine);
-            }
-
-            if (defaultSettingIndex >= 0 && defaultSettingIndex < defaultSettings.Length - 1) {
-                StateMachine?.ChangeState(defaultSettings[defaultSettingIndex].GetBaseConfiguration(StateMachine));
-            }
-        }
-
         public bool IsCloseToTarget() {
             if(agent == null) return false;
             else if(target == null) return true;
@@ -122,7 +76,5 @@ namespace RedSilver2.Framework.StateMachines.Controllers
             var results = waypoints.Where(x => !x.Equals(target)).ToArray();
             return results.Count() > 0 ? results[Random.Range(0, results.Length)] : null;
         }
-         
-        public abstract AIMovementStateMachine GetMovementStateMachine();
     }
 }

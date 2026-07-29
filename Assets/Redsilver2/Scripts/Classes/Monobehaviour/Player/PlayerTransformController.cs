@@ -1,14 +1,13 @@
-using RedSilver2.Framework.Inputs.Configurations;
-using RedSilver2.Framework.Inputs.Settings;
+using Unity.VisualScripting;
+using UnityEngine;
 
-namespace RedSilver2.Framework.StateMachines.Controllers
-{
-    public class PlayerTransformController : PlayerMovementController
-    {
-        protected override void SetStateMachineController(PlayerMovementStateMachineController controller, MovementInputSettings inputSettings)
-        {
-            if (controller == null || controller == null || inputSettings == null) return;
-            controller?.SetStateMachine(new PlayerTransformMovementStateMachine(controller, inputSettings));
+namespace RedSilver2.Framework.StateMachines.Controllers {
+
+    [RequireComponent(typeof(PlayerTransformStateMachine))]
+    public sealed class PlayerTransformController : PlayerMovementController {
+        protected sealed override void Awake() {
+            gameObject.GetOrAddComponent<PlayerTransformStateMachine>();
+            base.Awake();
         }
     }
 }

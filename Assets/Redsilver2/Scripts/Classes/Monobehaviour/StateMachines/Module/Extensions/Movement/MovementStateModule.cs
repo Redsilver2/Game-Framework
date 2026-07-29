@@ -5,9 +5,9 @@ namespace RedSilver2.Framework.StateMachines.Controllers
 {
     public abstract class MovementStateModule : StateConfigurationModule
     {
-        protected sealed override UpdateableStateMachineController GetStateMachineStateMachine(UpdateableStateMachineController controller)
+        protected sealed override UpdatableStateMachine GetStateMachineStateMachine(UpdatableStateMachine controller)
         {
-            if (controller is not MovementStateMachineController) return null;
+            if (controller is not MovementStateMachine) return null;
             return  base.GetStateMachineStateMachine(controller);
         }
 

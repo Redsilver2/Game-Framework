@@ -1,10 +1,9 @@
+using RedSilver2.Framework.Interactions.Items;
 using UnityEngine;
 
 namespace RedSilver2.Framework.Items {
-    public class TestItem : EquippableItem
+    public class TestItem : LightSourceItem
     {
-        protected sealed override ItemType GetItemType() {
-            return ItemType.LightSource;
-        }
+
     }
 }

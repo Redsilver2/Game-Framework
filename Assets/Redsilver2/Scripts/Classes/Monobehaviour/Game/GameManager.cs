@@ -8,10 +8,11 @@ using RedSilver2.Framework.StateMachines.Controllers;
 using RedSilver2.Framework.Dialogs;
 using UnityEngine;
 using RedSilver2.Framework.UI;
+using RedSilver2.Framework.Achievements;
 
 namespace RedSilver2.Framework
 {
-    [RequireComponent(typeof(SteamManager))]
+    [RequireComponent(typeof(AchievementManager))]
     public class GameManager : MonoBehaviour
     {
         [SerializeField] private SceneLoaderManager sceneLoaderManager;    
@@ -20,6 +21,7 @@ namespace RedSilver2.Framework
         [SerializeField] private LightManager       lightManager;
 
         [SerializeField] private GameUIController   uiController;
+        private AchievementManager achievementManager;
 
         protected static GameManager instance;
 
@@ -34,6 +36,7 @@ namespace RedSilver2.Framework
         public static SettingManager     SettingManager     => instance ? instance.settingManager     : null;
         public static LightManager       LightManager       => instance ? instance.lightManager       : null;
         public static GameUIController   UIController       => instance ? instance.uiController       : null;
+        public static AchievementManager AchievementManager => instance ? instance.achievementManager : null;
 
         public const string INTERACTION_LAYER_NAME = "Interaction";
         public const string GROUND_LAYER_NAME      = "Ground";
@@ -49,7 +52,7 @@ namespace RedSilver2.Framework
             gameObject.name = "GameManager";
             DontDestroyOnLoad(instance);
 
-            Application.targetFrameRate = 999;
+            achievementManager = GetComponent<AchievementManager>();
         }
 
         protected virtual void Update() {

@@ -2,6 +2,7 @@ using UnityEngine.Events;
 
 namespace RedSilver2.Framework.Inputs
 {
+    [System.Serializable]
     public abstract class InputHandler
     {
         private bool isEnabled = false;

@@ -13,15 +13,7 @@ namespace RedSilver2.Framework.StateMachines.States
         private UnityAction<State> onStateAdded;
         private UnityAction<State> onStateRemoved;
 
-        private UpdateableStateMachineController controller;
-      
-        protected StateMachine stateMachine 
-        {
-            get {
-                if (controller == null) return null;
-                return controller.StateMachine;
-            }
-        }
+        private UpdatableStateMachine controller;
 
         public string ModuleName => moduleName;
 
@@ -79,16 +71,16 @@ namespace RedSilver2.Framework.StateMachines.States
             }
         }
 
-        private UpdateableStateMachineController GetStateMachineController()
+        private UpdatableStateMachine GetStateMachineController()
         {
-            if (transform.root.TryGetComponent(out UpdateableStateMachineController controller)) {
+            if (transform.root.TryGetComponent(out UpdatableStateMachine controller)) {
                 return GetStateMachineStateMachine(controller);
             }
 
             return null;
         }
 
-        protected virtual UpdateableStateMachineController GetStateMachineStateMachine(UpdateableStateMachineController controller)
+        protected virtual UpdatableStateMachine GetStateMachineStateMachine(UpdatableStateMachine controller)
         {
             if (controller == null) return null;
             return controller;

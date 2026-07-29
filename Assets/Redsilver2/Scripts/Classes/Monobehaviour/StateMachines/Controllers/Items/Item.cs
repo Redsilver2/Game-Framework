@@ -66,6 +66,8 @@ namespace RedSilver2.Framework.Items
 
                 SetInteractionColliderVisibility(true);
             });
+
+            StartDropCoroutine();
         }
 
         protected override void OnEnable() {
@@ -149,12 +151,9 @@ namespace RedSilver2.Framework.Items
 
             while (true) {
                 bool isHittingGround = Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, dropCheckRange);
-                Debug.Log("?? " + hit.collider);
                 if (owner != null) break;
 
-                Debug.Log("What??");
                 transform.SetParent(null);
-
                 transform.localRotation = Quaternion.Euler(dropRotation);
                 transform.localPosition += Time.deltaTime * (Vector3.down * dropFallSpeed);
               

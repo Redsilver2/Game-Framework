@@ -11,8 +11,8 @@ namespace RedSilver2.Framework.StateMachines.States
 
         protected override void Awake()
         {
-            base.Awake();
-            source = GetComponent<AudioSource>();
+           // base.Awake();
+          //  source = GetComponent<AudioSource>();
         }
 
 

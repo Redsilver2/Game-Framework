@@ -1,8 +1,8 @@
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace RedSilver2.Framework.Inputs
 {
+    [System.Serializable]
     public abstract class Vector2Input : InputHandler
     {
         protected GamepadStick gamepadStick;

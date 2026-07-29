@@ -164,15 +164,19 @@ namespace RedSilver2.Framework.Items
 
         public void PlayAnimation(AnimationData data)
         {
-            animator?.CrossFadeAnimation(data);
-            if(data != null) SetPositionUpdaterTimer(data.AnimationName, data.CrossFadeTime);
+            if (IsInInventory()) {
+                animator?.CrossFadeAnimation(data);
+                if (data != null) SetPositionUpdaterTimer(data.AnimationName, data.CrossFadeTime);
+            }
         }
 
 
         public void PlayAnimation(string animationName, float crossFadeTime)
         {
-            animator?.CrossFadeAnimation(animationName, crossFadeTime);
-            SetPositionUpdaterTimer(animationName, crossFadeTime);
+            if (IsInInventory()) {
+                animator?.CrossFadeAnimation(animationName, crossFadeTime);
+                SetPositionUpdaterTimer(animationName, crossFadeTime);
+            }
         }
 
         private void SetPositionUpdaterTimer(string animationName, float crossFadeTime) {

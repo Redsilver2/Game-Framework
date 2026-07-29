@@ -7,7 +7,6 @@ namespace RedSilver2.Framework.Interactions.Items
         protected virtual void Start()
         {
 
-            SetLightState();
         }
 
         public override void AddAction(EquippableItemAction action)

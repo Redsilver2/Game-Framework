@@ -819,7 +819,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4113432655305760555}
-  - component: {fileID: 6779929578561990584}
   - component: {fileID: 2527184037399419824}
   - component: {fileID: 7564608450746250694}
   - component: {fileID: 2514620892661351127}
@@ -831,6 +830,7 @@ GameObject:
   - component: {fileID: 1825564850401266671}
   - component: {fileID: 7876432241037572376}
   - component: {fileID: 6104419656080014367}
+  - component: {fileID: 4658874703273691323}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -857,18 +857,6 @@ Transform:
   - {fileID: 3454149093181788364}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6779929578561990584
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5893443778602384923}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef4bffeda13d7a748973ff9204401c07, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SteamManager
 --- !u!114 &2527184037399419824
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -885,6 +873,7 @@ MonoBehaviour:
   subtitleManager: {fileID: 2514620892661351127}
   settingManager: {fileID: 0}
   lightManager: {fileID: 0}
+  uiController: {fileID: 0}
 --- !u!114 &7564608450746250694
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1061,6 +1050,18 @@ MonoBehaviour:
   template: {fileID: 386424459591330249}
   templateParent: {fileID: 9125756057020315474}
   templatePosition: {x: -300, y: 200, z: 0}
+--- !u!114 &4658874703273691323
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5893443778602384923}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b33002193a8669b49a24b06109cd1852, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Achievements.AchievementManager
 --- !u!1 &8087175750124228306
 GameObject:
   m_ObjectHideFlags: 0

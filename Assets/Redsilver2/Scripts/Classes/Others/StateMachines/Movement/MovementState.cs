@@ -1,22 +1,106 @@
+using RedSilver2.Framework.StateMachines.Controllers;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace RedSilver2.Framework.StateMachines.States
 {
-    public abstract class MovementState : UpdateableState
+    public abstract class MovementState : UpdatableState
     {
-        public readonly MovementStateType   Type;
-        public readonly MovementStateType[] IncompatibleTransitionStates;
+        [Space]
+        [SerializeField] private MovementStateType[] incompatibleTransitionStates;
 
-        protected MovementState(MovementStateMachine owner) : base(owner) {
-            SetPlayerStateType(ref Type);
-            SetIncompatibleStateTransitions(ref IncompatibleTransitionStates);
-            IncompatibleTransitionStates = IncompatibleTransitionStates.Distinct().ToArray();;
+        private MovementStateType   type;
+        private MovementStateMachine stateMachine;
+
+
+        private List<MovementState> transitionStates;
+        public MovementStateType Type => type;
+
+#if UNITY_EDITOR
+
+        protected virtual void OnValidate()
+        {
+            ValidateIncompatibleTransitionStates(ref incompatibleTransitionStates);
         }
 
+        protected abstract void ValidateIncompatibleTransitionStates(ref MovementStateType[] stateTypes);
+#endif
+
+        protected override void Awake() {
+            base.Awake();
+
+            stateMachine = GetComponent<MovementStateMachine>();
+            transitionStates = new List<MovementState>();
+
+            SetMovementStateType(ref type);    
+            incompatibleTransitionStates = incompatibleTransitionStates.Distinct().ToArray();
+
+            AddOnUpdatedListener(OnUpdate);
+            AddOnDisabledListener(OnDisabled);
+
+            AddOnEnabledListener(OnEnabled);
+        }
+
+        private void Start()
+        {
+            OnEnabled();
+        }
+
+        protected virtual void OnEnabled()
+        {
+            stateMachine?.AddOnStateAddedListener(OnStateAdded);
+            stateMachine?.AddOnStateRemovedListener(OnStateRemoved);
+            stateMachine?.AddState(this);
+        }
+
+        protected virtual void OnDisabled()
+        {
+            stateMachine?.RemoveState(this);
+            stateMachine?.RemoveOnStateAddedListener(OnStateAdded);
+            stateMachine?.RemoveOnStateRemovedListener(OnStateRemoved);
+        }
+
+        protected virtual void OnUpdate() {
+            if (transitionStates != null) {
+                foreach(MovementState state in transitionStates) {
+                    if (state == null || !state.CanTransition()) continue;
+                    stateMachine?.ChangeState(state);   
+                    break;
+                }
+            }
+
+            OnUpdate(stateMachine);
+        }
+
+        private void OnStateAdded(MovementState state) {
+            if (stateMachine == null || transitionStates == null) return;
+            MovementState[] states = stateMachine.States;
+
+            for (int i = 0; i < states.Length; i++) {
+                if (states[i] == this || states[i] == null) continue;
+                else if (IsValidTransitionState(states[i]) && !transitionStates.Contains(states[i])) transitionStates.Add(states[i]);
+            }
+        }
+
+        private void OnStateRemoved(MovementState state) {
+            if(stateMachine == null) return;
+            MovementState[] states = stateMachine.States;
+
+            for (int i = 0; i < states.Length; i++) {
+                if (transitionStates.Contains(states[i])) transitionStates.Remove(states[i]);
+            }
+        }
+
+        private bool CanTransition() {
+            return CanTransition(stateMachine); 
+        }
+
+
         protected bool IsValidTransitionState(MovementStateType stateType)  {
-            if (IncompatibleTransitionStates == null || owner == null) return false;
-            return !IncompatibleTransitionStates.Contains(stateType);
+            if (incompatibleTransitionStates == null) return false;
+            return !incompatibleTransitionStates.Contains(stateType);
         }
 
         protected sealed override bool IsValidTransitionState(State state) {
@@ -24,22 +108,14 @@ namespace RedSilver2.Framework.StateMachines.States
         }
 
         protected bool IsValidTransitionState(MovementState state) {
-            if  (state == null || IncompatibleTransitionStates == null) return false;
-            return IsValidTransitionState(state.Type);
+            if  (state == null || incompatibleTransitionStates == null) return false;
+            return IsValidTransitionState(state.type);
         }
 
-        public sealed override string GetStateName()
-        {
-            return Type.ToString();
+        public sealed override string GetStateName() {
+            return type.ToString();
         }
 
-        public MovementStateMachine GetMovementStateMachine()
-        {
-            return owner as MovementStateMachine;
-        }
-
-        protected abstract void SetPlayerStateType(ref MovementStateType type);
-        protected abstract void SetIncompatibleStateTransitions(ref MovementStateType[] results);
         public static MovementStateType[] GetStateTypes(){
             return ((MovementStateType[])Enum.GetValues(typeof(MovementStateType)));
         }
@@ -62,5 +138,9 @@ namespace RedSilver2.Framework.StateMachines.States
             foreach (MovementStateType type in includedStates) results = results.Where(x => x == type).Distinct().ToArray();
             return results;
         }
+
+        protected abstract void SetMovementStateType(ref MovementStateType type);
+        protected abstract bool CanTransition(MovementStateMachine stateMachine);
+        protected abstract void OnUpdate(MovementStateMachine stateMachine);
     }
 }

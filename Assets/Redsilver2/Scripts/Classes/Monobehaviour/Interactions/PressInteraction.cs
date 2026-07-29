@@ -1,6 +1,3 @@
-using RedSilver2.Framework.Inputs;
-using UnityEditor.ShaderKeywordFilter;
-using UnityEngine;
 using UnityEngine.Events;
 
 namespace RedSilver2.Framework.Interactions

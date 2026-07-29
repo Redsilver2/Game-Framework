@@ -1,0 +1,55 @@
+using RedSilver2.Framework.StateMachines.Controllers;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+
+namespace RedSilver2.Framework.StateMachines.States
+{
+    public sealed class WalkState : MovementState
+    {
+        [Space]
+        [SerializeField] private float walkSpeed;
+        [SerializeField] private float moveTransitionSpeed;
+
+        public const MovementStateType TYPE = MovementStateType.Walk;
+
+        protected sealed override bool CanTransition(MovementStateMachine stateMachine) {
+            if (stateMachine == null) return false;
+            return stateMachine.IsMoving && !stateMachine.IsRunning
+                   && !stateMachine.IsCrouching && stateMachine.IsGrounded;
+        }
+
+        protected sealed override void OnUpdate(MovementStateMachine stateMachine) {
+            if (stateMachine == null) return;
+            stateMachine?.SetMoveSpeed(walkSpeed, moveTransitionSpeed);
+        }
+
+        protected sealed override void SetMovementStateType(ref MovementStateType type) {
+            type = TYPE;
+        }
+
+        public void SetWalkSpeed(float walkSpeed) {
+            this.walkSpeed = Mathf.Clamp(walkSpeed, 0f, float.MaxValue);
+        }
+
+        public void SetTransitionSpeed(float transitionSpeed) {
+            this.moveTransitionSpeed = Mathf.Clamp(transitionSpeed, 0f, float.MaxValue);
+        }
+
+        public static WalkState GetState(MovementStateMachine stateMachine) { 
+            if(stateMachine == null) return null;
+            return stateMachine.GetState(TYPE) as WalkState;
+        }
+
+
+#if UNITY_EDITOR
+        protected sealed override void ValidateIncompatibleTransitionStates(ref MovementStateType[] stateTypes)
+        {
+            List<MovementStateType> results = stateTypes.ToList();
+            if (!results.Contains(TYPE)) results.Add(TYPE);
+
+            stateTypes = results.ToArray();
+        }
+#endif
+    }
+}
