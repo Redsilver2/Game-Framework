@@ -34,7 +34,7 @@ namespace RedSilver2.Framework.StateMachines.Controllers
             onEnabled = new UnityEvent();
 
             instances.Add(this);
-            this.enabled = false;
+            //this.enabled = false;
         }
 
         private void OnEnable() { onEnabled?.Invoke(); }

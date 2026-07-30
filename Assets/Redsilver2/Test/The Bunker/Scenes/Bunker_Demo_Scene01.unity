@@ -369,12 +369,12 @@ Transform:
   m_GameObject: {fileID: 190184648}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.57299995, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6121824776835189799}
-  m_Father: {fileID: 1038957370103312475}
+  m_Father: {fileID: 1594589319}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &190184650
 MonoBehaviour:
@@ -1960,6 +1960,38 @@ Transform:
   m_Children: []
   m_Father: {fileID: 6121824776835189799}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1594589318
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1594589319}
+  m_Layer: 3
+  m_Name: Crouch
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1594589319
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1594589318}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 190184649}
+  m_Father: {fileID: 1038957370103312475}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1607124412
 GameObject:
   m_ObjectHideFlags: 0
@@ -2212,11 +2244,11 @@ Transform:
   m_GameObject: {fileID: 1057482895335304216}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -3.48661, y: 1.008, z: -6.54049}
+  m_LocalPosition: {x: -3.48661, y: 1.737, z: -6.54049}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 190184649}
+  - {fileID: 1594589319}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1057482895335304216
@@ -2243,6 +2275,7 @@ GameObject:
   - component: {fileID: 9091687914289102634}
   - component: {fileID: 9091687914289102635}
   - component: {fileID: 9091687914289102636}
+  - component: {fileID: 9091687914289102637}
   m_Layer: 3
   m_Name: FPS Camera Controller
   m_TagString: Player
@@ -2594,7 +2627,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f25b713a46a0df4cbf4d970d9f10c17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.States.IdolState
-  incompatibleTransitionStates: 00000000
+  incompatibleTransitionStates: 0000000005000000
+  isActif: 0
   moveSpeedTransition: 4
 --- !u!114 &9091687914289102630
 MonoBehaviour:
@@ -2609,6 +2643,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.States.WalkState
   incompatibleTransitionStates: 01000000
+  isActif: 0
   walkSpeed: 4
   moveTransitionSpeed: 5
 --- !u!114 &9091687914289102631
@@ -2625,9 +2660,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.PlayerCharacterControllerStateMachine
   groundCheckRange: 1.15
   is2DMovement: 0
-  defaultFallSpeed: 5
+  defaultFallSpeed: -10
+  fallTransitionSpeed: 10
+  defaultHeight: 2
+  heightTransitionSpeed: 5
   defaultState: 0
   inputSetting: {fileID: 11400000, guid: 34e9a3b820b865e438822ed3a624d62a, type: 2}
+  cameraCrouchTransform: {fileID: 1594589319}
+  crouchCameraPosition: {x: 0, y: 0.5, z: 0}
+  standCameraPosition: {x: 0, y: 1, z: 0}
+  crouchCameraUpdateSpeed: 5
 --- !u!114 &9091687914289102633
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2641,6 +2683,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.States.LandState
   incompatibleTransitionStates: 060000000500000004000000
+  isActif: 0
 --- !u!114 &9091687914289102634
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2653,11 +2696,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f5c142f23232aa448ede2e50f9d37c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.States.FallState
-  incompatibleTransitionStates: 00000000010000000200000003000000040000000500000007000000
+  incompatibleTransitionStates: 00000000010000000200000003000000040000000700000005000000
+  isActif: 0
   walkSpeed: 0.5
   moveTransitionSpeed: 10
   fallSpeed: -20
-  falltransitionSpeed: 10
+  fallTransitionSpeed: 10
 --- !u!114 &9091687914289102635
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2670,7 +2714,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 070b354e01e35f04b8a1757a68ff46b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.States.PlayerJumpState
-  incompatibleTransitionStates: 0000000001000000020000000300000004000000060000000700000000000000010000000200000003000000040000000600000007000000
+  incompatibleTransitionStates: 00000000010000000200000003000000040000000600000007000000
+  isActif: 0
   jumpForce: 10
   inputSetting: {fileID: 11400000, guid: a9d391630c40d6943945932a946a9df0, type: 2}
 --- !u!114 &9091687914289102636
@@ -2685,12 +2730,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1af91e7a48eb974d8f148a0ff6e161d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.States.PlayerRunState
-  incompatibleTransitionStates: 02000000
+  incompatibleTransitionStates: 02000000000000000600000007000000
+  isActif: 0
   runSpeed: 10
   runTransitionSpeed: 5
   hasToHoldInput: 1
   pressRun: {fileID: 11400000, guid: 4c71ffb6cf65a0b49964f02a90a49771, type: 2}
   holdRun: {fileID: 11400000, guid: cd01e6854305f9c42a71654f72ddbaf6, type: 2}
+--- !u!114 &9091687914289102637
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1057482895335304216}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0012639ce59b2f34f9cb83c0faf0b3cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.States.PlayerCrouchState
+  incompatibleTransitionStates: 030000000600000005000000
+  isActif: 0
+  crouchMoveSpeed: 2
+  crouchMoveTransitionSpeed: 10
+  crouchHeight: 1
+  crouchHeightTransitionSpeed: 5
+  hasToHoldInput: 1
+  pressCrouch: {fileID: 11400000, guid: 1faffc1e4c2cd3943a96937c4b8401fb, type: 2}
+  holdCrouch: {fileID: 11400000, guid: 61364bc8a312b1c4c9ca563f361e9b55, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

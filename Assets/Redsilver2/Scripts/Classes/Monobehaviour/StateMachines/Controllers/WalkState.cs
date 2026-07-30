@@ -16,8 +16,8 @@ namespace RedSilver2.Framework.StateMachines.States
 
         protected sealed override bool CanTransition(MovementStateMachine stateMachine) {
             if (stateMachine == null || stateMachine.IsCurrentState(TYPE)) return false;
-            return stateMachine.IsMoving && !RunState.GetIsRunningValue(stateMachine)
-                   && !stateMachine.IsCrouching && stateMachine.IsGrounded;
+            return stateMachine.IsMoving && !RunState.GetIsRunning(stateMachine)
+                   && !CrouchState.GetIsCrouching(stateMachine) && stateMachine.IsGrounded;
         }
 
         protected sealed override void OnUpdate(MovementStateMachine stateMachine) {
@@ -44,12 +44,9 @@ namespace RedSilver2.Framework.StateMachines.States
 
 
 #if UNITY_EDITOR
-        protected sealed override void ValidateIncompatibleTransitionStates(ref MovementStateType[] stateTypes)
+        protected sealed override MovementStateType[] GetDefaultInvalidTypes()
         {
-            List<MovementStateType> results = stateTypes != null ? stateTypes.ToList() : new List<MovementStateType>();
-            if (!results.Contains(TYPE)) results.Add(TYPE);
-
-            stateTypes = results.ToArray();
+            return new MovementStateType[] { TYPE };
         }
 #endif
     }

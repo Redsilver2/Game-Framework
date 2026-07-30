@@ -1,6 +1,5 @@
 using RedSilver2.Framework.StateMachines.Controllers;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -21,16 +20,12 @@ namespace RedSilver2.Framework.StateMachines.States {
             jumpForce = Mathf.Clamp(jumpForce, 0f, float.MaxValue);
         }
 
-        protected sealed override void ValidateIncompatibleTransitionStates(ref MovementStateType[] stateTypes) {
+        protected sealed override MovementStateType[] GetDefaultInvalidTypes()
+        {
+            var results = Enum.GetValues(typeof(MovementStateType)) as MovementStateType[];
+            if (results == null) return new MovementStateType[0];
 
-            List<MovementStateType> results = stateTypes != null ? stateTypes.ToList() : new List<MovementStateType>();
-
-            foreach (MovementStateType stateType in Enum.GetValues(typeof(MovementStateType))) {
-                if (stateType == FallState.TYPE || results.Contains(stateType)) continue; 
-                results?.Add(stateType);
-            }
-
-            stateTypes = results.ToArray();
+            return results.Where(x => x != MovementStateType.Fall).ToArray();
         }
 
 #endif

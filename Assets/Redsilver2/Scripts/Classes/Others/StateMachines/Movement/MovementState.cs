@@ -11,11 +11,16 @@ namespace RedSilver2.Framework.StateMachines.States
         [Space]
         [SerializeField] private MovementStateType[] incompatibleTransitionStates;
 
+        [Space]
+        [SerializeField] private bool isActif;
+
         private MovementStateType   type;
         private MovementStateMachine stateMachine;
 
 
         private List<MovementState> transitionStates;
+
+        public bool IsActif => isActif;
         public MovementStateType Type => type;
         protected MovementStateMachine StateMachine => stateMachine;
 
@@ -23,10 +28,24 @@ namespace RedSilver2.Framework.StateMachines.States
 
         protected virtual void OnValidate()
         {
-            ValidateIncompatibleTransitionStates(ref incompatibleTransitionStates);
+            List<MovementStateType> results = incompatibleTransitionStates != null ? incompatibleTransitionStates.ToList() :  new List<MovementStateType>();
+
+            foreach(MovementStateType stateType in GetDefaultInvalidTypes()) {
+                if (!results.Contains(stateType)) results?.Add(stateType);
+            }
+
+            foreach(MovementStateType stateType in GetRequiredTypes()) {
+                if(results.Contains(stateType)) results?.Remove(stateType);
+            }
+
+            incompatibleTransitionStates = results.ToArray();
         }
 
-        protected abstract void ValidateIncompatibleTransitionStates(ref MovementStateType[] stateTypes);
+        protected abstract MovementStateType[] GetDefaultInvalidTypes();
+        protected virtual MovementStateType[] GetRequiredTypes() {
+            return new MovementStateType[0];
+        }
+
 #endif
 
         protected override void Awake() {
@@ -47,6 +66,11 @@ namespace RedSilver2.Framework.StateMachines.States
         private void Start()
         {
             OnEnabled();
+        }
+
+        public void SetIsActif(bool isActif)
+        {
+            this.isActif = isActif;
         }
 
         protected virtual void OnEnabled()
@@ -95,7 +119,7 @@ namespace RedSilver2.Framework.StateMachines.States
         }
 
         private bool CanTransition() {
-            if (enabled == false) return false;
+            if (enabled == false || !isActif) return false;
             return CanTransition(stateMachine); 
         }
 
@@ -118,28 +142,6 @@ namespace RedSilver2.Framework.StateMachines.States
             return type.ToString();
         }
 
-        public static MovementStateType[] GetStateTypes(){
-            return ((MovementStateType[])Enum.GetValues(typeof(MovementStateType)));
-        }
-
-        public static MovementStateType[] GetExcludedStateTypes(MovementStateType[] ignoredStates) {
-            if(ignoredStates == null || ignoredStates.Length == 0) return GetStateTypes();
-            MovementStateType[] results = GetStateTypes();
-
-            foreach(MovementStateType type in ignoredStates) 
-                results = results.Where(x => x != type).Distinct().ToArray();
-
-            return results;
-        }
-
-        public static MovementStateType[] GetIncludedStateTypes(MovementStateType[] includedStates)
-        {
-            if (includedStates == null || includedStates.Length == 0) return GetStateTypes();
-            MovementStateType[] results = GetStateTypes();
-
-            foreach (MovementStateType type in includedStates) results = results.Where(x => x == type).Distinct().ToArray();
-            return results;
-        }
 
         protected abstract void SetMovementStateType(ref MovementStateType type);
         protected abstract bool CanTransition(MovementStateMachine stateMachine);

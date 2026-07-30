@@ -18,17 +18,19 @@ namespace RedSilver2.Framework.StateMachines.Controllers
 
         [Space]
         [SerializeField] private float defaultFallSpeed;
+        [SerializeField] private float fallTransitionSpeed;
 
+        [Space]
+        [SerializeField] private float defaultHeight;
+        [SerializeField] private float heightTransitionSpeed;
 
         [Space]
         [SerializeField] private MovementStateType defaultState;
-
 
         private float moveSpeed;
         private float fallSpeed;
 
         private bool isGrounded;
-        private bool isCrouching;
 
         private bool isMoving;
         private string groundTag;
@@ -42,7 +44,8 @@ namespace RedSilver2.Framework.StateMachines.Controllers
         private UnityEvent<MovementState> onStateAdded, onStateRemoved;
         private UnityEvent<MovementState> onStateEntered, onStateExited;
 
-
+        public float DefaultHeight => defaultHeight;
+        public float DefaultFallSpeed => defaultFallSpeed;
 
         public float MoveSpeed => moveSpeed;
         public float FallSpeed => fallSpeed;
@@ -50,7 +53,6 @@ namespace RedSilver2.Framework.StateMachines.Controllers
         public string GroundTag   => groundTag;
         public bool   IsMoving    => isMoving;
         public bool   IsGrounded  => isGrounded;
-        public bool   IsCrouching => isCrouching;
 
         public float GroundCheckRange                    => groundCheckRange;
         public bool Is2DMovement                         => is2DMovement;
@@ -79,9 +81,7 @@ namespace RedSilver2.Framework.StateMachines.Controllers
             onStateExited  = new UnityEvent<MovementState>();
 
             groundTag = string.Empty;
-
             isGrounded  = false;
-            isCrouching = false;
 
             isMoving  = false;
             fallSpeed = -10f;
@@ -110,9 +110,7 @@ namespace RedSilver2.Framework.StateMachines.Controllers
 
         protected virtual void OnEnabled() {
             if(states != null) {
-                foreach(MovementStateType  type in states.Keys)
-                {
-                    Debug.Log(type);
+                foreach(MovementStateType  type in states.Keys) {  
                     EnableState(type);
                 }
             }
@@ -122,15 +120,12 @@ namespace RedSilver2.Framework.StateMachines.Controllers
         {
             if (states != null)
             {
-                foreach (MovementStateType type in states.Keys)
-                {
-                    Debug.Log(type);
+                foreach (MovementStateType type in states.Keys) {
                     DisableState(type);
                 }
             }
 
             this.isGrounded = true;
-            this.isCrouching = false;
             this.isMoving = false;
         }
 
@@ -156,13 +151,11 @@ namespace RedSilver2.Framework.StateMachines.Controllers
         }
 
         public void DisableState(MovementStateType type) {
-            MovementState state = GetState(type);
-            if(state != null) state.enabled = false;
+            GetState(type)?.SetIsActif(false);
         }
         public void EnableState(MovementStateType type)
         {
-            MovementState state = GetState(type);
-            if (state != null) state.enabled = true;
+            GetState(type)?.SetIsActif(true);
         }
 
 
@@ -197,7 +190,7 @@ namespace RedSilver2.Framework.StateMachines.Controllers
             states?.Add(state.Type, state);
             onStateAdded?.Invoke(state);
 
-            if (state != null) state.enabled = enabled;
+            if (state != null) state?.SetIsActif(enabled);
         }
 
         public void RemoveState(MovementState state)
@@ -234,10 +227,12 @@ namespace RedSilver2.Framework.StateMachines.Controllers
          
             currentGroundTag = currentGroundTag.ToLower();
             if (!groundTag.ToLower().Equals(currentGroundTag)) onGroundTagChanged?.Invoke(currentGroundTag);
+
+            if (!IsCurrentState(MovementStateType.Fall))   SetFallSpeed(defaultFallSpeed, fallTransitionSpeed);
+            if (!IsCurrentState(MovementStateType.Crouch)) SetHeight(defaultHeight, heightTransitionSpeed);
         }
 
-        protected virtual void OnLateUpdate()
-        {
+        protected virtual void OnLateUpdate() {
             Move();
         }
 
@@ -345,19 +340,23 @@ namespace RedSilver2.Framework.StateMachines.Controllers
             return false;
         }
 
-
-        protected abstract void Move();
-
         public void Move(Vector3 nextPosition){
             onMoved?.Invoke(nextPosition);
         }
 
-        protected virtual bool CanRun() {
-            if (!isMoving || !isGrounded || isCrouching) return false;
-            return true;
+        protected abstract void Move();
+        protected abstract void OnMoved(Vector3 nextPosition);
+
+        public virtual void SetHeight(float height) {
+            transform.localScale = Vector3.right   * transform.localScale.x + 
+                                   Vector3.up      * height + 
+                                   Vector3.forward * transform.localScale.z;
         }
 
-        protected abstract void OnMoved(Vector3 nextPosition);
+        public virtual void SetHeight(float height, float transitionSpeed)
+        {
+            SetHeight(Mathf.Clamp(transform.localScale.y, height, Time.deltaTime * transitionSpeed));
+        }
 
     }
 }

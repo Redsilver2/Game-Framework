@@ -46,8 +46,7 @@ namespace RedSilver2.Framework.StateMachines.States
             this.moveTransitionSpeed = moveTransitionSpeed;
         }
 
-        public void SetFallSpeed(float fallSpeed)
-        {
+        public void SetFallSpeed(float fallSpeed){
             this.fallSpeed = fallSpeed;
         }
 
@@ -65,22 +64,12 @@ namespace RedSilver2.Framework.StateMachines.States
 
 
 #if UNITY_EDITOR
-        protected override void ValidateIncompatibleTransitionStates(ref MovementStateType[] stateTypes) {
+        protected sealed override MovementStateType[] GetDefaultInvalidTypes()
+        {
+            var results = Enum.GetValues(typeof(MovementStateType)) as MovementStateType[];
+            if(results == null) return new MovementStateType[0];  
 
-            if (stateTypes != null)
-            {
-                if (stateTypes.Length > 0 && !stateTypes.Contains(LandState.TYPE)) 
-                   return;
-            }
-
-            List<MovementStateType> results  = new List<MovementStateType>();
-
-            foreach(MovementStateType stateType in Enum.GetValues(typeof(MovementStateType))) {
-                if (stateType == LandState.TYPE) continue;
-                results?.Add(stateType);
-            }
-
-            stateTypes = results.ToArray();
+            return results.Where(x => x != MovementStateType.Land).ToArray();
         }
 #endif
     }

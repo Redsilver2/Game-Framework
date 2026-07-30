@@ -1,6 +1,4 @@
 using RedSilver2.Framework.StateMachines.Controllers;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace RedSilver2.Framework.StateMachines.States
@@ -17,7 +15,7 @@ namespace RedSilver2.Framework.StateMachines.States
             if (stateMachine == null || stateMachine.IsCurrentState(TYPE)) return false;
            
             return !stateMachine.IsMoving && stateMachine.IsGrounded
-                && !RunState.GetIsRunningValue(stateMachine);     
+                && !RunState.GetIsRunning(stateMachine) && !CrouchState.GetIsCrouching(stateMachine);     
         }
 
         protected sealed override void OnUpdate(MovementStateMachine stateMachine) {
@@ -37,12 +35,9 @@ namespace RedSilver2.Framework.StateMachines.States
 
 
 #if UNITY_EDITOR
-        protected override void ValidateIncompatibleTransitionStates(ref MovementStateType[] stateTypes)
+        protected sealed override MovementStateType[] GetDefaultInvalidTypes()
         {
-            List<MovementStateType> results = stateTypes == null ? new List<MovementStateType>() : stateTypes.ToList();
-            if (!results.Contains(TYPE)) results.Add(TYPE);
-
-            stateTypes = results.ToArray();
+            return new MovementStateType[] { TYPE, FallState.TYPE };
         }
 #endif
     }

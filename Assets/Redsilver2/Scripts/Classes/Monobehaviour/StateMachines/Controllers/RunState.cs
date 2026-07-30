@@ -1,4 +1,5 @@
 using RedSilver2.Framework.StateMachines.Controllers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -16,15 +17,17 @@ namespace RedSilver2.Framework.StateMachines.States
         public const MovementStateType TYPE = MovementStateType.Run;
 
 #if UNITY_EDITOR
-        protected sealed override void ValidateIncompatibleTransitionStates(ref MovementStateType[] stateTypes)
+        protected sealed override MovementStateType[] GetDefaultInvalidTypes()
         {
-            List<MovementStateType> results = stateTypes != null ? stateTypes.ToList() : new List<MovementStateType>();
+            var results = Enum.GetValues(typeof(MovementStateType)) as MovementStateType[];
+            if (results == null) return new MovementStateType[0];
 
-            foreach(MovementStateType type in new MovementStateType[] { TYPE }) {
-                if(!results.Contains(type)) results.Add(type);
-            }
+            return results.ToArray();
+        }
 
-            stateTypes = results.ToArray();
+        protected override MovementStateType[] GetRequiredTypes()
+        {
+            return new MovementStateType[] { FallState.TYPE, WalkState.TYPE, CrouchState.TYPE, JumpState.TYPE };
         }
 #endif
 
@@ -51,7 +54,7 @@ namespace RedSilver2.Framework.StateMachines.States
         protected sealed override bool CanTransition(MovementStateMachine stateMachine)
         {
             if (stateMachine == null) return false;
-            return stateMachine.IsGrounded && isRunning;
+            return stateMachine.IsGrounded && !CrouchState.GetIsCrouching(stateMachine) && isRunning;
         }
 
        
@@ -60,7 +63,7 @@ namespace RedSilver2.Framework.StateMachines.States
             return stateMachine.GetState(TYPE) as RunState;
         }
 
-        public static bool GetIsRunningValue(MovementStateMachine stateMachine) {
+        public static bool GetIsRunning(MovementStateMachine stateMachine) {
             RunState state = GetState(stateMachine);
             return state != null ? state.IsRunning : false;
         }

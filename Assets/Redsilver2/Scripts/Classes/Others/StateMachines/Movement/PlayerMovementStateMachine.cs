@@ -1,5 +1,6 @@
 
 using RedSilver2.Framework.Inputs.Settings;
+using RedSilver2.Framework.StateMachines.States;
 using UnityEngine;
 
 
@@ -9,8 +10,17 @@ namespace RedSilver2.Framework.StateMachines.Controllers {
         [Space]
         [SerializeField] private KeyboardVector2InputSettings inputSetting;
 
-        protected override void Awake()
-        {
+        [Space]
+        [SerializeField] private Transform cameraCrouchTransform;
+
+        [Space]
+        [SerializeField] private Vector3 crouchCameraPosition;
+        [SerializeField] private Vector3 standCameraPosition;
+
+        [Space]
+        [SerializeField] private float crouchCameraUpdateSpeed;
+
+        protected override void Awake() {
             base.Awake();
             if(enabled) inputSetting?.Enable();
         }
@@ -26,6 +36,16 @@ namespace RedSilver2.Framework.StateMachines.Controllers {
         {
             base.OnDisabled();
             inputSetting?.Disable();
+        }
+
+        protected override void OnUpdate() {
+            base.OnUpdate();
+            UpdateCameraCrouchTransform(IsCurrentState(MovementStateType.Crouch) ? crouchCameraPosition : standCameraPosition);
+        }
+
+        private void UpdateCameraCrouchTransform(Vector3 position) {
+            if (cameraCrouchTransform != null)
+                cameraCrouchTransform.localPosition = Vector3.Lerp(cameraCrouchTransform.localPosition, position, Time.deltaTime * crouchCameraUpdateSpeed);
         }
 
         public void SetInputSetting(KeyboardVector2InputSettings inputSetting) {

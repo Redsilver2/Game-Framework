@@ -1,6 +1,4 @@
 using RedSilver2.Framework.StateMachines.Controllers;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace RedSilver2.Framework.StateMachines.States
 {
@@ -30,15 +28,9 @@ namespace RedSilver2.Framework.StateMachines.States
         }
 
 #if UNITY_EDITOR
-        protected override void ValidateIncompatibleTransitionStates(ref MovementStateType[] stateTypes)
+        protected override MovementStateType[] GetDefaultInvalidTypes()
         {
-            List<MovementStateType> results = stateTypes == null ? new List<MovementStateType>() : stateTypes.ToList();
-
-            foreach(MovementStateType type in new MovementStateType[]{ TYPE, FallState.TYPE, JumpState.TYPE }) {
-                if (!results.Contains(type)) results?.Add(type);
-            }
-
-            stateTypes = results.ToArray();
+            return new MovementStateType[] { TYPE, FallState.TYPE, JumpState.TYPE };
         }
 #endif
     }
