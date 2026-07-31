@@ -21,9 +21,15 @@ namespace RedSilver2.Framework.StateMachines.States
 
         protected void SetIsCrouching(bool isCrouching) { this.isCrouching = isCrouching; }
 
-        protected override bool CanTransition(MovementStateMachine stateMachine) {
-            if(stateMachine == null) return false;
-            return stateMachine.IsGrounded && isCrouching;
+        protected override void OnEntered()
+        {
+            base.OnEntered();
+            Debug.Log("Crouch");
+
+        }
+
+        protected sealed override bool CanTransition(MovementStateMachine stateMachine) {
+            return base.CanTransition(stateMachine) && IsStateMachineCrouching(stateMachine);
         }
 
         protected sealed override void OnUpdate(MovementStateMachine stateMachine) {
@@ -33,6 +39,12 @@ namespace RedSilver2.Framework.StateMachines.States
 
         protected sealed override void SetMovementStateType(ref MovementStateType type) {
             type = TYPE;
+        }
+
+        protected override void OnDisabled()
+        {
+            base.OnDisabled();
+            isCrouching = false;
         }
 
 #if UNITY_EDITOR
@@ -49,7 +61,7 @@ namespace RedSilver2.Framework.StateMachines.States
             return stateMachine?.GetState(TYPE) as CrouchState;
         }
 
-        public static bool GetIsCrouching(MovementStateMachine stateMachine){
+        public static bool IsStateMachineCrouching(MovementStateMachine stateMachine){
             CrouchState state = GetState(stateMachine);
             return state != null ? state.IsCrouching : false;   
         }

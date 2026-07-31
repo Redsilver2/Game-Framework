@@ -8,21 +8,12 @@ namespace RedSilver2.Framework.StateMachines.States
 {
     public abstract class MovementState : UpdatableState
     {
-        [Space]
-        [SerializeField] private MovementStateType[] incompatibleTransitionStates;
-
-        [Space]
-        [SerializeField] private bool isActif;
-
-        private MovementStateType   type;
         private MovementStateMachine stateMachine;
 
-
-        private List<MovementState> transitionStates;
-
-        public bool IsActif => isActif;
+        private MovementStateType[] incompatibleTransitionStates;
+        private MovementStateType   type;
+    
         public MovementStateType Type => type;
-        protected MovementStateMachine StateMachine => stateMachine;
 
 #if UNITY_EDITOR
 
@@ -51,100 +42,114 @@ namespace RedSilver2.Framework.StateMachines.States
         protected override void Awake() {
             base.Awake();
 
-            stateMachine = GetComponent<MovementStateMachine>();
-            transitionStates = new List<MovementState>();
-
             SetMovementStateType(ref type);    
-            incompatibleTransitionStates = incompatibleTransitionStates.Distinct().ToArray();
-
-            AddOnUpdatedListener(OnUpdate);
-            AddOnDisabledListener(OnDisabled);
-
-            AddOnEnabledListener(OnEnabled);
+            AddOnUpdateListener(OnUpdate);
         }
 
-        private void Start()
+        protected void Start()
         {
             OnEnabled();
         }
 
-        public void SetIsActif(bool isActif)
-        {
-            this.isActif = isActif;
+
+        protected override void OnEnabled() {
+            base.OnEnabled();
+            OnEnabled(stateMachine);
         }
 
-        protected virtual void OnEnabled()
+        protected override void OnDisabled() {
+            base.OnDisabled();
+            OnDisabled(stateMachine);   
+        }
+
+        protected override void OnEntered()
         {
-            stateMachine?.AddOnStateAddedListener(OnStateAdded);
-            stateMachine?.AddOnStateRemovedListener(OnStateRemoved);
+            base.OnEntered();
+            OnEntered(stateMachine);
+        }
+
+        protected virtual void OnEnabled(MovementStateMachine stateMachine) {
+            if (stateMachine == null || stateMachine.ContainsState(this)) return;
+            stateMachine?.AddOnMovementStateAddedListener(OnStateAdded);
+            stateMachine?.AddOnMovementStateRemovedListener(OnStateRemoved);
             stateMachine?.AddState(this);
         }
 
-        protected virtual void OnDisabled()
+        protected virtual void OnDisabled(MovementStateMachine stateMachine)
         {
+            if (stateMachine == null || !stateMachine.ContainsState(this)) return;
             stateMachine?.RemoveState(this);
-            stateMachine?.RemoveOnStateAddedListener(OnStateAdded);
-            stateMachine?.RemoveOnStateRemovedListener(OnStateRemoved);
+            stateMachine?.RemoveOnMovementStateAddedListener(OnStateAdded);
+            stateMachine?.RemoveOnMovementStateRemovedListener(OnStateRemoved);
         }
 
-        protected virtual void OnUpdate() {
-            if (transitionStates != null) {
-                foreach(MovementState state in transitionStates) {
-                    if (state == null || !state.CanTransition()) continue;
-                    stateMachine?.ChangeState(state.type);   
-                    break;
-                }
-            }
+        protected sealed override bool CanAddTransitionState(State state)
+        {
+           if(incompatibleTransitionStates != null && base.CanAddTransitionState(state)) {
+                MovementState _state =  state as MovementState;
 
+                if (_state == null || incompatibleTransitionStates.Contains(_state.Type)) return false;
+                return true;
+           }
+
+           return false;
+        }
+
+        protected override void SetStateMachine(StateMachine stateMachine)
+        {
+            base.SetStateMachine(stateMachine);
+            this.stateMachine = stateMachine as MovementStateMachine;
+        }
+
+
+        protected override void OnUpdate() {
+            base.OnUpdate();
             OnUpdate(stateMachine);
         }
 
         protected virtual void OnStateAdded(MovementState state) {
-            if (stateMachine == null || transitionStates == null) return;
-            MovementState[] states = stateMachine.States;
+            if (stateMachine == null) return;
 
-            for (int i = 0; i < states.Length; i++) {
-                if (states[i] == this || states[i] == null) continue;
-                else if (IsValidTransitionState(states[i]) && !transitionStates.Contains(states[i])) transitionStates.Add(states[i]);
+
+            if (state == this) {
+                foreach (MovementState _state in stateMachine.States)
+                    AddTransitionState(_state);
             }
+            else { AddTransitionState(state); }
         }
 
         protected virtual void OnStateRemoved(MovementState state) {
             if(stateMachine == null) return;
-            MovementState[] states = stateMachine.States;
 
-            for (int i = 0; i < states.Length; i++) {
-                if (transitionStates.Contains(states[i])) transitionStates.Remove(states[i]);
+            if(state == this) {
+                foreach (MovementState _state in stateMachine.States) {
+                    RemoveTransitionState(_state);
+                }
             }
-        }
-
-        private bool CanTransition() {
-            if (enabled == false || !isActif) return false;
-            return CanTransition(stateMachine); 
-        }
-
-
-        protected bool IsValidTransitionState(MovementStateType stateType)  {
-            if (incompatibleTransitionStates == null) return false;
-            return !incompatibleTransitionStates.Contains(stateType);
-        }
-
-        protected sealed override bool IsValidTransitionState(State state) {
-            return IsValidTransitionState(state as MovementState);
-        }
-
-        protected bool IsValidTransitionState(MovementState state) {
-            if  (state == null || incompatibleTransitionStates == null) return false;
-            return IsValidTransitionState(state.type);
+            else { RemoveTransitionState(state); }
         }
 
         public sealed override string GetStateName() {
             return type.ToString();
         }
 
+        public sealed override bool CanTransition() {
+            return base.CanTransition() && CanTransition(stateMachine);
+        }
+
+        protected virtual bool CanTransition(MovementStateMachine stateMachine) {
+            if (stateMachine == null || stateMachine.IsCurrentState(type)) return false;
+            return true;
+        }
+
+        protected virtual void OnEntered(MovementStateMachine stateMachine) {
+
+        }
+
+        protected virtual void OnUpdate(MovementStateMachine stateMachine) {
+
+        }
 
         protected abstract void SetMovementStateType(ref MovementStateType type);
-        protected abstract bool CanTransition(MovementStateMachine stateMachine);
-        protected abstract void OnUpdate(MovementStateMachine stateMachine);
     }
 }

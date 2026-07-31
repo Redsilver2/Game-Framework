@@ -2,6 +2,7 @@
 using RedSilver2.Framework.Inputs.Settings;
 using RedSilver2.Framework.StateMachines.States;
 using UnityEngine;
+using UnityEngine.Events;
 
 
 namespace RedSilver2.Framework.StateMachines.Controllers {
@@ -19,10 +20,17 @@ namespace RedSilver2.Framework.StateMachines.Controllers {
 
         [Space]
         [SerializeField] private float crouchCameraUpdateSpeed;
+        private Vector3 nextPosition;
+
+
+        private UnityEvent<Vector2> onMoveInputUpdate;
 
         protected override void Awake() {
             base.Awake();
-            if(enabled) inputSetting?.Enable();
+            onMoveInputUpdate = new UnityEvent<Vector2>();
+
+            AddOnMoveInputUpdateListener(OnMoveInputUpdate);
+            if (enabled) inputSetting?.Enable();
         }
 
 
@@ -40,7 +48,12 @@ namespace RedSilver2.Framework.StateMachines.Controllers {
 
         protected override void OnUpdate() {
             base.OnUpdate();
+            onMoveInputUpdate?.Invoke(inputSetting != null ? inputSetting.GetValue() : Vector2.zero);
             UpdateCameraCrouchTransform(IsCurrentState(MovementStateType.Crouch) ? crouchCameraPosition : standCameraPosition);
+        }
+
+        protected sealed override void OnLateUpdate(){
+            Move(nextPosition);
         }
 
         private void UpdateCameraCrouchTransform(Vector3 position) {
@@ -58,20 +71,25 @@ namespace RedSilver2.Framework.StateMachines.Controllers {
             }
         }
 
-        protected sealed override void Move()
+        private void OnMoveInputUpdate(Vector2 input)
         {
+            Debug.Log(input);
 
-            Vector2 inputValue = inputSetting != null ? inputSetting.GetValue() : Vector2.zero;
-            SetIsMoving(inputValue.magnitude > 0f ? true : false);
+            SetIsMoving(input.magnitude > 0f ? true : false);
+            input.Normalize();
 
-            inputValue.Normalize();
-
-            float moveSpeed = MoveSpeed, fallSpeed = FallSpeed;
-            Vector3 nextPosition = Time.deltaTime * ((transform.right   * moveSpeed * inputValue.x) +
-                                                     (transform.up      * fallSpeed)
-                                                   + (transform.forward * moveSpeed * inputValue.y));
-
-            Move(nextPosition);
+            nextPosition = Time.deltaTime * (Vector3.right   * MoveSpeed * input.x +
+                                             Vector3.up      * FallSpeed +
+                                             Vector3.forward * MoveSpeed * input.y);
         }
+
+        public void AddOnMoveInputUpdateListener(UnityAction<Vector2> action) {
+           if(action != null)  onMoveInputUpdate?.AddListener(action);
+        }
+        public void RemoveOnMoveInputUpdateListener(UnityAction<Vector2> action)
+        {
+           if(action != null) onMoveInputUpdate?.RemoveListener(action);
+        }
+
     }
 }

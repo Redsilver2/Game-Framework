@@ -1,56 +1,77 @@
+using RedSilver2.Framework.StateMachines.Controllers;
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine.Events;
 
 namespace RedSilver2.Framework.StateMachines.States
 {
     public abstract class UpdatableState : State
     {
+        private UpdatableStateMachine stateMachine;
+       
         private UnityEvent onUpdate;
-        private IEnumerator stateUpdate;
+        private UnityEvent onLateUpdate;
+
 
         protected override void Awake() {
             base.Awake();
-            onUpdate = new UnityEvent();
+            onUpdate     = new UnityEvent();
+            onLateUpdate = new UnityEvent();
 
-            AddOnEnteredListener(OnEntered);
-            AddOnExitedListener(OnExited);
+            AddOnUpdateListener(OnUpdate);
+            AddOnLateUpdateListener(OnLateUpdate);
         }
 
-        protected virtual void OnEntered() {
-            StartStateUpdate();
+        protected override bool CanAddTransitionState(State state) {
+            return base.CanAddTransitionState(state) && state as UpdatableState != null;
         }
 
-        protected virtual void OnExited() {
-            StopStateUpdate();
+        protected override void OnEntered() {
+            base.OnEntered();
+            stateMachine?.AddOnUpdateListener(InvokeOnUpdateEvent);
+            stateMachine?.AddOnLateUpdateListener(InvokeOnLateUpdateEvent);
         }
 
-        public void AddOnUpdatedListener(UnityAction action)
+        protected override void OnExited()
         {
+            base.OnExited();
+            stateMachine?.RemoveOnUpdateListener(InvokeOnUpdateEvent);
+            stateMachine?.RemoveOnLateUpdateListener(InvokeOnLateUpdateEvent);
+        }
+
+        private void InvokeOnUpdateEvent() { onUpdate?.Invoke(); }
+        private void InvokeOnLateUpdateEvent() { onLateUpdate?.Invoke(); }
+
+        protected virtual void OnUpdate() {
+            UpdateStateTransitions();
+        }
+
+        protected virtual void OnLateUpdate() { }
+
+
+        protected override void SetStateMachine(StateMachine stateMachine)
+        {
+            base.SetStateMachine(stateMachine);
+            this.stateMachine = stateMachine as UpdatableStateMachine;
+        }
+
+        public void AddOnUpdateListener(UnityAction action) {
             if (action != null) onUpdate?.AddListener(action);
         }
-        public void RemoevOnUpdatedListener(UnityAction action)
-        {
+
+        public void RemoveOnUpdateListener(UnityAction action) {
             if (action != null) onUpdate?.RemoveListener(action);
         }
 
-        private void StartStateUpdate()
+        public void AddOnLateUpdateListener(UnityAction action)
         {
-            StopStateUpdate();
-            stateUpdate = StateUpdate();
-            StartCoroutine(stateUpdate);
+            if (action != null) onLateUpdate?.AddListener(action);
         }
 
-        private void StopStateUpdate()
+        public void RemoveOnLateUpdateListener(UnityAction action)
         {
-            if(stateUpdate != null) StopCoroutine(stateUpdate);
-            stateUpdate = null; 
+            if (action != null) onLateUpdate?.RemoveListener(action);
         }
 
-        private IEnumerator StateUpdate() {
-            while (true) {
-                onUpdate?.Invoke();
-                yield return null;
-            }
-        }
     }
 }

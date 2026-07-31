@@ -1,6 +1,4 @@
 using RedSilver2.Framework.StateMachines.Controllers;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace RedSilver2.Framework.StateMachines.States
@@ -15,9 +13,9 @@ namespace RedSilver2.Framework.StateMachines.States
         public const MovementStateType TYPE = MovementStateType.Walk;
 
         protected sealed override bool CanTransition(MovementStateMachine stateMachine) {
-            if (stateMachine == null || stateMachine.IsCurrentState(TYPE)) return false;
-            return stateMachine.IsMoving && !RunState.GetIsRunning(stateMachine)
-                   && !CrouchState.GetIsCrouching(stateMachine) && stateMachine.IsGrounded;
+            if (!base.CanTransition(stateMachine)) return false;
+            return stateMachine.IsMoving && !RunState.IsStateMachineRunning(stateMachine)
+                   && !CrouchState.IsStateMachineCrouching(stateMachine) && stateMachine.IsGrounded;
         }
 
         protected sealed override void OnUpdate(MovementStateMachine stateMachine) {
@@ -46,7 +44,7 @@ namespace RedSilver2.Framework.StateMachines.States
 #if UNITY_EDITOR
         protected sealed override MovementStateType[] GetDefaultInvalidTypes()
         {
-            return new MovementStateType[] { TYPE };
+            return new MovementStateType[] { TYPE, LandState.TYPE };
         }
 #endif
     }

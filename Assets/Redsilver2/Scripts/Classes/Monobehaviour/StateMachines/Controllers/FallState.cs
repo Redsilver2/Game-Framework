@@ -22,7 +22,8 @@ namespace RedSilver2.Framework.StateMachines.States
 
         protected sealed override bool CanTransition(MovementStateMachine stateMachine)
         {
-            return stateMachine != null ? !stateMachine.IsGrounded && !stateMachine.IsCurrentState(TYPE) : false;
+            if (!base.CanTransition(stateMachine)) return false;
+            return !stateMachine.IsGrounded;
         }
 
         protected sealed override void OnUpdate(MovementStateMachine stateMachine)
@@ -36,8 +37,7 @@ namespace RedSilver2.Framework.StateMachines.States
             type = MovementStateType.Fall;
         }
 
-        public void SetWalkSpeed(float walkSpeed)
-        {
+        public void SetWalkSpeed(float walkSpeed){
             this.walkSpeed = walkSpeed;
         }
 
@@ -67,9 +67,12 @@ namespace RedSilver2.Framework.StateMachines.States
         protected sealed override MovementStateType[] GetDefaultInvalidTypes()
         {
             var results = Enum.GetValues(typeof(MovementStateType)) as MovementStateType[];
-            if(results == null) return new MovementStateType[0];  
+            return results == null ? new MovementStateType[0] : results;
+        }
 
-            return results.Where(x => x != MovementStateType.Land).ToArray();
+        protected override MovementStateType[] GetRequiredTypes()
+        {
+            return new MovementStateType[] { LandState.TYPE };
         }
 #endif
     }

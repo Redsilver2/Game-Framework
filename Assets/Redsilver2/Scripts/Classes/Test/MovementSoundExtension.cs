@@ -1,13 +1,13 @@
-using RedSilver2.Framework.StateMachines.Controllers;
+using RedSilver2.Framework.StateMachines.Events;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace RedSilver2.Framework.StateMachines.Extensions
 {
     [RequireComponent(typeof(AudioSource))]
 
-    public class MovementSoundExtension : MovementStateExtension
+    public class MovementSoundExtension : MovementStateMachineEvent
     {
         [SerializeField] private MovementSoundData[] movementSoundDatas;
         [SerializeField] private float soundTriggerTime;
@@ -20,31 +20,44 @@ namespace RedSilver2.Framework.StateMachines.Extensions
 
         private float currentMoveSoundTriggerTime;
 
-        protected sealed override void Start() {
+        protected override void Awake()
+        {
+            base.Awake();
+
             source = GetComponent<AudioSource>();
             tagSoundDatas = new Dictionary<string, MovementSoundData>();
 
-            eventHandler?.AddOnUpdateListener(OnUpdate);
-            eventHandler?.AddOnGroundTagChangedListener(OnGroundTagChanged);
-
-            foreach (MovementSoundData data in movementSoundDatas) {
+            foreach(MovementSoundData data in movementSoundDatas) {
                 if (data == null || tagSoundDatas.ContainsKey(data.groundTag.ToLower())) return;
                 tagSoundDatas?.Add(data.groundTag.ToLower(), data);
             }
-
         }
 
-        private void OnUpdate() {
-            if (eventHandler == null) return;
-
-            if (eventHandler.IsMoving() && eventHandler.IsGrounded()) {
-                currentMoveSoundTriggerTime = Mathf.Clamp(Time.deltaTime + currentMoveSoundTriggerTime, 0f, soundTriggerTime);
-
-                if(currentMoveSoundTriggerTime >= soundTriggerTime) {
-                    currentMoveSoundTriggerTime = 0f;
-                    TriggerMoveSoundUpdate();
-                }
+        protected override void SetStateMachineEvents(MovementStateMachine stateMachine, bool isAddingEvents)
+        {
+            if (isAddingEvents) {
+                stateMachine?.AddOnUpdateListener(OnUpdate(stateMachine));
+                stateMachine?.AddOnGroundTagChangedListener(OnGroundTagChanged);
             }
+            else {
+                stateMachine?.RemoveOnUpdateListener(OnUpdate(stateMachine));
+                stateMachine?.RemoveOnGroundTagChangedListener(OnGroundTagChanged);
+            }
+        }
+
+        private UnityAction OnUpdate(MovementStateMachine stateMachine) {
+            return () =>
+            {
+                if (stateMachine == null) return;
+                else if (stateMachine.IsMoving && stateMachine.IsGrounded) {
+                    currentMoveSoundTriggerTime = Mathf.Clamp(Time.deltaTime + currentMoveSoundTriggerTime, 0f, soundTriggerTime);
+
+                    if (currentMoveSoundTriggerTime >= soundTriggerTime) {
+                        currentMoveSoundTriggerTime = 0f;
+                        TriggerMoveSoundUpdate();
+                    }
+                }
+            };
         }
 
         private void OnGroundTagChanged(string value) {
@@ -74,16 +87,6 @@ namespace RedSilver2.Framework.StateMachines.Extensions
                 return tagSoundDatas[groundTag.ToLower()];
 
             return null;
-        }
-
-        protected override void OnDisable() {
-            eventHandler?.RemoveOnUpdateListener(OnUpdate);
-            eventHandler?.RemoveOnGroundTagChangedListener(OnGroundTagChanged);
-        }
-
-        protected override void OnEnable() {
-            eventHandler?.AddOnUpdateListener(OnUpdate);
-            eventHandler?.AddOnGroundTagChangedListener(OnGroundTagChanged);
         }
     }
 }

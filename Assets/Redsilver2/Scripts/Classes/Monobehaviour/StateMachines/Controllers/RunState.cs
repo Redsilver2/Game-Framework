@@ -31,6 +31,17 @@ namespace RedSilver2.Framework.StateMachines.States
         }
 #endif
 
+        protected override void OnExited()
+        {
+            base.OnExited();
+            isRunning = false;
+        }
+
+        protected override void OnDisabled()
+        {
+            base.OnDisabled();
+            isRunning = false;
+        }
 
         public void SetRunSpeed(float runSpeed) {
             this.runSpeed = runSpeed;
@@ -53,8 +64,7 @@ namespace RedSilver2.Framework.StateMachines.States
         public void SetIsRunning(bool isRunning) { this.isRunning = isRunning; }
         protected sealed override bool CanTransition(MovementStateMachine stateMachine)
         {
-            if (stateMachine == null) return false;
-            return stateMachine.IsGrounded && !CrouchState.GetIsCrouching(stateMachine) && isRunning;
+            return base.CanTransition(stateMachine) && IsStateMachineRunning(stateMachine);
         }
 
        
@@ -63,7 +73,7 @@ namespace RedSilver2.Framework.StateMachines.States
             return stateMachine.GetState(TYPE) as RunState;
         }
 
-        public static bool GetIsRunning(MovementStateMachine stateMachine) {
+        public static bool IsStateMachineRunning(MovementStateMachine stateMachine) {
             RunState state = GetState(stateMachine);
             return state != null ? state.IsRunning : false;
         }

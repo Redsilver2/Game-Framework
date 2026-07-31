@@ -28,6 +28,13 @@ namespace RedSilver2.Framework.StateMachines
             }
         }
 
+        protected sealed override bool GetGroundCheckResult(out string groundTag)
+        {
+            groundTag = string.Empty;
+            if(controller == null || !controller.isGrounded) return false;
+            return base.GetGroundCheckResult(out groundTag);
+        }
+
         public sealed override void SetHeight(float height, float transitionSpeed)
         {
             if (controller != null) SetHeight(Mathf.Lerp(controller.height, height, Time.deltaTime * transitionSpeed));

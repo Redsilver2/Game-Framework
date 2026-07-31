@@ -8,13 +8,13 @@ namespace RedSilver2.Framework.StateMachines.States
 
         protected sealed override bool CanTransition(MovementStateMachine stateMachine)
         {
-            if (stateMachine == null || stateMachine.IsCurrentState(TYPE)) return false;
-            return stateMachine.IsGrounded && stateMachine.IsCurrentState(FallState.TYPE);
+            if (stateMachine == null) return false;
+            return base.CanTransition(stateMachine) && stateMachine.IsGrounded;
         }
 
         protected sealed override void OnUpdate(MovementStateMachine stateMachine) {
             if (stateMachine == null) return;
-            stateMachine?.SetFallSpeed(-10f);
+            stateMachine?.SetFallSpeed(stateMachine.DefaultFallSpeed);
         }
 
         protected override void SetMovementStateType(ref MovementStateType type) {

@@ -11,6 +11,8 @@ namespace RedSilver2.Framework.StateMachines.Controllers
         [Space]
         [SerializeField] private int defaultSettingIndex;
 
+        private Quaternion targetRotation;
+
         private Transform    target;
         private NavMeshAgent agent;
         private Transform[]  waypoints;
@@ -27,21 +29,21 @@ namespace RedSilver2.Framework.StateMachines.Controllers
             this.target = target;
         }
 
-        protected override void Move()
+        protected override void OnUpdate()
         {
+            base.OnUpdate();
+
             if (agent == null) return;
-            else if (agent.velocity.sqrMagnitude > 0.1f) {
-                Quaternion targetRotation = Quaternion.LookRotation(agent.velocity.normalized);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 1000f * Time.deltaTime);
-            }
+            else if (agent.velocity.sqrMagnitude > 0.1f) { targetRotation = Quaternion.LookRotation(agent.velocity.normalized); }
 
 
-            if (!IsCloseToTarget()) {
-                agent?.SetDestination(target != null ? target.position : transform.position);
-                Move(agent.nextPosition);
-            }
+            if (!IsCloseToTarget())   agent?.SetDestination(target != null ? target.position : transform.position);
+        }
 
-
+        protected sealed override void OnLateUpdate()
+        {
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 1000f * Time.deltaTime);
+            if(agent != null) Move(agent.nextPosition);
         }
 
         public void SetWaypoints(Transform[] waypoints) { this.waypoints = waypoints; }

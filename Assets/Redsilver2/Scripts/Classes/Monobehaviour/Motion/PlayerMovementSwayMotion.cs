@@ -1,6 +1,8 @@
+using RedSilver2.Framework.StateMachines.Controllers;
+using RedSilver2.Framework.StateMachines.Events;
 using UnityEngine;
 
-public class MovementSwayMotion : MovementStateExtension
+public class PlayerMovementSwayMotion : PlayerMovementMotion
 {
     [SerializeField] private float defaultLerpSpeed;
 
@@ -18,14 +20,6 @@ public class MovementSwayMotion : MovementStateExtension
     protected float MaxY => original.y + max.y;
     protected Vector3 Original => original;
 
-    protected override void Start()
-    {
-        SetOriginal(transform.localPosition);
-
-        eventHandler?.AddOnMoveListener(OnUpdate);
-        eventHandler?.AddOnLateUpdateListener(OnLateUpdate);
-    }
-
     public void SetOriginal(Vector3 localPosition)
     {
         this.original = localPosition;
@@ -41,13 +35,11 @@ public class MovementSwayMotion : MovementStateExtension
         this.max = maxPosition;
     }
 
-    protected void OnLateUpdate()  {
-
+    protected sealed override void OnLateUpdate()  {
         OnLateUpdate(desired);
     }
 
-    protected void OnUpdate(Vector2 vector)
-    {
+    protected sealed override void OnMoveInputUpdate(Vector2 vector) {
         OnUpdate(vector, ref desired);
     }
 
@@ -83,17 +75,5 @@ public class MovementSwayMotion : MovementStateExtension
             y = Mathf.Lerp(Original.y, MaxY, absSin);
             x = Mathf.Lerp(Original.x, MaxX, absSin);
         }
-    }
-
-    protected override void OnDisable()
-    {
-        eventHandler?.RemoveOnMoveListener(OnUpdate);
-        eventHandler?.RemoveOnLateUpdateListener(OnLateUpdate);
-    }
-
-    protected override void OnEnable()
-    {
-        eventHandler?.AddOnMoveListener(OnUpdate);
-        eventHandler?.AddOnLateUpdateListener(OnLateUpdate);
     }
 }

@@ -51,8 +51,6 @@ namespace RedSilver2.Framework.Scenes
 
             while(t < audioFadeDuration) {
                 AudioListener.volume = Mathf.Clamp(currentVolume, nextVolume, Mathf.Clamp01(t / audioFadeDuration));
-                Debug.Log(Mathf.Clamp01(t / audioFadeDuration));
-
                 t += Time.deltaTime;
                 yield return null;
             }
