@@ -11,13 +11,8 @@ namespace RedSilver2.Framework.StateMachines.States {
 
         [Space]
         [SerializeField] private float defaultJumpForce;
-        [SerializeField] private float defaultJumpDuration;
-
-        [Space]
-        [SerializeField] private float jumpForce;
-        [SerializeField] private float jumpDuration;
+        private float jumpForce;
        
-
         private bool isJumping;
         private IEnumerator jumpUpdater;
 
@@ -29,8 +24,7 @@ namespace RedSilver2.Framework.StateMachines.States {
         {
             base.OnValidate();
             jumpForce           = Mathf.Clamp(jumpForce, 0f, float.MaxValue);
-            defaultJumpForce    = Mathf.Clamp(defaultJumpForce, 0f, float.MaxValue);
-            defaultJumpDuration = Mathf.Clamp(defaultJumpDuration, 0f, float.MaxValue);
+
         }
 #endif
 
@@ -47,22 +41,14 @@ namespace RedSilver2.Framework.StateMachines.States {
         protected override void Awake()
         {
             base.Awake();
-
             ResetJumpForce();
-            ResetJumpDuration();
         }
 
         protected override void OnEntered(MovementStateMachine stateMachine) {
-            Cancel();
-            jumpUpdater = UpdateJump(stateMachine);
-            StartCoroutine(jumpUpdater);
+            base.OnEntered(stateMachine);
+            stateMachine?.SetFallSpeed(jumpForce);
         }
 
-        public void Cancel()
-        {
-            if (jumpUpdater != null) StopCoroutine(jumpUpdater);
-            jumpUpdater = null;
-        }
 
         protected override void OnExited()
         {
@@ -74,16 +60,6 @@ namespace RedSilver2.Framework.StateMachines.States {
         {
             base.OnDisabled();
             isJumping = false;
-        }
-
-        private IEnumerator UpdateJump(MovementStateMachine stateMachine) {
-            float t = 0f;
-
-            while(t < jumpDuration) {
-                stateMachine?.Move(Time.deltaTime * (Vector3.up * jumpForce));
-                t += Time.deltaTime;
-                yield return null;
-            }
         }
 
         protected void SetIsJumping(bool isJumping) { this.isJumping = isJumping;  }
@@ -101,13 +77,7 @@ namespace RedSilver2.Framework.StateMachines.States {
             this.jumpForce = Mathf.Clamp(jumpForce, 0f, float.MaxValue);
         }
 
-        public void SetJumpDuration(float jumpDuration)
-        {
-            this.jumpDuration = Mathf.Clamp(jumpDuration, 0f, float.MaxValue);
-        }
-
         public void ResetJumpForce() { SetJumpForce(defaultJumpForce); }
-        public void ResetJumpDuration() { SetJumpDuration(defaultJumpDuration); }
 
         public static JumpState GetState(MovementStateMachine stateMachine) {
             if(stateMachine == null) return null;

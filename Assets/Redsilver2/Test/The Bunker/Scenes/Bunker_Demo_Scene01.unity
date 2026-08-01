@@ -1159,7 +1159,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::JumpPad
   jumpForce: 40
-  jumpDuration: 0.05
 --- !u!65 &1052771178
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3097,10 +3096,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.States.PlayerJumpState
   isActif: 1
-  defaultJumpForce: 100
-  defaultJumpDuration: 0.015
-  jumpForce: 100
-  jumpDuration: 0.05
+  defaultJumpForce: 20
   inputSetting: {fileID: 11400000, guid: a9d391630c40d6943945932a946a9df0, type: 2}
 --- !u!114 &9091687914289102636
 MonoBehaviour:
