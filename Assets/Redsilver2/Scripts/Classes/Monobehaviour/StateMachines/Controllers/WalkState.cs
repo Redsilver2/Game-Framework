@@ -41,11 +41,9 @@ namespace RedSilver2.Framework.StateMachines.States
         }
 
 
-#if UNITY_EDITOR
         protected sealed override MovementStateType[] GetDefaultInvalidTypes()
         {
             return new MovementStateType[] { TYPE, LandState.TYPE };
         }
-#endif
     }
 }

@@ -53,7 +53,7 @@ namespace RedSilver2.Framework.StateMachines.Controllers {
         }
 
         protected sealed override void OnLateUpdate(){
-            Move(nextPosition);
+            Move(Time.deltaTime * nextPosition);
         }
 
         private void UpdateCameraCrouchTransform(Vector3 position) {
@@ -73,14 +73,12 @@ namespace RedSilver2.Framework.StateMachines.Controllers {
 
         private void OnMoveInputUpdate(Vector2 input)
         {
-            Debug.Log(input);
-
             SetIsMoving(input.magnitude > 0f ? true : false);
             input.Normalize();
 
-            nextPosition = Time.deltaTime * (Vector3.right   * MoveSpeed * input.x +
-                                             Vector3.up      * FallSpeed +
-                                             Vector3.forward * MoveSpeed * input.y);
+            nextPosition = Vector3.right   * MoveSpeed * input.x +
+                           Vector3.up      * FallSpeed +
+                           Vector3.forward * MoveSpeed * (Is2DMovement ? 0f : input.y);
         }
 
         public void AddOnMoveInputUpdateListener(UnityAction<Vector2> action) {

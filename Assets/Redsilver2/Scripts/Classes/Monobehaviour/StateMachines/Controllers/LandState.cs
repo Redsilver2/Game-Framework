@@ -27,11 +27,9 @@ namespace RedSilver2.Framework.StateMachines.States
             return stateMachine.GetState(TYPE) as LandState;
         }
 
-#if UNITY_EDITOR
-        protected override MovementStateType[] GetDefaultInvalidTypes()
+        protected sealed override MovementStateType[] GetDefaultInvalidTypes()
         {
             return new MovementStateType[] { TYPE, FallState.TYPE, JumpState.TYPE };
         }
-#endif
     }
 }

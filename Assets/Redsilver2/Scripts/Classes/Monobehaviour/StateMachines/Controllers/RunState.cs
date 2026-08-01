@@ -16,7 +16,6 @@ namespace RedSilver2.Framework.StateMachines.States
         public bool IsRunning => isRunning;
         public const MovementStateType TYPE = MovementStateType.Run;
 
-#if UNITY_EDITOR
         protected sealed override MovementStateType[] GetDefaultInvalidTypes()
         {
             var results = Enum.GetValues(typeof(MovementStateType)) as MovementStateType[];
@@ -25,11 +24,10 @@ namespace RedSilver2.Framework.StateMachines.States
             return results.ToArray();
         }
 
-        protected override MovementStateType[] GetRequiredTypes()
+        protected sealed override MovementStateType[] GetRequiredTypes()
         {
             return new MovementStateType[] { FallState.TYPE, WalkState.TYPE, CrouchState.TYPE, JumpState.TYPE };
         }
-#endif
 
         protected override void OnExited()
         {

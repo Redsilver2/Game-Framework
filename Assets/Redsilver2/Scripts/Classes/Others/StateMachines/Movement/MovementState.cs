@@ -1,4 +1,3 @@
-using RedSilver2.Framework.StateMachines.Controllers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,36 +18,42 @@ namespace RedSilver2.Framework.StateMachines.States
 
         protected virtual void OnValidate()
         {
-            List<MovementStateType> results = incompatibleTransitionStates != null ? incompatibleTransitionStates.ToList() :  new List<MovementStateType>();
 
-            foreach(MovementStateType stateType in GetDefaultInvalidTypes()) {
-                if (!results.Contains(stateType)) results?.Add(stateType);
-            }
-
-            foreach(MovementStateType stateType in GetRequiredTypes()) {
-                if(results.Contains(stateType)) results?.Remove(stateType);
-            }
-
-            incompatibleTransitionStates = results.ToArray();
-        }
-
-        protected abstract MovementStateType[] GetDefaultInvalidTypes();
-        protected virtual MovementStateType[] GetRequiredTypes() {
-            return new MovementStateType[0];
         }
 
 #endif
 
         protected override void Awake() {
             base.Awake();
+            SetMovementStateType(ref type);
+          
+            Initialize();
 
-            SetMovementStateType(ref type);    
-            AddOnUpdateListener(OnUpdate);
         }
 
-        protected void Start()
-        {
+        protected void Start() {
             OnEnabled();
+        }
+
+        private void Initialize()
+        {
+            List<MovementStateType> results = incompatibleTransitionStates != null ? incompatibleTransitionStates.ToList() : new List<MovementStateType>();
+
+            foreach (MovementStateType stateType in GetDefaultInvalidTypes()) {
+                if (!results.Contains(stateType)) results?.Add(stateType);
+            }
+
+            foreach (MovementStateType stateType in GetRequiredTypes()){
+                if (results.Contains(stateType)) results?.Remove(stateType);
+            }
+
+            incompatibleTransitionStates = results.ToArray();
+        }
+
+        protected abstract MovementStateType[] GetDefaultInvalidTypes();
+        protected virtual MovementStateType[] GetRequiredTypes()
+        {
+            return new MovementStateType[0];
         }
 
 
@@ -83,17 +88,19 @@ namespace RedSilver2.Framework.StateMachines.States
             stateMachine?.RemoveOnMovementStateRemovedListener(OnStateRemoved);
         }
 
-        protected sealed override bool CanAddTransitionState(State state)
+        protected sealed override bool CanAddTransitionState(UpdatableState state)
         {
-           if(incompatibleTransitionStates != null && base.CanAddTransitionState(state)) {
-                MovementState _state =  state as MovementState;
-
-                if (_state == null || incompatibleTransitionStates.Contains(_state.Type)) return false;
-                return true;
-           }
-
-           return false;
+            if(state != null) return CanAddTransitionState(state as MovementState); 
+            return false;
         }
+
+        private bool CanAddTransitionState(MovementState state) {
+            if (state == null || incompatibleTransitionStates == null) return false;
+            return !incompatibleTransitionStates.Contains(state.Type);
+        }
+
+
+
 
         protected override void SetStateMachine(StateMachine stateMachine)
         {
@@ -108,7 +115,7 @@ namespace RedSilver2.Framework.StateMachines.States
         }
 
         protected virtual void OnStateAdded(MovementState state) {
-            if (stateMachine == null) return;
+            if (stateMachine == null || state == null) return;
 
 
             if (state == this) {
@@ -119,12 +126,11 @@ namespace RedSilver2.Framework.StateMachines.States
         }
 
         protected virtual void OnStateRemoved(MovementState state) {
-            if(stateMachine == null) return;
+            if(stateMachine == null || state == null) return;
 
             if(state == this) {
-                foreach (MovementState _state in stateMachine.States) {
+                foreach (MovementState _state in stateMachine.States)
                     RemoveTransitionState(_state);
-                }
             }
             else { RemoveTransitionState(state); }
         }

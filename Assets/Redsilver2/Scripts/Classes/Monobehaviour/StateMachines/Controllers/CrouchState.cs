@@ -47,12 +47,10 @@ namespace RedSilver2.Framework.StateMachines.States
             isCrouching = false;
         }
 
-#if UNITY_EDITOR
         protected sealed override MovementStateType[] GetDefaultInvalidTypes()
         {
             return new MovementStateType[] { TYPE, LandState.TYPE, FallState.TYPE };
         }
-#endif
 
 
         public static CrouchState GetState(MovementStateMachine stateMachine)

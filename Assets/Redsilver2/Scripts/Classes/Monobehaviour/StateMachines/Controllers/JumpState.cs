@@ -32,6 +32,7 @@ namespace RedSilver2.Framework.StateMachines.States {
             defaultJumpForce    = Mathf.Clamp(defaultJumpForce, 0f, float.MaxValue);
             defaultJumpDuration = Mathf.Clamp(defaultJumpDuration, 0f, float.MaxValue);
         }
+#endif
 
         protected sealed override MovementStateType[] GetDefaultInvalidTypes()
         {
@@ -42,8 +43,6 @@ namespace RedSilver2.Framework.StateMachines.States {
         protected sealed override MovementStateType[] GetRequiredTypes() {
             return new MovementStateType[] { FallState.TYPE };
         }
-
-#endif
 
         protected override void Awake()
         {

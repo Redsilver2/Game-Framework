@@ -1,6 +1,7 @@
 using RedSilver2.Framework.StateMachines.Controllers;
 using System.Collections;
 using Unity.VisualScripting;
+using UnityEngine;
 using UnityEngine.Events;
 
 namespace RedSilver2.Framework.StateMachines.States
@@ -22,8 +23,12 @@ namespace RedSilver2.Framework.StateMachines.States
             AddOnLateUpdateListener(OnLateUpdate);
         }
 
-        protected override bool CanAddTransitionState(State state) {
-            return base.CanAddTransitionState(state) && state as UpdatableState != null;
+        protected sealed override bool CanAddTransitionState(State state) {
+            return base.CanAddTransitionState(state) && CanAddTransitionState(state as UpdatableState);
+        }
+
+        protected virtual bool CanAddTransitionState(UpdatableState state) { 
+            return state != null ? true : false;
         }
 
         protected override void OnEntered() {
@@ -42,10 +47,7 @@ namespace RedSilver2.Framework.StateMachines.States
         private void InvokeOnUpdateEvent() { onUpdate?.Invoke(); }
         private void InvokeOnLateUpdateEvent() { onLateUpdate?.Invoke(); }
 
-        protected virtual void OnUpdate() {
-            UpdateStateTransitions();
-        }
-
+        protected virtual void OnUpdate() { UpdateStateTransitions(); }
         protected virtual void OnLateUpdate() { }
 
 

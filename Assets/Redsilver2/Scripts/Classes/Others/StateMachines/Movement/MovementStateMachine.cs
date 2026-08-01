@@ -118,6 +118,7 @@ namespace RedSilver2.Framework.StateMachines
         }
         protected virtual void OnMovementStateAdded(MovementState state) {
             if(states == null || state == null || states.ContainsKey(state.Type)) return;
+
             states?.Add(state.Type, state);
             onMovementStateAdded?.Invoke(state);
         }
@@ -134,7 +135,11 @@ namespace RedSilver2.Framework.StateMachines
             if (states == null || state == null || !states.ContainsKey(state.Type)) return;
             else if (states[state.Type] == state) {
                 states.Remove(state.Type);
+
+
+                Debug.Log("Removed: " + state);
                 onMovementStateRemoved?.Invoke(state);
+
             }
         }
 
@@ -178,7 +183,6 @@ namespace RedSilver2.Framework.StateMachines
         public bool IsCurrentState(MovementStateType type)
         {
             if (currentState == null) return false;
-
             return type == currentState.Type;
         }
         public void ChangeState(MovementStateType type) {
@@ -225,7 +229,7 @@ namespace RedSilver2.Framework.StateMachines
 
             airbornTime = Mathf.Clamp(airbornTime, 0f, float.MaxValue);
 
-            if (!IsCurrentState(MovementStateType.Fall))   SetFallSpeed(defaultFallSpeed, fallTransitionSpeed);
+            if (!IsCurrentState(MovementStateType.Fall)) SetFallSpeed(defaultFallSpeed, fallTransitionSpeed);
             if (!IsCurrentState(MovementStateType.Crouch)) {
                 SetHeight(defaultHeight, heightTransitionSpeed);
             }

@@ -58,7 +58,6 @@ namespace RedSilver2.Framework.StateMachines.States
         }
 
         public void RemoveTransitionState(State state) {
-            if(transitionStates == null || state == null || !transitionStates.Contains(state)) return;
             onTransitionStateRemoved?.Invoke(state);
             transitionStates?.Remove(state);
         }
@@ -86,6 +85,9 @@ namespace RedSilver2.Framework.StateMachines.States
         {
             if (stateMachine == null || state == null || state == this) return false;
             else if (transitionStates == null || transitionStates.Contains(state)) return false;
+
+
+            Debug.Log("Contains StateMachine State: " + stateMachine.ContainsState(state));
             return stateMachine.ContainsState(state);
         }
 

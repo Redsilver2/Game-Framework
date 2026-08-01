@@ -62,18 +62,15 @@ namespace RedSilver2.Framework.StateMachines.States
         }
 
 
-
-#if UNITY_EDITOR
         protected sealed override MovementStateType[] GetDefaultInvalidTypes()
         {
             var results = Enum.GetValues(typeof(MovementStateType)) as MovementStateType[];
             return results == null ? new MovementStateType[0] : results;
         }
 
-        protected override MovementStateType[] GetRequiredTypes()
+        protected sealed override MovementStateType[] GetRequiredTypes()
         {
             return new MovementStateType[] { LandState.TYPE };
         }
-#endif
     }
 }
