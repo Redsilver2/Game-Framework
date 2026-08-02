@@ -30,35 +30,28 @@ namespace RedSilver2.Framework.StateMachines.States
             }
         }
 
-        protected sealed override void OnDisabled()
-        {
-            base.OnDisabled();
-            pressCrouch?.Disable();
-            holdCrouch?.Disable();
-        }
-
-        protected sealed override void OnEnabled()
-        {
-            base.OnEnabled();
-            pressCrouch?.Enable();
-            holdCrouch?.Enable();
-        }
-
-        protected sealed override void OnEnabled(MovementStateMachine stateMachine)
-        {
-            base.OnEnabled(stateMachine);
-
-            if (stateMachine == null || !stateMachine.ContainsState(this)) return;
-            stateMachine?.AddOnUpdateListener(OnUpdateCrouchInput(stateMachine));
-        }
-
         protected sealed override void OnDisabled(MovementStateMachine stateMachine)
         {
+            pressCrouch?.Disable();
+            holdCrouch?.Disable();
+
             base.OnDisabled(stateMachine);
 
             if (stateMachine == null || !stateMachine.ContainsState(this)) return;
             stateMachine?.RemoveOnUpdateListener(OnUpdateCrouchInput(stateMachine));
         }
+
+        protected sealed override void OnEnabled(MovementStateMachine stateMachine)
+        {
+            if (stateMachine == null || !stateMachine.ContainsState(this)) return;
+            stateMachine?.AddOnUpdateListener(OnUpdateCrouchInput(stateMachine));
+
+            pressCrouch?.Enable();
+            holdCrouch?.Enable();
+
+            base.OnEnabled(stateMachine);
+        }
+
 
 
         private UnityAction OnUpdateCrouchInput(MovementStateMachine stateMachine)
@@ -91,6 +84,10 @@ namespace RedSilver2.Framework.StateMachines.States
 
             if (enabled) this.holdCrouch?.Enable();
             else this.holdCrouch?.Disable();
+        }
+
+        protected sealed override int GetLayerToIgnore() {
+            return GameManager.PlayerLayer;
         }
     }
 }

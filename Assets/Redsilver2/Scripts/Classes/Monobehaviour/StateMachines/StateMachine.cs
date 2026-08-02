@@ -15,6 +15,8 @@ namespace RedSilver2.Framework.StateMachines
         private UnityEvent<State> onStateAdded, onStateRemoved;
         private UnityEvent<State> onStateEntered, onStateExited;
 
+        public State[] States => states != null ? states.ToArray() : new State[0];
+
         protected virtual void Awake()
         {
             states = new List<State>();
@@ -57,18 +59,23 @@ namespace RedSilver2.Framework.StateMachines
             states?.Remove(state);
         }
 
-
         public void ChangeState(State state)
         {
             ChangeState(state, true);
         }
+        public void ChangeState(string stateName)
+        {
+            ChangeState(GetState(stateName), true);
+        }
 
+        public void ChangeState(string stateName, bool checkSimilarity)
+        {
+            ChangeState(GetState(stateName), checkSimilarity);
+        }
         public void ChangeState(State state, bool checkSimilarity)
         {
             if (states == null || (this.currentState == state && checkSimilarity)) return;
             else if (state != null && !states.Contains(state)) return;
-
-            Debug.Log(state);
 
             onStateExited?.Invoke(currentState);
             onStateEntered?.Invoke(state);
@@ -102,11 +109,32 @@ namespace RedSilver2.Framework.StateMachines
             currentState = null;
         }
 
+        public bool ContainsState(string stateName)
+        {
+           return ContainsState(GetState(stateName));
+        }
+
         public bool ContainsState(State state)
         {
             if (states == null || state == null) return false;
             return states.Contains(state);
         }
+
+        public State GetState(string stateName)
+        {
+            if (states == null || string.IsNullOrEmpty(stateName)) return null;
+
+            for (int i = 0; i < states.Count; i++) {
+                if(states[i] == null) continue;
+                string _state = states[i].StateName;
+
+                if(string.IsNullOrEmpty(_state) || _state != stateName) continue;
+                return states[i];
+            }
+
+            return null;
+        }
+
 
         public void AddOnEnabledListener(UnityAction action)
         {

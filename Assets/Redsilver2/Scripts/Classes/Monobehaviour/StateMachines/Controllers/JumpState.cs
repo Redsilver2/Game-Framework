@@ -11,11 +11,8 @@ namespace RedSilver2.Framework.StateMachines.States {
 
         [Space]
         [SerializeField] private float defaultJumpForce;
-        private float jumpForce;
-       
+        private float jumpForce;    
         private bool isJumping;
-        private IEnumerator jumpUpdater;
-
         public bool IsJumping => isJumping;
         public const MovementStateType TYPE = MovementStateType.Jump;
 
@@ -50,22 +47,22 @@ namespace RedSilver2.Framework.StateMachines.States {
         }
 
 
-        protected override void OnExited()
+        protected override void OnExited(MovementStateMachine stateMachine)
         {
-            base.OnExited();
+            base.OnExited(stateMachine);
             isJumping      = false;
         }
 
-        protected override void OnDisabled()
+        protected override void OnDisabled(MovementStateMachine stateMachine)
         {
-            base.OnDisabled();
+            base.OnDisabled(stateMachine);
             isJumping = false;
         }
 
         protected void SetIsJumping(bool isJumping) { this.isJumping = isJumping;  }
         protected sealed override void SetMovementStateType(ref MovementStateType type) { type = TYPE; }
 
-        protected override bool CanTransition(MovementStateMachine stateMachine) {
+        public sealed override bool CanTransition(MovementStateMachine stateMachine) {
             return base.CanTransition(stateMachine) && IsStateMachineJumping(stateMachine);
         }
 

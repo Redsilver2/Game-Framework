@@ -1,5 +1,4 @@
 using RedSilver2.Framework.StateMachines.States;
-using System.Collections.Generic;
 using UnityEngine.Events;
 
 namespace RedSilver2.Framework.StateMachines
@@ -9,32 +8,33 @@ namespace RedSilver2.Framework.StateMachines
         private UnityEvent onUpdate;
         private UnityEvent onLateUpdate;
 
-        private UnityEvent<UpdatableState> onUpdatableStateAdded,   onUpdatableStateRemoved;
+        private UnityEvent<UpdatableState> onUpdatableStateAdded, onUpdatableStateRemoved;
         private UnityEvent<UpdatableState> onUpdatableStateEntered, onUpdatableStateExited;
 
         protected override void Awake()
         {
             base.Awake();
-            onUpdate     = new UnityEvent();
+            onUpdate = new UnityEvent();
             onLateUpdate = new UnityEvent();
 
-            onUpdatableStateAdded   = new UnityEvent<UpdatableState>();
+            onUpdatableStateAdded = new UnityEvent<UpdatableState>();
             onUpdatableStateRemoved = new UnityEvent<UpdatableState>();
 
             onUpdatableStateEntered = new UnityEvent<UpdatableState>();
-            onUpdatableStateExited  = new UnityEvent<UpdatableState>();
+            onUpdatableStateExited = new UnityEvent<UpdatableState>();
 
             AddOnUpdateListener(OnUpdate);
             AddOnLateUpdateListener(OnLateUpdate);
         }
 
-        private void Update() { onUpdate?.Invoke();  }
-        private void LateUpdate() { onLateUpdate?.Invoke();  }
+        private void Update() { onUpdate?.Invoke(); }
+        private void LateUpdate() { onLateUpdate?.Invoke(); }
 
         protected abstract void OnUpdate();
-        protected abstract void OnLateUpdate(); 
+        protected abstract void OnLateUpdate();
 
-        protected override void OnStateEntered(State state)
+
+        protected sealed override void OnStateEntered(State state)
         {
             base.OnStateEntered(state);
             OnUpdatableStateEntered(state as UpdatableState);
@@ -44,7 +44,7 @@ namespace RedSilver2.Framework.StateMachines
             onUpdatableStateEntered?.Invoke(state);
         }
 
-        protected override void OnStateExited(State state)
+        protected sealed override void OnStateExited(State state)
         {
             base.OnStateExited(state);
             OnUpdatableStateExited(state as UpdatableState);
@@ -54,17 +54,21 @@ namespace RedSilver2.Framework.StateMachines
             onUpdatableStateEntered?.Invoke(state);
         }
 
-        protected sealed override void OnStateAdded(State state) {
+        protected sealed override void OnStateAdded(State state)
+        {
             OnUpdatableStateAdded(state as UpdatableState);
         }
-        protected virtual void OnUpdatableStateAdded(UpdatableState state) {
-            onUpdatableStateRemoved?.Invoke(state);   
+        protected virtual void OnUpdatableStateAdded(UpdatableState state)
+        {
+            onUpdatableStateRemoved?.Invoke(state);
         }
 
-        protected sealed override void OnStateRemoved(State state) {
+        protected sealed override void OnStateRemoved(State state)
+        {
             OnUpdatableStateAdded(state as UpdatableState);
         }
-        protected virtual void OnUpdatableStateRemoved(UpdatableState state) {
+        protected virtual void OnUpdatableStateRemoved(UpdatableState state)
+        {
             onUpdatableStateRemoved?.Invoke(state);
         }
 
@@ -122,9 +126,14 @@ namespace RedSilver2.Framework.StateMachines
             if (action != null) onUpdatableStateExited?.RemoveListener(action);
         }
 
-        protected override bool CanAddState(State state) {
-            return base.CanAddState(state) && state as UpdatableState != null;
+        protected sealed override bool CanAddState(State state)
+        {
+            return base.CanAddState(state) && CanAddState(state as UpdatableState);
+        }
+
+        protected virtual bool CanAddState(UpdatableState state)
+        {
+            return state != null ? true : false;
         }
     }
-
 }

@@ -5,22 +5,22 @@ namespace RedSilver2.Framework.Interactions {
     public abstract class Door : InteractionModule {
 
         [Space]
-        [SerializeField] private DoorState state;
+        [SerializeField] private DoorStateType state;
 
         private bool isOpen;
         private bool isLocked;
 
-        private UnityEvent<DoorState> onStateChanged;
+        private UnityEvent<DoorStateType> onStateChanged;
 
         public bool IsOpen => isOpen;
         public bool IsLocked => isLocked;
 
-        public DoorState State       => state;
+        public DoorStateType State       => state;
 
         protected override void Awake()
         {
             base.Awake();
-            onStateChanged = new UnityEvent<DoorState>();
+            onStateChanged = new UnityEvent<DoorStateType>();
 
             SetInteractionType(InteractionType.Door);
             AddOnStateChangedListener(OnStateChanged);
@@ -30,7 +30,7 @@ namespace RedSilver2.Framework.Interactions {
             onStateChanged?.Invoke(state);
         }
 
-        private void SetDoorState(DoorState state) {
+        private void SetDoorState(DoorStateType state) {
             if (this.state != state) {
                 this.state = state;
                 onStateChanged?.Invoke(state);
@@ -38,51 +38,51 @@ namespace RedSilver2.Framework.Interactions {
         }
 
         public  void Open() {
-            if (state == DoorState.Closed) { OnOpen(); }
+            if (state == DoorStateType.Close) { OnOpen(); }
         }
 
         public void Close() {
-            if (state == DoorState.Opened) { OnClose(); }
+            if (state == DoorStateType.Open) { OnClose(); }
         }
 
         public void Lock() {
-            if (state != DoorState.Locked) { SetDoorState(DoorState.Locked); }
+            if (state != DoorStateType.Locked) { SetDoorState(DoorStateType.Locked); }
         }
         public void Unlock() {
-            if (state == DoorState.Locked) { SetDoorState(DoorState.Unlocked); }
+            if (state == DoorStateType.Locked) { SetDoorState(DoorStateType.Unlocked); }
         }
 
         protected virtual void OnOpen() {
-            SetDoorState(DoorState.Opened);
+            SetDoorState(DoorStateType.Open);
         }
 
         protected virtual void OnClose() {
-            SetDoorState(DoorState.Closed);
+            SetDoorState(DoorStateType.Close);
         }
 
-        public void AddOnStateChangedListener(UnityAction<DoorState> action)
+        public void AddOnStateChangedListener(UnityAction<DoorStateType> action)
         {
             if (action != null) onStateChanged?.AddListener(action);
         }
-        public void RemoveOnStateChangedListener(UnityAction<DoorState> action)
+        public void RemoveOnStateChangedListener(UnityAction<DoorStateType> action)
         {
             if (action != null) onStateChanged?.RemoveListener(action);
         }
-        protected virtual void OnStateChanged(DoorState state) {
-            if (state == DoorState.Closed) {
+        protected virtual void OnStateChanged(DoorStateType state) {
+            if (state == DoorStateType.Close) {
                 isOpen = false;
                 isLocked = false;
             }
-            else if (state == DoorState.Opened) {
+            else if (state == DoorStateType.Open) {
                 isOpen = true;
                 isLocked = false;
             }
-            else if (state == DoorState.Locked) {
+            else if (state == DoorStateType.Locked) {
                 isLocked = true;
             }
-            else if (state == DoorState.Unlocked) {
+            else if (state == DoorStateType.Unlocked) {
                 isLocked = false;
-                SetDoorState(isOpen ? DoorState.Opened : DoorState.Closed);
+                SetDoorState(isOpen ? DoorStateType.Open : DoorStateType.Close);
             }
         }
 

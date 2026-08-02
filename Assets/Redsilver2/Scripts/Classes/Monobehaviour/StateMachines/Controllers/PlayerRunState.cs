@@ -34,18 +34,24 @@ namespace RedSilver2.Framework.StateMachines.States
 
         protected sealed override void OnEnabled(MovementStateMachine stateMachine)
         {
-            base.OnEnabled(stateMachine);
-
             if (stateMachine == null || !stateMachine.ContainsState(this)) return;
             stateMachine?.AddOnUpdateListener(OnUpdateRunInput(stateMachine));
+
+            pressRun?.Enable();
+            holdRun?.Enable();
+
+            base.OnEnabled(stateMachine);
         }
 
         protected sealed override void OnDisabled(MovementStateMachine stateMachine)
         {
-            base.OnDisabled(stateMachine);
-
             if (stateMachine == null || !stateMachine.ContainsState(this)) return;
             stateMachine?.RemoveOnUpdateListener(OnUpdateRunInput(stateMachine));
+
+            pressRun?.Disable();
+            holdRun?.Disable();
+
+            base.OnDisabled(stateMachine);
         }
 
 
@@ -62,21 +68,6 @@ namespace RedSilver2.Framework.StateMachines.States
                     else SetIsRunning(false);
                 }
             };
-        }
-
-
-        protected sealed override void OnDisabled()
-        {
-            base.OnDisabled();
-            pressRun?.Disable();
-            holdRun?.Disable();
-        }
-
-        protected sealed override void OnEnabled()
-        {
-            base.OnEnabled();
-            pressRun?.Enable();
-            holdRun?.Enable();
         }
 
         public void SetPressRunSetting(PressInputSettings pressRunSetting)

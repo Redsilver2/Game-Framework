@@ -51,10 +51,10 @@ namespace RedSilver2.Framework.StateMachines
         public float MoveSpeed => moveSpeed;
         public float FallSpeed => fallSpeed;
 
-        public string GroundTag => groundTag;
-        public bool IsMoving    => isMoving;
-        public bool IsGrounded  => isGrounded;
-        public float AirbornTime => airbornTime;
+        public string GroundTag   => groundTag;
+        public bool   IsMoving    => isMoving;
+        public bool   IsGrounded  => isGrounded;
+        public float  AirbornTime => airbornTime;
 
         public float GroundCheckRange => groundCheckRange;
         public bool  Is2DMovement     => is2DMovement;
@@ -100,19 +100,18 @@ namespace RedSilver2.Framework.StateMachines
             ChangeState(defaultState);
         }
 
-        protected sealed override bool CanAddState(State state)
+        protected sealed override bool CanAddState(UpdatableState state)
         {
-            if (states != null && base.CanAddState(state)) {
-                MovementState _state = state as MovementState;
-
-                if (_state == null || states.ContainsKey(_state.Type)) return false;
-                return true;
-            }
-
-            return false;
+            return CanAddState(state as MovementState);
         }
 
-        protected override void OnUpdatableStateAdded(UpdatableState state) {
+        private bool CanAddState(MovementState state)
+        {
+            if (states == null || state == null || states.ContainsKey(state.Type)) return false;
+            return true;
+        }
+
+        protected sealed override void OnUpdatableStateAdded(UpdatableState state) {
             base.OnUpdatableStateAdded(state);
             OnMovementStateAdded(state as MovementState);
         }
@@ -123,27 +122,23 @@ namespace RedSilver2.Framework.StateMachines
             onMovementStateAdded?.Invoke(state);
         }
 
-        protected override void OnUpdatableStateRemoved(UpdatableState state)
+        protected sealed override void OnUpdatableStateRemoved(UpdatableState state)
         {
             base.OnUpdatableStateAdded(state);
             OnMovementStateRemoved(state as MovementState);
         }
         protected virtual void OnMovementStateRemoved(MovementState state)
         {
-            if (currentState == state) ChangeState(null);
+            if (currentState == state) ChangeState(null as MovementState);
 
             if (states == null || state == null || !states.ContainsKey(state.Type)) return;
             else if (states[state.Type] == state) {
                 states.Remove(state.Type);
-
-
-                Debug.Log("Removed: " + state);
                 onMovementStateRemoved?.Invoke(state);
-
             }
         }
 
-        protected override void OnUpdatableStateEntered(UpdatableState state)
+        protected sealed override void OnUpdatableStateEntered(UpdatableState state)
         {
             base.OnUpdatableStateAdded(state);
             OnMovementStateEntered(state as MovementState);
@@ -154,7 +149,7 @@ namespace RedSilver2.Framework.StateMachines
             onMovementStateEntered?.Invoke(state);
         }
 
-        protected override void OnUpdatableStateExited(UpdatableState state)
+        protected sealed override void OnUpdatableStateExited(UpdatableState state)
         {
             base.OnUpdatableStateAdded(state);
             OnMovementStateExited(state as MovementState);

@@ -13,6 +13,8 @@ namespace RedSilver2.Framework.StateMachines.States
         [SerializeField] private float crouchHeight;
         [SerializeField] private float crouchHeightTransitionSpeed;
 
+        [Space]
+        [SerializeField] private float unCrouchSafetyCheckDistance;
 
         private bool isCrouching;
         public bool IsCrouching => isCrouching;
@@ -21,14 +23,14 @@ namespace RedSilver2.Framework.StateMachines.States
 
         protected void SetIsCrouching(bool isCrouching) { this.isCrouching = isCrouching; }
 
-        protected override void OnEntered()
+        protected override void OnEntered(MovementStateMachine stateMachine)
         {
-            base.OnEntered();
+            base.OnEntered(stateMachine);
             Debug.Log("Crouch");
 
         }
 
-        protected sealed override bool CanTransition(MovementStateMachine stateMachine) {
+        public sealed override bool CanTransition(MovementStateMachine stateMachine) {
             return base.CanTransition(stateMachine) && IsStateMachineCrouching(stateMachine);
         }
 
@@ -41,9 +43,9 @@ namespace RedSilver2.Framework.StateMachines.States
             type = TYPE;
         }
 
-        protected override void OnDisabled()
+        protected override void OnDisabled(MovementStateMachine stateMachine)
         {
-            base.OnDisabled();
+            base.OnDisabled(stateMachine);
             isCrouching = false;
         }
 
@@ -52,6 +54,14 @@ namespace RedSilver2.Framework.StateMachines.States
             return new MovementStateType[] { TYPE, LandState.TYPE, FallState.TYPE };
         }
 
+        protected sealed override void UpdateStateTransitions()
+        {
+            if (!Physics.Raycast(transform.position, transform.up, out RaycastHit hit, unCrouchSafetyCheckDistance, ~(1 << GetLayerToIgnore()))) {
+                base.UpdateStateTransitions();
+            }
+        }
+
+        protected abstract int GetLayerToIgnore();
 
         public static CrouchState GetState(MovementStateMachine stateMachine)
         {

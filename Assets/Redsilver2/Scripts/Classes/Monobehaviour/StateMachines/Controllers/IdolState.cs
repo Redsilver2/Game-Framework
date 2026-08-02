@@ -10,9 +10,9 @@ namespace RedSilver2.Framework.StateMachines.States
 
         public const MovementStateType TYPE = MovementStateType.Idol;
 
-        protected sealed override bool CanTransition(MovementStateMachine stateMachine)
+        public sealed override bool CanTransition(MovementStateMachine stateMachine)
         {
-            if (!base.CanTransition(stateMachine)) return false;
+            if (stateMachine == null) return false;
            
             return !stateMachine.IsMoving && stateMachine.IsGrounded
                 && !RunState.IsStateMachineRunning(stateMachine) && !CrouchState.IsStateMachineCrouching(stateMachine)

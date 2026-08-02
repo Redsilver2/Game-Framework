@@ -2,10 +2,10 @@ using UnityEngine;
 
 namespace RedSilver2.Framework.Interactions
 {
-    public enum DoorState {
+    public enum DoorStateType {
         Locked,
         Unlocked,
-        Opened,
-        Closed
+        Open,
+        Close
     }
 }

@@ -25,11 +25,11 @@ namespace RedSilver2.Framework.Interactions.Actions {
             return handler => { door?.Unlock(); };
         }
 
-        private UnityAction<DoorState> GetOnStateChangedAction(Door door)
+        private UnityAction<DoorStateType> GetOnStateChangedAction(Door door)
         {
             return state => {
-                if (state == DoorState.Locked) door?.AddInteractionAction(this);
-                else if (state == DoorState.Unlocked) door?.RemoveInteractionAction(this);
+                if (state == DoorStateType.Locked) door?.AddInteractionAction(this);
+                else if (state == DoorStateType.Unlocked) door?.RemoveInteractionAction(this);
             };
         }
     }

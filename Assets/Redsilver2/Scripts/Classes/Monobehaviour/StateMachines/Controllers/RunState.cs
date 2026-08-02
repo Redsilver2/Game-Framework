@@ -29,15 +29,15 @@ namespace RedSilver2.Framework.StateMachines.States
             return new MovementStateType[] { FallState.TYPE, WalkState.TYPE, CrouchState.TYPE, JumpState.TYPE };
         }
 
-        protected override void OnExited()
+        protected override void OnExited(MovementStateMachine stateMachine)
         {
-            base.OnExited();
+            base.OnExited(stateMachine);
             isRunning = false;
         }
 
-        protected override void OnDisabled()
+        protected override void OnDisabled(MovementStateMachine stateMachine)
         {
-            base.OnDisabled();
+            base.OnDisabled(stateMachine);
             isRunning = false;
         }
 
@@ -60,7 +60,7 @@ namespace RedSilver2.Framework.StateMachines.States
         }
 
         public void SetIsRunning(bool isRunning) { this.isRunning = isRunning; }
-        protected sealed override bool CanTransition(MovementStateMachine stateMachine)
+        public sealed override bool CanTransition(MovementStateMachine stateMachine)
         {
             return base.CanTransition(stateMachine) && IsStateMachineRunning(stateMachine);
         }

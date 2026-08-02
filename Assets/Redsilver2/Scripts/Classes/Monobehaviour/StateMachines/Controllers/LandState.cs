@@ -6,10 +6,10 @@ namespace RedSilver2.Framework.StateMachines.States
     {
         public const MovementStateType TYPE = MovementStateType.Land;
 
-        protected sealed override bool CanTransition(MovementStateMachine stateMachine)
+        public sealed override bool CanTransition(MovementStateMachine stateMachine)
         {
             if (stateMachine == null) return false;
-            return base.CanTransition(stateMachine) && stateMachine.IsGrounded;
+            return stateMachine.IsGrounded;
         }
 
         protected sealed override void OnUpdate(MovementStateMachine stateMachine) {

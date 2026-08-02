@@ -20,7 +20,7 @@ namespace RedSilver2.Framework.StateMachines.States
 
         public const MovementStateType TYPE = MovementStateType.Fall;
 
-        protected sealed override bool CanTransition(MovementStateMachine stateMachine)
+        public sealed override bool CanTransition(MovementStateMachine stateMachine)
         {
             if (!base.CanTransition(stateMachine)) return false;
             return !stateMachine.IsGrounded;

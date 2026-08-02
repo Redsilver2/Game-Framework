@@ -1,6 +1,7 @@
 using RedSilver2.Framework.StateMachines.Controllers;
 using System.Collections;
 using Unity.VisualScripting;
+using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -8,8 +9,6 @@ namespace RedSilver2.Framework.StateMachines.States
 {
     public abstract class UpdatableState : State
     {
-        private UpdatableStateMachine stateMachine;
-       
         private UnityEvent onUpdate;
         private UnityEvent onLateUpdate;
 
@@ -31,18 +30,38 @@ namespace RedSilver2.Framework.StateMachines.States
             return state != null ? true : false;
         }
 
-        protected override void OnEntered() {
-            base.OnEntered();
+        protected sealed override void OnEntered(StateMachine stateMachine) {
+            base.OnEntered(stateMachine);
+            OnEntered(stateMachine as UpdatableStateMachine);
+        }
+
+        protected sealed override void OnExited(StateMachine stateMachine)
+        {
+            base.OnExited(stateMachine);
+            OnExited(stateMachine as UpdatableStateMachine);
+        }
+
+        protected sealed override void OnDisabled(StateMachine stateMachine) {
+            base.OnDisabled(stateMachine);
+            OnDisabled(stateMachine as UpdatableStateMachine);
+        }
+
+        protected sealed override void OnEnabled(StateMachine stateMachine)  {
+            OnEnabled(stateMachine as UpdatableStateMachine);
+            base.OnEnabled(stateMachine);
+        }
+
+        protected virtual void OnEntered(UpdatableStateMachine stateMachine) {
             stateMachine?.AddOnUpdateListener(InvokeOnUpdateEvent);
             stateMachine?.AddOnLateUpdateListener(InvokeOnLateUpdateEvent);
         }
-
-        protected override void OnExited()
-        {
-            base.OnExited();
+        protected virtual void OnExited(UpdatableStateMachine stateMachine) {
             stateMachine?.RemoveOnUpdateListener(InvokeOnUpdateEvent);
             stateMachine?.RemoveOnLateUpdateListener(InvokeOnLateUpdateEvent);
         }
+
+        protected virtual void OnEnabled(UpdatableStateMachine stateMachine) { }
+        protected virtual void OnDisabled(UpdatableStateMachine stateMachine) { }
 
         private void InvokeOnUpdateEvent() { onUpdate?.Invoke(); }
         private void InvokeOnLateUpdateEvent() { onLateUpdate?.Invoke(); }
@@ -50,12 +69,19 @@ namespace RedSilver2.Framework.StateMachines.States
         protected virtual void OnUpdate() { UpdateStateTransitions(); }
         protected virtual void OnLateUpdate() { }
 
-
-        protected override void SetStateMachine(StateMachine stateMachine)
+        public sealed override bool CanTransition(StateMachine stateMachine)
         {
-            base.SetStateMachine(stateMachine);
-            this.stateMachine = stateMachine as UpdatableStateMachine;
+            if(base.CanTransition(stateMachine)) return CanTransition(stateMachine as UpdatableStateMachine);
+            return false;
         }
+
+        public virtual bool CanTransition(UpdatableStateMachine stateMachine) { 
+            return stateMachine != null ? true : false;
+        }
+
+
+
+        public virtual void OnUpdate(UpdatableStateMachine stateMachine) { }
 
         public void AddOnUpdateListener(UnityAction action) {
             if (action != null) onUpdate?.AddListener(action);
