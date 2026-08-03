@@ -12,14 +12,6 @@ namespace RedSilver2.Framework.StateMachines.States
     
         public MovementStateType Type => type;
 
-#if UNITY_EDITOR
-
-        protected virtual void OnValidate()
-        {
-
-        }
-
-#endif
         protected override void Awake() {
             base.Awake();
             SetMovementStateType(ref type);

@@ -17,6 +17,11 @@ namespace RedSilver2.Framework.StateMachines
 
         public State[] States => states != null ? states.ToArray() : new State[0];
 
+
+#if UNITY_EDITOR
+        protected virtual void OnValidate()  { }
+#endif
+
         protected virtual void Awake()
         {
             states = new List<State>();

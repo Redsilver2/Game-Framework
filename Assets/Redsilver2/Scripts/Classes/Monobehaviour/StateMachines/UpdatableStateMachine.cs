@@ -5,11 +5,14 @@ namespace RedSilver2.Framework.StateMachines
 {
     public abstract class UpdatableStateMachine : StateMachine
     {
+        private bool doesCurrentStateExist;
+        private UpdatableState currentState;
+
         private UnityEvent onUpdate;
         private UnityEvent onLateUpdate;
 
-        private UnityEvent<UpdatableState> onUpdatableStateAdded, onUpdatableStateRemoved;
-        private UnityEvent<UpdatableState> onUpdatableStateEntered, onUpdatableStateExited;
+        private UnityEvent<UpdatableState> onStateAdded, onStateRemoved;
+        private UnityEvent<UpdatableState> onStateEntered, onStateExited;
 
         protected override void Awake()
         {
@@ -17,11 +20,13 @@ namespace RedSilver2.Framework.StateMachines
             onUpdate = new UnityEvent();
             onLateUpdate = new UnityEvent();
 
-            onUpdatableStateAdded = new UnityEvent<UpdatableState>();
-            onUpdatableStateRemoved = new UnityEvent<UpdatableState>();
+            onStateAdded = new UnityEvent<UpdatableState>();
+            onStateRemoved = new UnityEvent<UpdatableState>();
 
-            onUpdatableStateEntered = new UnityEvent<UpdatableState>();
-            onUpdatableStateExited = new UnityEvent<UpdatableState>();
+            onStateEntered = new UnityEvent<UpdatableState>();
+            onStateExited = new UnityEvent<UpdatableState>();
+
+            doesCurrentStateExist = false; 
 
             AddOnUpdateListener(OnUpdate);
             AddOnLateUpdateListener(OnLateUpdate);
@@ -30,46 +35,57 @@ namespace RedSilver2.Framework.StateMachines
         private void Update() { onUpdate?.Invoke(); }
         private void LateUpdate() { onLateUpdate?.Invoke(); }
 
-        protected abstract void OnUpdate();
-        protected abstract void OnLateUpdate();
+        protected virtual void OnUpdate() { 
+            if(!doesCurrentStateExist) {
+                foreach(State state in States) {
+                    if (state == null || !state.CanTransition()) continue;
+                    ChangeState(state);
+                    break;
+                }
+            }
+        }
+        protected virtual void OnLateUpdate() { }
 
 
         protected sealed override void OnStateEntered(State state)
         {
             base.OnStateEntered(state);
-            OnUpdatableStateEntered(state as UpdatableState);
+            OnStateEntered(state as UpdatableState);
         }
-        protected virtual void OnUpdatableStateEntered(UpdatableState state)
+        protected virtual void OnStateEntered(UpdatableState state)
         {
-            onUpdatableStateEntered?.Invoke(state);
+            currentState = state;
+            doesCurrentStateExist = currentState != null ? true : false;
+            onStateEntered?.Invoke(state);
         }
 
         protected sealed override void OnStateExited(State state)
         {
             base.OnStateExited(state);
-            OnUpdatableStateExited(state as UpdatableState);
+            OnStateExited(state as UpdatableState);
         }
-        protected virtual void OnUpdatableStateExited(UpdatableState state)
+        protected virtual void OnStateExited(UpdatableState state)
         {
-            onUpdatableStateEntered?.Invoke(state);
+            currentState = null;
+            onStateEntered?.Invoke(state);
         }
 
         protected sealed override void OnStateAdded(State state)
         {
-            OnUpdatableStateAdded(state as UpdatableState);
+            OnStateAdded(state as UpdatableState);
         }
-        protected virtual void OnUpdatableStateAdded(UpdatableState state)
+        protected virtual void OnStateAdded(UpdatableState state)
         {
-            onUpdatableStateRemoved?.Invoke(state);
+            onStateRemoved?.Invoke(state);
         }
 
         protected sealed override void OnStateRemoved(State state)
         {
-            OnUpdatableStateAdded(state as UpdatableState);
+            OnStateAdded(state as UpdatableState);
         }
-        protected virtual void OnUpdatableStateRemoved(UpdatableState state)
+        protected virtual void OnStateRemoved(UpdatableState state)
         {
-            onUpdatableStateRemoved?.Invoke(state);
+            onStateRemoved?.Invoke(state);
         }
 
         public void AddOnUpdateListener(UnityAction action)
@@ -90,40 +106,40 @@ namespace RedSilver2.Framework.StateMachines
             if (action != null) onLateUpdate?.RemoveListener(action);
         }
 
-        public void AddOnUpdatableStateAddedListener(UnityAction<UpdatableState> action)
+        public void AddOnStateAddedListener(UnityAction<UpdatableState> action)
         {
-            if (action != null) onUpdatableStateAdded?.AddListener(action);
+            if (action != null) onStateAdded?.AddListener(action);
         }
-        public void RemoveOnUpdatableStateAddedListener(UnityAction<UpdatableState> action)
+        public void RemoveOnStateAddedListener(UnityAction<UpdatableState> action)
         {
-            if (action != null) onUpdatableStateAdded?.RemoveListener(action);
-        }
-
-        public void AddOnUpdatableStateRemovedListener(UnityAction<UpdatableState> action)
-        {
-            if (action != null) onUpdatableStateRemoved?.AddListener(action);
-        }
-        public void RemoveOnUpdatableStateRemovedListener(UnityAction<UpdatableState> action)
-        {
-            if (action != null) onUpdatableStateRemoved?.RemoveListener(action);
+            if (action != null) onStateAdded?.RemoveListener(action);
         }
 
-        public void AddOnUpdatableStateEnteredListener(UnityAction<UpdatableState> action)
+        public void AddOnStateRemovedListener(UnityAction<UpdatableState> action)
         {
-            if (action != null) onUpdatableStateEntered?.AddListener(action);
+            if (action != null) onStateRemoved?.AddListener(action);
         }
-        public void RemoveOnUpdatableStateEnteredListener(UnityAction<UpdatableState> action)
+        public void RemoveOnStateRemovedListener(UnityAction<UpdatableState> action)
         {
-            if (action != null) onUpdatableStateEntered?.RemoveListener(action);
+            if (action != null) onStateRemoved?.RemoveListener(action);
         }
 
-        public void AddOnUpdatableStateExitedListener(UnityAction<UpdatableState> action)
+        public void AddOnStateEnteredListener(UnityAction<UpdatableState> action)
         {
-            if (action != null) onUpdatableStateExited?.AddListener(action);
+            if (action != null) onStateEntered?.AddListener(action);
         }
-        public void RemoveOnUpdatableStateExitedListener(UnityAction<UpdatableState> action)
+        public void RemoveOnStateEnteredListener(UnityAction<UpdatableState> action)
         {
-            if (action != null) onUpdatableStateExited?.RemoveListener(action);
+            if (action != null) onStateEntered?.RemoveListener(action);
+        }
+
+        public void AddOnStateExitedListener(UnityAction<UpdatableState> action)
+        {
+            if (action != null) onStateExited?.AddListener(action);
+        }
+        public void RemoveOnStateExitedListener(UnityAction<UpdatableState> action)
+        {
+            if (action != null) onStateExited?.RemoveListener(action);
         }
 
         protected sealed override bool CanAddState(State state)

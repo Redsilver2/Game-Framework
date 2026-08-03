@@ -18,6 +18,13 @@ namespace RedSilver2.Framework.StateMachines.Events
             SetStateMachineEvents(stateMachine, true);
         }
 
+        protected void SetStateMachine(StateMachine stateMachine) {
+            SetStateMachineEvents(this.stateMachine, false);
+
+            this.stateMachine = stateMachine;
+            SetStateMachineEvents(stateMachine, enabled);
+        }
+
         private void OnEnable()  { SetStateMachineEvents(stateMachine, true); }
         private void OnDisable() { SetStateMachineEvents(stateMachine, false); }
         protected abstract void SetStateMachineEvents(StateMachine stateMachine, bool isAddingEvents);

@@ -417,12 +417,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 194535283}
-  - component: {fileID: 194535282}
   - component: {fileID: 194535285}
-  - component: {fileID: 194535284}
-  - component: {fileID: 194535287}
-  - component: {fileID: 194535286}
   - component: {fileID: 194535288}
+  - component: {fileID: 194535293}
+  - component: {fileID: 194535291}
+  - component: {fileID: 194535289}
+  - component: {fileID: 194535292}
+  - component: {fileID: 194535294}
   m_Layer: 11
   m_Name: A
   m_TagString: Untagged
@@ -430,118 +431,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &194535282
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 194535281}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 33900d49706b64142956827105bb775a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Items.TestItem
-  interactableName: 
-  uiParent: {fileID: 0}
-  isInteractable: 1
-  dropRotation: {x: 0, y: 0, z: 0}
-  dropPositionYOffset: 0.01
-  dropCheckRange: 0.1
-  dropFallSpeed: 3
-  animatorController: {fileID: 9100000, guid: b680ca0de1026774dbd9873e8bd037b6, type: 2}
-  equippedAnimation:
-    animationName: Test_Equip
-    animationIndex: 0
-    crossFadeTime: 0.05
-    timestampEvents: []
-    onStarted:
-      m_PersistentCalls:
-        m_Calls: []
-    onFinished:
-      m_PersistentCalls:
-        m_Calls: []
-  unequippedAnimation:
-    animationName: Test_UnEquip
-    animationIndex: 1
-    crossFadeTime: 0.05
-    timestampEvents: []
-    onStarted:
-      m_PersistentCalls:
-        m_Calls: []
-    onFinished:
-      m_PersistentCalls:
-        m_Calls: []
-  droppedAnimation:
-    animationName: Test_Dropped
-    animationIndex: 2
-    crossFadeTime: 0.05
-    timestampEvents: []
-    onStarted:
-      m_PersistentCalls:
-        m_Calls: []
-    onFinished:
-      m_PersistentCalls:
-        m_Calls: []
-  parentRotation: {x: 0, y: 0, z: 0}
-  parentPosition: {x: 0.135, y: -0.182, z: 0.339}
-  openLightData:
-    animationName: Test_TurnFlashlight
-    animationIndex: 3
-    crossFadeTime: 0.05
-    timestampEvents:
-    - triggerTime: 0.5
-      triggerEvent:
-        m_PersistentCalls:
-          m_Calls:
-          - m_Target: {fileID: 194535282}
-            m_TargetAssemblyTypeName: RedSilver2.Framework.Items.TestItem, Assembly-CSharp
-            m_MethodName: SetState
-            m_Mode: 6
-            m_Arguments:
-              m_ObjectArgument: {fileID: 0}
-              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-              m_IntArgument: 0
-              m_FloatArgument: 0
-              m_StringArgument: 
-              m_BoolArgument: 1
-            m_CallState: 2
-    onStarted:
-      m_PersistentCalls:
-        m_Calls: []
-    onFinished:
-      m_PersistentCalls:
-        m_Calls: []
-  closeLightData:
-    animationName: Test_TurnFlashlight
-    animationIndex: 3
-    crossFadeTime: 0.05
-    timestampEvents:
-    - triggerTime: 0.5
-      triggerEvent:
-        m_PersistentCalls:
-          m_Calls:
-          - m_Target: {fileID: 194535282}
-            m_TargetAssemblyTypeName: RedSilver2.Framework.Items.TestItem, Assembly-CSharp
-            m_MethodName: SetState
-            m_Mode: 6
-            m_Arguments:
-              m_ObjectArgument: {fileID: 0}
-              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-              m_IntArgument: 0
-              m_FloatArgument: 0
-              m_StringArgument: 
-              m_BoolArgument: 0
-            m_CallState: 2
-    onStarted:
-      m_PersistentCalls:
-        m_Calls: []
-    onFinished:
-      m_PersistentCalls:
-        m_Calls: []
-  maxLightDuration: 0.1
-  lightDrainSpeed: 0
-  canDrainLightDuration: 0
 --- !u!4 &194535283
 Transform:
   m_ObjectHideFlags: 0
@@ -555,30 +444,10 @@ Transform:
   m_LocalScale: {x: 0.75, y: 0.75, z: 0.75}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 990535444}
+  - {fileID: 216972086}
   - {fileID: 1168673599}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &194535284
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 194535281}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a9d5b72ba24335546ad48126c165914f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Items.TakeItemAction
-  type: 0
-  interactionName: Take
-  interactionDescription: 
-  interactionIcon: {fileID: 0}
-  maxInteractionTime: 0
-  maxInteractionResetTime: 0
-  interactionResetSpeed: 0
-  canResetInteractionTime: 0
 --- !u!95 &194535285
 Animator:
   serializedVersion: 7
@@ -601,33 +470,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &194535286
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 194535281}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b30e2259f6a3dec46938c6e41c282a62, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Items.EquippableItemSwayUpdater
---- !u!114 &194535287
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 194535281}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 383dbdc64a957a848b380376d6b32e20, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MovementSwayMotion
-  defaultLerpSpeed: 0
-  min: {x: 0, y: 0}
-  max: {x: 0, y: 0}
 --- !u!65 &194535288
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -649,6 +491,234 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.22873275, y: 0.19792843, z: 1.0405579}
   m_Center: {x: -0.0045674047, y: 0.007367452, z: 0.49886632}
+--- !u!114 &194535289
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 194535281}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67a87830e4fcb1b4ab5a28a8be2f7564, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.States.LightSourceOffState
+  isActif: 1
+  defaultCooldown: 5
+  animatorController: {fileID: 9100000, guid: b680ca0de1026774dbd9873e8bd037b6, type: 2}
+  animationData:
+    animationName: Test_TurnFlashlight
+    animationIndex: 3
+    crossFadeTime: 0.5
+    timestampEvents:
+    - triggerTime: 0.5
+      triggerEvent:
+        m_PersistentCalls:
+          m_Calls:
+          - m_Target: {fileID: 194535289}
+            m_TargetAssemblyTypeName: RedSilver2.Framework.StateMachines.States.LightSourceOffState,
+              Assembly-CSharp
+            m_MethodName: SetLightEnableState
+            m_Mode: 2
+            m_Arguments:
+              m_ObjectArgument: {fileID: 194535291}
+              m_ObjectArgumentAssemblyTypeName: RedSilver2.Framework.StateMachines.LightSourceStateMachine,
+                Assembly-CSharp
+              m_IntArgument: 0
+              m_FloatArgument: 0
+              m_StringArgument: 
+              m_BoolArgument: 0
+            m_CallState: 2
+    onStarted:
+      m_PersistentCalls:
+        m_Calls: []
+    onFinished:
+      m_PersistentCalls:
+        m_Calls: []
+  inputSetting: {fileID: 0}
+--- !u!114 &194535291
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 194535281}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e835e655befe62d478699201a36a2352, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.LightSourceStateMachine
+  itemParent: {fileID: 1511958054}
+  parentRotation: {x: 13.1, y: -0.28, z: 0}
+  parentPosition: {x: 0.21, y: -0.11, z: -0.27}
+  dropRotation: {x: 0, y: 0, z: 0}
+  dropPositionYOffset: 0.25
+  dropCheckRange: 0.1
+  dropFallSpeed: 5
+  animatorController: {fileID: 9100000, guid: b680ca0de1026774dbd9873e8bd037b6, type: 2}
+  equippedAnimation:
+    animationName: Test_Equip
+    animationIndex: 0
+    crossFadeTime: 0.125
+    timestampEvents: []
+    onStarted:
+      m_PersistentCalls:
+        m_Calls: []
+    onFinished:
+      m_PersistentCalls:
+        m_Calls: []
+  unequippedAnimation:
+    animationName: Test_UnEquip
+    animationIndex: 1
+    crossFadeTime: 0.125
+    timestampEvents: []
+    onStarted:
+      m_PersistentCalls:
+        m_Calls: []
+    onFinished:
+      m_PersistentCalls:
+        m_Calls: []
+  droppedAnimation:
+    animationName: Test_Dropped
+    animationIndex: 2
+    crossFadeTime: 0.125
+    timestampEvents: []
+    onStarted:
+      m_PersistentCalls:
+        m_Calls: []
+    onFinished:
+      m_PersistentCalls:
+        m_Calls: []
+  defaultMaxLifeTime: 100
+  drainLifeTimeSpeed: 1
+--- !u!114 &194535292
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 194535281}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae5bc471150af0642a98171ee4a85684, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.LightSourceOnState
+  isActif: 1
+  defaultCooldown: 5
+  animatorController: {fileID: 9100000, guid: b680ca0de1026774dbd9873e8bd037b6, type: 2}
+  animationData:
+    animationName: Test_TurnFlashlight
+    animationIndex: 3
+    crossFadeTime: 0.5
+    timestampEvents:
+    - triggerTime: 0.5
+      triggerEvent:
+        m_PersistentCalls:
+          m_Calls:
+          - m_Target: {fileID: 194535292}
+            m_TargetAssemblyTypeName: RedSilver2.Framework.StateMachines.LightSourceOnState,
+              Assembly-CSharp
+            m_MethodName: SetLightEnableState
+            m_Mode: 2
+            m_Arguments:
+              m_ObjectArgument: {fileID: 194535291}
+              m_ObjectArgumentAssemblyTypeName: RedSilver2.Framework.StateMachines.LightSourceStateMachine,
+                Assembly-CSharp
+              m_IntArgument: 0
+              m_FloatArgument: 0
+              m_StringArgument: 
+              m_BoolArgument: 0
+            m_CallState: 2
+    onStarted:
+      m_PersistentCalls:
+        m_Calls: []
+    onFinished:
+      m_PersistentCalls:
+        m_Calls: []
+  inputSetting: {fileID: 0}
+--- !u!114 &194535293
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 194535281}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01e2bff77ed1f74449842cefc0bb4bda, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Items.EquippableItem
+  interactableName: ForREal?
+  uiParent: {fileID: 0}
+  isInteractable: 1
+--- !u!114 &194535294
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 194535281}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9d5b72ba24335546ad48126c165914f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Items.TakeItemAction
+  type: 0
+  interactionName: ABCDEFG
+  interactionDescription: 
+  interactionIcon: {fileID: 0}
+  maxInteractionTime: 0
+  maxInteractionResetTime: 0
+  interactionResetSpeed: 0
+  canResetInteractionTime: 0
+--- !u!1 &216972085
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 216972086}
+  - component: {fileID: 216972087}
+  m_Layer: 11
+  m_Name: Sway
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &216972086
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 216972085}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1511958054}
+  m_Father: {fileID: 194535283}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &216972087
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 216972085}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b30e2259f6a3dec46938c6e41c282a62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Items.EquippableItemSwayUpdater
+  defaultLerpSpeed: 2.5
+  min: {x: 0.05, y: 0.1}
+  max: {x: 0.05, y: 0}
 --- !u!1 &394761747
 GameObject:
   m_ObjectHideFlags: 0
@@ -1057,7 +1127,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 194535283}
+    m_TransformParent: {fileID: 1511958054}
     m_Modifications:
     - target: {fileID: 1275266641364890, guid: e3109ccf9db0f54408d5c02b496761c1, type: 3}
       propertyPath: m_Name
@@ -1115,8 +1185,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 90
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 95139158103427248, guid: e3109ccf9db0f54408d5c02b496761c1, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -2251,6 +2320,38 @@ Transform:
   m_Children: []
   m_Father: {fileID: 6121824776835189799}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1511958053
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1511958054}
+  m_Layer: 11
+  m_Name: Holder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1511958054
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1511958053}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 990535444}
+  m_Father: {fileID: 216972086}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1594589318
 GameObject:
   m_ObjectHideFlags: 0
@@ -3298,7 +3399,6 @@ MonoBehaviour:
   fallTransitionSpeed: 10
   defaultHeight: 2
   heightTransitionSpeed: 5
-  defaultState: 0
   inputSetting: {fileID: 11400000, guid: 34e9a3b820b865e438822ed3a624d62a, type: 2}
   cameraCrouchTransform: {fileID: 1594589319}
   crouchCameraPosition: {x: 0, y: 0.5, z: 0}

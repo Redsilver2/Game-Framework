@@ -1,4 +1,3 @@
-using RedSilver2.Framework.StateMachines.Controllers;
 using RedSilver2.Framework.StateMachines.Events;
 using UnityEngine;
 

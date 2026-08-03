@@ -22,19 +22,19 @@ namespace RedSilver2.Framework.StateMachines
         public bool IsLocked => isLocked;
         public Transform Handle => handle;
 
-        private UnityEvent<DoorState> onDoorStateEntered, onDoorStateExited;
-        private UnityEvent<DoorState> onDoorStateAdded  , onDoorStateRemoved;
+        private UnityEvent<DoorState> onStateEntered, onStateExited;
+        private UnityEvent<DoorState> onStateAdded  , onStateRemoved;
 
         protected sealed override void Awake()
         {
             base.Awake();
             states = new List<DoorState>();
 
-            onDoorStateAdded   = new UnityEvent<DoorState>();
-            onDoorStateRemoved = new UnityEvent<DoorState>();
+            onStateAdded   = new UnityEvent<DoorState>();
+            onStateRemoved = new UnityEvent<DoorState>();
 
-            onDoorStateEntered = new UnityEvent<DoorState>();
-            onDoorStateExited  = new UnityEvent<DoorState>();
+            onStateEntered = new UnityEvent<DoorState>();
+            onStateExited  = new UnityEvent<DoorState>();
 
             onClose  = new UnityEvent();
             onOpen   = new UnityEvent();
@@ -94,10 +94,10 @@ namespace RedSilver2.Framework.StateMachines
         }
 
         private void OnDoorStateEntered(DoorState state) {
-            onDoorStateEntered?.Invoke(state);
+            onStateEntered?.Invoke(state);
         }
         private void OnDoorStateExited(DoorState state) {
-            onDoorStateExited?.Invoke(state);
+            onStateExited?.Invoke(state);
         }
 
         protected sealed override void OnStateAdded(State state) {
@@ -111,45 +111,45 @@ namespace RedSilver2.Framework.StateMachines
             if(states == null || state == null || states.Contains(state)) return;
             states?.Add(state);
 
-            onDoorStateAdded?.Invoke(state);
+            onStateAdded?.Invoke(state);
         }
         private void OnStateRemoved(DoorState state) {
             if (states == null || state == null || !states.Contains(state)) return;
             states?.Remove(state);
 
-            onDoorStateRemoved?.Invoke(state);
+            onStateRemoved?.Invoke(state);
         }
 
-        public void AddOnDoorStateAddedListener(UnityAction<DoorState> action){
-            if (action != null) onDoorStateAdded?.AddListener(action);
+        public void AddOnStateAddedListener(UnityAction<DoorState> action){
+            if (action != null) onStateAdded?.AddListener(action);
         }
-        public void RemoveOnDoorStateAddedListener(UnityAction<DoorState> action) {
-            if (action != null) onDoorStateAdded?.RemoveListener(action);
-        }
-
-        public void AddOnDoorStateExitedListener(UnityAction<DoorState> action)
-        {
-            if (action != null) onDoorStateExited?.AddListener(action);
-        }
-        public void RemoveOnDoorStateExitedListener(UnityAction<DoorState> action)
-        {
-            if (action != null) onDoorStateExited?.RemoveListener(action);
+        public void RemoveOnStateAddedListener(UnityAction<DoorState> action) {
+            if (action != null) onStateAdded?.RemoveListener(action);
         }
 
-        public void AddOnDoorStateEnteredListener(UnityAction<DoorState> action)
+        public void AddOnStateExitedListener(UnityAction<DoorState> action)
         {
-            if (action != null) onDoorStateEntered?.AddListener(action);
+            if (action != null) onStateExited?.AddListener(action);
         }
-        public void RemoveOnDoorStateEnteredListener(UnityAction<DoorState> action)
+        public void RemoveOnStateExitedListener(UnityAction<DoorState> action)
         {
-            if (action != null) onDoorStateEntered?.RemoveListener(action);
+            if (action != null) onStateExited?.RemoveListener(action);
         }
 
-        public void AddOnDoorStateRemovedListener(UnityAction<DoorState> action) {
-            if (action != null) onDoorStateRemoved?.AddListener(action);
+        public void AddOnStateEnteredListener(UnityAction<DoorState> action)
+        {
+            if (action != null) onStateEntered?.AddListener(action);
         }
-        public void RemoveOnDoorStateRemovedListener(UnityAction<DoorState> action) {
-            if (action != null) onDoorStateRemoved?.RemoveListener(action);
+        public void RemoveOnStateEnteredListener(UnityAction<DoorState> action)
+        {
+            if (action != null) onStateEntered?.RemoveListener(action);
+        }
+
+        public void AddOnStateRemovedListener(UnityAction<DoorState> action) {
+            if (action != null) onStateRemoved?.AddListener(action);
+        }
+        public void RemoveOnStateRemovedListener(UnityAction<DoorState> action) {
+            if (action != null) onStateRemoved?.RemoveListener(action);
         }
 
         public void AddOnOpenListener(UnityAction action)

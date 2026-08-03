@@ -27,6 +27,10 @@ namespace RedSilver2.Framework.StateMachines.States
         public bool IsActif => isActif;
         public string StateName => stateName;
 
+#if UNITY_EDITOR
+        protected virtual void OnValidate() { }
+#endif
+
         protected virtual void Awake() {
             transitionStates = new List<State>();
             SetIncompatibleTransitionStates(ref incompatibleTransitionStates);  

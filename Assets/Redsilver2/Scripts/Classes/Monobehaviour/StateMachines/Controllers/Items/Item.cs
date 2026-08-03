@@ -1,5 +1,6 @@
 using RedSilver2.Framework.Interactions;
 using RedSilver2.Framework.Inventories;
+using RedSilver2.Framework.StateMachines;
 using System.Collections;
 using System.Linq;
 using UnityEngine;
@@ -9,39 +10,33 @@ namespace RedSilver2.Framework.Items
 {
     public abstract class Item : InteractionModule
     {
+        private bool isDropping;
+        private Inventory owner;
 
-        [Space]
-        [SerializeField] private Vector3 dropRotation;
-
-        [Space]
-        [SerializeField] private float dropPositionYOffset;
-
-        [Space]
-        [SerializeField] private float dropCheckRange;
-        [SerializeField] private float dropFallSpeed;
 
         private MeshRenderer[] renderers;
         private UnityEvent     onAdded, onRemoved, onDisabled, onEnabled;
-
-        private IEnumerator dropCoroutine;
-        private Inventory   owner;
+        private UnityEvent     onDropped;
 
         private ItemType type;
+
+        public bool IsDropping => isDropping;
         public  ItemType ItemType => type;
+  
 
 
 
 #if UNITY_EDITOR
         protected virtual void OnValidate()
         {
-            dropCheckRange = Mathf.Clamp(dropCheckRange, 0.1f, float.MaxValue);
-            dropFallSpeed  = Mathf.Clamp(dropFallSpeed, 0f, float.MaxValue);
         }
 #endif
 
         protected override void Awake() 
         {
             base.Awake();
+
+            owner = null;
             SetInteractionType(InteractionType.Item);
 
             onAdded       = new UnityEvent();
@@ -50,24 +45,20 @@ namespace RedSilver2.Framework.Items
             onDisabled    = new UnityEvent();
             onEnabled     = new UnityEvent();
 
+            onDropped = new UnityEvent();
+            isDropping = false;
+
             type          = GetItemType();
             renderers     = transform.GetComponentsInChildren<MeshRenderer>();
 
-            AddOnAddedListener  (() => {
-                StopDropCoroutine();
-                SetIsInteractable(false);
+            AddOnAddedListener  (() => { SetInteractionColliderVisibility(false); });
+            AddOnRemovedListener(() => { SetInteractionColliderVisibility(true); });
+        }
 
-                SetInteractionColliderVisibility(false);
-            });
-            AddOnRemovedListener(() => {
-                Debug.Log("Sure");
-                StartDropCoroutine();
-                SetIsInteractable(true);
-
-                SetInteractionColliderVisibility(true);
-            });
-
-            StartDropCoroutine();
+        private void Start()
+        {
+            var stateMachine = GetComponent<EquippableItemStateMachine>();
+            stateMachine?.AddOnGroundTouchedListener(v => { isDropping = false; });
         }
 
         protected override void OnEnable() {
@@ -87,7 +78,8 @@ namespace RedSilver2.Framework.Items
 
         public virtual void Take(Inventory inventory)
         {
-            if (owner != inventory) RemoveFromInventory();
+            if (isDropping) return;
+            else if (owner != inventory) RemoveFromInventory();
             inventory?.AddItem(this);
 
             if (inventory != null) {
@@ -98,6 +90,14 @@ namespace RedSilver2.Framework.Items
                     onAdded?.Invoke();
                     owner?.AddOnItemRemovedListner(OnRemoved);
                 }              
+            }
+        }
+
+        public virtual void Drop()
+        {
+            if (!isDropping) {
+                isDropping = true;
+                onDropped?.Invoke();
             }
         }
 
@@ -117,6 +117,7 @@ namespace RedSilver2.Framework.Items
                 inventory?.RemoveItem(this);
 
                 if (!inventory.ContainsItem(this)) onRemoved?.Invoke();
+                inventory?.RemoveOnItemRemovedListner(OnRemoved);
             }
         }
 
@@ -144,44 +145,6 @@ namespace RedSilver2.Framework.Items
         {
             var results = renderers.Where(x => x != null).Where(x => x.name.ToLower().Equals(name.ToLower()));
             return results.Count() > 0 ? results.First() : null;
-        }
-
-        protected virtual IEnumerator DropCoroutine() {
-            Debug.Log("1.");
-
-            while (true) {
-                bool isHittingGround = Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, dropCheckRange);
-                if (owner != null) break;
-
-                transform.SetParent(null);
-                transform.localRotation = Quaternion.Euler(dropRotation);
-                transform.localPosition += Time.deltaTime * (Vector3.down * dropFallSpeed);
-              
-                if (isHittingGround) {
-                    transform.position = hit.point + Vector3.up * dropPositionYOffset;
-                    Debug.DrawRay(transform.position, Vector3.down, Color.green);
-                    break;
-                }
-                else Debug.DrawRay(transform.position, Vector3.down, Color.red);
-
-                yield return null;
-            }
-
-            Debug.Log("2.");
-        }
-
-        protected void StartDropCoroutine()
-        {
-            StopDropCoroutine();
-
-            dropCoroutine = DropCoroutine();
-            StartCoroutine(dropCoroutine);
-        }
-
-        protected void StopDropCoroutine()
-        {
-            if(dropCoroutine != null) StopCoroutine(dropCoroutine);
-            dropCoroutine = null; 
         }
 
 
@@ -221,6 +184,16 @@ namespace RedSilver2.Framework.Items
         public void RemoveOnEnabledListener(UnityAction action)
         {
             if (action != null) onEnabled?.RemoveListener(action);
+        }
+
+        public void AddOnDroppedListener(UnityAction action)
+        {
+            if (action != null) onDropped?.AddListener(action);
+        }
+
+        public void RemoveOnDroppedListener(UnityAction action)
+        {
+            if (action != null) onDropped?.RemoveListener(action);
         }
 
         protected abstract ItemType GetItemType();

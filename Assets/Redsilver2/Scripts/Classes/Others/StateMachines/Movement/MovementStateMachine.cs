@@ -23,9 +23,6 @@ namespace RedSilver2.Framework.StateMachines
         [SerializeField] private float defaultHeight;
         [SerializeField] private float heightTransitionSpeed;
 
-        [Space]
-        [SerializeField] private MovementStateType defaultState;
-
         private float moveSpeed;
         private float fallSpeed;
 
@@ -42,8 +39,8 @@ namespace RedSilver2.Framework.StateMachines
         private UnityEvent<Vector3> onMoved;
         private UnityEvent<string> onGroundTagChanged;
 
-        private UnityEvent<MovementState> onMovementStateAdded, onMovementStateRemoved;
-        private UnityEvent<MovementState> onMovementStateEntered, onMovementStateExited;
+        private UnityEvent<MovementState> onStateAdded, onStateRemoved;
+        private UnityEvent<MovementState> onStateEntered, onStateExited;
 
         public float DefaultHeight    => defaultHeight;
         public float DefaultFallSpeed => defaultFallSpeed;
@@ -59,9 +56,6 @@ namespace RedSilver2.Framework.StateMachines
         public float GroundCheckRange => groundCheckRange;
         public bool  Is2DMovement     => is2DMovement;
 
-
-        public MovementState[] States => states != null ? states.Values.ToArray() : new MovementState[0];
-
 #if UNITY_EDITOR
         protected virtual void OnValidate() {
             groundCheckRange = Mathf.Clamp(groundCheckRange, 0f, float.MaxValue);
@@ -74,16 +68,16 @@ namespace RedSilver2.Framework.StateMachines
             states = new Dictionary<MovementStateType, MovementState>();
             base.Awake();
 
-            onMoved = new UnityEvent<Vector3>();
+            onMoved            = new UnityEvent<Vector3>();
             onGroundTagChanged = new UnityEvent<string>();
 
-            onMovementStateAdded = new UnityEvent<MovementState>();
-            onMovementStateRemoved = new UnityEvent<MovementState>();
+            onStateAdded   = new UnityEvent<MovementState>();
+            onStateRemoved = new UnityEvent<MovementState>();
 
-            onMovementStateEntered = new UnityEvent<MovementState>();
-            onMovementStateExited = new UnityEvent<MovementState>();
+            onStateEntered = new UnityEvent<MovementState>();
+            onStateExited  = new UnityEvent<MovementState>();
 
-            groundTag = string.Empty;
+            groundTag  = string.Empty;
             isGrounded = false;
 
             isMoving  = false;
@@ -93,11 +87,6 @@ namespace RedSilver2.Framework.StateMachines
             AddOnMovedListener(OnMoved);
             
             AddOnGroundTagChangedListener(OnGroundTagChanged);
-        }
-
-        protected async virtual void Start() {
-            while (!states.ContainsKey(defaultState)) await Awaitable.NextFrameAsync();
-            ChangeState(defaultState);
         }
 
         protected sealed override bool CanAddState(UpdatableState state)
@@ -111,53 +100,54 @@ namespace RedSilver2.Framework.StateMachines
             return true;
         }
 
-        protected sealed override void OnUpdatableStateAdded(UpdatableState state) {
-            base.OnUpdatableStateAdded(state);
-            OnMovementStateAdded(state as MovementState);
+        protected sealed override void OnStateAdded(UpdatableState state) {
+            base.OnStateAdded(state);
+            OnStateAdded(state as MovementState);
         }
-        protected virtual void OnMovementStateAdded(MovementState state) {
+        protected virtual void OnStateAdded(MovementState state) {
             if(states == null || state == null || states.ContainsKey(state.Type)) return;
 
             states?.Add(state.Type, state);
-            onMovementStateAdded?.Invoke(state);
+            onStateAdded?.Invoke(state);
         }
 
-        protected sealed override void OnUpdatableStateRemoved(UpdatableState state)
+        protected sealed override void OnStateRemoved(UpdatableState state)
         {
-            base.OnUpdatableStateAdded(state);
-            OnMovementStateRemoved(state as MovementState);
+            base.OnStateRemoved(state);
+            OnStateRemoved(state as MovementState);
         }
-        protected virtual void OnMovementStateRemoved(MovementState state)
+        protected virtual void OnStateRemoved(MovementState state)
         {
             if (currentState == state) ChangeState(null as MovementState);
 
             if (states == null || state == null || !states.ContainsKey(state.Type)) return;
             else if (states[state.Type] == state) {
                 states.Remove(state.Type);
-                onMovementStateRemoved?.Invoke(state);
+                onStateRemoved?.Invoke(state);
             }
         }
 
-        protected sealed override void OnUpdatableStateEntered(UpdatableState state)
+        protected sealed override void OnStateEntered(UpdatableState state)
         {
-            base.OnUpdatableStateAdded(state);
-            OnMovementStateEntered(state as MovementState);
+            base.OnStateEntered(state);
+            OnStateEntered(state as MovementState);
         }
-        protected virtual void OnMovementStateEntered(MovementState state)
+        protected virtual void OnStateEntered(MovementState state)
         {
             currentState = state;
-            onMovementStateEntered?.Invoke(state);
+            onStateEntered?.Invoke(state);
         }
 
-        protected sealed override void OnUpdatableStateExited(UpdatableState state)
+        protected sealed override void OnStateExited(UpdatableState state)
         {
-            base.OnUpdatableStateAdded(state);
-            OnMovementStateExited(state as MovementState);
+            base.OnStateExited(state);
+            OnStateExited(state as MovementState);
         }
-        protected virtual void OnMovementStateExited(MovementState state)
+
+        protected virtual void OnStateExited(MovementState state)
         {
             currentState = null;
-            onMovementStateExited?.Invoke(state);
+            onStateExited?.Invoke(state);
         }
 
         protected override void OnDisabled() {
@@ -194,7 +184,7 @@ namespace RedSilver2.Framework.StateMachines
         private void RemoveState(MovementStateType type) {
             if (states == null || !states.ContainsKey(type)) return;
 
-            onMovementStateRemoved?.Invoke(states[type]);
+            onStateRemoved?.Invoke(states[type]);
             states?.Remove(type);
         }
 
@@ -212,6 +202,8 @@ namespace RedSilver2.Framework.StateMachines
 
         protected override void OnUpdate()
         {
+            base.OnUpdate();
+
             string currentGroundTag = string.Empty;
 
             isGrounded = IsCurrentState(MovementStateType.Jump) ? false :  GetGroundCheckResult(out currentGroundTag);
@@ -254,40 +246,40 @@ namespace RedSilver2.Framework.StateMachines
             if (action != null) onGroundTagChanged?.RemoveListener(action);
         }
 
-        public void AddOnMovementStateAddedListener(UnityAction<MovementState> action)
+        public void AddOnStateAddedListener(UnityAction<MovementState> action)
         {
-            if (action != null) onMovementStateAdded?.AddListener(action);
+            if (action != null) onStateAdded?.AddListener(action);
         }
-        public void RemoveOnMovementStateAddedListener(UnityAction<MovementState> action)
+        public void RemoveOnStateAddedListener(UnityAction<MovementState> action)
         {
-            if (action != null) onMovementStateAdded?.RemoveListener(action);
-        }
-
-        public void AddOnMovementStateRemovedListener(UnityAction<MovementState> action)
-        {
-            if (action != null) onMovementStateRemoved?.AddListener(action);
-        }
-        public void RemoveOnMovementStateRemovedListener(UnityAction<MovementState> action)
-        {
-            if (action != null) onMovementStateRemoved?.RemoveListener(action);
+            if (action != null) onStateAdded?.RemoveListener(action);
         }
 
-        public void AddOnMovementStateEnteredListener(UnityAction<MovementState> action)
+        public void AddOnStateRemovedListener(UnityAction<MovementState> action)
         {
-            if (action != null) onMovementStateEntered?.AddListener(action);
+            if (action != null) onStateRemoved?.AddListener(action);
         }
-        public void RemoveOnMovementStateEnteredListener(UnityAction<MovementState> action)
+        public void RemoveOnStateRemovedListener(UnityAction<MovementState> action)
         {
-            if (action != null) onMovementStateEntered?.RemoveListener(action);
+            if (action != null) onStateRemoved?.RemoveListener(action);
         }
 
-        public void AddOnMovementStateExitedListener(UnityAction<MovementState> action)
+        public void AddOnStateEnteredListener(UnityAction<MovementState> action)
         {
-            if (action != null) onMovementStateExited?.AddListener(action);
+            if (action != null) onStateEntered?.AddListener(action);
         }
-        public void RemoveOnMovementStateExitedListener(UnityAction<MovementState> action)
+        public void RemoveOnStateEnteredListener(UnityAction<MovementState> action)
         {
-            if (action != null) onMovementStateExited?.RemoveListener(action);
+            if (action != null) onStateEntered?.RemoveListener(action);
+        }
+
+        public void AddOnStateExitedListener(UnityAction<MovementState> action)
+        {
+            if (action != null) onStateExited?.AddListener(action);
+        }
+        public void RemoveOnStateExitedListener(UnityAction<MovementState> action)
+        {
+            if (action != null) onStateExited?.RemoveListener(action);
         }
 
         public virtual void SetMoveSpeed(float moveSpeed)

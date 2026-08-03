@@ -1,8 +1,3 @@
-using RedSilver2.Framework.StateMachines.Controllers;
-using System.Collections;
-using Unity.VisualScripting;
-using UnityEditorInternal;
-using UnityEngine;
 using UnityEngine.Events;
 
 namespace RedSilver2.Framework.StateMachines.States
@@ -71,8 +66,7 @@ namespace RedSilver2.Framework.StateMachines.States
 
         public sealed override bool CanTransition(StateMachine stateMachine)
         {
-            if(base.CanTransition(stateMachine)) return CanTransition(stateMachine as UpdatableStateMachine);
-            return false;
+            return base.CanTransition(stateMachine) && CanTransition(stateMachine as UpdatableStateMachine);
         }
 
         public virtual bool CanTransition(UpdatableStateMachine stateMachine) { 
