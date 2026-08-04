@@ -353,7 +353,6 @@ GameObject:
   m_Component:
   - component: {fileID: 190184649}
   - component: {fileID: 190184650}
-  - component: {fileID: 190184651}
   m_Layer: 3
   m_Name: '-'
   m_TagString: Untagged
@@ -390,24 +389,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SwayMotion
   defaultLerpSpeed: 5
+  positionUpdateSpeed: 10
   min: {x: 0.5, y: 0.5}
   max: {x: 0.5, y: 0}
---- !u!114 &190184651
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 190184648}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7b068d00a6201504d96af2469a1abc9a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MovementTiltMotion
-  defaultLerpSpeed: 10
-  min: {x: 2.5, y: 5}
-  max: {x: 2.5, y: 0}
-  directionUpdateSpeed: 30
 --- !u!1 &194535281
 GameObject:
   m_ObjectHideFlags: 0
@@ -549,8 +533,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.LightSourceStateMachine
   itemParent: {fileID: 1511958054}
-  parentRotation: {x: 13.1, y: -0.28, z: 0}
-  parentPosition: {x: 0.21, y: -0.11, z: -0.27}
+  parentRotation: {x: -333.33, y: 0, z: 0}
+  parentPosition: {x: 0.4, y: -0.5, z: -0.17}
   dropRotation: {x: 0, y: 0, z: 0}
   dropPositionYOffset: 0.25
   dropCheckRange: 0.1
@@ -680,6 +664,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 216972086}
+  - component: {fileID: 216972088}
   - component: {fileID: 216972087}
   m_Layer: 11
   m_Name: Sway
@@ -701,7 +686,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1511958054}
+  - {fileID: 645008274}
   m_Father: {fileID: 194535283}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &216972087
@@ -713,11 +698,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 216972085}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b30e2259f6a3dec46938c6e41c282a62, type: 3}
+  m_Script: {fileID: 11500000, guid: 86c9777e0e729984fb86ed006de7f069, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Items.EquippableItemSwayUpdater
-  defaultLerpSpeed: 2.5
-  min: {x: 0.05, y: 0.1}
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Items.EquippableItemSwayMotion
+--- !u!114 &216972088
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 216972085}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 383dbdc64a957a848b380376d6b32e20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MovementSwayMotion
+  defaultLerpSpeed: 5
+  positionUpdateSpeed: 10
+  min: {x: 0.05, y: 0.05}
   max: {x: 0.05, y: 0}
 --- !u!1 &394761747
 GameObject:
@@ -1007,6 +1005,69 @@ MonoBehaviour:
   maxInteractionResetTime: 0
   interactionResetSpeed: 0
   canResetInteractionTime: 0
+--- !u!1 &645008273
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 645008274}
+  - component: {fileID: 645008276}
+  - component: {fileID: 645008275}
+  m_Layer: 11
+  m_Name: RotationMotion
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &645008274
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 645008273}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1511958054}
+  m_Father: {fileID: 216972086}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &645008275
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 645008273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49919e971a640774ea8b3fad50396a73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Items.EquippableItemMouseTiltMotion
+--- !u!114 &645008276
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 645008273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3d5e1a3f6b78814e8b293c842152ffe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.Events.MouseMovementTiltMotion
+  defaultLerpSpeed: 5
+  directionUpdateSpeed: 5
+  rotationUpdateSpeed: 1.5
+  min: {x: 5, y: 5}
+  max: {x: 5, y: 5}
 --- !u!1 &681363555
 GameObject:
   m_ObjectHideFlags: 0
@@ -2350,7 +2411,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 990535444}
-  m_Father: {fileID: 216972086}
+  m_Father: {fileID: 645008274}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1594589318
 GameObject:

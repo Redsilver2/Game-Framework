@@ -1,5 +1,6 @@
 using RedSilver2.Framework.Inputs.Configurations;
 using UnityEngine;
+using UnityEngine.Events;
 
 public abstract class Vector2InputConfigurationEvent : MonoBehaviour
 {
@@ -25,14 +26,36 @@ public abstract class Vector2InputConfigurationEvent : MonoBehaviour
     protected virtual async void SetEvent(bool isAddingEvent, Vector2InputConfiguration configuration)
     {
         if (isAddingEvent) {
-            configuration?.AddOnUpdateListener(OnUpdate);
-            configuration?.AddOnLateUpdateListener(OnLateUpdate);
+            AddOnUpdateListener(OnUpdate);
+            AddOnLateUpdateListener(OnLateUpdate);
         }
         else {
-            configuration.RemoveOnUpdateListener(OnUpdate);
-            configuration?.RemoveOnLateUpdateListener(OnLateUpdate);
+            RemoveOnUpdateListener(OnUpdate);
+            RemoveOnLateUpdateListener(OnLateUpdate);
         }
     }
+
+    public void AddOnUpdateListener(UnityAction<Vector2> action)
+    {
+        GetConfiguration()?.AddOnUpdateListener(action);
+    }
+
+    public void RemoveOnUpdateListener(UnityAction<Vector2> action)
+    {
+        GetConfiguration()?.RemoveOnUpdateListener(action);
+    }
+
+
+    public void AddOnLateUpdateListener(UnityAction action)
+    {
+        GetConfiguration()?.AddOnLateUpdateListener(action);
+    }
+
+    public void RemoveOnLateUpdateListener(UnityAction action)
+    {
+        GetConfiguration()?.AddOnLateUpdateListener(action);
+    }
+
 
     protected virtual void OnDisable()
     {

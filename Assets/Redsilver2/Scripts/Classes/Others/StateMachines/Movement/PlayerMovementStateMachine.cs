@@ -1,5 +1,6 @@
-
+               
 using RedSilver2.Framework.Inputs.Settings;
+using RedSilver2.Framework.Player;
 using RedSilver2.Framework.StateMachines.States;
 using UnityEngine;
 using UnityEngine.Events;
@@ -22,14 +23,20 @@ namespace RedSilver2.Framework.StateMachines.Controllers {
         [SerializeField] private float crouchCameraUpdateSpeed;
         private Vector3 nextPosition;
 
-
+        private CameraController cameraController;
         private UnityEvent<Vector2> onMoveInputUpdate;
+
+        public CameraController CameraController => cameraController;
 
         protected override void Awake() {
             base.Awake();
             onMoveInputUpdate = new UnityEvent<Vector2>();
 
+            cameraController = transform.root != null ? transform.root.GetComponentInChildren<CameraController>() :
+                                                                       GetComponentInChildren<CameraController>();
+
             AddOnMoveInputUpdateListener(OnMoveInputUpdate);
+          
             if (enabled) inputSetting?.Enable();
         }
 
@@ -37,12 +44,14 @@ namespace RedSilver2.Framework.StateMachines.Controllers {
         protected override void OnEnabled() {
 
             base.OnEnabled();
+            if (cameraController != null) cameraController.enabled = true;
             inputSetting?.Enable();
         }
 
         protected override void OnDisabled()
         {
             base.OnDisabled();
+            if (cameraController != null) cameraController.enabled = false;
             inputSetting?.Disable();
         }
 

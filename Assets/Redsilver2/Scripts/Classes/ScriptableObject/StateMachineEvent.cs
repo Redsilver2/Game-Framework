@@ -18,7 +18,7 @@ namespace RedSilver2.Framework.StateMachines.Events
             SetStateMachineEvents(stateMachine, true);
         }
 
-        protected void SetStateMachine(StateMachine stateMachine) {
+        public void SetStateMachine(StateMachine stateMachine) {
             SetStateMachineEvents(this.stateMachine, false);
 
             this.stateMachine = stateMachine;

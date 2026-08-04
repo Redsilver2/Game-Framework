@@ -1,10 +1,11 @@
+using RedSilver2.Framework.StateMachines.Controllers;
 using RedSilver2.Framework.StateMachines.Events;
 using UnityEngine;
 
-public class PlayerMovementSwayMotion : PlayerMovementMotion
+public class MovementSwayMotion : MovementMotion
 {
     [SerializeField] private float defaultLerpSpeed;
-
+    [SerializeField] private float positionUpdateSpeed;
     [Space]
     [SerializeField] private Vector2 min;
     [SerializeField] private Vector2 max;
@@ -34,19 +35,27 @@ public class PlayerMovementSwayMotion : PlayerMovementMotion
         this.max = maxPosition;
     }
 
-    protected sealed override void OnLateUpdate()  {
-        OnLateUpdate(desired);
+    protected sealed override void SetStateMachineEvents(PlayerMovementStateMachine stateMachine, bool isAddingEvents)
+    {
+        if (isAddingEvents) {
+            stateMachine?.AddOnLateUpdateListener(OnLateUpdate);
+            stateMachine?.AddOnMoveInputUpdateListener(OnInputUpdate);
+        }
+        else {
+            stateMachine?.RemoveOnLateUpdateListener(OnLateUpdate);
+            stateMachine?.RemoveOnMoveInputUpdateListener(OnInputUpdate);
+        }
     }
 
-    protected sealed override void OnMoveInputUpdate(Vector2 vector) {
+    protected sealed override void OnLateUpdate()  {
+        transform.localPosition = Vector3.Lerp(transform.localPosition, desired, Time.deltaTime * positionUpdateSpeed);
+    }
+
+    protected sealed override void OnInputUpdate(Vector2 vector) {
         OnUpdate(vector, ref desired);
     }
 
 
-
-    protected void OnLateUpdate(Vector3 desired) {
-        transform.localPosition = desired;
-    }
 
     protected void OnUpdate(Vector3 movementVector, ref Vector3 desired)
     {

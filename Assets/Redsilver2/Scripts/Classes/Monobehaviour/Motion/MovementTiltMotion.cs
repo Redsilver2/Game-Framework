@@ -1,18 +1,23 @@
 using UnityEngine;
+using UnityEngine.Windows;
 
 namespace RedSilver2.Framework.StateMachines.Events
 {
-    public class PlayerMovementTiltMotion : PlayerMovementMotion
+    public abstract class MovementTiltMotion : MovementMotion
     {
         [Space]
         [SerializeField] private float defaultLerpSpeed;
+       
+        [Space]
+        [SerializeField] private float directionUpdateSpeed;
+
+        [Space]
+        [SerializeField] private float rotationUpdateSpeed;
 
         [Space]
         [SerializeField] private Vector2 min;
         [SerializeField] private Vector2 max;
 
-        [Space]
-        [SerializeField] private float directionUpdateSpeed;
 
         private Vector3 original;
         private Vector3 desired;
@@ -44,38 +49,31 @@ namespace RedSilver2.Framework.StateMachines.Events
 
         protected sealed override void OnLateUpdate()
         {
-            transform.localRotation = Quaternion.Euler(desired);
+            transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.Euler(desired), Time.deltaTime * rotationUpdateSpeed);
         }
 
-        protected sealed override void OnMoveInputUpdate(Vector2 vector)
+        protected sealed override void OnInputUpdate(Vector2 vector)
         {
             UpdateRotation(vector, ref desired);
         }
         private void UpdateRotation(Vector2 input, ref Vector3 desired)
         {
-            float x, y;
             input.Normalize();
-
-            if (Mathf.Abs(input.x) > 0f) {
-                x = GetAxis(desired.z + (Time.deltaTime * -Mathf.Sign(input.x) * directionUpdateSpeed), MinX, MaxX);
-            }
-            else {
-                x = Mathf.Lerp(desired.z, Original.z, Time.deltaTime * DefaultLerpSpeed);
-            }
-
-            if (Mathf.Abs(input.y) > 0f) {
-                y = GetAxis(desired.x + (Time.deltaTime * -Mathf.Sign(input.y) * directionUpdateSpeed), MinY, MaxY);
-            }
-            else {
-                y = Mathf.Lerp(desired.x, Original.x, Time.deltaTime * DefaultLerpSpeed);
-            }
-
-            desired = Vector3.right * y + Vector3.up * Original.y + Vector3.forward * x;
+            desired.y = GetUpdatedRotation(-input.x, desired.y, original.y, MinY, MaxY);
+            desired.x = GetUpdatedRotation(input.y, desired.x, original.x, MinX, MaxX);
+            desired.z = original.z;
         }
 
-        private float GetAxis(float value, float min, float max) {
-            return Mathf.Clamp(value, min, max);
-        }
+        private float GetUpdatedRotation(float input, float current, float original,  float min, float max)
+        {
 
+            if (Mathf.Abs(input) > 0f) {
+                current += Time.deltaTime * -Mathf.Sign(input) * directionUpdateSpeed;
+                current = Mathf.Clamp(current, min, max);
+            }
+            else  current = Mathf.Lerp(current, 0f, Time.deltaTime * defaultLerpSpeed); 
+            return current;
+        }
     }
+
 }
