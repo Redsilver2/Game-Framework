@@ -1,4 +1,6 @@
+using RedSilver2.Framework.Animations;
 using RedSilver2.Framework.StateMachines.States;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -9,13 +11,21 @@ namespace RedSilver2.Framework.StateMachines {
         [SerializeField] private float defaultMaxLifeTime;
 
         [Space]
-        [SerializeField] private float drainLifeTimeSpeed; 
+        [SerializeField] private float drainLifeTimeSpeed;
+
+        [Space]
+        [SerializeField] private AnimationData onStateData;
+
+        [Space]
+        [SerializeField] private AnimationData offStateData;
 
         private float lifetime;
         private float maxLifeTime;
 
         private Light _light;
-        private LightSourceStateType currentType;
+        private LightSourceState currentState;
+
+        private IEnumerator drainLightUpdater;
         
         private UnityEvent<float> onLifeTimeProgressUpdate;
         private UnityEvent<LightSourceState> onStateAdded, onStateRemoved;
@@ -23,8 +33,21 @@ namespace RedSilver2.Framework.StateMachines {
 
         public float LifeTime    => lifetime;
         public float MaxLifeTime => maxLifeTime;
-        public LightSourceStateType  CurrentType        => currentType;
+        public LightSourceState  CurrentState        => currentState;
         public Light Light       => _light;
+
+        public AnimationData OnStateData => onStateData;
+        public AnimationData OffStateData => offStateData;
+
+#if UNITY_EDITOR
+        protected override void ValidateAnimations(RuntimeAnimatorController controller)
+        {
+            base.ValidateAnimations(controller);
+            onStateData?.Validate(controller);
+            offStateData?.Validate(controller);
+        }
+#endif
+
 
         protected override void Awake()
         {
@@ -40,29 +63,15 @@ namespace RedSilver2.Framework.StateMachines {
            _light = transform.root != null ? transform.root.GetComponentInChildren<Light>() : 
                                                              GetComponentInChildren<Light>();
 
-            if(_light != null) {
-                if (currentType == LightSourceStateType.On) _light.enabled = true;
-                else                                        _light.enabled = false;
-            }
-
+            if(_light != null) _light.enabled = false;   
             AddOnLifeTimeProgressUpdateListener(OnLifeTimeProgressUpdate);
+          
             SetMaxLifeTime(defaultMaxLifeTime);
+            SetLifeTime(maxLifeTime);
         }
 
-        protected virtual void OnLifeTimeProgressUpdate(float progress) {
-            if(progress <= 0f && currentType == LightSourceStateType.On) {
-                ChangeState(LightSourceStateType.Off);
-            }
-        }
-
-        protected override void OnUpdate() {
-            base.OnUpdate();
-
-            if (currentType == LightSourceStateType.On && lifetime > 0f)
-                lifetime = Mathf.Clamp(lifetime - Time.deltaTime * drainLifeTimeSpeed, 0f, maxLifeTime);
-
-            // Ceashes game for some reason
-          //  onLifeTimeProgressUpdate?.Invoke(maxLifeTime <= 0f ? 0f : Mathf.Clamp01(lifetime / maxLifeTime));
+        protected virtual void OnLifeTimeProgressUpdate(float progress) {   
+            if(progress <= 0f)  ChangeState(LightSourceStateType.Off);
         }
 
         protected sealed override void OnStateAdded(EquippableItemState state) {
@@ -86,21 +95,77 @@ namespace RedSilver2.Framework.StateMachines {
         }
 
         protected virtual void OnStateAdded(LightSourceState state) {
-            onStateAdded?.Invoke(state);    
+            onStateAdded?.Invoke(state);
+
+            if (state != null) {
+                if(currentState == null) {
+                    ChangeState(state);
+                }
+            }
+        }
+
+        public void StopDrainingLightSource()
+        {
+            if(drainLightUpdater != null) StopCoroutine(drainLightUpdater);
+            drainLightUpdater = null;
+        }
+
+        public void StartDrainingLightSource(float waitTime) {
+            StopDrainingLightSource();
+            drainLightUpdater = UpdateDrainLife(waitTime);
+
+            StartCoroutine(drainLightUpdater);
+        }
+
+        private IEnumerator UpdateDrainLife(float waitTime)
+        {
+            float t = 0f;
+
+            while(t < waitTime) {
+                t += Time.deltaTime;
+                yield return null;
+            }
+
+            StartCoroutine(UpdateDrainLife());
+        }
+
+        private IEnumerator UpdateDrainLife()
+        {
+            if (_light != null) _light.enabled = true;
+
+            while (currentState != null) {
+                if (currentState.Type != LightSourceStateType.On || lifetime <= 0f) break;
+                lifetime = Mathf.Clamp(lifetime - Time.deltaTime * drainLifeTimeSpeed, 0f, maxLifeTime);
+
+                onLifeTimeProgressUpdate?.Invoke(maxLifeTime < 0f ? 1f :  Mathf.Clamp01(lifetime/maxLifeTime));
+                yield return null;
+            }
+
+            if(_light != null) _light.enabled = false;
         }
 
         protected virtual void OnStateEntered(LightSourceState state) {
-            if (state != null) currentType = state.Type;
-            else               currentType = LightSourceStateType.None;
 
+            Animator animator = Animator;
+
+            if (state != null && animator != null) {
+                if (state.Type == LightSourceStateType.On) animator.PlayAnimation(onStateData);
+                else animator.PlayAnimation(offStateData);
+            }
+
+            currentState = state;
             onStateEntered?.Invoke(state);   
         }
 
         protected virtual void OnStateExited(LightSourceState state) {
+
+            currentState = null;
             onStateExited?.Invoke(state);
         }
 
         protected virtual void OnStateRemoved(LightSourceState state) {
+
+
             onStateRemoved?.Invoke(state);
         }
 
@@ -174,7 +239,7 @@ namespace RedSilver2.Framework.StateMachines {
         }
 
         public void ChangeState(LightSourceState state) {
-            ChangeState(state);
+            ChangeState(state as State);
         }
 
         public void ChangeState(LightSourceStateType type) {

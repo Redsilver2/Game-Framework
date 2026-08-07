@@ -18,10 +18,17 @@ namespace RedSilver2.Framework.StateMachines.States {
 
         public sealed override bool CanTransition(LightSourceStateMachine stateMachine)
         {
-            if (stateMachine == null || inputSetting == null) return false;
+            if (stateMachine == null || stateMachine.CurrentState == null || inputSetting == null) return false;
             inputSetting?.Enable();
 
-            return inputSetting.GetValue() && stateMachine.CurrentType == LightSourceStateType.On;
+            return inputSetting.GetValue() && stateMachine.CurrentState.Type == LightSourceStateType.On;
+        }
+
+        protected override void OnEntered(LightSourceStateMachine stateMachine)
+        {
+            stateMachine?.StopDrainingLightSource();
+
+            base.OnEntered(stateMachine);
         }
 
         protected sealed override void SetLightSourceStateType(ref LightSourceStateType type)

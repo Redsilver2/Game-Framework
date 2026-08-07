@@ -10,8 +10,8 @@ namespace RedSilver2.Framework.Items
         private EquippableItem item;
 
         protected virtual void Awake() {
-            movementMotion = GetComponent<MovementMotion>();
-            item           = transform.root != null ? transform.root.GetComponentInChildren<EquippableItem>() :
+            SetMovementMotion(ref movementMotion);
+            item = transform.root != null ? transform.root.GetComponentInChildren<EquippableItem>() :
                                                                      GetComponentInChildren<EquippableItem>();
         }
 
@@ -29,7 +29,7 @@ namespace RedSilver2.Framework.Items
 
         private void OnAdded()
         {
-            if(item != null) {
+            if (item != null) {
                 Transform transform = item.transform;
                 movementMotion?.SetStateMachine(transform.root != null ? transform.root.GetComponent<PlayerMovementStateMachine>() : null);
             }
@@ -38,5 +38,7 @@ namespace RedSilver2.Framework.Items
         private void OnRemoved() {
             movementMotion?.SetStateMachine(null);
         }
+
+        protected abstract void SetMovementMotion(ref MovementMotion motion);
     }
 }

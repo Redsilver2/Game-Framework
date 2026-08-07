@@ -23,13 +23,6 @@ namespace RedSilver2.Framework.StateMachines.States
 
         protected void SetIsCrouching(bool isCrouching) { this.isCrouching = isCrouching; }
 
-        protected override void OnEntered(MovementStateMachine stateMachine)
-        {
-            base.OnEntered(stateMachine);
-            Debug.Log("Crouch");
-
-        }
-
         public sealed override bool CanTransition(MovementStateMachine stateMachine) {
             return base.CanTransition(stateMachine) && IsStateMachineCrouching(stateMachine);
         }

@@ -41,6 +41,8 @@ namespace RedSilver2.Framework.StateMachines
         [Space]
         [SerializeField] private AnimationData droppedAnimation;
 
+        [Space]
+        [SerializeField] private AnimationData defaultStateData;
 
         private float stateChangeCooldown;
         private bool canPerformActions;
@@ -61,6 +63,11 @@ namespace RedSilver2.Framework.StateMachines
         public  ItemType Type => type;
         public Animator Animator => animator;
 
+        public AnimationData EquippedStateData   => equippedAnimation;
+        public AnimationData UnequippedStateData => unequippedAnimation;
+        public AnimationData DroppedStateData    => droppedAnimation;
+        public AnimationData DefaultStateData => defaultStateData;
+
         private readonly static Dictionary<EquippableItem, EquippableItemStateMachine> instances = new Dictionary<EquippableItem, EquippableItemStateMachine>();
 
 #if UNITY_EDITOR
@@ -69,9 +76,15 @@ namespace RedSilver2.Framework.StateMachines
             dropCheckRange = Mathf.Clamp(dropCheckRange, 0.1f, float.MaxValue);
             dropFallSpeed = Mathf.Clamp(dropFallSpeed, 0f, float.MaxValue);
 
-            equippedAnimation?.Validate(animatorController);
-            unequippedAnimation?.Validate(animatorController);
-            droppedAnimation?.Validate(animatorController);
+            ValidateAnimations(animatorController);
+        }
+
+        protected virtual void ValidateAnimations(RuntimeAnimatorController controller) {
+            equippedAnimation?.Validate(controller);
+            unequippedAnimation?.Validate(controller);
+            
+            droppedAnimation?.Validate(controller);
+            defaultStateData?.Validate(controller);
         }
 
 #endif
@@ -92,10 +105,14 @@ namespace RedSilver2.Framework.StateMachines
             onGroundTouched = new UnityEvent<Vector3>();
 
             equippedAnimation.AddOnStartedListener(() => { enabled = true; });
-            equippedAnimation.AddOnFinishedListener(() => { canPerformActions = true; });
+            equippedAnimation.AddOnFinishedListener(() => { 
 
-            unequippedAnimation.AddOnStartedListener(() => { canPerformActions = false; });
-            unequippedAnimation.AddOnFinishedListener(( ) => { enabled = false; });
+                canPerformActions = true;
+                animator?.PlayAnimation(defaultStateData);
+            });
+
+            unequippedAnimation?.AddOnStartedListener(() => { canPerformActions = false; });
+            unequippedAnimation?.AddOnFinishedListener(() => { enabled = false; });
 
             AddOnGroundTouchedListener(OnGroundTouched);
 
@@ -137,12 +154,8 @@ namespace RedSilver2.Framework.StateMachines
             if (animator != null) animator.enabled = true;
             StopDropCoroutine();
 
-            Debug.Log("A");
-
-
             item?.SetIsInteractable(false);
             item?.SetMeshRenderersVisibility(true);
-
 
             animator?.PlayAnimation(equippedAnimation);
         }
@@ -151,7 +164,7 @@ namespace RedSilver2.Framework.StateMachines
             if (animator != null) animator.enabled = true;
             StopDropCoroutine();
 
-            Debug.Log("B");
+
 
             item?.SetIsInteractable(false);
             item?.SetMeshRenderersVisibility(true);
@@ -162,10 +175,8 @@ namespace RedSilver2.Framework.StateMachines
             enabled = true;
             StopDropCoroutine();
 
-            if (item != null)
-            {
+            if (item != null) {
                 if (!item.IsEquipped) {
-                    Debug.Log("D");
                     item?.SetIsInteractable(false);
                     item?.SetMeshRenderersVisibility(false);
                 }
@@ -174,16 +185,12 @@ namespace RedSilver2.Framework.StateMachines
 
         protected virtual void OnItemRemoved() {
             enabled = false;
-            Debug.Log("C");
-
             item?.SetIsInteractable(true);
             item?.SetMeshRenderersVisibility(true);
         }
 
         protected virtual void OnItemDropped()
         {
-            Debug.Log("E");
-
             item?.RemoveFromInventory();
             item?.SetMeshRenderersVisibility(true);
             StartDropCoroutine();
@@ -213,7 +220,7 @@ namespace RedSilver2.Framework.StateMachines
 
         protected virtual void OnUpdate(EquippableItem item)
         {
-            if (currentState != null && item != null){
+            if (currentState != null && item != null) {
                 if (item.IsEquipped && stateChangeCooldown < currentState.Cooldown) {
                     stateChangeCooldown = Mathf.Clamp(stateChangeCooldown + Time.deltaTime, 0f, currentState.Cooldown);
                 }
@@ -234,6 +241,11 @@ namespace RedSilver2.Framework.StateMachines
         {
             transform.position = position + Vector3.up * dropPositionYOffset;
             Debug.DrawRay(transform.position, Vector3.down, Color.green, 5f);
+        }
+
+        public override void ChangeState(State state)
+        {
+            if (IsEquipped()) base.ChangeState(state);
         }
 
         protected sealed override void OnStateEntered(UpdatableState state)
@@ -321,6 +333,12 @@ namespace RedSilver2.Framework.StateMachines
         public void RemoveOnGroundTouchedListener(UnityAction<Vector3> action)
         {
             if (action != null) onGroundTouched?.RemoveListener(action);
+        }
+
+        public bool IsEquipped()
+        {
+            if(item == null) return false;
+            return item.IsEquipped;
         }
 
         public bool IsCooldownOver() {

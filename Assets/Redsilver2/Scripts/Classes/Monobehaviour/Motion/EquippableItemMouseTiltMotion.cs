@@ -7,10 +7,9 @@ namespace RedSilver2.Framework.Items
     [RequireComponent(typeof(MouseMovementTiltMotion))]
     public sealed class EquippableItemMouseTiltMotion : EquippableItemMovementUpdater
     {
-        protected sealed override void Awake()
+        protected sealed override void SetMovementMotion(ref MovementMotion motion)
         {
-            gameObject.GetOrAddComponent<MouseMovementTiltMotion>();
-            base.Awake();
+            motion = gameObject.GetOrAddComponent<MouseMovementTiltMotion>();
         }
     }
 }

@@ -8,6 +8,8 @@ namespace RedSilver2.Framework.StateMachines.States {
 
         protected override void Awake() {
             base.Awake();
+            SetStateMachine(GetComponent<DoorStateMachine>());
+
             SetDoorStateType(ref type);
             SetStateName(type.ToString());
         }

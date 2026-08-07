@@ -44,9 +44,6 @@ namespace RedSilver2.Framework.StateMachines.States
             onTransitionStateAdded   = new UnityEvent<State>();
             onTransitionStateRemoved = new UnityEvent<State>();
 
-            SetStateMachine(transform.root != null ? transform.root.GetComponentInChildren<StateMachine>() :
-                                                                    GetComponentInChildren<StateMachine>());
-
             AddOnEnteredListener(OnEntered);
             AddOnExitedListener(OnExited);
 
@@ -81,7 +78,7 @@ namespace RedSilver2.Framework.StateMachines.States
         protected virtual void UpdateStateTransitions() {
             if (transitionStates == null) return;
 
-            foreach (MovementState state in transitionStates) {
+            foreach (State state in transitionStates) {
                 if (state == null || !state.CanTransition()) continue;
                 stateMachine?.ChangeState(state);
             }

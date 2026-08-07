@@ -37,6 +37,18 @@ namespace RedSilver2.Framework.Animations
             this.registeredActions = new List<UnityAction>();
         }
 
+
+        public AnimationTimestampEvent(float triggerTime, UnityAction action)
+        {
+            wasTriggered = false;
+            this.triggerTime = triggerTime;
+
+            this.triggerEvent = new UnityEvent();
+            this.registeredActions = new List<UnityAction>();
+
+            if(triggerEvent != null) this.triggerEvent?.AddListener(action);
+        }
+
         public void Trigger(float time) {
             if(CanTrigger(time)) {
                 wasTriggered = true;

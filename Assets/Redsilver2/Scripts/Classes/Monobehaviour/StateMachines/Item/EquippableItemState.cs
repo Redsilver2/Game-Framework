@@ -1,4 +1,3 @@
-using RedSilver2.Framework.Animations;
 using RedSilver2.Framework.StateMachines.States;
 using UnityEngine;
 
@@ -8,27 +7,31 @@ namespace RedSilver2.Framework.StateMachines
 
         [Space]
         [SerializeField] private float defaultCooldown;
-
-        [Space]
-        [SerializeField] private RuntimeAnimatorController animatorController;
-
-        [Space]
-        [SerializeField] private AnimationData animationData;
-
         private float cooldown;
+
+        private EquippableItemStateMachine stateMachine;
+
         public float Cooldown => cooldown;
 
 #if UNITY_EDITOR
-        protected override void OnValidate()
-        {
-            animationData?.Validate(animatorController);
+        protected override void OnValidate()  {
+
         }
 #endif
 
         protected override void Awake()
         {
             base.Awake();
+            SetStateMachine(GetComponent<EquippableItemStateMachine>());
+
+
             cooldown = defaultCooldown;
+        }
+
+        protected override void SetStateMachine(StateMachine stateMachine)
+        {
+            base.SetStateMachine(stateMachine);
+            this.stateMachine = stateMachine as EquippableItemStateMachine;
         }
 
         protected sealed override void OnDisabled(UpdatableStateMachine stateMachine)
@@ -69,9 +72,7 @@ namespace RedSilver2.Framework.StateMachines
 
         protected virtual void OnEnabled(EquippableItemStateMachine stateMachine) { }
 
-        protected virtual void OnEntered(EquippableItemStateMachine stateMachine) {
-            if (stateMachine != null) stateMachine.Animator?.PlayAnimation(animationData);
-        }
+        protected virtual void OnEntered(EquippableItemStateMachine stateMachine) { }
 
         protected virtual void OnExited(EquippableItemStateMachine stateMachine) {  }
 

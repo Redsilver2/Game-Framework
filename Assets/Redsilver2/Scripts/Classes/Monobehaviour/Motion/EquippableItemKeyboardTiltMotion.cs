@@ -7,10 +7,9 @@ namespace RedSilver2.Framework.Items
     [RequireComponent(typeof(KeyboardMovementTiltMotion))]
     public sealed class EquippableItemKeyboardTiltMotion : EquippableItemMovementUpdater 
     {
-        protected sealed override void Awake()
+        protected sealed override void SetMovementMotion(ref MovementMotion motion)
         {
-            gameObject.GetOrAddComponent<KeyboardMovementTiltMotion>();
-            base.Awake();
+            motion = gameObject.GetOrAddComponent<KeyboardMovementTiltMotion>();
         }
     }
 }

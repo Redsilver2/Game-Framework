@@ -14,6 +14,10 @@ namespace RedSilver2.Framework.StateMachines.States
 
         protected override void Awake() {
             base.Awake();
+
+            SetStateMachine(transform.root != null ? transform.root.GetComponentInChildren<MovementStateMachine>() :
+                                                                    GetComponentInChildren<MovementStateMachine>());
+
             SetMovementStateType(ref type);
             SetStateName(type.ToString());
         }
@@ -27,8 +31,7 @@ namespace RedSilver2.Framework.StateMachines.States
                 if (!results.Contains(typeName)) results?.Add(typeName);
             }
 
-            foreach (MovementStateType stateType in GetRequiredTypes())
-            {
+            foreach (MovementStateType stateType in GetRequiredTypes()) {
                 string typeName = stateType.ToString();
                 if (results.Contains(typeName)) results?.Remove(typeName);
             }

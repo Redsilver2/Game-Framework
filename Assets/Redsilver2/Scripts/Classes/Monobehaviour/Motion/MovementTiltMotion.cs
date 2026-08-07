@@ -56,24 +56,33 @@ namespace RedSilver2.Framework.StateMachines.Events
         {
             UpdateRotation(vector, ref desired);
         }
-        private void UpdateRotation(Vector2 input, ref Vector3 desired)
+        protected virtual void UpdateRotation(Vector2 input, ref Vector3 desired)
         {
-            input.Normalize();
             desired.y = GetUpdatedRotation(-input.x, desired.y, original.y, MinY, MaxY);
             desired.x = GetUpdatedRotation(input.y, desired.x, original.x, MinX, MaxX);
             desired.z = original.z;
         }
 
-        private float GetUpdatedRotation(float input, float current, float original,  float min, float max)
-        {
+       private float GetUpdatedRotation(float input, float current, float original,  float min, float max) {
+            return GetUpdatedRotation(input, current, original, directionUpdateSpeed, min, max);
+        }
 
+
+        protected virtual float GetUpdatedRotation(float input, float current, float original, float directionUpdateSpeed, float min, float max)
+        {
             if (Mathf.Abs(input) > 0f) {
                 current += Time.deltaTime * -Mathf.Sign(input) * directionUpdateSpeed;
-                current = Mathf.Clamp(current, min, max);
+                return Mathf.Clamp(current, min, max);
             }
-            else  current = Mathf.Lerp(current, 0f, Time.deltaTime * defaultLerpSpeed); 
-            return current;
+
+            return GetUpdatedRotation(current);
         }
+
+        protected float GetUpdatedRotation(float current)
+        {
+            return Mathf.Lerp(current, 0f, Time.deltaTime * defaultLerpSpeed);
+        }
+
     }
 
 }

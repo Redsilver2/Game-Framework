@@ -64,10 +64,9 @@ public class MovementSwayMotion : MovementMotion
 
         if (movementVector.magnitude > 0f) UpdatePosition(ref x, ref y);
 
-        float nextPositionX = Mathf.Lerp(desired.x, x, Time.deltaTime * DefaultLerpSpeed);
-        float nextPositionY = Mathf.Lerp(desired.y, y, Time.deltaTime * DefaultLerpSpeed);
-
-        desired = Vector3.right * nextPositionX + Vector3.up * nextPositionY + Vector3.forward * Original.z;  
+        desired.x = Mathf.Lerp(desired.x, x, Time.deltaTime);
+        desired.y = Mathf.Lerp(desired.y, y, Time.deltaTime);
+        desired.z = Original.z;
     }
 
     protected virtual void UpdatePosition(ref float x, ref float y) 

@@ -7,6 +7,9 @@ namespace RedSilver2.Framework.StateMachines
     public class LightSourceOnState : LightSourceState
     {
         [Space]
+        [SerializeField] private float lightActivationWaitTime;
+
+        [Space]
         [SerializeField] private PressInputSettings inputSetting;
 
         public const LightSourceStateType TYPE = LightSourceStateType.On;
@@ -17,12 +20,18 @@ namespace RedSilver2.Framework.StateMachines
             if (light != null) light.enabled = true;
         }
 
+        protected override void OnEntered(LightSourceStateMachine stateMachine)
+        {
+            stateMachine?.StartDrainingLightSource(lightActivationWaitTime);
+            base.OnEntered(stateMachine);
+        }
+
         public sealed override bool CanTransition(LightSourceStateMachine stateMachine)
         {
-            if (stateMachine == null || inputSetting == null) return false;
+            if (stateMachine == null || stateMachine.CurrentState == null || inputSetting == null) return false;
             inputSetting?.Enable();
 
-            return inputSetting.GetValue() && stateMachine.CurrentType == LightSourceStateType.Off &&
+            return inputSetting.GetValue() && stateMachine.CurrentState.Type == LightSourceStateType.Off &&
                    stateMachine.LifeTime > 0f;
         }
 

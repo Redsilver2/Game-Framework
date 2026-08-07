@@ -1,19 +1,17 @@
-using System.Collections;
 using UnityEngine;
 
 namespace RedSilver2.Framework.Interactions {
+    [RequireComponent(typeof(Door))]
     public sealed class TriggerableDoor : MonoBehaviour {
 
         private Door door;
 
         private void Awake()
         {
-            door = GetComponentInChildren<Door>();
+            door = GetComponent<Door>();
             door?.SetIsInteractable(false);
-        }
 
-        private void Start() {
-            StartCoroutine(ForceUpdate(new WaitForSeconds(0.25f)));
+            if (gameObject.TryGetComponent(out Collider collider)) collider.isTrigger = true;
         }
 
         private void OnTriggerEnter(Collider other) {
@@ -30,13 +28,6 @@ namespace RedSilver2.Framework.Interactions {
 
         private void OnTriggerExit2D(Collider2D collision) {
             if(collision.tag.ToLower() == "player") door?.Close();
-        }
-
-        private IEnumerator ForceUpdate(WaitForSeconds wait) {
-            while (door != null) {
-                door?.SetIsInteractable(false);
-                yield return wait;
-            }
         }
     }
 }

@@ -14,8 +14,9 @@ namespace RedSilver2.Framework.StateMachines
 
         private UnityEvent<State> onStateAdded, onStateRemoved;
         private UnityEvent<State> onStateEntered, onStateExited;
-
         public State[] States => states != null ? states.ToArray() : new State[0];
+
+     
 
 
 #if UNITY_EDITOR
@@ -26,14 +27,14 @@ namespace RedSilver2.Framework.StateMachines
         {
             states = new List<State>();
 
-            onEnabled = new UnityEvent();
+            onEnabled  = new UnityEvent();
             onDisabled = new UnityEvent();
 
-            onStateAdded = new UnityEvent<State>();
+            onStateAdded   = new UnityEvent<State>();
             onStateRemoved = new UnityEvent<State>();
 
             onStateEntered = new UnityEvent<State>();
-            onStateExited = new UnityEvent<State>();
+            onStateExited  = new UnityEvent<State>();
 
             AddOnStateAddedListener(OnStateAdded);
             AddOnStateRemovedListener(OnStateRemoved);
@@ -64,7 +65,7 @@ namespace RedSilver2.Framework.StateMachines
             states?.Remove(state);
         }
 
-        public void ChangeState(State state)
+        public virtual void ChangeState(State state)
         {
             ChangeState(state, true);
         }

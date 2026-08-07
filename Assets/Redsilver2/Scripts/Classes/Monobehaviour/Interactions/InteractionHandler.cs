@@ -99,7 +99,7 @@ namespace RedSilver2.Framework.Interactions
                 isEmptySelectedInteraction = false;
                 SetSelectedInteraction(interactionModule);
             }
-            else if(!isEmptySelectedInteraction) {
+            else if(!isEmptySelectedInteraction && interactionModule == null) {
                 isEmptySelectedInteraction = true;
                 SetSelectedInteraction(null);
             }
@@ -120,7 +120,7 @@ namespace RedSilver2.Framework.Interactions
         private bool IsSelectedInteraction(InteractionModule module)
         {
             if(selectedInteraction == null || module == null) return false;
-            return selectedInteraction.Equals(module);
+            return selectedInteraction == module;
         }
 
         public void AddOnSelectedListener(UnityAction<InteractionModule> action) {

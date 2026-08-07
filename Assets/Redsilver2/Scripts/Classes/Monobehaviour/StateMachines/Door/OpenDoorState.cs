@@ -13,7 +13,6 @@ namespace RedSilver2.Framework.StateMachines.States
         private Vector3 currentRotation;
 
         private Transform handle;
-
         public const DoorStateType TYPE = DoorStateType.Open;
 
         protected sealed override void SetDoorStateType(ref DoorStateType type)

@@ -1,7 +1,6 @@
 using RedSilver2.Framework.Interactions;
 using RedSilver2.Framework.Inventories;
 using RedSilver2.Framework.StateMachines;
-using System.Collections;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
@@ -27,8 +26,8 @@ namespace RedSilver2.Framework.Items
 
 
 #if UNITY_EDITOR
-        protected virtual void OnValidate()
-        {
+        protected virtual void OnValidate() {
+
         }
 #endif
 
@@ -57,8 +56,17 @@ namespace RedSilver2.Framework.Items
 
         private void Start()
         {
-            var stateMachine = GetComponent<EquippableItemStateMachine>();
-            stateMachine?.AddOnGroundTouchedListener(v => { isDropping = false; });
+            GetComponent<EquippableItemStateMachine>()?.AddOnGroundTouchedListener(v => { isDropping = false; });
+        }
+
+        protected override void OnSelectionUpdate(InteractionHandler handler)
+        {
+            base.OnSelectionUpdate(handler);
+            if (handler != null) {
+                if (handler.IsPressed()) {
+                    Take(handler.Inventory);
+                }
+            }
         }
 
         protected override void OnEnable() {

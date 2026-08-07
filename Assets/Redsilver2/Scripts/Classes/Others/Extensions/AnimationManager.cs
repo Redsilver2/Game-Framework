@@ -210,8 +210,6 @@ public static class AnimationManager {
             t += Time.deltaTime;
             await Awaitable.NextFrameAsync();
         }
-
-        Debug.Log(clip.name + " - " + t);
     }
 
     public static string GetCurrentClipPlayingName(this Animator animator)

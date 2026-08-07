@@ -55,8 +55,8 @@ namespace RedSilver2.Framework.StateMachines
         protected virtual void OnStateEntered(UpdatableState state)
         {
             currentState = state;
-            doesCurrentStateExist = currentState != null ? true : false;
             onStateEntered?.Invoke(state);
+            doesCurrentStateExist = currentState != null ? true : false;
         }
 
         protected sealed override void OnStateExited(State state)

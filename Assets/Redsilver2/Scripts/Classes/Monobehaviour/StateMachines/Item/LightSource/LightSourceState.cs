@@ -5,7 +5,6 @@ using UnityEngine;
 namespace RedSilver2.Framework.StateMachines {
     [RequireComponent(typeof(LightSourceStateMachine))]
     public abstract class LightSourceState : EquippableItemState {
-
         private LightSourceStateType type;
         public LightSourceStateType Type => type;
 
