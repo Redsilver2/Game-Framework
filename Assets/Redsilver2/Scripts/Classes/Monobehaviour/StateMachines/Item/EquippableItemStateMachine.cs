@@ -5,11 +5,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.InputSystem.XR;
 
 namespace RedSilver2.Framework.StateMachines
 {
-    [RequireComponent(typeof(Animator))]
     [RequireComponent(typeof(EquippableItem))]
+    [RequireComponent(typeof(EquippableItemAnimationController))]
     public abstract class EquippableItemStateMachine : UpdatableStateMachine
     {
         [Space]
@@ -29,21 +30,6 @@ namespace RedSilver2.Framework.StateMachines
         [SerializeField] private float dropCheckRange;
         [SerializeField] private float dropFallSpeed;
 
-        [Space]
-        [SerializeField] private RuntimeAnimatorController animatorController;
-
-        [Space]
-        [SerializeField] private AnimationData equippedAnimation;
-
-        [Space]
-        [SerializeField] private AnimationData unequippedAnimation;
-
-        [Space]
-        [SerializeField] private AnimationData droppedAnimation;
-
-        [Space]
-        [SerializeField] private AnimationData defaultStateData;
-
         private float stateChangeCooldown;
         private bool canPerformActions;
 
@@ -51,7 +37,7 @@ namespace RedSilver2.Framework.StateMachines
 
 
         private EquippableItemState currentState;
-        private Animator animator; 
+        private EquippableItemAnimationController controller;
 
         private UnityEvent<EquippableItemState> onStateAdded,   onStateRemoved;
         private UnityEvent<EquippableItemState> onStateEntered, onStateExited;
@@ -61,13 +47,13 @@ namespace RedSilver2.Framework.StateMachines
 
         private ItemType type;
         public  ItemType Type => type;
-        public Animator Animator => animator;
 
-        public AnimationData EquippedStateData   => equippedAnimation;
-        public AnimationData UnequippedStateData => unequippedAnimation;
-        public AnimationData DroppedStateData    => droppedAnimation;
-        public AnimationData DefaultStateData => defaultStateData;
+        public EquippableItemAnimationController Controller => controller;
 
+        public const string EQUIP_ANIMATION_NAME = "Equip";
+        public const string UNEQUIP_ANIMATION_NAME = "UnEquip";
+
+        public const string DROP_ANIMATION_NAME = "Drop";
         private readonly static Dictionary<EquippableItem, EquippableItemStateMachine> instances = new Dictionary<EquippableItem, EquippableItemStateMachine>();
 
 #if UNITY_EDITOR
@@ -75,25 +61,14 @@ namespace RedSilver2.Framework.StateMachines
         {
             dropCheckRange = Mathf.Clamp(dropCheckRange, 0.1f, float.MaxValue);
             dropFallSpeed = Mathf.Clamp(dropFallSpeed, 0f, float.MaxValue);
-
-            ValidateAnimations(animatorController);
         }
-
-        protected virtual void ValidateAnimations(RuntimeAnimatorController controller) {
-            equippedAnimation?.Validate(controller);
-            unequippedAnimation?.Validate(controller);
-            
-            droppedAnimation?.Validate(controller);
-            defaultStateData?.Validate(controller);
-        }
-
 #endif
 
         protected override void Awake() {
             base.Awake();
+            SetAnimationController(GetComponent<EquippableItemAnimationController>());
+        
             canPerformActions = false;
-
-            animator = GetComponent<Animator>();
             item = GetComponent<EquippableItem>();
 
             onStateAdded = new UnityEvent<EquippableItemState>();
@@ -104,27 +79,28 @@ namespace RedSilver2.Framework.StateMachines
 
             onGroundTouched = new UnityEvent<Vector3>();
 
-            equippedAnimation.AddOnStartedListener(() => { enabled = true; });
-            equippedAnimation.AddOnFinishedListener(() => { 
-
+            controller?.GetEquipData()?.AddOnStartedListener(() => { enabled = true; });
+            controller?.GetEquipData()?.AddOnFinishedListener(() => {
+                ChangeState(null as State);
                 canPerformActions = true;
-                animator?.PlayAnimation(defaultStateData);
+                stateChangeCooldown = 0f;
+
             });
 
-            unequippedAnimation?.AddOnStartedListener(() => { canPerformActions = false; });
-            unequippedAnimation?.AddOnFinishedListener(() => { enabled = false; });
+            controller?.GetUnEquipData()?.AddOnStartedListener(() => { canPerformActions = false; });
+            controller?.GetUnEquipData()?.AddOnFinishedListener(() => { enabled = false; });
+
+            controller?.GetDropData()?.AddOnFinishedListener(() =>
+            {
+                item?.RemoveFromInventory();
+                item?.SetMeshRenderersVisibility(true);
+                StartDropCoroutine();
+            });
 
             AddOnGroundTouchedListener(OnGroundTouched);
 
-
-            if (instances != null && item != null) {
+            if (instances != null && item != null)
                 if (!instances.ContainsKey(item)) { instances?.Add(item, this); }
-            }
-
-
-            if (animator != null) {
-                animator.runtimeAnimatorController = animatorController;
-            }
 
             StartDropCoroutine();
         }
@@ -149,26 +125,28 @@ namespace RedSilver2.Framework.StateMachines
             }
         }
 
+    
+        protected void SetAnimationController(EquippableItemAnimationController controller) {
+            this.controller = controller;
+        }
+
         protected virtual void OnItemEquipped()
         {
-            if (animator != null) animator.enabled = true;
             StopDropCoroutine();
 
             item?.SetIsInteractable(false);
             item?.SetMeshRenderersVisibility(true);
 
-            animator?.PlayAnimation(equippedAnimation);
+            controller?.PlayEquipData();
         }
 
         protected virtual void OnItemUnEquipped() {
-            if (animator != null) animator.enabled = true;
             StopDropCoroutine();
-
-
 
             item?.SetIsInteractable(false);
             item?.SetMeshRenderersVisibility(true);
-            animator?.PlayAnimation(unequippedAnimation);
+
+            controller?.PlayUnEquipData();
         }
 
         protected virtual void OnItemAdded() {
@@ -191,9 +169,7 @@ namespace RedSilver2.Framework.StateMachines
 
         protected virtual void OnItemDropped()
         {
-            item?.RemoveFromInventory();
-            item?.SetMeshRenderersVisibility(true);
-            StartDropCoroutine();
+            controller?.PlayDropData();
         }
 
         protected sealed override bool CanAddState(UpdatableState state) {
@@ -228,12 +204,12 @@ namespace RedSilver2.Framework.StateMachines
         }
 
         protected sealed override void OnDisabled() {
-            if (animator != null) animator.enabled = false;
+            if (controller != null) controller.enabled = false;
             base.OnDisabled();
         }
 
         protected sealed override void OnEnabled() {
-            if (animator != null) animator.enabled = true;
+            if (controller != null) controller.enabled = true;
             base.OnEnabled();
         }
 
@@ -384,6 +360,10 @@ namespace RedSilver2.Framework.StateMachines
         {
             if (dropCoroutine != null) StopCoroutine(dropCoroutine);
             dropCoroutine = null;
+        }
+
+        public EquippableItemAnimationController GetEquippableItemAnimationController() {
+            return controller;
         }
 
         public static EquippableItemStateMachine GetStateMachine(EquippableItem item)

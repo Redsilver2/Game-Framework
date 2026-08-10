@@ -1,6 +1,8 @@
+using RedSilver2.Framework.Animations;
 using RedSilver2.Framework.Inputs;
 using RedSilver2.Framework.Items;
 using RedSilver2.Framework.Player.Inventories;
+using RedSilver2.Framework.StateMachines;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -59,9 +61,7 @@ namespace RedSilver2.Framework.Inventories {
                     itemEquipped    = null;
                     canUpdateInputs = true;
                 }
-            }
-
-                
+            }             
         }
 
         private void AddSlot() {
@@ -191,15 +191,27 @@ namespace RedSilver2.Framework.Inventories {
 
 
         private IEnumerator UpdateItemEquipped(EquippableItem item) {
-            itemEquipped?.UnEquip();
-
-            while (itemEquipped != null) {
-                if (!itemEquipped.IsEquipped) break;
-                yield return null;
-            }
+            yield return StartCoroutine(UpdateItemEquipped());
 
             item?.Equip();
             itemEquipped = item;
+        }
+
+        private IEnumerator UpdateItemEquipped() {
+            itemEquipped?.UnEquip();
+            yield return StartCoroutine(UpdateItemEquipped(itemEquipped != null ? itemEquipped.StateMachine : null));
+        }
+
+        private IEnumerator UpdateItemEquipped(EquippableItemStateMachine stateMachine) {
+            yield return StartCoroutine(UpdateItemEquipped(stateMachine != null ? stateMachine.Controller : null));
+        }
+
+        private IEnumerator UpdateItemEquipped(EquippableItemAnimationController controller)
+        {
+            while(controller != null) {
+                if (!controller.IsPlayingUnEquipData()) break;
+                yield return null;
+            }
         }
     }
 }

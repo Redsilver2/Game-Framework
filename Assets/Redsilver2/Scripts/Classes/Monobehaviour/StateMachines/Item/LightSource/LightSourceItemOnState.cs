@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace RedSilver2.Framework.StateMachines
 {
-    public class LightSourceOnState : LightSourceState
+    public class LightSourceItemOnState : LightSourceItemState
     {
         [Space]
         [SerializeField] private float lightActivationWaitTime;
@@ -14,25 +14,24 @@ namespace RedSilver2.Framework.StateMachines
 
         public const LightSourceStateType TYPE = LightSourceStateType.On;
 
-        public void SetLightEnableState(LightSourceStateMachine stateMachine)
+        public void SetLightEnableState(LightSourceItemStateMachine stateMachine)
         {
             Light light = stateMachine != null ? stateMachine.Light : null;
             if (light != null) light.enabled = true;
         }
 
-        protected override void OnEntered(LightSourceStateMachine stateMachine)
+        protected override void OnEntered(LightSourceItemStateMachine stateMachine)
         {
             stateMachine?.StartDrainingLightSource(lightActivationWaitTime);
             base.OnEntered(stateMachine);
         }
 
-        public sealed override bool CanTransition(LightSourceStateMachine stateMachine)
+        public sealed override bool CanTransition(LightSourceItemStateMachine stateMachine)
         {
-            if (stateMachine == null || stateMachine.CurrentState == null || inputSetting == null) return false;
+            if (stateMachine == null || inputSetting == null) return false;
             inputSetting?.Enable();
 
-            return inputSetting.GetValue() && stateMachine.CurrentState.Type == LightSourceStateType.Off &&
-                   stateMachine.LifeTime > 0f;
+            return inputSetting.GetValue() && !stateMachine.IsOn && stateMachine.LifeTime > 0f;
         }
 
         protected sealed override void SetLightSourceStateType(ref LightSourceStateType type) {
@@ -49,10 +48,10 @@ namespace RedSilver2.Framework.StateMachines
             base.SetIncompatibleTransitionStates(ref incompatibleStates);
         }
 
-        public static LightSourceOnState GetState(LightSourceStateMachine stateMachine)
+        public static LightSourceItemOnState GetState(LightSourceItemStateMachine stateMachine)
         {
             if(stateMachine == null) return null;
-            return stateMachine.GetState(TYPE) as LightSourceOnState;
+            return stateMachine.GetState(TYPE) as LightSourceItemOnState;
         }
     }
 }

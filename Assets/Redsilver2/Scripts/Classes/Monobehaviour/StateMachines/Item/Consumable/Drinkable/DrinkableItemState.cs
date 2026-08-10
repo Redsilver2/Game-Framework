@@ -54,6 +54,5 @@ namespace RedSilver2.Framework.StateMachines
         protected virtual void OnEntered(DrinkableItemStateMachine stateMachine) { }
 
         protected virtual void OnExited(DrinkableItemStateMachine stateMachine) { }
-
     }
 }

@@ -524,7 +524,7 @@ MonoBehaviour:
   max: {x: 10, y: 0}
   isTiltingContinuously: 1
   tiltSpeed: 5
---- !u!1 &194535281
+--- !u!1 &379409355
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -532,227 +532,11 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 194535283}
-  - component: {fileID: 194535285}
-  - component: {fileID: 194535288}
-  - component: {fileID: 194535293}
-  - component: {fileID: 194535291}
-  - component: {fileID: 194535289}
-  - component: {fileID: 194535292}
-  m_Layer: 11
-  m_Name: A
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &194535283
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 194535281}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.002181689, y: 0, z: 0, w: 0.9999976}
-  m_LocalPosition: {x: 0.36, y: 0.63, z: 0}
-  m_LocalScale: {x: 0.75, y: 0.75, z: 0.75}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 216972086}
-  - {fileID: 1168673599}
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: -0.25, y: 0, z: 0}
---- !u!95 &194535285
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 194535281}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: b680ca0de1026774dbd9873e8bd037b6, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
---- !u!65 &194535288
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 194535281}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.22873275, y: 0.19792843, z: 1.0405579}
-  m_Center: {x: -0.0045674047, y: 0.007367452, z: 0.49886632}
---- !u!114 &194535289
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 194535281}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 67a87830e4fcb1b4ab5a28a8be2f7564, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.States.LightSourceOffState
-  isActif: 1
-  defaultCooldown: 5
-  inputSetting: {fileID: 11400000, guid: 8374533a0a89a7c40b903cf7d817bd8c, type: 2}
---- !u!114 &194535291
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 194535281}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e835e655befe62d478699201a36a2352, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.LightSourceStateMachine
-  itemParent: {fileID: 1511958054}
-  parentRotation: {x: 0, y: 0, z: 0}
-  parentPosition: {x: -0.07, y: 0, z: 0.01}
-  dropRotation: {x: 0, y: 0, z: 0}
-  dropPositionYOffset: 0.25
-  dropCheckRange: 0.1
-  dropFallSpeed: 1.5
-  animatorController: {fileID: 9100000, guid: b680ca0de1026774dbd9873e8bd037b6, type: 2}
-  equippedAnimation:
-    animationName: Test_Equip
-    animationIndex: 0
-    crossFadeTime: 0.125
-    timestampEvents: []
-    onStarted:
-      m_PersistentCalls:
-        m_Calls: []
-    onFinished:
-      m_PersistentCalls:
-        m_Calls: []
-  unequippedAnimation:
-    animationName: Test_UnEquip
-    animationIndex: 1
-    crossFadeTime: 0.125
-    timestampEvents: []
-    onStarted:
-      m_PersistentCalls:
-        m_Calls: []
-    onFinished:
-      m_PersistentCalls:
-        m_Calls: []
-  droppedAnimation:
-    animationName: Test_Dropped
-    animationIndex: 2
-    crossFadeTime: 0.125
-    timestampEvents: []
-    onStarted:
-      m_PersistentCalls:
-        m_Calls: []
-    onFinished:
-      m_PersistentCalls:
-        m_Calls: []
-  defaultStateData:
-    animationName: Test_Equip
-    animationIndex: 0
-    crossFadeTime: 0
-    timestampEvents: []
-    onStarted:
-      m_PersistentCalls:
-        m_Calls: []
-    onFinished:
-      m_PersistentCalls:
-        m_Calls: []
-  defaultMaxLifeTime: 100
-  drainLifeTimeSpeed: 1
-  onStateData:
-    animationName: Test_TurnFlashlightOn
-    animationIndex: 4
-    crossFadeTime: 0.5
-    timestampEvents: []
-    onStarted:
-      m_PersistentCalls:
-        m_Calls: []
-    onFinished:
-      m_PersistentCalls:
-        m_Calls: []
-  offStateData:
-    animationName: Test_TurnFlashlightOff
-    animationIndex: 3
-    crossFadeTime: 0.5
-    timestampEvents: []
-    onStarted:
-      m_PersistentCalls:
-        m_Calls: []
-    onFinished:
-      m_PersistentCalls:
-        m_Calls: []
---- !u!114 &194535292
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 194535281}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae5bc471150af0642a98171ee4a85684, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.LightSourceOnState
-  isActif: 1
-  defaultCooldown: 5
-  lightActivationWaitTime: 0.3333333
-  inputSetting: {fileID: 11400000, guid: 8374533a0a89a7c40b903cf7d817bd8c, type: 2}
---- !u!114 &194535293
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 194535281}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 01e2bff77ed1f74449842cefc0bb4bda, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Items.EquippableItem
-  interactableName: ForREal?
-  uiParent: {fileID: 0}
-  isInteractable: 1
---- !u!1 &216972085
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 216972086}
-  - component: {fileID: 216972088}
-  - component: {fileID: 216972087}
-  - component: {fileID: 216972090}
-  - component: {fileID: 216972089}
+  - component: {fileID: 379409356}
+  - component: {fileID: 379409360}
+  - component: {fileID: 379409359}
+  - component: {fileID: 379409358}
+  - component: {fileID: 379409357}
   m_Layer: 11
   m_Name: Sway
   m_TagString: Untagged
@@ -760,69 +544,41 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &216972086
+--- !u!4 &379409356
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 216972085}
+  m_GameObject: {fileID: 379409355}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 645008274}
-  m_Father: {fileID: 194535283}
+  - {fileID: 1860110683}
+  m_Father: {fileID: 841889631}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &216972087
+--- !u!114 &379409357
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 216972085}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 86c9777e0e729984fb86ed006de7f069, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Items.EquippableItemSwayMotion
---- !u!114 &216972088
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 216972085}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 383dbdc64a957a848b380376d6b32e20, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MovementSwayMotion
-  defaultLerpSpeed: 5
-  positionUpdateSpeed: 10
-  min: {x: 0.05, y: 0.05}
-  max: {x: 0.05, y: 0}
---- !u!114 &216972089
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 216972085}
+  m_GameObject: {fileID: 379409355}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bd9a9b0f6614ee54c82f754b896b5734, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Items.EquippableItemKeyboardTiltMotion
---- !u!114 &216972090
+--- !u!114 &379409358
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 216972085}
+  m_GameObject: {fileID: 379409355}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9d6d7665595f0974dbc21b5ca5d787b7, type: 3}
@@ -835,6 +591,34 @@ MonoBehaviour:
   max: {x: 5, y: 5}
   isTiltingContinuously: 1
   tiltSpeed: 10
+--- !u!114 &379409359
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 379409355}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86c9777e0e729984fb86ed006de7f069, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Items.EquippableItemSwayMotion
+--- !u!114 &379409360
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 379409355}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 383dbdc64a957a848b380376d6b32e20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MovementSwayMotion
+  defaultLerpSpeed: 5
+  positionUpdateSpeed: 10
+  min: {x: 0.05, y: 0.05}
+  max: {x: 0.05, y: 0}
 --- !u!1 &392872283
 GameObject:
   m_ObjectHideFlags: 0
@@ -1004,6 +788,80 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 4125389787687924, guid: 57e3542e6c16dfd40972c0b1b0899afb, type: 3}
   m_PrefabInstance: {fileID: 468967267}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &557639393
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 672330127}
+    m_Modifications:
+    - target: {fileID: 1896720402374228, guid: baa8d2066558c9a4ebcd1853c4c3ac4e, type: 3}
+      propertyPath: m_Name
+      value: cannedfood
+      objectReference: {fileID: 0}
+    - target: {fileID: 4582117764247738, guid: baa8d2066558c9a4ebcd1853c4c3ac4e, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4582117764247738, guid: baa8d2066558c9a4ebcd1853c4c3ac4e, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4582117764247738, guid: baa8d2066558c9a4ebcd1853c4c3ac4e, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4582117764247738, guid: baa8d2066558c9a4ebcd1853c4c3ac4e, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4582117764247738, guid: baa8d2066558c9a4ebcd1853c4c3ac4e, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4582117764247738, guid: baa8d2066558c9a4ebcd1853c4c3ac4e, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4582117764247738, guid: baa8d2066558c9a4ebcd1853c4c3ac4e, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.27793115
+      objectReference: {fileID: 0}
+    - target: {fileID: 4582117764247738, guid: baa8d2066558c9a4ebcd1853c4c3ac4e, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4582117764247738, guid: baa8d2066558c9a4ebcd1853c4c3ac4e, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.96060103
+      objectReference: {fileID: 0}
+    - target: {fileID: 4582117764247738, guid: baa8d2066558c9a4ebcd1853c4c3ac4e, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4582117764247738, guid: baa8d2066558c9a4ebcd1853c4c3ac4e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4582117764247738, guid: baa8d2066558c9a4ebcd1853c4c3ac4e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -212.27399
+      objectReference: {fileID: 0}
+    - target: {fileID: 4582117764247738, guid: baa8d2066558c9a4ebcd1853c4c3ac4e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: baa8d2066558c9a4ebcd1853c4c3ac4e, type: 3}
+--- !u!4 &557639394 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4582117764247738, guid: baa8d2066558c9a4ebcd1853c4c3ac4e, type: 3}
+  m_PrefabInstance: {fileID: 557639393}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &568502127
 GameObject:
@@ -1248,7 +1106,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.02587, y: 2.197342, z: 1.8603146}
   m_Center: {x: 0.51954764, y: 1.1786785, z: -0.003796339}
---- !u!1 &645008273
+--- !u!1 &672330126
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1256,61 +1114,30 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 645008274}
-  - component: {fileID: 645008276}
-  - component: {fileID: 645008275}
+  - component: {fileID: 672330127}
   m_Layer: 11
-  m_Name: RotationMotion
+  m_Name: Holder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &645008274
+--- !u!4 &672330127
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 645008273}
+  m_GameObject: {fileID: 672330126}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1511958054}
-  m_Father: {fileID: 216972086}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &645008275
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 645008273}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 49919e971a640774ea8b3fad50396a73, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Items.EquippableItemMouseTiltMotion
---- !u!114 &645008276
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 645008273}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a3d5e1a3f6b78814e8b293c842152ffe, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.Events.MouseMovementTiltMotion
-  defaultLerpSpeed: 10
-  directionUpdateSpeed: 50
-  rotationUpdateSpeed: 10
-  min: {x: 5, y: 20}
-  max: {x: 5, y: 20}
+  - {fileID: 557639394}
+  m_Father: {fileID: 1860110683}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!1 &681363555
 GameObject:
   m_ObjectHideFlags: 0
@@ -1469,6 +1296,7 @@ GameObject:
   - component: {fileID: 770072908}
   - component: {fileID: 770072912}
   - component: {fileID: 770072913}
+  - component: {fileID: 770072914}
   m_Layer: 11
   m_Name: A (2)
   m_TagString: Untagged
@@ -1542,8 +1370,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 770072904}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.83, y: 0.543, z: 0.367}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.84, z: 0.422}
   m_LocalScale: {x: 0.75, y: 0.7500001, z: 0.7500001}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1569,63 +1397,7 @@ MonoBehaviour:
   dropPositionYOffset: 0.05
   dropCheckRange: 0.1
   dropFallSpeed: 1.5
-  animatorController: {fileID: 9100000, guid: 9096a0307b4533645a465442196d969a, type: 2}
-  equippedAnimation:
-    animationName: Water_Equip
-    animationIndex: 0
-    crossFadeTime: 0.125
-    timestampEvents: []
-    onStarted:
-      m_PersistentCalls:
-        m_Calls: []
-    onFinished:
-      m_PersistentCalls:
-        m_Calls: []
-  unequippedAnimation:
-    animationName: Water_UnEquip
-    animationIndex: 1
-    crossFadeTime: 0.125
-    timestampEvents: []
-    onStarted:
-      m_PersistentCalls:
-        m_Calls: []
-    onFinished:
-      m_PersistentCalls:
-        m_Calls: []
-  droppedAnimation:
-    animationName: Water_Drop
-    animationIndex: 2
-    crossFadeTime: 0.125
-    timestampEvents: []
-    onStarted:
-      m_PersistentCalls:
-        m_Calls: []
-    onFinished:
-      m_PersistentCalls:
-        m_Calls: []
-  defaultStateData:
-    animationName: Water_Default
-    animationIndex: 4
-    crossFadeTime: 0
-    timestampEvents: []
-    onStarted:
-      m_PersistentCalls:
-        m_Calls: []
-    onFinished:
-      m_PersistentCalls:
-        m_Calls: []
   defaultMaxConsumptionValue: 100
-  consumeStateData:
-    animationName: Water_Consume
-    animationIndex: 3
-    crossFadeTime: 0.125
-    timestampEvents: []
-    onStarted:
-      m_PersistentCalls:
-        m_Calls: []
-    onFinished:
-      m_PersistentCalls:
-        m_Calls: []
 --- !u!114 &770072913
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1643,6 +1415,289 @@ MonoBehaviour:
   consumption: 1
   actionExecutionTime: 1
   settings: {fileID: 11400000, guid: 8374533a0a89a7c40b903cf7d817bd8c, type: 2}
+--- !u!114 &770072914
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 770072904}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd1664b4c39c6bc41a5179b647ae99de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Animations.ConsumableItemAnimationController
+  controller: {fileID: 9100000, guid: 9096a0307b4533645a465442196d969a, type: 2}
+  infos:
+  - Name: default
+    AnimationDataIndex: 4
+  - Name: equip
+    AnimationDataIndex: 0
+  - Name: unequip
+    AnimationDataIndex: 1
+  - Name: drop
+    AnimationDataIndex: 2
+  - Name: consume
+    AnimationDataIndex: 3
+  datas:
+  - animationName: Water_Equip
+    animationIndex: 0
+    crossFadeTime: 0.125
+    timestampEvents: []
+    onStarted:
+      m_PersistentCalls:
+        m_Calls: []
+    onFinished:
+      m_PersistentCalls:
+        m_Calls: []
+  - animationName: Water_UnEquip
+    animationIndex: 1
+    crossFadeTime: 0.125
+    timestampEvents: []
+    onStarted:
+      m_PersistentCalls:
+        m_Calls: []
+    onFinished:
+      m_PersistentCalls:
+        m_Calls: []
+  - animationName: Water_Drop
+    animationIndex: 2
+    crossFadeTime: 0.125
+    timestampEvents: []
+    onStarted:
+      m_PersistentCalls:
+        m_Calls: []
+    onFinished:
+      m_PersistentCalls:
+        m_Calls: []
+  - animationName: Water_Consume
+    animationIndex: 3
+    crossFadeTime: 0
+    timestampEvents: []
+    onStarted:
+      m_PersistentCalls:
+        m_Calls: []
+    onFinished:
+      m_PersistentCalls:
+        m_Calls: []
+  - animationName: Water_Default
+    animationIndex: 4
+    crossFadeTime: 0
+    timestampEvents: []
+    onStarted:
+      m_PersistentCalls:
+        m_Calls: []
+    onFinished:
+      m_PersistentCalls:
+        m_Calls: []
+--- !u!1 &841889624
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 841889631}
+  - component: {fileID: 841889630}
+  - component: {fileID: 841889629}
+  - component: {fileID: 841889628}
+  - component: {fileID: 841889627}
+  - component: {fileID: 841889626}
+  - component: {fileID: 841889625}
+  m_Layer: 11
+  m_Name: A (3)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &841889625
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 841889624}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd1664b4c39c6bc41a5179b647ae99de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Animations.ConsumableItemAnimationController
+  controller: {fileID: 9100000, guid: 9096a0307b4533645a465442196d969a, type: 2}
+  infos:
+  - Name: default
+    AnimationDataIndex: 4
+  - Name: equip
+    AnimationDataIndex: 0
+  - Name: unequip
+    AnimationDataIndex: 1
+  - Name: drop
+    AnimationDataIndex: 2
+  - Name: consume
+    AnimationDataIndex: 3
+  datas:
+  - animationName: Water_Equip
+    animationIndex: 0
+    crossFadeTime: 0.125
+    timestampEvents: []
+    onStarted:
+      m_PersistentCalls:
+        m_Calls: []
+    onFinished:
+      m_PersistentCalls:
+        m_Calls: []
+  - animationName: Water_UnEquip
+    animationIndex: 1
+    crossFadeTime: 0.125
+    timestampEvents: []
+    onStarted:
+      m_PersistentCalls:
+        m_Calls: []
+    onFinished:
+      m_PersistentCalls:
+        m_Calls: []
+  - animationName: Water_Drop
+    animationIndex: 2
+    crossFadeTime: 0.125
+    timestampEvents: []
+    onStarted:
+      m_PersistentCalls:
+        m_Calls: []
+    onFinished:
+      m_PersistentCalls:
+        m_Calls: []
+  - animationName: Water_Consume
+    animationIndex: 3
+    crossFadeTime: 0
+    timestampEvents: []
+    onStarted:
+      m_PersistentCalls:
+        m_Calls: []
+    onFinished:
+      m_PersistentCalls:
+        m_Calls: []
+  - animationName: Water_Default
+    animationIndex: 4
+    crossFadeTime: 0
+    timestampEvents: []
+    onStarted:
+      m_PersistentCalls:
+        m_Calls: []
+    onFinished:
+      m_PersistentCalls:
+        m_Calls: []
+--- !u!114 &841889626
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 841889624}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b41a3c44f65a20b458b863c4efa34006, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.DrinkableItemState
+  isActif: 1
+  defaultCooldown: 2
+  consumption: 1
+  actionExecutionTime: 1
+  settings: {fileID: 11400000, guid: 8374533a0a89a7c40b903cf7d817bd8c, type: 2}
+--- !u!114 &841889627
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 841889624}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49530662f34b4c140b36fdef6dd70f17, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.DrinkableItemStateMachine
+  itemParent: {fileID: 672330127}
+  parentRotation: {x: 0, y: 0, z: 0}
+  parentPosition: {x: 0.418, y: -0.163, z: 0.59}
+  dropRotation: {x: 90, y: 0, z: 0}
+  dropPositionYOffset: 0.05
+  dropCheckRange: 0.1
+  dropFallSpeed: 1.5
+  defaultMaxConsumptionValue: 100
+--- !u!114 &841889628
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 841889624}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01e2bff77ed1f74449842cefc0bb4bda, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Items.EquippableItem
+  interactableName: ForREal?
+  uiParent: {fileID: 0}
+  isInteractable: 1
+--- !u!65 &841889629
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 841889624}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.28954753, y: 0.32571644, z: 0.50341153}
+  m_Center: {x: 0.00343889, y: 0.0021068251, z: 0.008233546}
+--- !u!95 &841889630
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 841889624}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 9096a0307b4533645a465442196d969a, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!4 &841889631
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 841889624}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.219, y: 0.84, z: 0.422}
+  m_LocalScale: {x: 0.75, y: 0.7500001, z: 0.7500001}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 379409356}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &920773165
 GameObject:
   m_ObjectHideFlags: 0
@@ -1833,80 +1888,6 @@ MonoBehaviour:
   rotationUpdateSpeed: 10
   min: {x: 5, y: 20}
   max: {x: 5, y: 20}
---- !u!1001 &990535443
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 1511958054}
-    m_Modifications:
-    - target: {fileID: 1275266641364890, guid: e3109ccf9db0f54408d5c02b496761c1, type: 3}
-      propertyPath: m_Name
-      value: flashlight
-      objectReference: {fileID: 0}
-    - target: {fileID: 4153173015106888, guid: e3109ccf9db0f54408d5c02b496761c1, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4153173015106888, guid: e3109ccf9db0f54408d5c02b496761c1, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4153173015106888, guid: e3109ccf9db0f54408d5c02b496761c1, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4153173015106888, guid: e3109ccf9db0f54408d5c02b496761c1, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4153173015106888, guid: e3109ccf9db0f54408d5c02b496761c1, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4153173015106888, guid: e3109ccf9db0f54408d5c02b496761c1, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4153173015106888, guid: e3109ccf9db0f54408d5c02b496761c1, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 4153173015106888, guid: e3109ccf9db0f54408d5c02b496761c1, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 4153173015106888, guid: e3109ccf9db0f54408d5c02b496761c1, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 4153173015106888, guid: e3109ccf9db0f54408d5c02b496761c1, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 4153173015106888, guid: e3109ccf9db0f54408d5c02b496761c1, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4153173015106888, guid: e3109ccf9db0f54408d5c02b496761c1, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 90
-      objectReference: {fileID: 0}
-    - target: {fileID: 4153173015106888, guid: e3109ccf9db0f54408d5c02b496761c1, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 90
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: e3109ccf9db0f54408d5c02b496761c1, type: 3}
---- !u!4 &990535444 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4153173015106888, guid: e3109ccf9db0f54408d5c02b496761c1, type: 3}
-  m_PrefabInstance: {fileID: 990535443}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1013899970
 GameObject:
   m_ObjectHideFlags: 0
@@ -2214,133 +2195,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1168673598
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1168673599}
-  - component: {fileID: 1168673601}
-  - component: {fileID: 1168673600}
-  m_Layer: 11
-  m_Name: Light
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1168673599
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1168673598}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 1.077}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 194535283}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1168673600
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1168673598}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
-  m_UsePipelineSettings: 1
-  m_AdditionalLightsShadowResolutionTier: 2
-  m_CustomShadowLayers: 0
-  m_LightCookieSize: {x: 1, y: 1}
-  m_LightCookieOffset: {x: 0, y: 0}
-  m_SoftShadowQuality: 0
-  m_RenderingLayersMask:
-    serializedVersion: 0
-    m_Bits: 1
-  m_ShadowRenderingLayersMask:
-    serializedVersion: 0
-    m_Bits: 1
-  m_Version: 4
-  m_LightLayerMask: 1
-  m_ShadowLayerMask: 1
-  m_RenderingLayers: 1
-  m_ShadowRenderingLayers: 1
---- !u!108 &1168673601
-Light:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1168673598}
-  m_Enabled: 1
-  serializedVersion: 13
-  m_Type: 0
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 40.37
-  m_Range: 10
-  m_SpotAngle: 100.46705
-  m_InnerSpotAngle: 21.80208
-  m_CookieSize2D: {x: 0.5, y: 0.5}
-  m_Shadows:
-    m_Type: 0
-    m_Resolution: -1
-    m_CustomResolution: -1
-    m_Strength: 1
-    m_Bias: 0.05
-    m_NormalBias: 0.4
-    m_NearPlane: 0.2
-    m_CullingMatrixOverride:
-      e00: 1
-      e01: 0
-      e02: 0
-      e03: 0
-      e10: 0
-      e11: 1
-      e12: 0
-      e13: 0
-      e20: 0
-      e21: 0
-      e22: 1
-      e23: 0
-      e30: 0
-      e31: 0
-      e32: 0
-      e33: 1
-    m_UseCullingMatrixOverride: 0
-  m_Cookie: {fileID: 0}
-  m_DrawHalo: 0
-  m_Flare: {fileID: 0}
-  m_RenderMode: 0
-  m_CullingMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_RenderingLayerMask: 1
-  m_Lightmapping: 4
-  m_LightShadowCasterMode: 0
-  m_AreaSize: {x: 1, y: 1}
-  m_BounceIntensity: 0
-  m_ColorTemperature: 6570
-  m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
-  m_UseBoundingSphereOverride: 0
-  m_UseViewFrustumForShadowCasterCull: 1
-  m_ForceVisible: 0
-  m_ShapeRadius: 0.025
-  m_ShadowAngle: 0
-  m_LightUnit: 1
-  m_LuxAtDistance: 1
-  m_EnableSpotReflector: 1
 --- !u!1 &1248698881
 GameObject:
   m_ObjectHideFlags: 0
@@ -2902,38 +2756,6 @@ MonoBehaviour:
   rotationUpdateSpeed: 10
   min: {x: 5, y: 20}
   max: {x: 5, y: 20}
---- !u!1 &1511958053
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1511958054}
-  m_Layer: 11
-  m_Name: Holder
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1511958054
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1511958053}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 990535444}
-  m_Father: {fileID: 645008274}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1533362341
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3303,6 +3125,69 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 604aadcb0ac840a49a36e620bd54a39a, type: 3}
+--- !u!1 &1860110682
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1860110683}
+  - component: {fileID: 1860110685}
+  - component: {fileID: 1860110684}
+  m_Layer: 11
+  m_Name: RotationMotion
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1860110683
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1860110682}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 672330127}
+  m_Father: {fileID: 379409356}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1860110684
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1860110682}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49919e971a640774ea8b3fad50396a73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Items.EquippableItemMouseTiltMotion
+--- !u!114 &1860110685
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1860110682}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3d5e1a3f6b78814e8b293c842152ffe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.Events.MouseMovementTiltMotion
+  defaultLerpSpeed: 10
+  directionUpdateSpeed: 50
+  rotationUpdateSpeed: 10
+  min: {x: 5, y: 20}
+  max: {x: 5, y: 20}
 --- !u!1 &1953040681
 GameObject:
   m_ObjectHideFlags: 0
@@ -3318,6 +3203,7 @@ GameObject:
   - component: {fileID: 1953040684}
   - component: {fileID: 1953040683}
   - component: {fileID: 1953040682}
+  - component: {fileID: 1953040689}
   m_Layer: 11
   m_Name: A (1)
   m_TagString: Untagged
@@ -3338,7 +3224,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.LightSourceOnState
   isActif: 1
-  defaultCooldown: 5
+  defaultCooldown: 1.25
   lightActivationWaitTime: 0.3333333
   inputSetting: {fileID: 11400000, guid: 8374533a0a89a7c40b903cf7d817bd8c, type: 2}
 --- !u!114 &1953040683
@@ -3354,7 +3240,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.States.LightSourceOffState
   isActif: 1
-  defaultCooldown: 5
+  defaultCooldown: 1.25
   inputSetting: {fileID: 11400000, guid: 8374533a0a89a7c40b903cf7d817bd8c, type: 2}
 --- !u!114 &1953040684
 MonoBehaviour:
@@ -3375,75 +3261,8 @@ MonoBehaviour:
   dropPositionYOffset: 0.25
   dropCheckRange: 0.1
   dropFallSpeed: 1.5
-  animatorController: {fileID: 9100000, guid: b680ca0de1026774dbd9873e8bd037b6, type: 2}
-  equippedAnimation:
-    animationName: Test_Equip
-    animationIndex: 0
-    crossFadeTime: 0.125
-    timestampEvents: []
-    onStarted:
-      m_PersistentCalls:
-        m_Calls: []
-    onFinished:
-      m_PersistentCalls:
-        m_Calls: []
-  unequippedAnimation:
-    animationName: Test_UnEquip
-    animationIndex: 1
-    crossFadeTime: 0.125
-    timestampEvents: []
-    onStarted:
-      m_PersistentCalls:
-        m_Calls: []
-    onFinished:
-      m_PersistentCalls:
-        m_Calls: []
-  droppedAnimation:
-    animationName: Test_Dropped
-    animationIndex: 2
-    crossFadeTime: 0.125
-    timestampEvents: []
-    onStarted:
-      m_PersistentCalls:
-        m_Calls: []
-    onFinished:
-      m_PersistentCalls:
-        m_Calls: []
-  defaultStateData:
-    animationName: Test_Equip
-    animationIndex: 0
-    crossFadeTime: 0
-    timestampEvents: []
-    onStarted:
-      m_PersistentCalls:
-        m_Calls: []
-    onFinished:
-      m_PersistentCalls:
-        m_Calls: []
   defaultMaxLifeTime: 100
   drainLifeTimeSpeed: 1
-  onStateData:
-    animationName: Test_TurnFlashlightOn
-    animationIndex: 4
-    crossFadeTime: 0.5
-    timestampEvents: []
-    onStarted:
-      m_PersistentCalls:
-        m_Calls: []
-    onFinished:
-      m_PersistentCalls:
-        m_Calls: []
-  offStateData:
-    animationName: Test_TurnFlashlightOff
-    animationIndex: 3
-    crossFadeTime: 0.5
-    timestampEvents: []
-    onStarted:
-      m_PersistentCalls:
-        m_Calls: []
-    onFinished:
-      m_PersistentCalls:
-        m_Calls: []
 --- !u!114 &1953040685
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3519,6 +3338,93 @@ Transform:
   - {fileID: 1997602232}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: -0.25, y: 0, z: 0}
+--- !u!114 &1953040689
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1953040681}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af04fd253164d32458cbb4f571ae421d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Animations.LightSourceItemAnimationController
+  controller: {fileID: 9100000, guid: b680ca0de1026774dbd9873e8bd037b6, type: 2}
+  infos:
+  - Name: default
+    AnimationDataIndex: 5
+  - Name: equip
+    AnimationDataIndex: 0
+  - Name: unequip
+    AnimationDataIndex: 1
+  - Name: drop
+    AnimationDataIndex: 2
+  - Name: turn light on
+    AnimationDataIndex: 3
+  - Name: turn light off
+    AnimationDataIndex: 4
+  datas:
+  - animationName: Test_Equip
+    animationIndex: 0
+    crossFadeTime: 0.125
+    timestampEvents: []
+    onStarted:
+      m_PersistentCalls:
+        m_Calls: []
+    onFinished:
+      m_PersistentCalls:
+        m_Calls: []
+  - animationName: Test_UnEquip
+    animationIndex: 1
+    crossFadeTime: 0.125
+    timestampEvents: []
+    onStarted:
+      m_PersistentCalls:
+        m_Calls: []
+    onFinished:
+      m_PersistentCalls:
+        m_Calls: []
+  - animationName: Test_Dropped
+    animationIndex: 2
+    crossFadeTime: 0.125
+    timestampEvents: []
+    onStarted:
+      m_PersistentCalls:
+        m_Calls: []
+    onFinished:
+      m_PersistentCalls:
+        m_Calls: []
+  - animationName: Test_TurnFlashlightOff
+    animationIndex: 3
+    crossFadeTime: 0.125
+    timestampEvents: []
+    onStarted:
+      m_PersistentCalls:
+        m_Calls: []
+    onFinished:
+      m_PersistentCalls:
+        m_Calls: []
+  - animationName: Test_TurnFlashlightOn
+    animationIndex: 4
+    crossFadeTime: 0.125
+    timestampEvents: []
+    onStarted:
+      m_PersistentCalls:
+        m_Calls: []
+    onFinished:
+      m_PersistentCalls:
+        m_Calls: []
+  - animationName: Test_Default
+    animationIndex: 5
+    crossFadeTime: 0
+    timestampEvents: []
+    onStarted:
+      m_PersistentCalls:
+        m_Calls: []
+    onFinished:
+      m_PersistentCalls:
+        m_Calls: []
 --- !u!1 &1960062246
 GameObject:
   m_ObjectHideFlags: 0
@@ -4574,10 +4480,10 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1273927347}
-  - {fileID: 1745779785}
-  - {fileID: 194535283}
-  - {fileID: 1953040688}
   - {fileID: 770072911}
+  - {fileID: 841889631}
+  - {fileID: 1745779785}
+  - {fileID: 1953040688}
   - {fileID: 1038957370103312475}
   - {fileID: 1961811}
   - {fileID: 603077995}

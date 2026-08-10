@@ -11,9 +11,6 @@ namespace RedSilver2.Framework.StateMachines
         [Space]
         [SerializeField] private float defaultMaxConsumptionValue;
 
-        [Space]
-        [SerializeField] private AnimationData consumeStateData;
-
         private float maxConsumptionValue;
         private float consumptionValue;
 
@@ -26,7 +23,8 @@ namespace RedSilver2.Framework.StateMachines
 
         public float         ConsumptionValue    => consumptionValue;
         public float         MaxConsumptionValue => maxConsumptionValue;
-        public AnimationData ConsumeStateData    => consumeStateData;
+
+        public const string CONSUME_ANIMATION_NAME = "Consume";
 
         protected  override void Awake() {
             base.Awake();
@@ -37,10 +35,8 @@ namespace RedSilver2.Framework.StateMachines
             SetMaxConsumptionValue(defaultMaxConsumptionValue);
             SetConsumptionValue(maxConsumptionValue);
 
-            consumeStateData?.AddOnFinishedListener(() => {
-                Animator?.CrossFadeAnimation(DefaultStateData);
-                ChangeState(null);
-            });
+            GetConsumableItemAnimationController()?.GetConsumeData()?.AddOnFinishedListener(() => { ChangeState(null); });
+            // Set State to Null
         }
 
 #if UNITY_EDITOR
@@ -48,12 +44,6 @@ namespace RedSilver2.Framework.StateMachines
         {
             base.OnValidate();
             defaultMaxConsumptionValue = Mathf.Clamp(defaultMaxConsumptionValue, 0f, float.MaxValue);
-        }
-
-        protected override void ValidateAnimations(RuntimeAnimatorController controller)
-        {
-            base.ValidateAnimations(controller);
-            consumeStateData?.Validate(controller);
         }
 #endif
 
@@ -223,6 +213,10 @@ namespace RedSilver2.Framework.StateMachines
         public void RemoveOnStateExitedListener(UnityAction<ConsumableItemState> action)
         {
             if (action != null) onStateExited?.RemoveListener(action);
+        }
+
+        public ConsumableItemAnimationController GetConsumableItemAnimationController() {
+            return GetEquippableItemAnimationController() as ConsumableItemAnimationController;
         }
     }
 }

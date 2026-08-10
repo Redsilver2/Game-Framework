@@ -3,50 +3,40 @@ using RedSilver2.Framework.StateMachines.States;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
+using State = RedSilver2.Framework.StateMachines.States.State;
 
 namespace RedSilver2.Framework.StateMachines {
-    public class LightSourceStateMachine : EquippableItemStateMachine
-    {
+    public class LightSourceItemStateMachine : EquippableItemStateMachine {
         [Space]
         [SerializeField] private float defaultMaxLifeTime;
 
         [Space]
         [SerializeField] private float drainLifeTimeSpeed;
 
-        [Space]
-        [SerializeField] private AnimationData onStateData;
-
-        [Space]
-        [SerializeField] private AnimationData offStateData;
-
         private float lifetime;
         private float maxLifeTime;
 
+        private bool isOn;
+
         private Light _light;
-        private LightSourceState currentState;
+        private LightSourceItemState currentState;
 
         private IEnumerator drainLightUpdater;
         
         private UnityEvent<float> onLifeTimeProgressUpdate;
-        private UnityEvent<LightSourceState> onStateAdded, onStateRemoved;
-        private UnityEvent<LightSourceState> onStateEntered, onStateExited;
+        private UnityEvent<LightSourceItemState> onStateAdded, onStateRemoved;
+        private UnityEvent<LightSourceItemState> onStateEntered, onStateExited;
 
         public float LifeTime    => lifetime;
         public float MaxLifeTime => maxLifeTime;
-        public LightSourceState  CurrentState        => currentState;
-        public Light Light       => _light;
 
-        public AnimationData OnStateData => onStateData;
-        public AnimationData OffStateData => offStateData;
+        public bool IsOn => isOn;   
 
-#if UNITY_EDITOR
-        protected override void ValidateAnimations(RuntimeAnimatorController controller)
-        {
-            base.ValidateAnimations(controller);
-            onStateData?.Validate(controller);
-            offStateData?.Validate(controller);
-        }
-#endif
+        public LightSourceItemState  CurrentState => currentState;
+        public Light Light                        => _light;
+
+        public const string TURN_LIGHT_ON_ANIMATION_NAME  = "Turn Light On";
+        public const string TURN_LIGHT_OFF_ANIMATION_NAME = "Turn Light Off";
 
 
         protected override void Awake()
@@ -54,11 +44,11 @@ namespace RedSilver2.Framework.StateMachines {
             base.Awake();
             onLifeTimeProgressUpdate = new UnityEvent<float>();
 
-            onStateAdded = new UnityEvent<LightSourceState>();
-            onStateRemoved = new UnityEvent<LightSourceState>();
+            onStateAdded = new UnityEvent<LightSourceItemState>();
+            onStateRemoved = new UnityEvent<LightSourceItemState>();
 
-            onStateEntered = new UnityEvent<LightSourceState>();
-            onStateExited = new UnityEvent<LightSourceState>();
+            onStateEntered = new UnityEvent<LightSourceItemState>();
+            onStateExited = new UnityEvent<LightSourceItemState>();
 
            _light = transform.root != null ? transform.root.GetComponentInChildren<Light>() : 
                                                              GetComponentInChildren<Light>();
@@ -76,25 +66,25 @@ namespace RedSilver2.Framework.StateMachines {
 
         protected sealed override void OnStateAdded(EquippableItemState state) {
             base.OnStateAdded(state);
-            OnStateAdded(state as LightSourceState);
+            OnStateAdded(state as LightSourceItemState);
         }
 
         protected sealed override void OnStateEntered(EquippableItemState state) {
             base.OnStateEntered(state);
-            OnStateEntered(state as LightSourceState);
+            OnStateEntered(state as LightSourceItemState);
         }
 
         protected sealed override void OnStateExited(EquippableItemState state) {
             base.OnStateExited(state);
-            OnStateExited(state as LightSourceState);
+            OnStateExited(state as LightSourceItemState);
         }
 
         protected sealed override void OnStateRemoved(EquippableItemState state) {
             base.OnStateRemoved(state);
-            OnStateRemoved(state as LightSourceState);
+            OnStateRemoved(state as LightSourceItemState);
         }
 
-        protected virtual void OnStateAdded(LightSourceState state) {
+        protected virtual void OnStateAdded(LightSourceItemState state) {
             onStateAdded?.Invoke(state);
 
             if (state != null) {
@@ -144,26 +134,29 @@ namespace RedSilver2.Framework.StateMachines {
             if(_light != null) _light.enabled = false;
         }
 
-        protected virtual void OnStateEntered(LightSourceState state) {
-
-            Animator animator = Animator;
-
-            if (state != null && animator != null) {
-                if (state.Type == LightSourceStateType.On) animator.PlayAnimation(onStateData);
-                else animator.PlayAnimation(offStateData);
+        protected virtual void OnStateEntered(LightSourceItemState state) {
+            if (state != null) {
+                if (state.Type == LightSourceStateType.On) {
+                    isOn = true;
+                    GetLightSourceItemAnimationController()?.PlayTurnOnLightData();
+                }
+                else {
+                    isOn = false;
+                    GetLightSourceItemAnimationController()?.PlayTurnOffLightData();
+                }
             }
 
             currentState = state;
             onStateEntered?.Invoke(state);   
         }
 
-        protected virtual void OnStateExited(LightSourceState state) {
+        protected virtual void OnStateExited(LightSourceItemState state) {
 
             currentState = null;
             onStateExited?.Invoke(state);
         }
 
-        protected virtual void OnStateRemoved(LightSourceState state) {
+        protected virtual void OnStateRemoved(LightSourceItemState state) {
 
 
             onStateRemoved?.Invoke(state);
@@ -171,10 +164,10 @@ namespace RedSilver2.Framework.StateMachines {
 
         protected override bool CanAddState(EquippableItemState state) {
 
-            return base.CanAddState(state) && CanAddState(state as LightSourceState);
+            return base.CanAddState(state) && CanAddState(state as LightSourceItemState);
         }
 
-        protected virtual bool CanAddState(LightSourceState state) {
+        protected virtual bool CanAddState(LightSourceItemState state) {
             return state != null ? true : false;
         }
         public void AddOnLifeTimeProgressUpdateListener(UnityAction<float> action)
@@ -186,42 +179,41 @@ namespace RedSilver2.Framework.StateMachines {
             if (action != null) onLifeTimeProgressUpdate?.RemoveListener(action);
         }
 
-        public void AddOnStateAddedListener(UnityAction<LightSourceState> action)
+        public void AddOnStateAddedListener(UnityAction<LightSourceItemState> action)
         {
             if (action != null) onStateAdded?.AddListener(action);
         }
-        public void RemoveOnStateAddedListener(UnityAction<LightSourceState> action)
+        public void RemoveOnStateAddedListener(UnityAction<LightSourceItemState> action)
         {
             if (action != null) onStateAdded?.RemoveListener(action);
         }
 
-        public void AddOnStateRemovedListener(UnityAction<LightSourceState> action)
+        public void AddOnStateRemovedListener(UnityAction<LightSourceItemState> action)
         {
             if (action != null) onStateRemoved?.AddListener(action);
         }
-        public void RemoveOnStateRemovedListener(UnityAction<LightSourceState> action)
+        public void RemoveOnStateRemovedListener(UnityAction<LightSourceItemState> action)
         {
             if (action != null) onStateRemoved?.RemoveListener(action);
         }
 
-        public void AddOnStateEnteredListener(UnityAction<LightSourceState> action)
+        public void AddOnStateEnteredListener(UnityAction<LightSourceItemState> action)
         {
             if (action != null) onStateEntered?.AddListener(action);
         }
-        public void RemoveOnStateEnteredListener(UnityAction<LightSourceState> action)
+        public void RemoveOnStateEnteredListener(UnityAction<LightSourceItemState> action)
         {
             if (action != null) onStateEntered?.RemoveListener(action);
         }
 
-        public void AddOnStateExitedListener(UnityAction<LightSourceState> action)
+        public void AddOnStateExitedListener(UnityAction<LightSourceItemState> action)
         {
             if (action != null) onStateExited?.AddListener(action);
         }
-        public void RemoveOnStateExitedListener(UnityAction<LightSourceState> action)
+        public void RemoveOnStateExitedListener(UnityAction<LightSourceItemState> action)
         {
             if (action != null) onStateExited?.RemoveListener(action);
         }
-
 
         public void SetDrainLifeTimeSpeed(float speed) { this.drainLifeTimeSpeed = Mathf.Clamp(speed, 0f, float.MaxValue); }
         public void SetLifeTime(float lifetime) { 
@@ -238,7 +230,7 @@ namespace RedSilver2.Framework.StateMachines {
             return Mathf.Clamp01(lifetime / maxLifeTime) == 1f;
         }
 
-        public void ChangeState(LightSourceState state) {
+        public void ChangeState(LightSourceItemState state) {
             ChangeState(state as State);
         }
 
@@ -246,10 +238,16 @@ namespace RedSilver2.Framework.StateMachines {
             ChangeState(GetState(type));
         }
 
-        public LightSourceState GetState(LightSourceStateType type)
+        public LightSourceItemAnimationController GetLightSourceItemAnimationController()
+        {
+            return GetEquippableItemAnimationController() as LightSourceItemAnimationController;
+        }
+
+
+        public LightSourceItemState GetState(LightSourceStateType type)
         {
             foreach(State state in States) {
-                LightSourceState _state = state as LightSourceState;
+                LightSourceItemState _state = state as LightSourceItemState;
                 if(_state == null || _state.Type != type) continue;
                 return _state;
             }

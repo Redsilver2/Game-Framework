@@ -15,7 +15,7 @@ namespace RedSilver2.Framework.StateMachines
 
 #if UNITY_EDITOR
         protected override void OnValidate()  {
-
+            defaultCooldown = Mathf.Clamp(defaultCooldown, 0f, float.MaxValue);
         }
 #endif
 
@@ -23,8 +23,6 @@ namespace RedSilver2.Framework.StateMachines
         {
             base.Awake();
             SetStateMachine(GetComponent<EquippableItemStateMachine>());
-
-
             cooldown = defaultCooldown;
         }
 

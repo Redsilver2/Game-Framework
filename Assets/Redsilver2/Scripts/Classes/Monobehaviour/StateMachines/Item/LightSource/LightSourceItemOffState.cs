@@ -3,28 +3,28 @@ using RedSilver2.Framework.Inputs.Settings;
 using UnityEngine;
 
 namespace RedSilver2.Framework.StateMachines.States {
-    public class LightSourceOffState : LightSourceState
+    public class LightSourceItemOffState : LightSourceItemState
     {
         [Space]
         [SerializeField] private PressInputSettings inputSetting;
 
         public const LightSourceStateType TYPE = LightSourceStateType.Off;
 
-        public void SetLightEnableState(LightSourceStateMachine stateMachine)
+        public void SetLightEnableState(LightSourceItemStateMachine stateMachine)
         {
             Light light = stateMachine != null ? stateMachine.Light : null;
             if(light != null) light.enabled = false;
         }
 
-        public sealed override bool CanTransition(LightSourceStateMachine stateMachine)
+        public sealed override bool CanTransition(LightSourceItemStateMachine stateMachine)
         {
-            if (stateMachine == null || stateMachine.CurrentState == null || inputSetting == null) return false;
+            if (stateMachine == null|| inputSetting == null) return false;
             inputSetting?.Enable();
 
-            return inputSetting.GetValue() && stateMachine.CurrentState.Type == LightSourceStateType.On;
+            return inputSetting.GetValue() && stateMachine.IsOn;
         }
 
-        protected override void OnEntered(LightSourceStateMachine stateMachine)
+        protected override void OnEntered(LightSourceItemStateMachine stateMachine)
         {
             stateMachine?.StopDrainingLightSource();
 
@@ -47,10 +47,10 @@ namespace RedSilver2.Framework.StateMachines.States {
             this.inputSetting = inputSetting;
         }
 
-        public static LightSourceOffState GetState(LightSourceStateMachine stateMachine)
+        public static LightSourceItemOffState GetState(LightSourceItemStateMachine stateMachine)
         {
             if (stateMachine == null) return null;
-            return stateMachine.GetState(TYPE) as LightSourceOffState;
+            return stateMachine.GetState(TYPE) as LightSourceItemOffState;
         }
     }
 }

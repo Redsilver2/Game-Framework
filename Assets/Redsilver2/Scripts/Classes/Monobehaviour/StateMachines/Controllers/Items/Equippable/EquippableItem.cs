@@ -7,9 +7,12 @@ namespace RedSilver2.Framework.Items
 {
     public sealed class EquippableItem : Item {
         private bool isEquipped;
+
+        private EquippableItemStateMachine stateMachine;
         private UnityEvent onEquipped, onUnEquipped;
 
         public bool IsEquipped => isEquipped;
+        public EquippableItemStateMachine StateMachine => stateMachine;
 
         protected override void Awake()
         {
@@ -17,7 +20,9 @@ namespace RedSilver2.Framework.Items
             isEquipped              = false;
            
             onEquipped              = new UnityEvent();  
-            onUnEquipped            = new UnityEvent();     
+            onUnEquipped            = new UnityEvent();
+
+            stateMachine = GetComponent<EquippableItemStateMachine>();
 
             AddOnEquippedListener(OnEquipped);  
             AddOnUnEquippedListener(OnUnEquipped);

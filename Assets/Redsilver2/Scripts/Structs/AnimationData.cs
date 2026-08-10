@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.InputSystem.XR;
 
 namespace RedSilver2.Framework.Animations
 {
@@ -83,6 +82,11 @@ namespace RedSilver2.Framework.Animations
         public void Start()  { onStarted?.Invoke(); }
 
 #if UNITY_EDITOR
+        public void SetIndex(int index)
+        {
+            this.animationIndex = index;
+        }
+
         public void Validate(RuntimeAnimatorController controller)
         {
             ValidateAnimationName(controller);
@@ -105,7 +109,7 @@ namespace RedSilver2.Framework.Animations
                 foreach (AnimationTimestampEvent timestampEvent in timestampEvents)
                     timestampEvent?.Validate(current);
 
-                crossFadeTime = Mathf.Clamp(crossFadeTime, 0f, current.length);
+                crossFadeTime = Mathf.Clamp01(crossFadeTime);
             }
             else { crossFadeTime = 0f; }
         }

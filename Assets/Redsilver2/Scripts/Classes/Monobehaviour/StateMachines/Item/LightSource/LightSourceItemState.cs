@@ -3,8 +3,8 @@ using UnityEngine;
 
 
 namespace RedSilver2.Framework.StateMachines {
-    [RequireComponent(typeof(LightSourceStateMachine))]
-    public abstract class LightSourceState : EquippableItemState {
+    [RequireComponent(typeof(LightSourceItemStateMachine))]
+    public abstract class LightSourceItemState : EquippableItemState {
         private LightSourceStateType type;
         public LightSourceStateType Type => type;
 
@@ -18,51 +18,51 @@ namespace RedSilver2.Framework.StateMachines {
 
         protected sealed override bool CanAddTransitionState(EquippableItemState state)
         {
-            return base.CanAddTransitionState(state) && CanAddTransitionState(state as LightSourceState);
+            return base.CanAddTransitionState(state) && CanAddTransitionState(state as LightSourceItemState);
         }
 
-        protected virtual bool CanAddTransitionState(LightSourceState state) {
+        protected virtual bool CanAddTransitionState(LightSourceItemState state) {
             return state != null ? true : false;
         }
 
         protected sealed override void OnDisabled(EquippableItemStateMachine stateMachine)
         {
             base.OnDisabled(stateMachine);
-            OnDisabled(stateMachine as LightSourceStateMachine);
+            OnDisabled(stateMachine as LightSourceItemStateMachine);
         }
 
         protected sealed override void OnEnabled(EquippableItemStateMachine stateMachine)
         {
             base.OnEnabled(stateMachine);
-            OnEnabled(stateMachine as LightSourceStateMachine);
+            OnEnabled(stateMachine as LightSourceItemStateMachine);
         }
 
         protected sealed override void OnEntered(EquippableItemStateMachine stateMachine)
         {
             base.OnEntered(stateMachine);
-            OnEntered(stateMachine as LightSourceStateMachine);
+            OnEntered(stateMachine as LightSourceItemStateMachine);
         }
 
         protected sealed override void OnExited(EquippableItemStateMachine stateMachine)
         {
             base.OnExited(stateMachine);
-            OnExited(stateMachine as LightSourceStateMachine);
+            OnExited(stateMachine as LightSourceItemStateMachine);
         }
 
         public sealed override bool CanTransition(EquippableItemStateMachine stateMachine) {
-            return base.CanTransition(stateMachine) && CanTransition(stateMachine as LightSourceStateMachine);
+            return base.CanTransition(stateMachine) && CanTransition(stateMachine as LightSourceItemStateMachine);
         }
 
-        public virtual bool CanTransition(LightSourceStateMachine stateMachine)
+        public virtual bool CanTransition(LightSourceItemStateMachine stateMachine)
         {
             return stateMachine != null ? true : false;
         }
 
-        protected virtual void OnDisabled(LightSourceStateMachine stateMachine) { }
-        protected virtual void OnEnabled(LightSourceStateMachine stateMachine) { }
+        protected virtual void OnDisabled(LightSourceItemStateMachine stateMachine) { }
+        protected virtual void OnEnabled(LightSourceItemStateMachine stateMachine) { }
 
-        protected virtual void OnEntered(LightSourceStateMachine stateMachine) { }
-        protected virtual void OnExited(LightSourceStateMachine stateMachine) { }
+        protected virtual void OnEntered(LightSourceItemStateMachine stateMachine) { }
+        protected virtual void OnExited(LightSourceItemStateMachine stateMachine) { }
 
         protected abstract void SetLightSourceStateType(ref LightSourceStateType type);
     }

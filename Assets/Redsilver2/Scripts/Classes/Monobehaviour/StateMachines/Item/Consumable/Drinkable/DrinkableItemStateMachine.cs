@@ -1,4 +1,3 @@
-using RedSilver2.Framework.Dialogs;
 using RedSilver2.Framework.Items;
 using RedSilver2.Framework.StateMachines.States;
 using UnityEngine.Events;
@@ -20,8 +19,6 @@ namespace RedSilver2.Framework.StateMachines
           
             onStateRemoved = new UnityEvent<DrinkableItemState>();
             onStateExited = new UnityEvent<DrinkableItemState>();
-
-            ConsumeStateData.AddOnFinishedListener(() => { DialogManager.PlayScreenSpace("Water is so good :p", 0.5f, 1f); });
         }
 
         protected sealed override bool CanAddState(ConsumableItemState state) {
@@ -63,8 +60,8 @@ namespace RedSilver2.Framework.StateMachines
         protected virtual void OnStateEntered(DrinkableItemState state) 
         {
             if (state != null) {
-                if (state.Type == DrinkableItemStateType.Drink)
-                    Animator?.PlayAnimation(ConsumeStateData);
+               if (state.Type == DrinkableItemStateType.Drink)
+                  GetConsumableItemAnimationController()?.PlayConsumeData();
             }
 
 
