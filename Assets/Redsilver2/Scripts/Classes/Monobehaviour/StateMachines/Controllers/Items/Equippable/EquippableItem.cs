@@ -55,7 +55,6 @@ namespace RedSilver2.Framework.Items
 
         public void AddOnEquippedListener(UnityAction action)
         {
-            Debug.Log(action + " - " + (onEquipped != null ? true : false));
             if(action != null) onEquipped?.AddListener(action);
         }
 

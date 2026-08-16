@@ -4,56 +4,79 @@ using UnityEngine.Events;
 
 namespace RedSilver2.Framework.StateMachines.States
 {
+    [System.Serializable]
     public abstract class UpdatableDoorState : DoorState
     {
-        [Space]
         [SerializeField] private float defaultDuration;
 
+        [Space]
+        [SerializeField] private Vector3 desiredPosition;
+        [SerializeField] private Vector3 desiredRotation;
+
         private float duration;
+
+        private Vector3 currentPosition;
+        private Vector3 currentRotation;
         private IEnumerator doorUpdate;
+
+
 
         private UnityEvent onUpdateStarted, onUpdateCompleted;
         private UnityEvent<float> onProgressionUpdate;
 
-        protected override void Awake()
+        protected UpdatableDoorState() : base()
         {
-            base.Awake();
-            onUpdateStarted = new UnityEvent();
-
-            onUpdateCompleted = new UnityEvent();
+            onUpdateStarted     = new UnityEvent();
+            onUpdateCompleted   = new UnityEvent();
             onProgressionUpdate = new UnityEvent<float>();
 
             AddOnUpdateStartedListener(OnUpdateStarted);
             AddOnUpdateCompletedListener(OnUpdateCompleted);
             AddOnProgressionUpdateListener(OnProgressionUpdate);
-
-   
         }
 
-        protected virtual void OnUpdateStarted() { }
-        protected virtual void OnProgressionUpdate(float progress) { }
-        protected virtual void OnUpdateCompleted() { }
-
-        protected override void OnEntered(DoorStateMachine stateMachine)
-        {
-            base.OnEntered(stateMachine);
-
-            if (doorUpdate != null) StopCoroutine(doorUpdate);
-            doorUpdate = null;
-
-            doorUpdate = UpdateDoor(stateMachine);
-            StartCoroutine(doorUpdate);
+        protected virtual void OnUpdateStarted() {
+            Transform handle = DoorStateMachine != null ? DoorStateMachine.Handle : null;
+            currentPosition = handle != null ? handle.localPosition : Vector3.zero;
+            currentRotation = handle != null ? handle.localEulerAngles : Vector3.zero;
         }
 
-        protected override void OnExited(DoorStateMachine stateMachine)
-        {
-            base.OnExited(stateMachine);
+        protected virtual void OnProgressionUpdate(float progress) {
+            Transform handle = DoorStateMachine != null ? DoorStateMachine.Handle : null;
 
-            if(doorUpdate != null) StopCoroutine(doorUpdate);
-            doorUpdate = null;
+            if (handle != null) {
+                handle.localPosition = Vector3.Lerp(currentPosition, desiredPosition, progress);
+                handle.localRotation = Quaternion.Slerp(Quaternion.Euler(currentRotation), Quaternion.Euler(desiredRotation), progress);
+            }
         }
 
-        private IEnumerator UpdateDoor(DoorStateMachine stateMachine) {
+        protected virtual void OnUpdateCompleted() {
+            Transform handle = DoorStateMachine != null ? DoorStateMachine.Handle : null;
+
+            if (handle != null) {
+                handle.localPosition = desiredPosition;
+                handle.localRotation = Quaternion.Euler(desiredRotation);
+            }
+        }
+
+        protected override void OnEntered() {
+            base.OnEntered();
+
+        
+        }
+
+        protected override void OnExited()  { base.OnExited(); }
+
+        public void SetDesiredRotation(Vector3 desiredRotation) {
+            this.desiredRotation = desiredRotation;
+        }
+
+        public void SetDesiredPosition(Vector3 desiredPosition) {
+            this.desiredPosition = desiredPosition;
+        }
+
+
+        private IEnumerator UpdateDoor() {
             float t = 0f;
             onUpdateStarted?.Invoke();
 

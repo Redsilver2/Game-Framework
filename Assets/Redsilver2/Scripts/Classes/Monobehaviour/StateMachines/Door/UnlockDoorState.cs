@@ -2,18 +2,31 @@ using RedSilver2.Framework.Interactions;
 
 namespace RedSilver2.Framework.StateMachines.States
 {
-    public class UnlockDoorState : DoorState
+    [System.Serializable]
+    public sealed class UnlockDoorState : DoorState
     {
+        private LockableDoorStateMachine LockableDoorStateMachine;
         public const DoorStateType TYPE = DoorStateType.Unlocked;
+
+        public UnlockDoorState() : base()
+        {
+
+        }
 
         protected sealed override void SetDoorStateType(ref DoorStateType type) {
             type = TYPE;
         }
 
-        protected sealed override void OnEntered(DoorStateMachine stateMachine)
+        public void SetStateMachine(LockableDoorStateMachine stateMachine)
         {
-            base.OnEntered(stateMachine);
-            stateMachine?.SetLockState(false);
+            this.DoorStateMachine = stateMachine;
+            this.LockableDoorStateMachine = stateMachine;
+            SetStateMachine(stateMachine as StateMachine);
+        }
+
+
+        protected sealed override void OnEntered() {
+
         }
 
         protected sealed override void SetIncompatibleTransitionStates(ref string[] incompatibleStates)
@@ -22,7 +35,14 @@ namespace RedSilver2.Framework.StateMachines.States
             base.SetIncompatibleTransitionStates(ref incompatibleStates);
         }
 
-        public UnlockDoorState GetState(DoorStateMachine stateMachine)
+        public sealed override bool CanTransition()
+        {
+            if (LockableDoorStateMachine == null) return false;
+            return base.CanTransition() && LockableDoorStateMachine.IsLocked;
+        }
+
+
+        public UnlockDoorState GetState(LockableDoorStateMachine stateMachine)
         {
             if (stateMachine == null) return null;
             return stateMachine.GetState(TYPE) as UnlockDoorState;

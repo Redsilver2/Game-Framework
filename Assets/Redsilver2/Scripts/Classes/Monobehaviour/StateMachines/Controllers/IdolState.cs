@@ -1,8 +1,8 @@
-using RedSilver2.Framework.StateMachines.Controllers;
 using UnityEngine;
 
 namespace RedSilver2.Framework.StateMachines.States
 {
+    [System.Serializable]
     public sealed class IdolState : MovementState
     {
         [Space]
@@ -10,18 +10,42 @@ namespace RedSilver2.Framework.StateMachines.States
 
         public const MovementStateType TYPE = MovementStateType.Idol;
 
-        public sealed override bool CanTransition(MovementStateMachine stateMachine)
+        public IdolState() : base()
         {
-            if (stateMachine == null) return false;
-           
-            return !stateMachine.IsMoving && stateMachine.IsGrounded
-                && !RunState.IsStateMachineRunning(stateMachine) && !CrouchState.IsStateMachineCrouching(stateMachine)
-                && !JumpState.IsStateMachineJumping(stateMachine);     
         }
 
-        protected sealed override void OnUpdate(MovementStateMachine stateMachine) {
-            if(stateMachine == null) return;
-            stateMachine?.SetMoveSpeed(0f, moveSpeedTransition);
+
+#if UNITY_EDITOR
+        public void Validate(MovementStateMachine stateMachine)
+        {
+            SetStateMachine(stateMachine);
+            Validate();
+        }
+
+        protected override void Validate()
+        {
+            base.Validate();
+            moveSpeedTransition = Mathf.Clamp(moveSpeedTransition, 0f, float.MaxValue);
+        }
+#endif
+
+        private void SetStateMachine(MovementStateMachine stateMachine) { 
+            this.MovementStateMachine = stateMachine;
+            SetStateMachine(stateMachine as UpdatableStateMachine);
+        }
+
+        public sealed override bool CanTransition()
+        {
+            if (!base.CanTransition() || MovementStateMachine == null) return false;
+           
+            return !MovementStateMachine.IsMoving && MovementStateMachine.IsGrounded
+                && !RunState.IsStateMachineRunning(MovementStateMachine) && !CrouchState.IsStateMachineCrouching(MovementStateMachine)
+                && !JumpState.IsStateMachineJumping(MovementStateMachine);     
+        }
+
+        protected sealed override void OnUpdate() {
+            base.OnUpdate();
+            MovementStateMachine?.SetMoveSpeed(0f, moveSpeedTransition);
         }
 
         protected sealed override void SetMovementStateType(ref MovementStateType type) {

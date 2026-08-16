@@ -1,90 +1,68 @@
 using RedSilver2.Framework.Inputs.Settings;
 using RedSilver2.Framework.StateMachines.Controllers;
-using System.Collections;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace RedSilver2.Framework.StateMachines.States
 {
+    [System.Serializable]
     public sealed class PlayerRunState : RunState {
         [Space]
         [SerializeField] private bool hasToHoldInput = true;
 
+        [Space]
+        [SerializeField] private PressInputSettings pressInput;
 
         [Space]
-        [SerializeField] private PressInputSettings pressRun;
+        [SerializeField] private HoldInputSettings holdInput;
 
-        [Space]
-        [SerializeField] private HoldInputSettings holdRun;
+        public PressInputSettings PressInput => pressInput;
+        public HoldInputSettings  HoldInput  => holdInput; 
 
-        protected sealed override void Awake()
+        public PlayerRunState() : base()  { }
+
+
+#if UNITY_EDITOR
+        public void Validate(PlayerMovementStateMachine stateMachine)
         {
-            base.Awake();
+            SetStateMachine(stateMachine);
+            Validate();
+        }
+#endif
 
-            if (enabled) {
-                pressRun?.Enable();
-                holdRun?.Enable();
-            }
-            else {
-                pressRun?.Disable();
-                holdRun?.Disable();
-            }
+        private void SetStateMachine(PlayerMovementStateMachine stateMachine) {
+            this.MovementStateMachine = stateMachine;
+            SetStateMachine(stateMachine as UpdatableStateMachine);
+        }
+
+        protected override void OnEnabled()
+        {
+            MovementStateMachine?.AddOnUpdateListener(OnUpdateRunInput);
+            base.OnEnabled();
+        }
+
+        protected override void OnDisabled()
+        {
+            MovementStateMachine?.RemoveOnUpdateListener(OnUpdateRunInput);
+            base.OnDisabled();
         }
 
 
-        protected sealed override void OnEnabled(MovementStateMachine stateMachine)
+        private void OnUpdateRunInput()
         {
-            if (stateMachine == null || !stateMachine.ContainsState(this)) return;
-            stateMachine?.AddOnUpdateListener(OnUpdateRunInput(stateMachine));
+            pressInput?.Enable();
+            holdInput?.Enable();
 
-            pressRun?.Enable();
-            holdRun?.Enable();
-
-            base.OnEnabled(stateMachine);
-        }
-
-        protected sealed override void OnDisabled(MovementStateMachine stateMachine)
-        {
-            if (stateMachine == null || !stateMachine.ContainsState(this)) return;
-            stateMachine?.RemoveOnUpdateListener(OnUpdateRunInput(stateMachine));
-
-            pressRun?.Disable();
-            holdRun?.Disable();
-
-            base.OnDisabled(stateMachine);
-        }
-
-
-        private UnityAction OnUpdateRunInput(MovementStateMachine stateMachine)
-        {
-            return () => {
-                if (stateMachine == null || !stateMachine.IsGrounded || !stateMachine.IsMoving || !enabled)                 SetIsRunning(false);
-                else if(CrouchState.IsStateMachineCrouching(stateMachine) || JumpState.IsStateMachineJumping(stateMachine)) SetIsRunning(false);
-                else if (hasToHoldInput)  SetIsRunning(holdRun != null ? holdRun.GetValue() : false);
-                else if (!hasToHoldInput) {
-                    if (pressRun != null) {
-                        if (pressRun.GetValue()) SetIsRunning(!IsRunning);
-                    }
-                    else SetIsRunning(false);
+            if (MovementStateMachine == null || !MovementStateMachine.IsGrounded || !MovementStateMachine.IsMoving) SetIsRunning(false);
+            else if (CrouchState.IsStateMachineCrouching(MovementStateMachine) || JumpState.IsStateMachineJumping(MovementStateMachine)) SetIsRunning(false);
+            else if (hasToHoldInput) SetIsRunning(holdInput != null ? holdInput.GetValue() : false);
+            else if (!hasToHoldInput)
+            {
+                if (pressInput != null)
+                {
+                    if (pressInput.GetValue()) SetIsRunning(!IsRunning);
                 }
-            };
-        }
-
-        public void SetPressRunSetting(PressInputSettings pressRunSetting)
-        {
-            this.pressRun?.Disable();
-            this.pressRun = pressRunSetting;
-
-            if (enabled) pressRunSetting?.Enable();
-            else pressRunSetting?.Disable();
-        }
-
-        public void SetHoldRunSetting(HoldInputSettings holdRunSetting) {
-            this.holdRun?.Disable();
-            this.holdRun = holdRunSetting;
-
-            if (enabled) this.holdRun?.Enable();
-            else         this.holdRun?.Disable();
+                else SetIsRunning(false);
+            }
         }
 
         public static PlayerRunState GetState(PlayerMovementStateMachine stateMachine) {

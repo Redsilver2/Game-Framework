@@ -3,23 +3,36 @@ using UnityEngine;
 
 namespace RedSilver2.Framework.StateMachines.States
 {
+    [System.Serializable]
     public sealed class LockDoorState : DoorState
     {
+        private LockableDoorStateMachine LockableDoorStateMachine;
+
         public const DoorStateType TYPE = DoorStateType.Locked;
+
+        public LockDoorState() : base() {
+
+        }
+
+        public void SetStateMachine(LockableDoorStateMachine stateMachine)
+        {
+            this.DoorStateMachine         = stateMachine;
+            this.LockableDoorStateMachine = stateMachine;
+            SetStateMachine(stateMachine as StateMachine);
+        }
 
         protected sealed override void SetDoorStateType(ref DoorStateType type) {
             type = TYPE;
         }
 
-        protected sealed override void OnEntered(DoorStateMachine stateMachine) {
-            base.OnEntered(stateMachine);
-            stateMachine?.SetLockState(true);
+        protected sealed override void OnEntered() {
+
         }
 
-        public sealed override bool CanTransition(DoorStateMachine stateMachine)
+        public sealed override bool CanTransition()
         {
-            if (stateMachine == null) return false;
-            return !stateMachine.IsLocked;
+            if (LockableDoorStateMachine == null) return false;
+            return base.CanTransition() && !LockableDoorStateMachine.IsLocked;
         }
 
         protected sealed override void SetIncompatibleTransitionStates(ref string[] incompatibleStates) {
@@ -31,7 +44,7 @@ namespace RedSilver2.Framework.StateMachines.States
             base.SetIncompatibleTransitionStates(ref incompatibleStates);
         }
 
-        public LockDoorState GetState(DoorStateMachine stateMachine) {
+        public LockDoorState GetState(LockableDoorStateMachine stateMachine) {
             if (stateMachine == null) return null;
             return stateMachine.GetState(TYPE) as LockDoorState;
         }

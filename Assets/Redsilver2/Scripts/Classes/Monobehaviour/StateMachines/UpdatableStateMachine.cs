@@ -1,4 +1,5 @@
 using RedSilver2.Framework.StateMachines.States;
+using UnityEngine;
 using UnityEngine.Events;
 
 namespace RedSilver2.Framework.StateMachines
@@ -6,7 +7,6 @@ namespace RedSilver2.Framework.StateMachines
     public abstract class UpdatableStateMachine : StateMachine
     {
         private bool doesCurrentStateExist;
-        private UpdatableState currentState;
 
         private UnityEvent onUpdate;
         private UnityEvent onLateUpdate;
@@ -20,11 +20,11 @@ namespace RedSilver2.Framework.StateMachines
             onUpdate = new UnityEvent();
             onLateUpdate = new UnityEvent();
 
-            onStateAdded = new UnityEvent<UpdatableState>();
+            onStateAdded   = new UnityEvent<UpdatableState>();
             onStateRemoved = new UnityEvent<UpdatableState>();
 
             onStateEntered = new UnityEvent<UpdatableState>();
-            onStateExited = new UnityEvent<UpdatableState>();
+            onStateExited  = new UnityEvent<UpdatableState>();
 
             doesCurrentStateExist = false; 
 
@@ -35,7 +35,7 @@ namespace RedSilver2.Framework.StateMachines
         private void Update() { onUpdate?.Invoke(); }
         private void LateUpdate() { onLateUpdate?.Invoke(); }
 
-        protected virtual void OnUpdate() { 
+        protected virtual void OnUpdate() {
             if(!doesCurrentStateExist) {
                 foreach(State state in States) {
                     if (state == null || !state.CanTransition()) continue;
@@ -54,9 +54,10 @@ namespace RedSilver2.Framework.StateMachines
         }
         protected virtual void OnStateEntered(UpdatableState state)
         {
-            currentState = state;
+            Debug.Log(state);
+
             onStateEntered?.Invoke(state);
-            doesCurrentStateExist = currentState != null ? true : false;
+            doesCurrentStateExist = state != null ? true : false;
         }
 
         protected sealed override void OnStateExited(State state)
@@ -66,7 +67,6 @@ namespace RedSilver2.Framework.StateMachines
         }
         protected virtual void OnStateExited(UpdatableState state)
         {
-            currentState = null;
             onStateEntered?.Invoke(state);
         }
 

@@ -1,41 +1,44 @@
 using RedSilver2.Framework.Inputs.Settings;
 using RedSilver2.Framework.StateMachines.Controllers;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace RedSilver2.Framework.StateMachines.States
 {
+    [System.Serializable]
     public sealed class PlayerJumpState : JumpState {
         [Space]
         [SerializeField] private PressInputSettings inputSetting;
 
-        protected override void OnEnabled(MovementStateMachine stateMachine) {
-            if (stateMachine == null || stateMachine.ContainsState(this)) return;
-            stateMachine?.AddOnUpdateListener(OnUpdateJumpInput(stateMachine));
-
-            inputSetting?.Enable();
-            base.OnEnabled(stateMachine);
+        public PlayerJumpState() : base() {
+        
         }
 
-        protected override void OnDisabled(MovementStateMachine stateMachine)
+
+#if UNITY_EDITOR
+        public void Validate(PlayerMovementStateMachine stateMachine) { 
+            SetStateMachine(stateMachine);
+            Validate();
+        }
+#endif
+
+        private void SetStateMachine(PlayerMovementStateMachine stateMachine)
         {
-            inputSetting?.Disable();
-            base.OnDisabled(stateMachine);
-
-            if (stateMachine == null || !stateMachine.ContainsState(this)) return;
-            stateMachine?.RemoveOnUpdateListener(OnUpdateJumpInput(stateMachine));
+            this.MovementStateMachine = stateMachine;
+            SetStateMachine(stateMachine as UpdatableStateMachine);
         }
 
-        private UnityAction OnUpdateJumpInput(MovementStateMachine stateMachine) {
-            return () => {
-                if (stateMachine == null || inputSetting == null || !stateMachine.IsGrounded) SetIsJumping(false);
-                else if (inputSetting.GetValue()) { SetIsJumping(true); }
-            };
-        }
+        protected override void MovementStateMachineUpdate()
+        {
+            inputSetting?.Enable();
+            base.MovementStateMachineUpdate();
 
-
-        public void SetInputSetting(PressInputSettings inputSetting) {
-            this.inputSetting = inputSetting;
+            if (MovementStateMachine == null || inputSetting == null || CurrentJumpDelay > 0f || !IsEnabled) SetIsJumping(false);
+            else if (inputSetting.GetValue()) {
+               if (JumpCount == 0 && MovementStateMachine.IsGrounded) { SetIsJumping(true); }
+               else if (JumpCount > 0 && JumpCount < MaxJumpCount)    { MovementStateMachine?.ChangeState(TYPE, false); }
+               else { SetIsJumping(false); }
+            }
+            else { SetIsJumping(false); }
         }
 
         public static PlayerJumpState GetState(PlayerMovementStateMachine stateMachine) {

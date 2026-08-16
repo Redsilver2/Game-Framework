@@ -61,7 +61,7 @@ namespace RedSilver2.Framework.StateMachines {
         }
 
         protected virtual void OnLifeTimeProgressUpdate(float progress) {   
-            if(progress <= 0f)  ChangeState(LightSourceStateType.Off);
+            if(progress <= 0f)  ChangeState(LightSourceItemStateType.Off);
         }
 
         protected sealed override void OnStateAdded(EquippableItemState state) {
@@ -124,7 +124,7 @@ namespace RedSilver2.Framework.StateMachines {
             if (_light != null) _light.enabled = true;
 
             while (currentState != null) {
-                if (currentState.Type != LightSourceStateType.On || lifetime <= 0f) break;
+                if (currentState.Type != LightSourceItemStateType.On || lifetime <= 0f) break;
                 lifetime = Mathf.Clamp(lifetime - Time.deltaTime * drainLifeTimeSpeed, 0f, maxLifeTime);
 
                 onLifeTimeProgressUpdate?.Invoke(maxLifeTime < 0f ? 1f :  Mathf.Clamp01(lifetime/maxLifeTime));
@@ -136,7 +136,7 @@ namespace RedSilver2.Framework.StateMachines {
 
         protected virtual void OnStateEntered(LightSourceItemState state) {
             if (state != null) {
-                if (state.Type == LightSourceStateType.On) {
+                if (state.Type == LightSourceItemStateType.On) {
                     isOn = true;
                     GetLightSourceItemAnimationController()?.PlayTurnOnLightData();
                 }
@@ -234,7 +234,7 @@ namespace RedSilver2.Framework.StateMachines {
             ChangeState(state as State);
         }
 
-        public void ChangeState(LightSourceStateType type) {
+        public void ChangeState(LightSourceItemStateType type) {
             ChangeState(GetState(type));
         }
 
@@ -244,7 +244,7 @@ namespace RedSilver2.Framework.StateMachines {
         }
 
 
-        public LightSourceItemState GetState(LightSourceStateType type)
+        public LightSourceItemState GetState(LightSourceItemStateType type)
         {
             foreach(State state in States) {
                 LightSourceItemState _state = state as LightSourceItemState;

@@ -2,9 +2,10 @@ using UnityEngine;
 
 namespace RedSilver2.Framework.StateMachines.States
 {
-    public enum LightSourceStateType  {
+    public enum LightSourceItemStateType  {
         Off,
-        On
+        On,
+        Refilling
     }
 
 }

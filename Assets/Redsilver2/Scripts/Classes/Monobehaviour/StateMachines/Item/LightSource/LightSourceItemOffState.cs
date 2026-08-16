@@ -1,4 +1,3 @@
-
 using RedSilver2.Framework.Inputs.Settings;
 using UnityEngine;
 
@@ -8,7 +7,11 @@ namespace RedSilver2.Framework.StateMachines.States {
         [Space]
         [SerializeField] private PressInputSettings inputSetting;
 
-        public const LightSourceStateType TYPE = LightSourceStateType.Off;
+        public const LightSourceItemStateType TYPE = LightSourceItemStateType.Off;
+
+        public LightSourceItemOffState() : base()
+        {
+        }
 
         public void SetLightEnableState(LightSourceItemStateMachine stateMachine)
         {
@@ -16,24 +19,24 @@ namespace RedSilver2.Framework.StateMachines.States {
             if(light != null) light.enabled = false;
         }
 
-        public sealed override bool CanTransition(LightSourceItemStateMachine stateMachine)
+        public sealed override bool CanTransition()
         {
-            if (stateMachine == null|| inputSetting == null) return false;
+            if (StateMachine == null|| inputSetting == null) return false;
             inputSetting?.Enable();
 
-            return inputSetting.GetValue() && stateMachine.IsOn;
+            return inputSetting.GetValue() && StateMachine.IsOn;
         }
 
-        protected override void OnEntered(LightSourceItemStateMachine stateMachine)
+        protected override void OnEntered()
         {
-            stateMachine?.StopDrainingLightSource();
+            StateMachine?.StopDrainingLightSource();
 
-            base.OnEntered(stateMachine);
+            base.OnEntered();
         }
 
-        protected sealed override void SetLightSourceStateType(ref LightSourceStateType type)
+        protected sealed override void SetLightSourceStateType(ref LightSourceItemStateType type)
         {
-            type = LightSourceStateType.Off;
+            type = LightSourceItemStateType.Off;
         }
 
         protected sealed override void SetIncompatibleTransitionStates(ref string[] incompatibleStates)

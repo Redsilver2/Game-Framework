@@ -14,7 +14,9 @@ namespace RedSilver2.Framework.StateMachines
 
         private UnityEvent<State> onStateAdded, onStateRemoved;
         private UnityEvent<State> onStateEntered, onStateExited;
-        public State[] States => states != null ? states.ToArray() : new State[0];
+
+        public State CurrentState => currentState;
+        public State[] States     => states != null ? states.ToArray() : new State[0];
 
      
 
@@ -51,16 +53,17 @@ namespace RedSilver2.Framework.StateMachines
 
         public void AddState(State state)
         {
-            if (CanAddState(state))
-            {
-                states?.Add(state);
-                onStateAdded?.Invoke(state);
-            }
+            if (states == null || !CanAddState(state) || states.Contains(state)) return;
+
+            states?.Add(state);
+            onStateAdded?.Invoke(state);
         }
 
         public void RemoveState(State state)
         {
             if (states == null || state == null || !states.Contains(state)) return;
+            state?.Disable();
+
             onStateRemoved?.Invoke(state);
             states?.Remove(state);
         }

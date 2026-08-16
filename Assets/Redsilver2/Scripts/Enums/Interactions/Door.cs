@@ -7,7 +7,7 @@ namespace RedSilver2.Framework.Interactions {
     [RequireComponent(typeof(DoorStateMachine))]
     public sealed class Door : InteractionModule {
 
-        private DoorStateMachine stateMachine;
+       private DoorStateMachine stateMachine;
 
         protected sealed override void Awake()
         {

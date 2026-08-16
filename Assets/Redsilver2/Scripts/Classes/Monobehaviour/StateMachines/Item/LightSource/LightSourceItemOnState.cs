@@ -1,3 +1,4 @@
+using RedSilver2.Framework.Animations;
 using RedSilver2.Framework.Inputs.Settings;
 using RedSilver2.Framework.StateMachines.States;
 using UnityEngine;
@@ -12,29 +13,26 @@ namespace RedSilver2.Framework.StateMachines
         [Space]
         [SerializeField] private PressInputSettings inputSetting;
 
-        public const LightSourceStateType TYPE = LightSourceStateType.On;
+        public const LightSourceItemStateType TYPE = LightSourceItemStateType.On;
 
-        public void SetLightEnableState(LightSourceItemStateMachine stateMachine)
-        {
-            Light light = stateMachine != null ? stateMachine.Light : null;
-            if (light != null) light.enabled = true;
+        public LightSourceItemOnState() : base() {
+
         }
 
-        protected override void OnEntered(LightSourceItemStateMachine stateMachine)
-        {
-            stateMachine?.StartDrainingLightSource(lightActivationWaitTime);
-            base.OnEntered(stateMachine);
+        protected override void OnEntered() {
+            base.OnEntered();
+            StateMachine?.StartDrainingLightSource(lightActivationWaitTime);
         }
 
-        public sealed override bool CanTransition(LightSourceItemStateMachine stateMachine)
+        public sealed override bool CanTransition()
         {
-            if (stateMachine == null || inputSetting == null) return false;
+            if (StateMachine == null || inputSetting == null) return false;
             inputSetting?.Enable();
 
-            return inputSetting.GetValue() && !stateMachine.IsOn && stateMachine.LifeTime > 0f;
+            return inputSetting.GetValue() && !StateMachine.IsOn && StateMachine.LifeTime > 0f;
         }
 
-        protected sealed override void SetLightSourceStateType(ref LightSourceStateType type) {
+        protected sealed override void SetLightSourceStateType(ref LightSourceItemStateType type) {
             type = TYPE;
         }
 

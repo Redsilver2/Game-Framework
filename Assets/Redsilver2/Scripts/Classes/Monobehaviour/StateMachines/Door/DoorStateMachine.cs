@@ -6,74 +6,65 @@ using UnityEngine.Events;
 
 namespace RedSilver2.Framework.StateMachines
 {
-    public sealed class DoorStateMachine : StateMachine
+    public class DoorStateMachine : StateMachine
     {
         [SerializeField] private Transform handle;
 
+        [Space]
+        [SerializeField] private OpenDoorState  openState;
+
+        [Space]
+        [SerializeField] private CloseDoorState closeState;
+
         private bool isOpen;
-        private bool isLocked;
+        private UnityEvent<DoorState> onStateEntered, onStateExited;
+        private UnityEvent<DoorState> onStateAdded, onStateRemoved;
 
-        private List<DoorState> states;
-
-        private UnityEvent onClose, onOpen;
-        private UnityEvent onLock, onUnlock;
-
-        public bool IsOpen => isOpen;
-        public bool IsLocked => isLocked;
+        public bool      IsOpen => isOpen;
         public Transform Handle => handle;
 
-        private UnityEvent<DoorState> onStateEntered, onStateExited;
-        private UnityEvent<DoorState> onStateAdded  , onStateRemoved;
+        public OpenDoorState  OpenState    => openState;
+        public CloseDoorState CloseState   => closeState;
 
-        protected sealed override void Awake()
+
+
+#if UNITY_EDITOR
+        protected override void OnValidate()
+        {
+            base.OnValidate();
+
+            openState?.Validate(this);
+            closeState?.Validate(this);
+        } 
+#endif
+
+        protected override void Awake()
         {
             base.Awake();
-            states = new List<DoorState>();
 
             onStateAdded   = new UnityEvent<DoorState>();
             onStateRemoved = new UnityEvent<DoorState>();
 
             onStateEntered = new UnityEvent<DoorState>();
             onStateExited  = new UnityEvent<DoorState>();
-
-            onClose  = new UnityEvent();
-            onOpen   = new UnityEvent();
-
-            onLock   = new UnityEvent();
-            onUnlock = new UnityEvent();
+           
+            AddState(openState);
+            AddState(closeState);
         }
 
-        public void Open() {
-            OpenDoorState state = OpenDoorState.GetState(this);
-
-            if (state != null) {
-                if (state.CanTransition()) {
-                    ChangeState(state);
-                    isOpen = true;
-                }
+        public virtual void Open()  {
+            if (!isOpen) {
+                ChangeState(openState);
+                isOpen = true;
             }
         }
-
-        public void Close() {
-            CloseDoorState state = CloseDoorState.GetState(this);
-
-            if (state != null) {
-                if (state.CanTransition()) {
-                    ChangeState(state);
-                    isOpen = false;
-                }
+        public void Close()
+        {
+            if (isOpen) {
+                ChangeState(closeState);
+                isOpen = false;
             }
         }
-
-        public void SetLockState(bool isLocked) {
-            if(this.isLocked != isLocked) {
-                this.isLocked = isLocked;
-               
-                if(isLocked) onLock?.Invoke();
-                else         onUnlock?.Invoke();
-            }
-        }
-
 
         protected override bool CanAddState(State state){
             return base.CanAddState(state) && CanAddState(state as DoorState);
@@ -108,15 +99,9 @@ namespace RedSilver2.Framework.StateMachines
         }
 
         private void OnStateAdded(DoorState state) {
-            if(states == null || state == null || states.Contains(state)) return;
-            states?.Add(state);
-
             onStateAdded?.Invoke(state);
         }
         private void OnStateRemoved(DoorState state) {
-            if (states == null || state == null || !states.Contains(state)) return;
-            states?.Remove(state);
-
             onStateRemoved?.Invoke(state);
         }
 
@@ -152,42 +137,36 @@ namespace RedSilver2.Framework.StateMachines
             if (action != null) onStateRemoved?.RemoveListener(action);
         }
 
-        public void AddOnOpenListener(UnityAction action)
+        public virtual void ChangeState(DoorStateType type)
         {
-            if (action != null) onOpen?.AddListener(action);
-        }
-        public void RemoveOnOpenListener(UnityAction action)
-        {
-            if (action != null) onOpen?.RemoveListener(action);
-        }
-
-        public void AddOnCloseListener(UnityAction action)
-        {
-            if (action != null) onClose?.AddListener(action);
-        }
-        public void RemoveOnCloseListener(UnityAction action)
-        {
-            if (action != null) onClose?.RemoveListener(action);
+            switch (type) {
+                case DoorStateType.Open:     ChangeState(openState); break;
+                case DoorStateType.Close:    ChangeState(closeState); break;
+            }
         }
 
-        public void AddOnLockListener(UnityAction action)
-        {
-            if (action != null) onLock?.AddListener(action);
-        }
-        public void RemoveOnLockListener(UnityAction action)
-        {
-            if (action != null) onLock?.RemoveListener(action);
+        public virtual void AddState(DoorStateType type) {
+            switch (type) {
+                case DoorStateType.Open:      AddState(openState);   break;
+                case DoorStateType.Close:     AddState(closeState);  break;
+            }
         }
 
-        public void ChangeState(DoorStateType type)
-        {
-            ChangeState(GetState(type));
+        public virtual void RemoveState(DoorStateType type) {
+            switch (type) {
+                case DoorStateType.Open:     RemoveState(openState);   break;
+                case DoorStateType.Close:    RemoveState(closeState);  break;
+            }
         }
+
+
         public DoorState GetState(DoorStateType type) {
-            if(states == null) return null;
+            foreach(State state in States) {
+                DoorState _state = state as DoorState;
+                if (_state == null || _state.Type != type) continue;
 
-            for(int i = 0; i < states.Count; i++)
-                if (states[i].Type == type) return states[i];
+                return _state;
+            }
 
             return null;
         }

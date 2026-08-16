@@ -1,3 +1,4 @@
+using RedSilver2.Framework.Animations;
 using RedSilver2.Framework.StateMachines.States;
 using UnityEngine;
 
@@ -7,78 +8,34 @@ namespace RedSilver2.Framework.StateMachines
 
         [Space]
         [SerializeField] private float defaultCooldown;
+
+        private AnimationController controller;
+
         private float cooldown;
-
-        private EquippableItemStateMachine stateMachine;
-
         public float Cooldown => cooldown;
 
+        protected EquippableItemState() : base() {
+            cooldown = defaultCooldown;
+        }
+
+
 #if UNITY_EDITOR
-        protected override void OnValidate()  {
+        protected override void Validate()  {
             defaultCooldown = Mathf.Clamp(defaultCooldown, 0f, float.MaxValue);
         }
 #endif
 
-        protected override void Awake()
+        protected override void OnEntered()
         {
-            base.Awake();
-            SetStateMachine(GetComponent<EquippableItemStateMachine>());
-            cooldown = defaultCooldown;
+            base.OnExited();
+            controller?.PlayDefaultData();
         }
 
-        protected override void SetStateMachine(StateMachine stateMachine)
-        {
-            base.SetStateMachine(stateMachine);
-            this.stateMachine = stateMachine as EquippableItemStateMachine;
-        }
-
-        protected sealed override void OnDisabled(UpdatableStateMachine stateMachine)
-        {
-            base.OnDisabled(stateMachine);
-            OnDisabled(stateMachine as EquippableItemStateMachine);
-        }
-
-        protected sealed override void OnEnabled(UpdatableStateMachine stateMachine)
-        {
-
-            base.OnEnabled(stateMachine);
-            OnEnabled(stateMachine as EquippableItemStateMachine);
-        }
-
-        protected sealed override void OnEntered(UpdatableStateMachine stateMachine) {
-            base.OnEntered(stateMachine);
-            OnEntered(stateMachine as EquippableItemStateMachine);
-        }
-
-        protected sealed override void OnExited(UpdatableStateMachine stateMachine) {
-            base.OnExited(stateMachine);
-            OnExited(stateMachine as EquippableItemStateMachine);
-        }
-
-        public sealed override bool CanTransition(UpdatableStateMachine stateMachine)
-        {
-            return base.CanTransition(stateMachine) && CanTransition(stateMachine as EquippableItemStateMachine); 
-        }
-
-        public virtual bool CanTransition(EquippableItemStateMachine stateMachine) {
-            if (stateMachine == null || !stateMachine.IsCooldownOver()) return false;
-            return true;
-        }
-
-
-        protected virtual void OnDisabled(EquippableItemStateMachine stateMachine) { }
-
-        protected virtual void OnEnabled(EquippableItemStateMachine stateMachine) { }
-
-        protected virtual void OnEntered(EquippableItemStateMachine stateMachine) { }
-
-        protected virtual void OnExited(EquippableItemStateMachine stateMachine) {  }
-
-
-        protected sealed override bool CanAddTransitionState(UpdatableState state)
+        protected sealed override bool CanAddTransitionState(State state)
         {
             return base.CanAddTransitionState(state) && CanAddTransitionState(state as EquippableItemState);
         }
+
         protected virtual bool CanAddTransitionState(EquippableItemState state)
         {
             return state != null ? true : false;
@@ -87,7 +44,6 @@ namespace RedSilver2.Framework.StateMachines
         public void SetCooldown(float cooldown) {
             this.cooldown = Mathf.Clamp(cooldown, 0f, cooldown);
         }
-
         public void ResetCooldown() { cooldown = defaultCooldown; }
     }
 }

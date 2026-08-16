@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace RedSilver2.Framework.StateMachines.States
 {
+    [System.Serializable]
     public abstract class CrouchState : MovementState
     {
         [Space]
@@ -21,24 +22,42 @@ namespace RedSilver2.Framework.StateMachines.States
 
         public const MovementStateType TYPE = MovementStateType.Crouch;
 
-        protected void SetIsCrouching(bool isCrouching) { this.isCrouching = isCrouching; }
-
-        public sealed override bool CanTransition(MovementStateMachine stateMachine) {
-            return base.CanTransition(stateMachine) && IsStateMachineCrouching(stateMachine);
+        protected CrouchState() : base() {
+            isCrouching = false;
         }
 
-        protected sealed override void OnUpdate(MovementStateMachine stateMachine) {
-            stateMachine?.SetMoveSpeed(crouchMoveSpeed, crouchMoveTransitionSpeed);
-            stateMachine?.SetHeight(crouchHeight, crouchHeightTransitionSpeed);
+
+#if UNITY_EDITOR
+        protected override void Validate() {
+            crouchMoveSpeed = Mathf.Clamp(crouchMoveSpeed, 0f, float.MaxValue);
+            crouchHeight = Mathf.Clamp(crouchHeight, 0f, float.MaxValue);
+
+            crouchHeightTransitionSpeed = Mathf.Clamp(crouchHeightTransitionSpeed, 0f, float.MaxValue);
+            crouchMoveTransitionSpeed = Mathf.Clamp(crouchMoveTransitionSpeed, 0f, float.MaxValue);
+
+            unCrouchSafetyCheckDistance = Mathf.Clamp(unCrouchSafetyCheckDistance, 0f, float.MaxValue);
+        }
+#endif
+
+        protected void SetIsCrouching(bool isCrouching) { this.isCrouching = isCrouching; }
+
+        public sealed override bool CanTransition() {
+            return base.CanTransition() && IsStateMachineCrouching(MovementStateMachine);
+        }
+
+        protected sealed override void OnUpdate() {
+            base.OnUpdate();
+            MovementStateMachine?.SetMoveSpeed(crouchMoveSpeed, crouchMoveTransitionSpeed);
+            MovementStateMachine?.SetHeight(crouchHeight, crouchHeightTransitionSpeed);
         }
 
         protected sealed override void SetMovementStateType(ref MovementStateType type) {
             type = TYPE;
         }
 
-        protected override void OnDisabled(MovementStateMachine stateMachine)
+        protected override void OnDisabled()
         {
-            base.OnDisabled(stateMachine);
+            base.OnDisabled();
             isCrouching = false;
         }
 
@@ -49,8 +68,12 @@ namespace RedSilver2.Framework.StateMachines.States
 
         protected sealed override void UpdateStateTransitions()
         {
-            if (!Physics.Raycast(transform.position, transform.up, out RaycastHit hit, unCrouchSafetyCheckDistance, ~(1 << GetLayerToIgnore()))) {
-                base.UpdateStateTransitions();
+            if(MovementStateMachine != null) {
+                Transform transform = MovementStateMachine.transform;
+
+                if (!Physics.Raycast(transform.position, transform.up, out RaycastHit hit, unCrouchSafetyCheckDistance, ~(1 << GetLayerToIgnore()))) {
+                    base.UpdateStateTransitions();
+                }
             }
         }
 

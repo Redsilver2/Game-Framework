@@ -1,20 +1,36 @@
 using RedSilver2.Framework.StateMachines.Controllers;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 namespace RedSilver2.Framework.StateMachines.States
 {
-    [RequireComponent(typeof(IdolState))]
+    [System.Serializable]
     public abstract class RunState : MovementState {
         [Space]
         [SerializeField] private float runSpeed;
         [SerializeField] private float runTransitionSpeed;
 
         private bool isRunning;
+
+        public float RunSpeed => runSpeed;
+        public float RunTransitionSpeed => runTransitionSpeed;
         public bool IsRunning => isRunning;
         public const MovementStateType TYPE = MovementStateType.Run;
+
+        protected RunState() : base() {
+
+        }
+
+
+#if UNITY_EDITOR
+        protected override void Validate()
+        {
+            base.Validate();
+            runSpeed = Mathf.Clamp(runSpeed, 0f, float.MaxValue);
+            runTransitionSpeed = Mathf.Clamp(runTransitionSpeed, 0f, float.MaxValue);
+        }
+#endif
 
         protected sealed override MovementStateType[] GetDefaultInvalidTypes()
         {
@@ -29,15 +45,15 @@ namespace RedSilver2.Framework.StateMachines.States
             return new MovementStateType[] { FallState.TYPE, WalkState.TYPE, CrouchState.TYPE, JumpState.TYPE };
         }
 
-        protected override void OnExited(MovementStateMachine stateMachine)
+        protected override void OnExited()
         {
-            base.OnExited(stateMachine);
+            base.OnExited();
             isRunning = false;
         }
 
-        protected override void OnDisabled(MovementStateMachine stateMachine)
+        protected override void OnDisabled()
         {
-            base.OnDisabled(stateMachine);
+            base.OnDisabled();
             isRunning = false;
         }
 
@@ -55,14 +71,17 @@ namespace RedSilver2.Framework.StateMachines.States
             type = TYPE;
         }
 
-        protected sealed override void OnUpdate(MovementStateMachine stateMachine) {
-            stateMachine?.SetMoveSpeed(this.runSpeed, runTransitionSpeed);
+        protected sealed override void OnUpdate() {
+            base.OnUpdate();
+            MovementStateMachine?.SetMoveSpeed(this.runSpeed, runTransitionSpeed);
         }
 
-        public void SetIsRunning(bool isRunning) { this.isRunning = isRunning; }
-        public sealed override bool CanTransition(MovementStateMachine stateMachine)
-        {
-            return base.CanTransition(stateMachine) && IsStateMachineRunning(stateMachine);
+        public void SetIsRunning(bool isRunning) {
+            this.isRunning = isRunning;
+        }
+
+        public sealed override bool CanTransition() {
+            return base.CanTransition() && IsStateMachineRunning(MovementStateMachine);
         }
 
        

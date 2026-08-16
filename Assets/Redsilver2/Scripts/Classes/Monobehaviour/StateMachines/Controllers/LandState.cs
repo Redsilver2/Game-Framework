@@ -1,25 +1,57 @@
-using RedSilver2.Framework.StateMachines.Controllers;
+
+using UnityEngine;
 
 namespace RedSilver2.Framework.StateMachines.States
 {
-    public class LandState : MovementState
+    [System.Serializable]
+    public sealed class LandState : MovementState
     {
         public const MovementStateType TYPE = MovementStateType.Land;
 
-        public sealed override bool CanTransition(MovementStateMachine stateMachine)
+        public LandState() : base()
         {
-            if (stateMachine == null) return false;
-            return stateMachine.IsGrounded;
         }
 
-        protected sealed override void OnUpdate(MovementStateMachine stateMachine) {
-            if (stateMachine == null) return;
-            stateMachine?.SetFallSpeed(stateMachine.DefaultFallSpeed);
+
+#if UNITY_EDITOR
+        public void Validate(MovementStateMachine stateMachine)
+        {
+            SetStateMachine(stateMachine);
+            Validate();
+        }
+#endif
+
+        public sealed override bool CanTransition()
+        {
+            if (MovementStateMachine == null) return false;
+            return base.CanTransition() && MovementStateMachine.IsGrounded;
+        }
+
+        protected override void OnEntered()
+        {
+            base.OnEntered();
+            JumpState.GetState(MovementStateMachine)?.ResetJumpCount();
+        }
+
+        protected sealed override void OnUpdate() {
+            base.OnUpdate();
+
+            if (MovementStateMachine == null) return;
+            MovementStateMachine?.SetFallSpeed(MovementStateMachine.DefaultFallSpeed);
         }
 
         protected override void SetMovementStateType(ref MovementStateType type) {
             type = TYPE;
         }
+
+
+
+        private void SetStateMachine(MovementStateMachine stateMachine)
+        {
+            this.MovementStateMachine = stateMachine;
+            SetStateMachine(stateMachine as UpdatableStateMachine);
+        }
+
 
         public static LandState GetState(MovementStateMachine stateMachine)
         {

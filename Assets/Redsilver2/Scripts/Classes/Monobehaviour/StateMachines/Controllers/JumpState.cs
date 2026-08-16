@@ -1,27 +1,55 @@
-using RedSilver2.Framework.StateMachines.Controllers;
 using System;
-using System.Collections;
-using System.Linq;
 using UnityEngine;
 
 namespace RedSilver2.Framework.StateMachines.States {
 
-    [RequireComponent(typeof(FallState))]
+    [System.Serializable]
     public abstract class JumpState : MovementState {
+       
+        [Space]
+        [SerializeField] private float jumpForce;
 
         [Space]
-        [SerializeField] private float defaultJumpForce;
-        private float jumpForce;    
+        [SerializeField] private uint maxJumpCount;
+
+        [Space]
+        [SerializeField] private float maxJumpDelay; 
+
+        private uint  currentJumpCount; 
+        private float currentJumpDelay;
+        
         private bool isJumping;
-        public bool IsJumping => isJumping;
-        public const MovementStateType TYPE = MovementStateType.Jump;
+
+
+        public  bool IsJumping => isJumping;
+        public  float JumpForce => jumpForce;
+
+        public uint   MaxJumpCount => maxJumpCount;
+        public uint   JumpCount    => currentJumpCount;
+
+        public float MaxJumpDelay     => maxJumpDelay;
+        public float CurrentJumpDelay => currentJumpDelay;
+
+
+        public  const MovementStateType TYPE = MovementStateType.Jump;
+
+        protected JumpState() : base()
+        {
+            currentJumpCount = 0;
+            currentJumpDelay = 0f;
+            isJumping = false;
+        }
 
 #if UNITY_EDITOR
-        protected override void OnValidate()
-        {
-            base.OnValidate();
-            jumpForce           = Mathf.Clamp(jumpForce, 0f, float.MaxValue);
+        public void Validate(MovementStateMachine stateMachine) {
+            SetStateMachine(stateMachine);
+            Validate();
+        }
 
+        protected override void Validate() {
+            jumpForce    = Mathf.Clamp(jumpForce, 0f, float.MaxValue);
+            maxJumpCount = (uint)Mathf.Clamp(maxJumpCount, 1, uint.MaxValue); 
+            maxJumpDelay = Mathf.Clamp(maxJumpDelay, 0f, float.MaxValue);       
         }
 #endif
 
@@ -35,46 +63,64 @@ namespace RedSilver2.Framework.StateMachines.States {
             return new MovementStateType[] { FallState.TYPE };
         }
 
-        protected override void Awake()
-        {
-            base.Awake();
-            ResetJumpForce();
+        protected override void OnEntered() {
+            MovementStateMachine?.ResetAirbornTime();
+            
+            base.OnEntered();
+         
+            if(MovementStateMachine != null) {
+                if (MovementStateMachine.FallSpeed < 0f) MovementStateMachine?.SetFallSpeed(jumpForce);
+                else MovementStateMachine?.SetFallSpeed(MovementStateMachine.FallSpeed + jumpForce);
+            }
+
+            currentJumpCount++;
+            currentJumpDelay = maxJumpDelay;
         }
 
-        protected override void OnEntered(MovementStateMachine stateMachine) {
-            base.OnEntered(stateMachine);
-            stateMachine?.SetFallSpeed(jumpForce);
-        }
 
-
-        protected override void OnExited(MovementStateMachine stateMachine)
+        protected override void OnExited()
         {
-            base.OnExited(stateMachine);
-            isJumping      = false;
-        }
-
-        protected override void OnDisabled(MovementStateMachine stateMachine)
-        {
-            base.OnDisabled(stateMachine);
+            base.OnExited();
             isJumping = false;
         }
+
+        protected override void OnEnabled()
+        {
+            base.OnEnabled();
+            Debug.Log("?!");
+
+            MovementStateMachine?.AddOnUpdateListener(MovementStateMachineUpdate);
+        }
+
+        protected override void OnDisabled() {
+            MovementStateMachine?.RemoveOnUpdateListener(MovementStateMachineUpdate);
+            isJumping = false;
+
+            base.OnDisabled();
+        }
+
+        protected virtual void MovementStateMachineUpdate() {
+            currentJumpDelay = Mathf.Clamp(currentJumpDelay - Time.deltaTime, 0f, maxJumpDelay);
+        }
+
+        public void ResetJumpCount() { currentJumpCount = 0; }
 
         protected void SetIsJumping(bool isJumping) { this.isJumping = isJumping;  }
         protected sealed override void SetMovementStateType(ref MovementStateType type) { type = TYPE; }
 
-        public sealed override bool CanTransition(MovementStateMachine stateMachine) {
-            return base.CanTransition(stateMachine) && IsStateMachineJumping(stateMachine);
+        public sealed override bool CanTransition() {
+            return base.CanTransition() && IsStateMachineJumping(MovementStateMachine) &&
+                   currentJumpDelay <= 0f && currentJumpCount == 0;
         }
 
-        protected sealed override void OnUpdate(MovementStateMachine stateMachine) {
-             stateMachine?.Move(Time.deltaTime * Vector3.up * jumpForce);
+        protected sealed override void OnUpdate() {
+            base.OnUpdate();
+            MovementStateMachine?.Move(Time.deltaTime * Vector3.up * jumpForce);
         }
 
         public void SetJumpForce(float jumpForce) {
             this.jumpForce = Mathf.Clamp(jumpForce, 0f, float.MaxValue);
         }
-
-        public void ResetJumpForce() { SetJumpForce(defaultJumpForce); }
 
         public static JumpState GetState(MovementStateMachine stateMachine) {
             if(stateMachine == null) return null;

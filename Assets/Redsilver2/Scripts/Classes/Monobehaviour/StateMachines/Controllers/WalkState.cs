@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace RedSilver2.Framework.StateMachines.States
 {
-    [RequireComponent(typeof(IdolState))]
+    [System.Serializable]
     public sealed class WalkState : MovementState
     {
         [Space]
@@ -12,15 +12,40 @@ namespace RedSilver2.Framework.StateMachines.States
 
         public const MovementStateType TYPE = MovementStateType.Walk;
 
-        public sealed override bool CanTransition(MovementStateMachine stateMachine) {
-            if (stateMachine == null) return false;
-            return stateMachine.IsMoving && !RunState.IsStateMachineRunning(stateMachine)
-                   && !CrouchState.IsStateMachineCrouching(stateMachine) && stateMachine.IsGrounded;
+        public WalkState() : base() {
+           
         }
 
-        protected sealed override void OnUpdate(MovementStateMachine stateMachine) {
-            if (stateMachine == null) return;
-            stateMachine?.SetMoveSpeed(walkSpeed, moveTransitionSpeed);
+#if UNITY_EDITOR
+        public void Validate(MovementStateMachine stateMachine)
+        {
+            SetStateMachine(stateMachine);
+            Validate();
+        }
+
+        protected override void Validate()
+        {
+            base.Validate();
+            walkSpeed = Mathf.Clamp(walkSpeed, 0f, float.MaxValue);
+            moveTransitionSpeed = Mathf.Clamp(moveTransitionSpeed, 0f, float.MaxValue);
+        }
+#endif
+
+        protected void SetStateMachine(MovementStateMachine stateMachine)  {
+            this.MovementStateMachine = stateMachine;
+            SetStateMachine(stateMachine as UpdatableStateMachine);
+        }
+
+        public sealed override bool CanTransition() {
+            if (MovementStateMachine == null) return false;
+
+            return MovementStateMachine.IsMoving && !RunState.IsStateMachineRunning(MovementStateMachine)
+                   && !CrouchState.IsStateMachineCrouching(MovementStateMachine) && MovementStateMachine.IsGrounded;
+        }
+
+        protected sealed override void OnUpdate() {
+            base.OnUpdate();
+            MovementStateMachine?.SetMoveSpeed(walkSpeed, moveTransitionSpeed);
         }
 
         protected sealed override void SetMovementStateType(ref MovementStateType type) {
