@@ -1,5 +1,6 @@
 
 using RedSilver2.Framework.StateMachines.States;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -48,20 +49,24 @@ namespace RedSilver2.Framework.StateMachines
         private UnityEvent<MovementState> onStateAdded, onStateRemoved;
         private UnityEvent<MovementState> onStateEntered, onStateExited;
 
-        public float DefaultHeight    => defaultHeight;
+        private Collider _collider;
+
+        private static readonly Dictionary<ulong, MovementStateMachine> instances = new Dictionary<ulong, MovementStateMachine>();
+
+        public float DefaultHeight => defaultHeight;
         public float DefaultFallSpeed => defaultFallSpeed;
 
         public float MoveSpeed => moveSpeed;
         public float FallSpeed => fallSpeed;
 
-        public string GroundTag        => groundTag;
-        public bool   IsMoving         => isMoving;
+        public string GroundTag => groundTag;
+        public bool IsMoving => isMoving;
 
-        public bool   IsGrounded       => isGrounded;
-        public float  AirbornTime      => airbornTime;
+        public bool IsGrounded => isGrounded;
+        public float AirbornTime => airbornTime;
 
-        public float  GroundCheckRange => groundCheckRange;
-        public bool   Is2DMovement     => is2DMovement;
+        public float GroundCheckRange => groundCheckRange;
+        public bool Is2DMovement => is2DMovement;
 
         public IdolState IdolState => idolState;
         public WalkState WalkState => walkState;
@@ -80,13 +85,13 @@ namespace RedSilver2.Framework.StateMachines
             if (walkState == null) walkState = new WalkState();
             walkState?.Validate(this);
 
-            if(fallState == null) fallState = new FallState();
+            if (fallState == null) fallState = new FallState();
             fallState?.Validate(this);
 
-            if(landState == null) landState = new LandState();
+            if (landState == null) landState = new LandState();
             landState?.Validate(this);
 
-            if(idolState == null) idolState = new IdolState();
+            if (idolState == null) idolState = new IdolState();
             idolState?.Validate(this);
         }
 #endif
@@ -96,39 +101,51 @@ namespace RedSilver2.Framework.StateMachines
         {
             base.Awake();
 
-            onMoved            = new UnityEvent<Vector3>();
+            onMoved = new UnityEvent<Vector3>();
             onGroundTagChanged = new UnityEvent<string>();
 
-            onStateAdded   = new UnityEvent<MovementState>();
+            onStateAdded = new UnityEvent<MovementState>();
             onStateRemoved = new UnityEvent<MovementState>();
 
             onStateEntered = new UnityEvent<MovementState>();
-            onStateExited  = new UnityEvent<MovementState>();
+            onStateExited = new UnityEvent<MovementState>();
 
-            groundTag  = string.Empty;
+            groundTag = string.Empty;
             isGrounded = false;
 
-            isMoving  = false;
+            isMoving = false;
             fallSpeed = defaultFallSpeed;
             moveSpeed = 0f;
-          
-            AddOnMovedListener(OnMoved);        
+
+            AddOnMovedListener(OnMoved);
             AddOnGroundTagChangedListener(OnGroundTagChanged);
         }
 
         protected virtual void Start()
         {
+            AddState(idolState);
+            AddState(fallState);
+
+            AddState(landState);
+            AddState(walkState);
+
             idolState?.Enable();
             walkState?.Enable();
 
             landState?.Enable();
             fallState?.Enable();
+        }
 
-            AddState(idolState);
-            AddState(walkState);
-
-            AddState(landState);
-            AddState(fallState);
+        private void OnDestroy()
+        {
+            if (instances != null && _collider != null) {
+                EntityId id = _collider.GetEntityId();
+              
+                if (id.IsValid()) {
+                    ulong _id = EntityId.ToULong(id);
+                    if (instances.ContainsKey(_id)) instances?.Remove(_id);
+                }
+            }
         }
 
         public void ResetAirbornTime()
@@ -180,11 +197,25 @@ namespace RedSilver2.Framework.StateMachines
             onStateExited?.Invoke(state);
         }
 
+        protected override void OnEnabled() {
+            if (_collider == null) _collider = GetComponent<Collider>();
+
+            if (instances != null && _collider != null) {
+                ulong _id = EntityId.ToULong(_collider.GetEntityId());
+                if (!instances.ContainsKey(_id)) instances?.Add(_id, this);
+            }
+
+            base.OnEnabled();
+        }
+
+
         protected override void OnDisabled() {
             base.OnDisabled();
             this.isGrounded = true;
             this.isMoving = false;
         }
+
+
 
         public void DisableState(MovementStateType type) {
             GetState(type)?.Disable();
@@ -197,8 +228,8 @@ namespace RedSilver2.Framework.StateMachines
 
         public bool IsCurrentState(MovementStateType type)
         {
-           MovementState state = CurrentState as MovementState;
-           return state != null ? state.Type == type : false;
+            MovementState state = CurrentState as MovementState;
+            return state != null ? state.Type == type : false;
         }
 
         public bool ChangeState(MovementStateType type)
@@ -220,14 +251,14 @@ namespace RedSilver2.Framework.StateMachines
 
         public virtual void AddState(MovementStateType type)
         {
-            if      (type == MovementStateType.Idol) AddState(idolState);
+            if (type == MovementStateType.Idol) AddState(idolState);
             else if (type == MovementStateType.Walk) AddState(walkState);
             else if (type == MovementStateType.Fall) AddState(fallState);
         }
 
 
         public virtual void RemoveState(MovementStateType type) {
-            if      (type == MovementStateType.Idol) RemoveState(idolState);
+            if (type == MovementStateType.Idol) RemoveState(idolState);
             else if (type == MovementStateType.Walk) RemoveState(walkState);
             else if (type == MovementStateType.Fall) RemoveState(fallState);
         }
@@ -236,8 +267,8 @@ namespace RedSilver2.Framework.StateMachines
             return GetState(type) != null;
         }
         public MovementState GetState(MovementStateType type) {
-          
-            foreach(State state in States) {
+
+            foreach (State state in States) {
                 MovementState _state = state as MovementState;
                 if (_state == null || _state.Type != type) continue;
 
@@ -257,13 +288,13 @@ namespace RedSilver2.Framework.StateMachines
 
             string currentGroundTag = string.Empty;
 
-            isGrounded = IsCurrentState(MovementStateType.Jump) ? false :  GetGroundCheckResult(out currentGroundTag);
+            isGrounded = IsCurrentState(MovementStateType.Jump) ? false : GetGroundCheckResult(out currentGroundTag);
             currentGroundTag = currentGroundTag.ToLower();
 
             if (!groundTag.ToLower().Equals(currentGroundTag)) onGroundTagChanged?.Invoke(currentGroundTag);
 
             if (isGrounded) { airbornTime = 0f; }
-            else { airbornTime += Time.deltaTime;  }
+            else { airbornTime += Time.deltaTime; }
 
             airbornTime = Mathf.Clamp(airbornTime, 0f, float.MaxValue);
 
@@ -378,8 +409,8 @@ namespace RedSilver2.Framework.StateMachines
         }
 
         public void Move(Vector3 nextPosition) {
-            nextPosition = transform.right   * nextPosition.x +
-                           transform.up      * nextPosition.y +
+            nextPosition = transform.right * nextPosition.x +
+                           transform.up * nextPosition.y +
                            transform.forward * nextPosition.z;
 
             onMoved?.Invoke(nextPosition);
@@ -396,6 +427,27 @@ namespace RedSilver2.Framework.StateMachines
         public virtual void SetHeight(float height, float transitionSpeed)
         {
             SetHeight(Mathf.Clamp(transform.localScale.y, height, Time.deltaTime * transitionSpeed));
+        }
+
+        public static MovementStateMachine GetInstance(Collider collider)
+        {
+            if(collider == null) return null;
+            return GetInstance(collider.GetEntityId());
+        }
+
+
+        public static MovementStateMachine GetInstance(Collider2D collider) {
+            if (collider == null) return null;
+            return GetInstance(collider.GetEntityId());
+        }
+
+        private static MovementStateMachine GetInstance(EntityId id)
+        {
+            if (instances == null || !id.IsValid()) return null;
+            ulong _id = EntityId.ToULong(id);
+
+          
+            return !instances.ContainsKey(_id) ? null : instances[_id];
         }
     }
 }

@@ -8,10 +8,10 @@ namespace RedSilver2.Framework.StateMachines.States
     {
         private UnityEvent onUpdate;
         private UnityEvent onLateUpdate;
-        private UpdatableStateMachine updatableStateMachine;
+        [SerializeField][HideInInspector] private UpdatableStateMachine updatableStateMachine;
 
 
-        protected UpdatableState() {         
+        protected UpdatableState() : base() {         
             onUpdate     = new UnityEvent();
             onLateUpdate = new UnityEvent();
 

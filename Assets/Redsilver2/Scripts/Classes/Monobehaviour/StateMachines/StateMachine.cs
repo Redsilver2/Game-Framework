@@ -10,13 +10,17 @@ namespace RedSilver2.Framework.StateMachines
         private State currentState;
 
         private List<State> states;
+        private List<State> actifStates;
         private UnityEvent onEnabled, onDisabled;
 
         private UnityEvent<State> onStateAdded, onStateRemoved;
         private UnityEvent<State> onStateEntered, onStateExited;
 
+        private UnityEvent<State> onActifStateAdded, onActifStateRemoved;
+
         public State CurrentState => currentState;
         public State[] States     => states != null ? states.ToArray() : new State[0];
+        public State[] ActifStates => actifStates != null ? actifStates.ToArray() : new State[0];
 
      
 
@@ -28,6 +32,7 @@ namespace RedSilver2.Framework.StateMachines
         protected virtual void Awake()
         {
             states = new List<State>();
+            actifStates = new List<State>();
 
             onEnabled  = new UnityEvent();
             onDisabled = new UnityEvent();
@@ -37,6 +42,9 @@ namespace RedSilver2.Framework.StateMachines
 
             onStateEntered = new UnityEvent<State>();
             onStateExited  = new UnityEvent<State>();
+
+            onActifStateAdded   = new UnityEvent<State>();
+            onActifStateRemoved = new UnityEvent<State>();
 
             AddOnStateAddedListener(OnStateAdded);
             AddOnStateRemovedListener(OnStateRemoved);
@@ -51,21 +59,43 @@ namespace RedSilver2.Framework.StateMachines
         private void OnDisable() { onDisabled?.Invoke(); }
         private void OnEnable() { onEnabled?.Invoke(); }
 
-        public void AddState(State state)
+        protected void AddState(State state)
         {
             if (states == null || !CanAddState(state) || states.Contains(state)) return;
-
             states?.Add(state);
             onStateAdded?.Invoke(state);
+        }
+
+        public void AddActifState(State state)
+        {
+            if (states == null || !states.Contains(state)) return; 
+            else if (actifStates == null || state == null || actifStates.Contains(state)) return;
+
+            actifStates?.Add(state);
+            onActifStateAdded?.Invoke(state);
         }
 
         public void RemoveState(State state)
         {
             if (states == null || state == null || !states.Contains(state)) return;
-            state?.Disable();
+   
+            if(actifStates != null)
+                if (actifStates.Contains(state)) { actifStates?.Remove(state); }
 
             onStateRemoved?.Invoke(state);
             states?.Remove(state);
+        }
+
+        public void RemoveActifState(State state)
+        {
+            if (states == null || !states.Contains(state)) return;
+            else if (actifStates == null || state == null || !actifStates.Contains(state)) return;
+
+            if(currentState == state) ChangeState(null as State, true);
+            Debug.Log("Removed: " + state);
+
+            onActifStateRemoved?.Invoke(state);
+            actifStates?.Remove(state);
         }
 
         public virtual void ChangeState(State state)
@@ -83,8 +113,8 @@ namespace RedSilver2.Framework.StateMachines
         }
         public void ChangeState(State state, bool checkSimilarity)
         {
-            if (states == null || (this.currentState == state && checkSimilarity)) return;
-            else if (state != null && !states.Contains(state)) return;
+            if (states == null || actifStates == null || (this.currentState == state && checkSimilarity)) return;
+            else if (state != null && !states.Contains(state) && !actifStates.Contains(state)) return;
 
             onStateExited?.Invoke(currentState);
             onStateEntered?.Invoke(state);
@@ -197,6 +227,26 @@ namespace RedSilver2.Framework.StateMachines
         public void RemoveOnStateExitedListener(UnityAction<State> action)
         {
             if (action != null) onStateExited?.RemoveListener(action);
+        }
+
+        public void AddOnActifStateAddedListener(UnityAction<State> action)
+        {
+            if(action != null) onActifStateAdded?.AddListener(action);
+        }
+
+        public void RemoveOnActifStateAddedListener(UnityAction<State> action)
+        {
+            if (action != null) onActifStateAdded?.RemoveListener(action);
+        }
+
+        public void AddOnActifStateRemovedListener(UnityAction<State> action)
+        {
+            if (action != null) onActifStateRemoved?.AddListener(action);
+        }
+
+        public void RemoveOnActifStateRemovedListener(UnityAction<State> action)
+        {
+            if (action != null) onActifStateRemoved?.RemoveListener(action);
         }
     }
 }

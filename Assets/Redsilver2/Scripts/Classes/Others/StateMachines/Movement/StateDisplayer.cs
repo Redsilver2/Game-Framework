@@ -19,7 +19,7 @@ namespace RedSilver2.Framework.StateMachines.Events
             }
 
         }
-        private void OnStateEntered(State state) { if(displayer != null) displayer.text = state.StateName; }
+        private void OnStateEntered(State state) { if(displayer != null) displayer.text = state != null ?  state.StateName : string.Empty; }
         private void OnStateExited(State state) { if (displayer != null) displayer.text = "None"; }
     }
 }

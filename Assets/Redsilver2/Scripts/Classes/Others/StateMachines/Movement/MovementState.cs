@@ -1,12 +1,14 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace RedSilver2.Framework.StateMachines.States
 {
     [System.Serializable]
     public abstract class MovementState : UpdatableState
     {
-        private MovementStateType   type;
-        protected MovementStateMachine MovementStateMachine;
+        [SerializeField][HideInInspector] protected MovementStateMachine MovementStateMachine;
+
+        private MovementStateType type;
         public MovementStateType Type => type;
 
         protected MovementState() : base() {

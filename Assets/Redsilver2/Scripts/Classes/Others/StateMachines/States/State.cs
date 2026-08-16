@@ -7,11 +7,11 @@ namespace RedSilver2.Framework.StateMachines.States
 {
     [System.Serializable]
     public abstract class State {
+        [SerializeField][HideInInspector] private StateMachine stateMachine;
+
         private bool isEnabled;
         private string stateName;
         private string[] incompatibleTransitionStates;
-
-        private  StateMachine stateMachine;
         private readonly List<State> transitionStates;
 
         private readonly UnityEvent onEntered;
@@ -23,14 +23,13 @@ namespace RedSilver2.Framework.StateMachines.States
         private readonly UnityEvent<State> onTransitionStateAdded;
         private readonly UnityEvent<State> onTransitionStateRemoved;
 
-
         public bool IsEnabled => isEnabled;
         public string StateName => stateName;
+        public State[] TransitionStates => transitionStates != null ? transitionStates.ToArray() : new State[0];
 
         protected State() {
             transitionStates = new List<State>();
             SetIncompatibleTransitionStates(ref incompatibleTransitionStates);
-
 
             onEnabled  = new UnityEvent();
             onDisabled = new UnityEvent();
@@ -63,14 +62,16 @@ namespace RedSilver2.Framework.StateMachines.States
         public void Exit()  { onExited?.Invoke();  }
 
 
-        public void AddTransitionState(State state) {
+        private void AddTransitionState(State state) {
             if (CanAddTransitionState(state)) {
                 transitionStates?.Add(state);
                 onTransitionStateAdded?.Invoke(state);
             }
         }
 
-        public void RemoveTransitionState(State state) {
+        private void RemoveTransitionState(State state) {
+            if (transitionStates == null || !transitionStates.Contains(state)) return;
+            if (this is IdolState) Debug.Log("wtf?  " + state.StateName);
             onTransitionStateRemoved?.Invoke(state);
             transitionStates?.Remove(state);
         }
@@ -85,25 +86,29 @@ namespace RedSilver2.Framework.StateMachines.States
         }
 
         protected virtual void OnDisabled() {
+            if (stateMachine != null) {
+                foreach (State _state in stateMachine.ActifStates) {
+                    RemoveTransitionState(_state);
+                }
+            }
 
-            foreach (State _state in stateMachine.States)
-                RemoveTransitionState(_state);
+            stateMachine?.RemoveOnActifStateAddedListener(OnActifStateAdded);
+            stateMachine?.RemoveOnActifStateRemovedListener(OnActifStateRemoved);
 
-            stateMachine?.RemoveOnStateAddedListener(OnStateAdded);
-            stateMachine?.RemoveOnStateRemovedListener(OnStateRemoved);
-
-            stateMachine?.RemoveState(this);
+            stateMachine?.RemoveActifState(this);
             isEnabled = false;
         }
 
         protected virtual void OnEnabled() {
-            stateMachine?.AddState(this);
+            stateMachine?.AddActifState(this);
 
-            foreach (State state in stateMachine.States)
-                AddTransitionState(state);
+            if (stateMachine != null) {
+                foreach (State state in stateMachine.ActifStates)
+                    AddTransitionState(state);
+            }
 
-            stateMachine?.AddOnStateAddedListener(OnStateAdded);
-            stateMachine?.AddOnStateRemovedListener(OnStateRemoved);
+            stateMachine?.AddOnActifStateAddedListener(OnActifStateAdded);
+            stateMachine?.AddOnActifStateRemovedListener(OnActifStateRemoved);
 
             isEnabled = true;
         }
@@ -111,16 +116,14 @@ namespace RedSilver2.Framework.StateMachines.States
         protected virtual void OnEntered() { }
         protected virtual void OnExited()  { }
 
-        protected virtual void OnStateAdded(State state)
+        protected virtual void OnActifStateAdded(State state)
         {
-            if (state == null || state == null || state == this) return;
-            else { AddTransitionState(state); }
+            AddTransitionState(state);
         }
 
-        protected virtual void OnStateRemoved(State state)
+        protected virtual void OnActifStateRemoved(State state)
         {
-            if (stateMachine == null || state == null || state == this) return;
-            else { RemoveTransitionState(state); }
+            RemoveTransitionState(state);
         }
 
         protected void SetStateName(string stateName)

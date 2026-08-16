@@ -630,8 +630,6 @@ GameObject:
   - component: {fileID: 392872284}
   - component: {fileID: 392872288}
   - component: {fileID: 392872287}
-  - component: {fileID: 392872286}
-  - component: {fileID: 392872285}
   m_Layer: 0
   m_Name: Door (4)
   m_TagString: Untagged
@@ -655,30 +653,6 @@ Transform:
   - {fileID: 91076359}
   m_Father: {fileID: 1362416032}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &392872285
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 392872283}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd42d08b13e77694a97287770f2316c6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.States.CloseDoorState
---- !u!114 &392872286
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 392872283}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e60d15cd4d96cc742918f236b00be000, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.States.OpenDoorState
 --- !u!114 &392872287
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -987,8 +961,6 @@ GameObject:
   - component: {fileID: 603077994}
   - component: {fileID: 603077993}
   - component: {fileID: 603077992}
-  - component: {fileID: 603077991}
-  - component: {fileID: 603077990}
   - component: {fileID: 603077996}
   m_Layer: 0
   m_Name: Triggerable Door
@@ -997,30 +969,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &603077990
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 603077989}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd42d08b13e77694a97287770f2316c6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.States.CloseDoorState
---- !u!114 &603077991
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 603077989}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e60d15cd4d96cc742918f236b00be000, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.States.OpenDoorState
 --- !u!114 &603077992
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1295,7 +1243,6 @@ GameObject:
   - component: {fileID: 770072909}
   - component: {fileID: 770072908}
   - component: {fileID: 770072912}
-  - component: {fileID: 770072913}
   - component: {fileID: 770072914}
   m_Layer: 11
   m_Name: A (2)
@@ -1398,18 +1345,6 @@ MonoBehaviour:
   dropCheckRange: 0.1
   dropFallSpeed: 1.5
   defaultMaxConsumptionValue: 100
---- !u!114 &770072913
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 770072904}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b41a3c44f65a20b458b863c4efa34006, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.DrinkableItemState
 --- !u!114 &770072914
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1498,7 +1433,6 @@ GameObject:
   - component: {fileID: 841889629}
   - component: {fileID: 841889628}
   - component: {fileID: 841889627}
-  - component: {fileID: 841889626}
   - component: {fileID: 841889625}
   m_Layer: 11
   m_Name: A (3)
@@ -1582,18 +1516,6 @@ MonoBehaviour:
     onFinished:
       m_PersistentCalls:
         m_Calls: []
---- !u!114 &841889626
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 841889624}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b41a3c44f65a20b458b863c4efa34006, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.DrinkableItemState
 --- !u!114 &841889627
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2072,7 +1994,6 @@ GameObject:
   - component: {fileID: 1052771180}
   - component: {fileID: 1052771179}
   - component: {fileID: 1052771178}
-  - component: {fileID: 1052771177}
   m_Layer: 0
   m_Name: Cube (1)
   m_TagString: Untagged
@@ -2080,18 +2001,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1052771177
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1052771176}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 49c9cf518e3142745a865383287429d7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::JumpPad
 --- !u!65 &1052771178
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2489,8 +2398,6 @@ GameObject:
   - component: {fileID: 1367059350}
   - component: {fileID: 1367059349}
   - component: {fileID: 1367059352}
-  - component: {fileID: 1367059357}
-  - component: {fileID: 1367059356}
   - component: {fileID: 1367059358}
   m_Layer: 11
   m_Name: Cube
@@ -2613,30 +2520,6 @@ MonoBehaviour:
     defaultDuration: 0
     desiredPosition: {x: 0, y: 0, z: 0}
     desiredRotation: {x: 0, y: 0, z: 0}
---- !u!114 &1367059356
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1367059346}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd42d08b13e77694a97287770f2316c6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.States.CloseDoorState
---- !u!114 &1367059357
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1367059346}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e60d15cd4d96cc742918f236b00be000, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.States.OpenDoorState
 --- !u!114 &1367059358
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3054,6 +2937,72 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.Events.StateDisplayer
   displayer: {fileID: 1712459078}
+--- !u!1 &1730425981
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1730425984}
+  - component: {fileID: 1730425983}
+  - component: {fileID: 1730425982}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1730425982
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1730425981}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5feefc357217534bbc28096bfe653ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CrouchZone
+--- !u!65 &1730425983
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1730425981}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 0.9999998, z: 2.3754888}
+  m_Center: {x: 0, y: 0, z: -0.6877444}
+--- !u!4 &1730425984
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1730425981}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -10.90431, y: 1.39, z: -5.32525}
+  m_LocalScale: {x: 11.128, y: 1.6045312, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1745779785
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3191,8 +3140,6 @@ GameObject:
   - component: {fileID: 1953040686}
   - component: {fileID: 1953040685}
   - component: {fileID: 1953040684}
-  - component: {fileID: 1953040683}
-  - component: {fileID: 1953040682}
   - component: {fileID: 1953040689}
   m_Layer: 11
   m_Name: A (1)
@@ -3201,30 +3148,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1953040682
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1953040681}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae5bc471150af0642a98171ee4a85684, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.LightSourceOnState
---- !u!114 &1953040683
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1953040681}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 67a87830e4fcb1b4ab5a28a8be2f7564, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.States.LightSourceOffState
 --- !u!114 &1953040684
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3949,8 +3872,8 @@ GameObject:
   - component: {fileID: 6751641640193018019}
   - component: {fileID: 9091687914289102628}
   - component: {fileID: 9091687914289102627}
-  - component: {fileID: 9091687914289102625}
-  - component: {fileID: 9091687914289102631}
+  - component: {fileID: 9091687914289102630}
+  - component: {fileID: 9091687914289102629}
   m_Layer: 3
   m_Name: FPS Camera Controller
   m_TagString: Player
@@ -4244,19 +4167,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 296fdf3592dcab54f93ea598d65ea24e, type: 2}
   - {fileID: 11400000, guid: b00cb1d02a88e7040a51545eb2427fad, type: 2}
   soundTriggerTime: 0.5
---- !u!114 &9091687914289102625
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1057482895335304216}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 848cc657753e2854b8be185a3572225b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.Controllers.PlayerCharacterController
-  dontDestroyOnLoad: 0
 --- !u!114 &9091687914289102627
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4289,7 +4199,20 @@ MonoBehaviour:
   allowDuplicateItem: 1
   maxRowCount: 4294967295
   maxColumnCount: 1
---- !u!114 &9091687914289102631
+--- !u!114 &9091687914289102629
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1057482895335304216}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 848cc657753e2854b8be185a3572225b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.Controllers.PlayerCharacterController
+  dontDestroyOnLoad: 0
+--- !u!114 &9091687914289102630
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4301,45 +4224,45 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63e85299cd878444fbfbbe680f58ed9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.PlayerCharacterControllerStateMachine
-  groundCheckRange: 1.15
+  groundCheckRange: 1.5
   is2DMovement: 0
   defaultFallSpeed: -10
   fallTransitionSpeed: 10
   defaultHeight: 2
-  heightTransitionSpeed: 5
+  heightTransitionSpeed: 10
   idolState:
-    moveSpeedTransition: 0
+    moveSpeedTransition: 10
   walkState:
-    walkSpeed: 0
-    moveTransitionSpeed: 0
-  fallState:
-    airbornTimeTransitionTrigger: 0.25
-    moveSpeed: 0
+    walkSpeed: 5
     moveTransitionSpeed: 10
-    fallSpeed: -10
-    fallTransitionSpeed: 10
+  fallState:
+    airbornTimeTransitionTrigger: 0.02
+    moveSpeed: 0.5
+    moveTransitionSpeed: 5
+    fallSpeed: -15
+    fallTransitionSpeed: 5
   inputSetting: {fileID: 11400000, guid: 34e9a3b820b865e438822ed3a624d62a, type: 2}
   jumpState:
-    jumpForce: 10
-    maxJumpCount: 1
-    maxJumpDelay: 0.05
+    jumpForce: 20
+    maxJumpCount: 2
+    maxJumpDelay: 0
     inputSetting: {fileID: 11400000, guid: a9d391630c40d6943945932a946a9df0, type: 2}
   crouchState:
-    crouchMoveSpeed: 0
-    crouchMoveTransitionSpeed: 0
-    crouchHeight: 0
-    crouchHeightTransitionSpeed: 0
-    unCrouchSafetyCheckDistance: 0
-    cameraCrouchTransform: {fileID: 0}
-    crouchCameraPosition: {x: 0, y: 0, z: 0}
-    standCameraPosition: {x: 0, y: 0, z: 0}
-    crouchCameraUpdateSpeed: 0
+    crouchMoveSpeed: 1.5
+    crouchMoveTransitionSpeed: 10
+    crouchHeight: 1
+    crouchHeightTransitionSpeed: 10
+    unCrouchSafetyCheckDistance: 10
+    cameraCrouchTransform: {fileID: 1594589319}
+    crouchCameraPosition: {x: 0, y: 0.75, z: 0}
+    standCameraPosition: {x: 0, y: 1.5, z: 0}
+    crouchCameraUpdateSpeed: 10
     hasToHoldInput: 1
     pressInput: {fileID: 11400000, guid: 1faffc1e4c2cd3943a96937c4b8401fb, type: 2}
     holdInput: {fileID: 11400000, guid: 61364bc8a312b1c4c9ca563f361e9b55, type: 2}
   runState:
-    runSpeed: 0
-    runTransitionSpeed: 0
+    runSpeed: 10
+    runTransitionSpeed: 10
     hasToHoldInput: 1
     pressInput: {fileID: 11400000, guid: 4c71ffb6cf65a0b49964f02a90a49771, type: 2}
     holdInput: {fileID: 11400000, guid: cd01e6854305f9c42a71654f72ddbaf6, type: 2}
@@ -4357,3 +4280,4 @@ SceneRoots:
   - {fileID: 603077995}
   - {fileID: 1607124414}
   - {fileID: 1052771181}
+  - {fileID: 1730425984}

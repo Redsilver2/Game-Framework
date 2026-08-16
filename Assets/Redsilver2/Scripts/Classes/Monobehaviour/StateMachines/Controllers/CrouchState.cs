@@ -18,7 +18,10 @@ namespace RedSilver2.Framework.StateMachines.States
         [SerializeField] private float unCrouchSafetyCheckDistance;
 
         private bool isCrouching;
+        private bool canChangeState;
+
         public bool IsCrouching => isCrouching;
+        public bool CanChangeState => canChangeState;
 
         public const MovementStateType TYPE = MovementStateType.Crouch;
 
@@ -33,7 +36,7 @@ namespace RedSilver2.Framework.StateMachines.States
             crouchHeight = Mathf.Clamp(crouchHeight, 0f, float.MaxValue);
 
             crouchHeightTransitionSpeed = Mathf.Clamp(crouchHeightTransitionSpeed, 0f, float.MaxValue);
-            crouchMoveTransitionSpeed = Mathf.Clamp(crouchMoveTransitionSpeed, 0f, float.MaxValue);
+            crouchMoveTransitionSpeed   = Mathf.Clamp(crouchMoveTransitionSpeed, 0f, float.MaxValue);
 
             unCrouchSafetyCheckDistance = Mathf.Clamp(unCrouchSafetyCheckDistance, 0f, float.MaxValue);
         }
@@ -66,14 +69,20 @@ namespace RedSilver2.Framework.StateMachines.States
             return new MovementStateType[] { TYPE, LandState.TYPE, FallState.TYPE };
         }
 
+        protected override void OnEntered()
+        {
+            base.OnEntered();
+            isCrouching = true;
+        }
+
         protected sealed override void UpdateStateTransitions()
         {
             if(MovementStateMachine != null) {
                 Transform transform = MovementStateMachine.transform;
-
-                if (!Physics.Raycast(transform.position, transform.up, out RaycastHit hit, unCrouchSafetyCheckDistance, ~(1 << GetLayerToIgnore()))) {
-                    base.UpdateStateTransitions();
-                }
+                canChangeState = !Physics.Raycast(transform.position, transform.up, unCrouchSafetyCheckDistance, ~(1 << GetLayerToIgnore()));
+               
+                if (canChangeState) { base.UpdateStateTransitions(); }
+                else { isCrouching = true; }
             }
         }
 
@@ -83,6 +92,11 @@ namespace RedSilver2.Framework.StateMachines.States
         {
             if(stateMachine == null) return null;
             return stateMachine?.GetState(TYPE) as CrouchState;
+        }
+
+        public static void ForceState(MovementStateMachine stateMachine) {
+            CrouchState state = GetState(stateMachine);
+            if (state != null) state.isCrouching = true; 
         }
 
         public static bool IsStateMachineCrouching(MovementStateMachine stateMachine){

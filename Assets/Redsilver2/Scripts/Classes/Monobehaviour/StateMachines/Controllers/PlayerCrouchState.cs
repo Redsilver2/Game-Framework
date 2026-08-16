@@ -78,14 +78,11 @@ namespace RedSilver2.Framework.StateMachines.States
             pressInput?.Enable();
             holdInput?.Enable();
 
-            if (MovementStateMachine == null || !IsEnabled || !MovementStateMachine.IsGrounded) SetIsCrouching(false);
+            if(!CanChangeState) { SetIsCrouching(true); }
+            else if (MovementStateMachine == null || !IsEnabled || !MovementStateMachine.IsGrounded) SetIsCrouching(false);
             else if (RunState.IsStateMachineRunning(MovementStateMachine) || JumpState.IsStateMachineJumping(MovementStateMachine)) SetIsCrouching(false);
-            else if (hasToHoldInput) {
-                SetIsCrouching(holdInput != null ? holdInput.GetValue() : false);
-            }
-            else if (!hasToHoldInput) {
-                SetIsCrouching(pressInput != null ? (pressInput.GetValue() ? !IsCrouching : IsCrouching) : false);
-            }
+            else if (hasToHoldInput) { SetIsCrouching(holdInput != null ? holdInput.GetValue() : false); }
+            else if (!hasToHoldInput) { SetIsCrouching(pressInput != null ? (pressInput.GetValue() ? !IsCrouching : IsCrouching) : false); }
 
             UpdateCameraCrouchTransform(IsCrouching ? crouchCameraPosition : standCameraPosition);
         }

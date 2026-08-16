@@ -70,6 +70,10 @@ namespace RedSilver2.Framework.StateMachines.Controllers {
         {
             base.Start();
 
+            AddState(jumpState);
+            AddState(runState);
+            AddState(crouchState);
+
             jumpState?.Enable();
             crouchState?.Enable();
             runState?.Enable();
