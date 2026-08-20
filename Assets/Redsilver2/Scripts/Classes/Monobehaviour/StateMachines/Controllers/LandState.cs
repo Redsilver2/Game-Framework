@@ -4,7 +4,7 @@ using UnityEngine;
 namespace RedSilver2.Framework.StateMachines.States
 {
     [System.Serializable]
-    public sealed class LandState : MovementState
+    public abstract class LandState : MovementState
     {
         public const MovementStateType TYPE = MovementStateType.Land;
 
@@ -12,14 +12,6 @@ namespace RedSilver2.Framework.StateMachines.States
         {
         }
 
-
-#if UNITY_EDITOR
-        public void Validate(MovementStateMachine stateMachine)
-        {
-            SetStateMachine(stateMachine);
-            Validate();
-        }
-#endif
 
         public sealed override bool CanTransition()
         {
@@ -40,18 +32,9 @@ namespace RedSilver2.Framework.StateMachines.States
             MovementStateMachine?.SetFallSpeed(MovementStateMachine.DefaultFallSpeed);
         }
 
-        protected override void SetMovementStateType(ref MovementStateType type) {
+        protected sealed override void SetMovementStateType(ref MovementStateType type) {
             type = TYPE;
         }
-
-
-
-        private void SetStateMachine(MovementStateMachine stateMachine)
-        {
-            this.MovementStateMachine = stateMachine;
-            SetStateMachine(stateMachine as UpdatableStateMachine);
-        }
-
 
         public static LandState GetState(MovementStateMachine stateMachine)
         {

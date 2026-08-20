@@ -11,14 +11,19 @@ namespace RedSilver2.Framework.StateMachines.States
 
         [Space]
         [SerializeField] private PressInputSettings pressInput;
-
-        [Space]
         [SerializeField] private HoldInputSettings holdInput;
 
-        public PressInputSettings PressInput => pressInput;
-        public HoldInputSettings  HoldInput  => holdInput; 
+        [Space]
+        [SerializeField] private HeadbobPositionMotion positionMotion;
 
-        public PlayerRunState() : base()  { }
+        public PressInputSettings PressInput => pressInput;
+        public HoldInputSettings  HoldInput  => holdInput;
+
+        public HeadbobPositionMotion PositionMotion => positionMotion;
+
+        public PlayerRunState() : base()  {
+            positionMotion = new HeadbobPositionMotion(TYPE, false);
+        }
 
 
 #if UNITY_EDITOR
@@ -26,6 +31,12 @@ namespace RedSilver2.Framework.StateMachines.States
         {
             SetStateMachine(stateMachine);
             Validate();
+        }
+
+        protected override void Validate()
+        {
+            base.Validate();
+            positionMotion?.Validate();
         }
 #endif
 
@@ -36,13 +47,19 @@ namespace RedSilver2.Framework.StateMachines.States
 
         protected override void OnEnabled()
         {
+            positionMotion?.Enable();
             MovementStateMachine?.AddOnUpdateListener(OnUpdateRunInput);
+
+            positionMotion?.SetStateMachine(MovementStateMachine as PlayerMovementStateMachine);
             base.OnEnabled();
         }
 
         protected override void OnDisabled()
         {
+            positionMotion?.Disable();
             MovementStateMachine?.RemoveOnUpdateListener(OnUpdateRunInput);
+
+            positionMotion?.SetStateMachine(null);
             base.OnDisabled();
         }
 
@@ -57,8 +74,7 @@ namespace RedSilver2.Framework.StateMachines.States
             else if (hasToHoldInput) SetIsRunning(holdInput != null ? holdInput.GetValue() : false);
             else if (!hasToHoldInput)
             {
-                if (pressInput != null)
-                {
+                if (pressInput != null) {
                     if (pressInput.GetValue()) SetIsRunning(!IsRunning);
                 }
                 else SetIsRunning(false);

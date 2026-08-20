@@ -464,8 +464,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 190184649}
-  - component: {fileID: 190184650}
-  - component: {fileID: 190184651}
   m_Layer: 3
   m_Name: '-'
   m_TagString: Untagged
@@ -489,41 +487,6 @@ Transform:
   - {fileID: 6121824776835189799}
   m_Father: {fileID: 1594589319}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &190184650
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 190184648}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 383dbdc64a957a848b380376d6b32e20, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SwayMotion
-  defaultLerpSpeed: 4.5
-  positionUpdateSpeed: 10
-  min: {x: 0.5, y: 0.5}
-  max: {x: 0.5, y: 0}
---- !u!114 &190184651
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 190184648}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9d6d7665595f0974dbc21b5ca5d787b7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.Events.KeyboardMovementTiltMotion
-  defaultLerpSpeed: 10
-  directionUpdateSpeed: 10
-  rotationUpdateSpeed: 10
-  min: {x: 10, y: 0}
-  max: {x: 10, y: 0}
-  isTiltingContinuously: 1
-  tiltSpeed: 5
 --- !u!1 &379409355
 GameObject:
   m_ObjectHideFlags: 0
@@ -682,10 +645,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.DoorStateMachine
   handle: {fileID: 392872284}
   openState:
+    stateMachine: {fileID: 392872288}
     defaultDuration: 0
     desiredPosition: {x: 0, y: 0, z: 0}
     desiredRotation: {x: 0, y: 0, z: 0}
   closeState:
+    stateMachine: {fileID: 392872288}
     defaultDuration: 0
     desiredPosition: {x: 0, y: 0, z: 0}
     desiredRotation: {x: 0, y: 0, z: 0}
@@ -1010,10 +975,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.DoorStateMachine
   handle: {fileID: 1960062247}
   openState:
+    stateMachine: {fileID: 603077994}
     defaultDuration: 0
     desiredPosition: {x: 0, y: 0, z: 0}
     desiredRotation: {x: 0, y: 0, z: 0}
   closeState:
+    stateMachine: {fileID: 603077994}
     defaultDuration: 0
     desiredPosition: {x: 0, y: 0, z: 0}
     desiredRotation: {x: 0, y: 0, z: 0}
@@ -2513,10 +2480,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.DoorStateMachine
   handle: {fileID: 1607124414}
   openState:
+    stateMachine: {fileID: 1367059352}
     defaultDuration: 0
     desiredPosition: {x: 0, y: 0, z: 0}
     desiredRotation: {x: 0, y: 0, z: 0}
   closeState:
+    stateMachine: {fileID: 1367059352}
     defaultDuration: 0
     desiredPosition: {x: 0, y: 0, z: 0}
     desiredRotation: {x: 0, y: 0, z: 0}
@@ -3760,10 +3729,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.DoorStateMachine
   handle: {fileID: 2094717040}
   openState:
+    stateMachine: {fileID: 2094717044}
     defaultDuration: 0
     desiredPosition: {x: 0, y: 0, z: 0}
     desiredRotation: {x: 0, y: 0, z: 0}
   closeState:
+    stateMachine: {fileID: 2094717044}
     defaultDuration: 0
     desiredPosition: {x: 0, y: 0, z: 0}
     desiredRotation: {x: 0, y: 0, z: 0}
@@ -4230,29 +4201,60 @@ MonoBehaviour:
   fallTransitionSpeed: 10
   defaultHeight: 2
   heightTransitionSpeed: 10
+  moveInputSetting: {fileID: 11400000, guid: 34e9a3b820b865e438822ed3a624d62a, type: 2}
   idolState:
+    stateMachine: {fileID: 9091687914289102630}
+    updatableStateMachine: {fileID: 9091687914289102630}
+    MovementStateMachine: {fileID: 9091687914289102630}
     moveSpeedTransition: 10
+    positionMotion:
+      transform: {fileID: 190184649}
+      transformUpdateSpeed: 10
+      updateSpeed: 1.5
+      resetUpdateSpeed: 5
+      originalPosition: {x: 0, y: 0}
+      minPosition: {x: 0.05, y: -0.25}
+      maxPosition: {x: 0.05, y: 0.25}
+  fallState:
+    stateMachine: {fileID: 9091687914289102630}
+    updatableStateMachine: {fileID: 9091687914289102630}
+    MovementStateMachine: {fileID: 9091687914289102630}
+    airbornTimeTransitionTrigger: 0.1
+    moveSpeed: 1
+    moveTransitionSpeed: 10
+    fallSpeed: -30
+    fallTransitionSpeed: 10
   walkState:
+    stateMachine: {fileID: 9091687914289102630}
+    updatableStateMachine: {fileID: 9091687914289102630}
+    MovementStateMachine: {fileID: 9091687914289102630}
     walkSpeed: 5
     moveTransitionSpeed: 10
-  fallState:
-    airbornTimeTransitionTrigger: 0.02
-    moveSpeed: 0.5
-    moveTransitionSpeed: 5
-    fallSpeed: -15
-    fallTransitionSpeed: 5
-  inputSetting: {fileID: 11400000, guid: 34e9a3b820b865e438822ed3a624d62a, type: 2}
+    positionMotion:
+      transform: {fileID: 190184649}
+      transformUpdateSpeed: 10
+      updateSpeed: 5
+      resetUpdateSpeed: 5
+      originalPosition: {x: 0, y: 0}
+      minPosition: {x: 0.1, y: -0.25}
+      maxPosition: {x: 0.1, y: 0.25}
   jumpState:
-    jumpForce: 20
-    maxJumpCount: 2
+    stateMachine: {fileID: 9091687914289102630}
+    updatableStateMachine: {fileID: 9091687914289102630}
+    MovementStateMachine: {fileID: 9091687914289102630}
+    jumpForce: 10
+    maxJumpCount: 1
     maxJumpDelay: 0
     inputSetting: {fileID: 11400000, guid: a9d391630c40d6943945932a946a9df0, type: 2}
   crouchState:
+    stateMachine: {fileID: 9091687914289102630}
+    updatableStateMachine: {fileID: 9091687914289102630}
+    MovementStateMachine: {fileID: 9091687914289102630}
     crouchMoveSpeed: 1.5
     crouchMoveTransitionSpeed: 10
     crouchHeight: 1
     crouchHeightTransitionSpeed: 10
-    unCrouchSafetyCheckDistance: 10
+    unCrouchSafetyCheckDistance: 1.5
     cameraCrouchTransform: {fileID: 1594589319}
     crouchCameraPosition: {x: 0, y: 0.75, z: 0}
     standCameraPosition: {x: 0, y: 1.5, z: 0}
@@ -4260,12 +4262,31 @@ MonoBehaviour:
     hasToHoldInput: 1
     pressInput: {fileID: 11400000, guid: 1faffc1e4c2cd3943a96937c4b8401fb, type: 2}
     holdInput: {fileID: 11400000, guid: 61364bc8a312b1c4c9ca563f361e9b55, type: 2}
+    positionMotion:
+      transform: {fileID: 190184649}
+      transformUpdateSpeed: 5
+      updateSpeed: 5
+      resetUpdateSpeed: 1
+      originalPosition: {x: 0, y: 0}
+      minPosition: {x: 0.1, y: -0.5}
+      maxPosition: {x: 0.1, y: 0.5}
   runState:
+    stateMachine: {fileID: 9091687914289102630}
+    updatableStateMachine: {fileID: 9091687914289102630}
+    MovementStateMachine: {fileID: 9091687914289102630}
     runSpeed: 10
     runTransitionSpeed: 10
     hasToHoldInput: 1
     pressInput: {fileID: 11400000, guid: 4c71ffb6cf65a0b49964f02a90a49771, type: 2}
     holdInput: {fileID: 11400000, guid: cd01e6854305f9c42a71654f72ddbaf6, type: 2}
+    positionMotion:
+      transform: {fileID: 190184649}
+      transformUpdateSpeed: 10
+      updateSpeed: 10
+      resetUpdateSpeed: 5
+      originalPosition: {x: 0, y: 0}
+      minPosition: {x: 0.1, y: -0.5}
+      maxPosition: {x: 0.1, y: 0.5}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

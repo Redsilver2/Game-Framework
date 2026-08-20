@@ -22,27 +22,15 @@ namespace RedSilver2.Framework.StateMachines
         [SerializeField] private float defaultHeight;
         [SerializeField] private float heightTransitionSpeed;
 
-        [Space]
-        [SerializeField] private IdolState idolState;
-
-        [Space]
-        [SerializeField] private WalkState walkState;
-
-        [Space]
-        [SerializeField] private FallState fallState;
-
-        private LandState landState;
-
-
         private float moveSpeed;
         private float fallSpeed;
 
         private bool isGrounded;
-
         private bool isMoving;
-        private string groundTag;
 
+        private string groundTag;
         private float airbornTime;
+
         private UnityEvent<Vector3> onMoved;
         private UnityEvent<string> onGroundTagChanged;
 
@@ -60,18 +48,13 @@ namespace RedSilver2.Framework.StateMachines
         public float FallSpeed => fallSpeed;
 
         public string GroundTag => groundTag;
-        public bool IsMoving => isMoving;
+        public bool IsMoving    => isMoving;
 
-        public bool IsGrounded => isGrounded;
+        public bool IsGrounded   => isGrounded;
         public float AirbornTime => airbornTime;
 
         public float GroundCheckRange => groundCheckRange;
-        public bool Is2DMovement => is2DMovement;
-
-        public IdolState IdolState => idolState;
-        public WalkState WalkState => walkState;
-        public FallState FallState => fallState;
-        public LandState LandState => landState;
+        public bool  Is2DMovement     => is2DMovement;
 
 #if UNITY_EDITOR
         protected override void OnValidate() {
@@ -81,19 +64,7 @@ namespace RedSilver2.Framework.StateMachines
             groundCheckRange = Mathf.Clamp(groundCheckRange, 0f, float.MaxValue);
         }
 
-        protected virtual void ValidateStates() {
-            if (walkState == null) walkState = new WalkState();
-            walkState?.Validate(this);
-
-            if (fallState == null) fallState = new FallState();
-            fallState?.Validate(this);
-
-            if (landState == null) landState = new LandState();
-            landState?.Validate(this);
-
-            if (idolState == null) idolState = new IdolState();
-            idolState?.Validate(this);
-        }
+        protected abstract void ValidateStates();
 #endif
 
 
@@ -121,21 +92,7 @@ namespace RedSilver2.Framework.StateMachines
             AddOnGroundTagChangedListener(OnGroundTagChanged);
         }
 
-        protected virtual void Start()
-        {
-            AddState(idolState);
-            AddState(fallState);
-
-            AddState(landState);
-            AddState(walkState);
-
-            idolState?.Enable();
-            walkState?.Enable();
-
-            landState?.Enable();
-            fallState?.Enable();
-        }
-
+        protected abstract void Start();
         private void OnDestroy()
         {
             if (instances != null && _collider != null) {
@@ -237,31 +194,9 @@ namespace RedSilver2.Framework.StateMachines
             return ChangeState(type, true);
         }
 
-        public virtual bool ChangeState(MovementStateType type, bool checkSimilarity) {
-            switch (type)
-            {
-                case MovementStateType.Idol: ChangeState(idolState, checkSimilarity); return true;
-                case MovementStateType.Walk: ChangeState(walkState, checkSimilarity); return true;
-                case MovementStateType.Fall: ChangeState(fallState, checkSimilarity); return true;
-                case MovementStateType.Land: ChangeState(landState, checkSimilarity); return true;
-            }
-
-            return false;
-        }
-
-        public virtual void AddState(MovementStateType type)
-        {
-            if (type == MovementStateType.Idol) AddState(idolState);
-            else if (type == MovementStateType.Walk) AddState(walkState);
-            else if (type == MovementStateType.Fall) AddState(fallState);
-        }
-
-
-        public virtual void RemoveState(MovementStateType type) {
-            if (type == MovementStateType.Idol) RemoveState(idolState);
-            else if (type == MovementStateType.Walk) RemoveState(walkState);
-            else if (type == MovementStateType.Fall) RemoveState(fallState);
-        }
+        public abstract bool ChangeState(MovementStateType type, bool checkSimilarity);
+        public abstract void AddState(MovementStateType type);
+        public abstract void RemoveState(MovementStateType type);
 
         public bool ContainsState(MovementStateType type) {
             return GetState(type) != null;

@@ -5,7 +5,7 @@ using UnityEngine;
 namespace RedSilver2.Framework.StateMachines.States
 {
     [System.Serializable]
-    public sealed class FallState : MovementState
+    public abstract class FallState : MovementState
     {
         [Space]
         [SerializeField] private float airbornTimeTransitionTrigger;
@@ -34,12 +34,6 @@ namespace RedSilver2.Framework.StateMachines.States
         }
 
 #if UNITY_EDITOR
-        public void Validate(MovementStateMachine stateMachine)
-        {
-            SetStateMachine(stateMachine);
-            Validate();
-        }
-
         protected override void Validate()
         {
             base.Validate();
@@ -50,13 +44,6 @@ namespace RedSilver2.Framework.StateMachines.States
             fallTransitionSpeed = Mathf.Clamp(fallTransitionSpeed, 0f, float.MaxValue);
         }
 #endif
-
-        private void SetStateMachine(MovementStateMachine stateMachine)
-        {
-            MovementStateMachine = stateMachine;
-            SetStateMachine(stateMachine as UpdatableStateMachine);
-        }
-
         public sealed override bool CanTransition()
         {
             if(MovementStateMachine == null) return false;

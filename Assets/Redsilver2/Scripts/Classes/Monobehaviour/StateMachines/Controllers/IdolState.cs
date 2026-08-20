@@ -3,15 +3,14 @@ using UnityEngine;
 namespace RedSilver2.Framework.StateMachines.States
 {
     [System.Serializable]
-    public sealed class IdolState : MovementState
+    public abstract class IdolState : MovementState
     {
         [Space]
         [SerializeField] private float moveSpeedTransition;
-
         public const MovementStateType TYPE = MovementStateType.Idol;
-
-        public IdolState() : base()
-        {
+       
+        public IdolState() : base() { 
+        
         }
 
 

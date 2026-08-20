@@ -22,19 +22,20 @@ namespace RedSilver2.Framework.StateMachines.States
         [Space]
         [SerializeField] private bool hasToHoldInput = true;
 
-
         [Space]
         [SerializeField] private PressInputSettings pressInput;
+        [SerializeField] private HoldInputSettings holdInput;
 
         [Space]
-        [SerializeField] private HoldInputSettings holdInput;
+        [SerializeField] private HeadbobPositionMotion positionMotion;
 
         public bool HasToHoldInput           => hasToHoldInput;
         public PressInputSettings PressInput => pressInput;
         public HoldInputSettings  HoldInput  => holdInput;
+        public HeadbobPositionMotion PositionMotion => positionMotion;
 
         public PlayerCrouchState() : base() {
-
+            positionMotion = new HeadbobPositionMotion(Type, false);
         }
 
 #if UNITY_EDITOR
@@ -45,11 +46,12 @@ namespace RedSilver2.Framework.StateMachines.States
 
         protected override void Validate() {
             base.Validate();
+            positionMotion?.Validate();
             crouchCameraUpdateSpeed = Mathf.Clamp(crouchCameraUpdateSpeed, 0f, float.MaxValue);
         }
 #endif
 
-        protected void SetStateMachine(PlayerMovementStateMachine stateMachine)
+        private void SetStateMachine(PlayerMovementStateMachine stateMachine)
         {
             this.MovementStateMachine = stateMachine;
             SetStateMachine(stateMachine as UpdatableStateMachine);
@@ -58,12 +60,18 @@ namespace RedSilver2.Framework.StateMachines.States
         protected override void OnEnabled()
         {
             MovementStateMachine?.AddOnUpdateListener(OnUpdateCrouch);
+            positionMotion?.Enable();
+
+            positionMotion?.SetStateMachine(MovementStateMachine as PlayerMovementStateMachine);
             base.OnEnabled();
         }
 
         protected override void OnDisabled()
         {
             MovementStateMachine?.RemoveOnUpdateListener(OnUpdateCrouch);
+            positionMotion?.Disable();
+
+            positionMotion?.SetStateMachine(null);
             base.OnDisabled();
         }
 

@@ -1,10 +1,9 @@
-using RedSilver2.Framework.StateMachines.Controllers;
 using UnityEngine;
 
 namespace RedSilver2.Framework.StateMachines.States
 {
     [System.Serializable]
-    public sealed class WalkState : MovementState
+    public abstract class WalkState : MovementState
     {
         [Space]
         [SerializeField] private float walkSpeed;
@@ -16,13 +15,8 @@ namespace RedSilver2.Framework.StateMachines.States
            
         }
 
-#if UNITY_EDITOR
-        public void Validate(MovementStateMachine stateMachine)
-        {
-            SetStateMachine(stateMachine);
-            Validate();
-        }
 
+#if UNITY_EDITOR
         protected override void Validate()
         {
             base.Validate();
@@ -30,11 +24,6 @@ namespace RedSilver2.Framework.StateMachines.States
             moveTransitionSpeed = Mathf.Clamp(moveTransitionSpeed, 0f, float.MaxValue);
         }
 #endif
-
-        protected void SetStateMachine(MovementStateMachine stateMachine)  {
-            this.MovementStateMachine = stateMachine;
-            SetStateMachine(stateMachine as UpdatableStateMachine);
-        }
 
         public sealed override bool CanTransition() {
             if (MovementStateMachine == null) return false;

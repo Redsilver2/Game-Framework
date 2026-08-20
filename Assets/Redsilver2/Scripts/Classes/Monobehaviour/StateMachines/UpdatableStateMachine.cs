@@ -36,15 +36,6 @@ namespace RedSilver2.Framework.StateMachines
         private void LateUpdate() { onLateUpdate?.Invoke(); }
 
         protected virtual void OnUpdate() {
-            Debug.Log("Does Current State Exist: " + doesCurrentStateExist + " | States: " + States.Length +  " | Actif States:" + ActifStates.Length);
-
-            if (CurrentState != null) {
-                Debug.Log("Current State: " + CurrentState.StateName);
-
-                foreach (State state in CurrentState.TransitionStates)
-                    Debug.Log("Transition State: " + (state != null ? state.StateName : "None"));
-            }
-
             if(!doesCurrentStateExist) {
                 foreach(State state in ActifStates) {
                     if (state == null || !state.CanTransition()) continue;
