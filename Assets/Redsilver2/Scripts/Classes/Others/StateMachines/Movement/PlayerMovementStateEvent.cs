@@ -8,15 +8,26 @@ namespace RedSilver2.Framework.StateMachines.Extensions
     public abstract class PlayerMovementStateEvent
     {
         private bool isEnabled;
+        private bool isRestrictedToType;
+        private MovementStateType type;
         private PlayerMovementStateMachine stateMachine;
-        
-        public readonly MovementStateType Type;
+
+        public bool IsRestrictedToType => isRestrictedToType;
+        public MovementStateType Type => type;
         public bool IsEnabled => isEnabled;
 
-        protected PlayerMovementStateEvent(MovementStateType Type) {
-            this.Type = Type;
+        protected PlayerMovementStateEvent()
+        {
             isEnabled = false;
         }
+
+#if UNITY_EDITOR
+        protected void Validate(MovementStateType type, bool isRestrictedToType)
+        {
+            this.type = type;
+            this.isRestrictedToType = isRestrictedToType;
+        }
+#endif
 
         public void Enable() {
             if (!isEnabled) isEnabled = true;
@@ -50,13 +61,12 @@ namespace RedSilver2.Framework.StateMachines.Extensions
 
 
         private void OnStateEntered(MovementState state) {
-            if (state == null || state.Type != Type) return;
-            Debug.Log(state);
+            if (state == null || (state.Type != Type && IsRestrictedToType)) return;
             AddStateEvents(state);
         }
 
         private void OnStateExited(MovementState state) {
-            if (state == null || state.Type != Type) return;
+            if (state == null || (state.Type != Type && IsRestrictedToType)) return;
             RemoveStateEvents(state);
         }
 
@@ -76,6 +86,5 @@ namespace RedSilver2.Framework.StateMachines.Extensions
 
         protected abstract void OnStateUpdate(PlayerMovementStateMachine stateMachine);
         protected abstract void OnStateLateUpdate(); 
-        protected abstract void SetMovementType(ref MovementStateType type);
     }
 }

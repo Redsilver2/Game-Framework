@@ -1,4 +1,5 @@
 using RedSilver2.Framework.StateMachines.Controllers;
+using RedSilver2.Framework.StateMachines.Extensions;
 using RedSilver2.Framework.StateMachines.States;
 using UnityEngine;
 
@@ -8,11 +9,14 @@ namespace RedSilver2.Framework.StateMachines
     public class PlayerWalkState : WalkState
     {
         [Space]
-        [SerializeField] private HeadbobPositionMotion positionMotion;
-        public HeadbobPositionMotion PositionMotion => positionMotion;
+        [SerializeField] private PlayerMovementStateMotion positionSwayMotion;
+        [SerializeField] private PlayerMovementStateMotion rotationSwayMotion;
+
+        public PlayerMovementStateMotion PositionSwayMotion => positionSwayMotion;
+        public PlayerMovementStateMotion RotationSwayMotion => rotationSwayMotion;
 
         public PlayerWalkState() : base() {
-            positionMotion = new HeadbobPositionMotion(TYPE, false);
+
         }
 
 
@@ -26,21 +30,35 @@ namespace RedSilver2.Framework.StateMachines
         protected override void Validate()
         {
             base.Validate();
-            positionMotion?.Validate();
+
+            if (positionSwayMotion == null) positionSwayMotion = new PlayerMovementStateMotion();
+            if (rotationSwayMotion == null) rotationSwayMotion = new PlayerMovementStateMotion();
+
+            positionSwayMotion?.Validate(TYPE, MovementMotionUpdateMode.Sin, MovementMotionLateUpdateMode.Position, MovementMotionInputType.Move);
+            rotationSwayMotion?.Validate(TYPE, MovementMotionUpdateMode.Sin, MovementMotionLateUpdateMode.Rotation, MovementMotionInputType.Move);
+
+            rotationSwayMotion?.Validate();
+            positionSwayMotion?.Validate();
         }
 #endif
 
         protected sealed override void OnEnabled()
         {
-            positionMotion?.Enable();
-            positionMotion?.SetStateMachine(this.MovementStateMachine as PlayerMovementStateMachine);
+            positionSwayMotion?.Enable();
+            positionSwayMotion?.SetStateMachine(this.MovementStateMachine as PlayerMovementStateMachine);
+
+            rotationSwayMotion?.Enable();
+            rotationSwayMotion?.SetStateMachine(MovementStateMachine as PlayerMovementStateMachine);
             base.OnEnabled();
         }
 
         protected sealed override void OnDisabled()
         {
-            positionMotion?.Disable();
-            positionMotion?.SetStateMachine(null);
+            positionSwayMotion?.Disable();
+            positionSwayMotion?.SetStateMachine(null);
+
+            rotationSwayMotion?.Disable();
+            rotationSwayMotion?.SetStateMachine(null);
             base.OnDisabled();
         }
 

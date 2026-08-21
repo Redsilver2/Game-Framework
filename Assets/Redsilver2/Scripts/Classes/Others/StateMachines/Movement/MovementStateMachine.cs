@@ -44,6 +44,8 @@ namespace RedSilver2.Framework.StateMachines
         public float DefaultHeight => defaultHeight;
         public float DefaultFallSpeed => defaultFallSpeed;
 
+        public float HeightTransitionSpeed => heightTransitionSpeed;
+
         public float MoveSpeed => moveSpeed;
         public float FallSpeed => fallSpeed;
 

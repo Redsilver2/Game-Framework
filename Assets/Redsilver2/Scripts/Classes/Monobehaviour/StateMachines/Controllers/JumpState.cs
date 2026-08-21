@@ -88,18 +88,14 @@ namespace RedSilver2.Framework.StateMachines.States {
         {
             base.OnEnabled();
             Debug.Log("?!");
-
-            MovementStateMachine?.AddOnUpdateListener(MovementStateMachineUpdate);
         }
 
         protected override void OnDisabled() {
-            MovementStateMachine?.RemoveOnUpdateListener(MovementStateMachineUpdate);
             isJumping = false;
-
             base.OnDisabled();
         }
 
-        protected virtual void MovementStateMachineUpdate() {
+        public virtual void Update() {
             currentJumpDelay = Mathf.Clamp(currentJumpDelay - Time.deltaTime, 0f, maxJumpDelay);
         }
 

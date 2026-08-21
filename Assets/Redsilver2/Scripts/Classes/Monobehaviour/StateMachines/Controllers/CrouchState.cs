@@ -23,6 +23,8 @@ namespace RedSilver2.Framework.StateMachines.States
         public bool IsCrouching => isCrouching;
         public bool CanChangeState => canChangeState;
 
+        public float CrouchHeightTransitionSpeed => crouchHeightTransitionSpeed;
+
         public const MovementStateType TYPE = MovementStateType.Crouch;
 
         protected CrouchState() : base() {

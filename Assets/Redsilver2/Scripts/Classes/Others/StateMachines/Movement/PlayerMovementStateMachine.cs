@@ -1,10 +1,12 @@
                
 using RedSilver2.Framework.Inputs.Settings;
 using RedSilver2.Framework.Player;
+using RedSilver2.Framework.StateMachines.Extensions;
 using RedSilver2.Framework.StateMachines.States;
 using Unity.IO.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.InputSystem.LowLevel;
 
 
 namespace RedSilver2.Framework.StateMachines.Controllers {
@@ -56,8 +58,6 @@ namespace RedSilver2.Framework.StateMachines.Controllers {
 
         protected override void ValidateStates()
         {
-
-
             if (idolState ==  null) idolState = new PlayerIdolState();
             idolState?.Validate(this);
 
@@ -177,9 +177,14 @@ namespace RedSilver2.Framework.StateMachines.Controllers {
             base.OnUpdate();
             onMoveInputUpdate?.Invoke(moveInputSetting != null ? moveInputSetting.GetValue() : Vector2.zero);
 
+            crouchState?.UpdateInput();
+            runState?.UpdateInput();
+            jumpState?.Update();
         }
 
         protected sealed override void OnLateUpdate() {
+            PlayerCrouchCameraUpdater cameraUpdater = crouchState != null ? crouchState.CameraUpdater : null;
+            cameraUpdater?.LateUpdate();
             Move(Time.deltaTime * nextPosition);
         }
 

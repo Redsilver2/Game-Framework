@@ -1,5 +1,6 @@
 using RedSilver2.Framework.Inputs.Settings;
 using RedSilver2.Framework.StateMachines.Controllers;
+using RedSilver2.Framework.StateMachines.Extensions;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -9,17 +10,6 @@ namespace RedSilver2.Framework.StateMachines.States
     public sealed class PlayerCrouchState : CrouchState
     {
         [Space]
-        [SerializeField] private Transform cameraCrouchTransform;
-
-        [Space]
-        [SerializeField] private Vector3 crouchCameraPosition;
-        [SerializeField] private Vector3 standCameraPosition;
-
-        [Space]
-        [SerializeField] private float crouchCameraUpdateSpeed;
-
-
-        [Space]
         [SerializeField] private bool hasToHoldInput = true;
 
         [Space]
@@ -27,27 +17,37 @@ namespace RedSilver2.Framework.StateMachines.States
         [SerializeField] private HoldInputSettings holdInput;
 
         [Space]
-        [SerializeField] private HeadbobPositionMotion positionMotion;
+        [SerializeField] private PlayerCrouchCameraUpdater cameraUpdater;
+        [SerializeField] private PlayerMovementStateMotion positionSwayMotion;
+        [SerializeField] private PlayerMovementStateMotion rotationSwayMotion;
 
         public bool HasToHoldInput           => hasToHoldInput;
         public PressInputSettings PressInput => pressInput;
         public HoldInputSettings  HoldInput  => holdInput;
-        public HeadbobPositionMotion PositionMotion => positionMotion;
 
-        public PlayerCrouchState() : base() {
-            positionMotion = new HeadbobPositionMotion(Type, false);
-        }
+        public PlayerCrouchCameraUpdater  CameraUpdater => cameraUpdater;
+        public PlayerMovementStateMotion PositionSwayMotion => positionSwayMotion;
+        public PlayerMovementStateMotion RotationSwayMotion => rotationSwayMotion;
+
+        public PlayerCrouchState() : base() { }
 
 #if UNITY_EDITOR
         public void Validate(PlayerMovementStateMachine stateMachine) {
             SetStateMachine(stateMachine);
+
+            if(cameraUpdater == null) cameraUpdater = new PlayerCrouchCameraUpdater();
+            cameraUpdater?.Validate(this, stateMachine);
+
             Validate();
         }
 
         protected override void Validate() {
             base.Validate();
-            positionMotion?.Validate();
-            crouchCameraUpdateSpeed = Mathf.Clamp(crouchCameraUpdateSpeed, 0f, float.MaxValue);
+            if (positionSwayMotion == null) positionSwayMotion = new PlayerMovementStateMotion();
+            if (rotationSwayMotion == null) rotationSwayMotion = new PlayerMovementStateMotion();
+
+            positionSwayMotion?.Validate(TYPE, MovementMotionUpdateMode.Sin, MovementMotionLateUpdateMode.Position, MovementMotionInputType.Move);
+            rotationSwayMotion?.Validate(TYPE, MovementMotionUpdateMode.Sin, MovementMotionLateUpdateMode.Rotation, MovementMotionInputType.Move);
         }
 #endif
 
@@ -59,30 +59,26 @@ namespace RedSilver2.Framework.StateMachines.States
 
         protected override void OnEnabled()
         {
-            MovementStateMachine?.AddOnUpdateListener(OnUpdateCrouch);
-            positionMotion?.Enable();
+            positionSwayMotion?.Enable();
+            positionSwayMotion?.SetStateMachine(MovementStateMachine as PlayerMovementStateMachine);
 
-            positionMotion?.SetStateMachine(MovementStateMachine as PlayerMovementStateMachine);
+            rotationSwayMotion?.Enable();
+            rotationSwayMotion?.SetStateMachine(MovementStateMachine as PlayerMovementStateMachine);
+
             base.OnEnabled();
         }
 
         protected override void OnDisabled()
         {
-            MovementStateMachine?.RemoveOnUpdateListener(OnUpdateCrouch);
-            positionMotion?.Disable();
+            rotationSwayMotion?.Disable();
+            rotationSwayMotion?.SetStateMachine(null);
 
-            positionMotion?.SetStateMachine(null);
+            positionSwayMotion?.Disable();
+            positionSwayMotion?.SetStateMachine(null);
             base.OnDisabled();
         }
-
-        private void UpdateCameraCrouchTransform(Vector3 position)
-        {
-            if (cameraCrouchTransform != null)
-                cameraCrouchTransform.localPosition = Vector3.Lerp(cameraCrouchTransform.localPosition, position, Time.deltaTime * crouchCameraUpdateSpeed);
-        }
-
-         
-        private void OnUpdateCrouch() {
+   
+        public void UpdateInput() {
             pressInput?.Enable();
             holdInput?.Enable();
 
@@ -91,8 +87,6 @@ namespace RedSilver2.Framework.StateMachines.States
             else if (RunState.IsStateMachineRunning(MovementStateMachine) || JumpState.IsStateMachineJumping(MovementStateMachine)) SetIsCrouching(false);
             else if (hasToHoldInput) { SetIsCrouching(holdInput != null ? holdInput.GetValue() : false); }
             else if (!hasToHoldInput) { SetIsCrouching(pressInput != null ? (pressInput.GetValue() ? !IsCrouching : IsCrouching) : false); }
-
-            UpdateCameraCrouchTransform(IsCrouching ? crouchCameraPosition : standCameraPosition);
         }
 
         protected sealed override int GetLayerToIgnore() {

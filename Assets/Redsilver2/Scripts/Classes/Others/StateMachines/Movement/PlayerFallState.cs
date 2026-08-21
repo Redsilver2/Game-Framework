@@ -1,6 +1,4 @@
-using RedSilver2.Framework.StateMachines;
 using RedSilver2.Framework.StateMachines.Controllers;
-using UnityEngine;
 
 namespace RedSilver2.Framework.StateMachines.States
 {

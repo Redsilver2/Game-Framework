@@ -1,4 +1,5 @@
 using RedSilver2.Framework.StateMachines.Controllers;
+using RedSilver2.Framework.StateMachines.Extensions;
 using UnityEngine;
 
 
@@ -9,11 +10,14 @@ namespace RedSilver2.Framework.StateMachines.States
     {
 
         [Space]
-        [SerializeField] private HeadbobPositionMotion positionMotion;
-        public HeadbobPositionMotion PositionMotion => positionMotion;
+        [SerializeField] private PlayerMovementStateMotion positionSwayMotion;
+        [SerializeField] private PlayerMovementStateMotion rotationSwayMotion;
+
+        public PlayerMovementStateMotion PositionSwayMotion => positionSwayMotion;
+        public PlayerMovementStateMotion RotationSwayMotion => rotationSwayMotion;
+
 
         public PlayerIdolState() {
-            positionMotion = new HeadbobPositionMotion(TYPE, true);
         }
 
 
@@ -26,7 +30,15 @@ namespace RedSilver2.Framework.StateMachines.States
 
         protected override void Validate() {
             base.Validate();
-            positionMotion?.Validate();
+
+            if (positionSwayMotion == null) positionSwayMotion = new PlayerMovementStateMotion();
+            if (rotationSwayMotion == null) rotationSwayMotion = new PlayerMovementStateMotion();
+
+            positionSwayMotion?.Validate(TYPE, MovementMotionUpdateMode.Sin, MovementMotionLateUpdateMode.Position, MovementMotionInputType.None);
+            rotationSwayMotion?.Validate(TYPE, MovementMotionUpdateMode.Sin, MovementMotionLateUpdateMode.Rotation, MovementMotionInputType.None);
+
+            positionSwayMotion?.Validate();
+            rotationSwayMotion?.Validate();
         }
 #endif
 
@@ -38,16 +50,23 @@ namespace RedSilver2.Framework.StateMachines.States
 
         protected override void OnEnabled()
         {
-            positionMotion?.Enable();
-            positionMotion?.SetStateMachine(MovementStateMachine as PlayerMovementStateMachine);
+            positionSwayMotion?.Enable();
+            positionSwayMotion?.SetStateMachine(MovementStateMachine as PlayerMovementStateMachine);
+
+            rotationSwayMotion?.Enable();
+            rotationSwayMotion?.SetStateMachine(MovementStateMachine as PlayerMovementStateMachine);
 
             base.OnEnabled();
         }
 
         protected override void OnDisabled()
         {
-            positionMotion?.Disable();
-            positionMotion?.SetStateMachine(null);
+            positionSwayMotion?.Disable();
+            positionSwayMotion?.SetStateMachine(null);
+
+            rotationSwayMotion?.Disable();
+            rotationSwayMotion?.SetStateMachine(null);
+
             base.OnDisabled();
         }
 

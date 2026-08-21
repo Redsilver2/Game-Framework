@@ -27,10 +27,10 @@ namespace RedSilver2.Framework.StateMachines.States
             SetStateMachine(stateMachine as UpdatableStateMachine);
         }
 
-        protected override void MovementStateMachineUpdate()
+        public override void Update()
         {
             inputSetting?.Enable();
-            base.MovementStateMachineUpdate();
+            base.Update();
 
             if (MovementStateMachine == null || inputSetting == null || CurrentJumpDelay > 0f || !IsEnabled) SetIsJumping(false);
             else if (inputSetting.GetValue()) {
