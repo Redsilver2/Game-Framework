@@ -58,5 +58,10 @@ namespace RedSilver2.Framework.StateMachines.States
             if (action != null) onLateUpdate?.RemoveListener(action);
         }
 
+        public static UpdatableStateMachine GetStateMachine(UpdatableState state)
+        {
+            return state != null ? state.updatableStateMachine : null;
+        }
+
     }
 }

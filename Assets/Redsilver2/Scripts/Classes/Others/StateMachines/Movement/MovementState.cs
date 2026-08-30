@@ -7,7 +7,6 @@ namespace RedSilver2.Framework.StateMachines.States
     public abstract class MovementState : UpdatableState
     {
         [SerializeField][HideInInspector] protected MovementStateMachine MovementStateMachine;
-
         private MovementStateType type;
         public MovementStateType Type => type;
 
@@ -15,6 +14,14 @@ namespace RedSilver2.Framework.StateMachines.States
             SetMovementStateType(ref type);
             SetStateName(type.ToString());
         }
+
+#if UNITY_EDITOR
+        public virtual void Validate(MovementStateMachine movementStateMachine)
+        {
+            SetStateMachine(movementStateMachine);
+            Validate();
+        }
+#endif
 
         protected override void SetIncompatibleTransitionStates(ref string[] incompatibleStates)
         {
@@ -41,6 +48,13 @@ namespace RedSilver2.Framework.StateMachines.States
         {
             return new MovementStateType[0];
         }
+
+        private void SetStateMachine(MovementStateMachine stateMachine)
+        {
+            this.MovementStateMachine = stateMachine;
+            SetStateMachine(stateMachine as UpdatableStateMachine);
+        }
+
 
         protected sealed override bool CanAddTransitionState(State state)
         {

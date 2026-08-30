@@ -6,7 +6,7 @@ using UnityEngine;
 namespace RedSilver2.Framework.StateMachines.States
 {
     [System.Serializable]
-    public abstract class RunState : MovementState {
+    public sealed class RunState : MovementState {
         [Space]
         [SerializeField] private float runSpeed;
         [SerializeField] private float runTransitionSpeed;
@@ -18,9 +18,7 @@ namespace RedSilver2.Framework.StateMachines.States
         public bool IsRunning => isRunning;
         public const MovementStateType TYPE = MovementStateType.Run;
 
-        protected RunState() : base() {
-
-        }
+        public RunState() : base() { }
 
 
 #if UNITY_EDITOR

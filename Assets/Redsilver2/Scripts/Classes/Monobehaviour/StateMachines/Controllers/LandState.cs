@@ -1,17 +1,13 @@
 
-using UnityEngine;
 
 namespace RedSilver2.Framework.StateMachines.States
 {
     [System.Serializable]
-    public abstract class LandState : MovementState
+    public sealed class LandState : MovementState
     {
         public const MovementStateType TYPE = MovementStateType.Land;
-
-        public LandState() : base()
-        {
-        }
-
+    
+        public LandState() : base() { }
 
         public sealed override bool CanTransition()
         {
@@ -22,14 +18,10 @@ namespace RedSilver2.Framework.StateMachines.States
         protected override void OnEntered()
         {
             base.OnEntered();
+            MovementStateMachine?.ResetAirbornTime();
+
+            FallState.GetState(MovementStateMachine)?.ResetFallSpeed();
             JumpState.GetState(MovementStateMachine)?.ResetJumpCount();
-        }
-
-        protected sealed override void OnUpdate() {
-            base.OnUpdate();
-
-            if (MovementStateMachine == null) return;
-            MovementStateMachine?.SetFallSpeed(MovementStateMachine.DefaultFallSpeed);
         }
 
         protected sealed override void SetMovementStateType(ref MovementStateType type) {

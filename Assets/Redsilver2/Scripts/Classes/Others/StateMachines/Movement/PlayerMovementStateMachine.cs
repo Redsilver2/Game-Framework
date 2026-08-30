@@ -1,12 +1,9 @@
                
 using RedSilver2.Framework.Inputs.Settings;
 using RedSilver2.Framework.Player;
-using RedSilver2.Framework.StateMachines.Extensions;
 using RedSilver2.Framework.StateMachines.States;
-using Unity.IO.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.InputSystem.LowLevel;
 
 
 namespace RedSilver2.Framework.StateMachines.Controllers {
@@ -14,27 +11,6 @@ namespace RedSilver2.Framework.StateMachines.Controllers {
     {
         [Space]
         [SerializeField] private KeyboardVector2InputSettings moveInputSetting;
-
-        [Space]
-        [SerializeField] private PlayerIdolState idolState;
-
-        [Space]
-        [SerializeField] private PlayerFallState fallState;
-
-        [Space]
-        [SerializeField] private PlayerLandState landState;
-
-        [Space]
-        [SerializeField] private PlayerWalkState walkState;
-
-        [Space]
-        [SerializeField] private PlayerJumpState jumpState;
-
-        [Space]
-        [SerializeField] private PlayerCrouchState crouchState;
-
-        [Space]
-        [SerializeField] private PlayerRunState runState;
 
         private Vector3 nextPosition;
 
@@ -44,40 +20,18 @@ namespace RedSilver2.Framework.StateMachines.Controllers {
         public Vector2 MoveInput => moveInputSetting != null ? moveInputSetting.GetValue() : Vector2.zero;
         public CameraController CameraController => cameraController;
 
-        public PlayerIdolState IdolState   => idolState;
-        public PlayerFallState FallState   => fallState;
-        public PlayerLandState LandState   => landState;
-
-        public PlayerWalkState   WalkState   => walkState;
-        public PlayerRunState    RunState    => runState;
-
-        public PlayerJumpState   JumpState   => jumpState;
-        public PlayerCrouchState CrouchState => crouchState;
-
 #if UNITY_EDITOR
 
-        protected override void ValidateStates()
+        protected override void OnValidate()
         {
-            if (idolState ==  null) idolState = new PlayerIdolState();
-            idolState?.Validate(this);
+            base.OnValidate();
+            if (GetState(MovementStateType.Fall) == null) { AddMovement(new Fall()); }
+            if (GetState(MovementStateType.Walk) == null) { AddMovement(new Walk()); }
+        }
 
-            if (fallState == null) fallState = new PlayerFallState();
-            fallState?.Validate(this);
-
-            if(landState == null) landState = new PlayerLandState();
-            landState?.Validate(this);
-
-            if (walkState == null) walkState = new PlayerWalkState();
-            walkState?.Validate(this);
-
-            if(crouchState == null) crouchState = new PlayerCrouchState();
-            crouchState?.Validate(this);
-
-            if (jumpState == null) jumpState = new PlayerJumpState();
-            jumpState?.Validate(this);
-
-            if(runState  == null) runState = new PlayerRunState();
-            runState?.Validate(this);
+        protected sealed override void SetMovementStaetMachineType(ref MovementStateMachineType type)
+        {
+            type = MovementStateMachineType.Player;
         }
 #endif
 
@@ -95,69 +49,8 @@ namespace RedSilver2.Framework.StateMachines.Controllers {
 
         protected override void Start()
         {
-            AddState(idolState);
-            AddState(fallState);
-            AddState(landState);
-
-            AddState(walkState);
-
-            AddState(jumpState);
-            AddState(runState);
-            AddState(crouchState);
-
-            idolState?.Enable();
-            fallState?.Enable();
-            landState?.Enable();    
-
-            walkState?.Enable();
-            jumpState?.Enable();
-           
-            crouchState?.Enable();
-            runState?.Enable();
+            base.Start();
         }
-
-        public override bool ChangeState(MovementStateType type, bool checkSimilarity)
-        {
-            switch (type)
-            {
-                case MovementStateType.Jump: ChangeState(jumpState, checkSimilarity); return true;
-                case MovementStateType.Run: ChangeState(runState, checkSimilarity); return true;
-                case MovementStateType.Crouch: ChangeState(crouchState, checkSimilarity); return true;
-                case MovementStateType.Idol: ChangeState(idolState, checkSimilarity); return true;
-                case MovementStateType.Fall: ChangeState(fallState, checkSimilarity); return true;
-                case MovementStateType.Land: ChangeState(landState, checkSimilarity); return true;
-            }
-
-            return false;
-        }
-
-        public override void AddState(MovementStateType type)
-        {
-            switch (type)
-            {
-                case MovementStateType.Jump: AddState(jumpState); return;
-                case MovementStateType.Run: AddState(runState); return;
-                case MovementStateType.Crouch: AddState(crouchState); return;
-                case MovementStateType.Idol: AddState(idolState); return;
-                case MovementStateType.Fall: AddState(fallState); return;
-                case MovementStateType.Land: AddState(landState); return;
-            }
-        }
-
-        public override void RemoveState(MovementStateType type)
-        {
-            switch (type)
-            {
-                case MovementStateType.Jump: RemoveState(jumpState); return;
-                case MovementStateType.Run: RemoveState(runState); return;
-                case MovementStateType.Crouch: RemoveState(crouchState); return;
-                case MovementStateType.Idol: RemoveState(idolState); return;
-                case MovementStateType.Fall: RemoveState(fallState); return;
-                case MovementStateType.Land: RemoveState(landState); return;
-            }
-        }
-
-
 
         protected override void OnEnabled() {
 
@@ -176,15 +69,15 @@ namespace RedSilver2.Framework.StateMachines.Controllers {
         protected override void OnUpdate() {
             base.OnUpdate();
             onMoveInputUpdate?.Invoke(moveInputSetting != null ? moveInputSetting.GetValue() : Vector2.zero);
+        }
 
-            crouchState?.UpdateInput();
-            runState?.UpdateInput();
-            jumpState?.Update();
+        public override void AddMovement(Movement movement)
+        {
+            if(movement == null) return;
+            else if (movement.IsType(MovementType.Player)) base.AddMovement(movement);
         }
 
         protected sealed override void OnLateUpdate() {
-            PlayerCrouchCameraUpdater cameraUpdater = crouchState != null ? crouchState.CameraUpdater : null;
-            cameraUpdater?.LateUpdate();
             Move(Time.deltaTime * nextPosition);
         }
 

@@ -1,12 +1,12 @@
-using RedSilver2.Framework.StateMachines.Controllers;
 using System;
 using UnityEngine;
 
 namespace RedSilver2.Framework.StateMachines.States
 {
     [System.Serializable]
-    public abstract class FallState : MovementState
+    public sealed class FallState : MovementState
     {
+
         [Space]
         [SerializeField] private float airbornTimeTransitionTrigger;
 
@@ -15,8 +15,16 @@ namespace RedSilver2.Framework.StateMachines.States
         [SerializeField] private float moveTransitionSpeed;
 
         [Space]
+        [SerializeField] private bool canAffectMovementSpeed;
+
+        [Space]
         [SerializeField] private float fallSpeed;
         [SerializeField] private float fallTransitionSpeed;
+
+
+        [Space]
+        [SerializeField] private float groundedFallSpeed;
+        [SerializeField] private float groundedFallTransitionSpeed;
 
 
         public float AirbornTimeTransitionTrigger => airbornTimeTransitionTrigger;
@@ -26,6 +34,9 @@ namespace RedSilver2.Framework.StateMachines.States
 
         public float FallSpeed           => fallSpeed;
         public float FallTransitionSpeed => fallTransitionSpeed;
+
+        public float DefaultFallSpeed => groundedFallSpeed;
+        public float DefaulltFallTransitionSpeed => groundedFallTransitionSpeed;
 
         public const MovementStateType TYPE = MovementStateType.Fall;
 
@@ -44,6 +55,21 @@ namespace RedSilver2.Framework.StateMachines.States
             fallTransitionSpeed = Mathf.Clamp(fallTransitionSpeed, 0f, float.MaxValue);
         }
 #endif
+
+        public void ResetFallSpeed()
+        {
+            this.fallSpeed = groundedFallSpeed;
+        }
+
+        public void Update()
+        {
+            if (MovementStateMachine != null) {
+
+                bool isFalling = MovementStateMachine.IsCurrentState(this);
+                MovementStateMachine?.SetFallSpeed(isFalling ? groundedFallSpeed : fallSpeed, isFalling ? groundedFallTransitionSpeed : fallTransitionSpeed);
+            }
+        }
+
         public sealed override bool CanTransition()
         {
             if(MovementStateMachine == null) return false;
@@ -54,9 +80,7 @@ namespace RedSilver2.Framework.StateMachines.States
         {
             base.OnUpdate();
             if (!IsEnabled) return;
-
-            MovementStateMachine?.SetMoveSpeed(moveSpeed, moveTransitionSpeed);
-            MovementStateMachine?.SetFallSpeed(fallSpeed, fallTransitionSpeed);
+            if(canAffectMovementSpeed) MovementStateMachine?.SetMoveSpeed(moveSpeed, moveTransitionSpeed);
         }
 
         protected sealed override void SetMovementStateType(ref MovementStateType type) {

@@ -9,18 +9,14 @@ namespace RedSilver2.Framework.StateMachines
     public abstract class MovementStateMachine : UpdatableStateMachine
     {
         [Space]
+        [SerializeField, SerializeReference] private List<Movement> movements;
+
+
+        [Space]
         [SerializeField] private float groundCheckRange = 0f;
 
         [Space]
         [SerializeField] private bool is2DMovement;
-
-        [Space]
-        [SerializeField] private float defaultFallSpeed;
-        [SerializeField] private float fallTransitionSpeed;
-
-        [Space]
-        [SerializeField] private float defaultHeight;
-        [SerializeField] private float heightTransitionSpeed;
 
         private float moveSpeed;
         private float fallSpeed;
@@ -41,11 +37,6 @@ namespace RedSilver2.Framework.StateMachines
 
         private static readonly Dictionary<ulong, MovementStateMachine> instances = new Dictionary<ulong, MovementStateMachine>();
 
-        public float DefaultHeight => defaultHeight;
-        public float DefaultFallSpeed => defaultFallSpeed;
-
-        public float HeightTransitionSpeed => heightTransitionSpeed;
-
         public float MoveSpeed => moveSpeed;
         public float FallSpeed => fallSpeed;
 
@@ -61,12 +52,18 @@ namespace RedSilver2.Framework.StateMachines
 #if UNITY_EDITOR
         protected override void OnValidate() {
             base.OnValidate();
-            ValidateStates();
 
+            if(movements == null) movements = new List<Movement>();
+            else {
+                foreach (Movement movement in movements) movement?.Validate(this);
+            }
+          
             groundCheckRange = Mathf.Clamp(groundCheckRange, 0f, float.MaxValue);
+            if (GetMovement(MovementStateType.Idol) == null) AddMovement(new Idol());
+
         }
 
-        protected abstract void ValidateStates();
+        protected abstract void SetMovementStaetMachineType(ref MovementStateMachineType type);
 #endif
 
 
@@ -74,27 +71,40 @@ namespace RedSilver2.Framework.StateMachines
         {
             base.Awake();
 
-            onMoved = new UnityEvent<Vector3>();
+            onMoved            = new UnityEvent<Vector3>();
             onGroundTagChanged = new UnityEvent<string>();
 
-            onStateAdded = new UnityEvent<MovementState>();
+            onStateAdded   = new UnityEvent<MovementState>();
             onStateRemoved = new UnityEvent<MovementState>();
 
             onStateEntered = new UnityEvent<MovementState>();
-            onStateExited = new UnityEvent<MovementState>();
+            onStateExited  = new UnityEvent<MovementState>();
 
             groundTag = string.Empty;
             isGrounded = false;
 
-            isMoving = false;
-            fallSpeed = defaultFallSpeed;
+            isMoving  = false;
             moveSpeed = 0f;
 
             AddOnMovedListener(OnMoved);
             AddOnGroundTagChangedListener(OnGroundTagChanged);
         }
 
-        protected abstract void Start();
+        protected virtual void Start()
+        {
+            if (movements != null)
+            {
+                foreach (Movement movement in movements)  {
+                    MovementState state = movement != null ? movement.GetState() : null;
+
+                    if (state == null) continue;
+                    movement?.InitializeEvents();
+                   
+                    AddState(state);
+                    EnableState(state.Type);
+                }
+            }
+        }
         private void OnDestroy()
         {
             if (instances != null && _collider != null) {
@@ -119,7 +129,7 @@ namespace RedSilver2.Framework.StateMachines
 
         private bool CanAddState(MovementState state)
         {
-            if (state == null || GetState(state.Type) != null) return false;
+            if (state == null || GetState(state.Type) != state) return false;
             return true;
         }
 
@@ -191,28 +201,78 @@ namespace RedSilver2.Framework.StateMachines
             return state != null ? state.Type == type : false;
         }
 
-        public bool ChangeState(MovementStateType type)
+        public void ChangeState(MovementStateType type)
         {
-            return ChangeState(type, true);
+            ChangeState(type, true);
         }
 
-        public abstract bool ChangeState(MovementStateType type, bool checkSimilarity);
-        public abstract void AddState(MovementStateType type);
-        public abstract void RemoveState(MovementStateType type);
+        public void ChangeState(MovementStateType type, bool checkSimilarity)
+        {
+            MovementState state = GetState(type);
+            if(state != null) ChangeState(state, checkSimilarity);
+        }
 
         public bool ContainsState(MovementStateType type) {
             return GetState(type) != null;
         }
-        public MovementState GetState(MovementStateType type) {
 
-            foreach (State state in States) {
-                MovementState _state = state as MovementState;
-                if (_state == null || _state.Type != type) continue;
+        public virtual void AddMovement(Movement movement) {
+            if (movement == null || movements == null) return;
+            else if (!movements.Contains(movement)){
+                MovementState state = movement.GetState();
+                if (state == null || GetMovement(state.Type) != null) return;
 
-                return _state;
+                AddState(state);
+                movements?.Add(movement);
+            }
+        }
+
+        public virtual void RemoveMovement(MovementStateType type) {
+            RemoveMovement(GetMovement(type));
+        }
+
+        private void RemoveMovement(Movement movement)
+        {
+            if (movement == null || movements == null || !movements.Contains(movement)) return;
+            else if (!movements.Contains(movement))
+            {
+                RemoveState(movement.GetState());
+                movements?.Remove(movement);
+            }
+        }
+
+        public void ReplaceMovement(Movement movement)
+        {
+            if(movement != null) {
+                MovementState state = movement.GetState();
+                if(state != null) RemoveMovement(state.Type);
+
+                AddMovement(movement);
+            }
+        }
+
+        public bool ContainsMovement(MovementStateType state)
+        {
+            return GetMovement(state) != null;
+        }
+
+        private Movement GetMovement(MovementStateType type)
+        {
+            if(movements != null) {
+                foreach(Movement movement in movements) {
+                    MovementState state = movement != null ? movement.GetState() : null;
+                    if (state == null || state.Type != type) continue;
+                    return movement;
+                }
             }
 
             return null;
+        }
+
+
+        public MovementState GetState(MovementStateType type) {
+            Movement movement = GetMovement(type);
+            return movement != null ? movement.GetState() : null;
         }
 
         protected void SetIsMoving(bool isMoving) {
@@ -222,11 +282,11 @@ namespace RedSilver2.Framework.StateMachines
         protected override void OnUpdate()
         {
             base.OnUpdate();
-
             string currentGroundTag = string.Empty;
 
-            isGrounded = IsCurrentState(MovementStateType.Jump) ? false : GetGroundCheckResult(out currentGroundTag);
+            isGrounded = GetGroundCheckResult(out currentGroundTag);
             currentGroundTag = currentGroundTag.ToLower();
+
 
             if (!groundTag.ToLower().Equals(currentGroundTag)) onGroundTagChanged?.Invoke(currentGroundTag);
 
@@ -234,11 +294,6 @@ namespace RedSilver2.Framework.StateMachines
             else { airbornTime += Time.deltaTime; }
 
             airbornTime = Mathf.Clamp(airbornTime, 0f, float.MaxValue);
-
-            if (!IsCurrentState(MovementStateType.Fall)) SetFallSpeed(defaultFallSpeed, fallTransitionSpeed);
-            if (!IsCurrentState(MovementStateType.Crouch)) {
-                SetHeight(defaultHeight, heightTransitionSpeed);
-            }
         }
 
         protected virtual void OnGroundTagChanged(string groundTag)
@@ -364,6 +419,12 @@ namespace RedSilver2.Framework.StateMachines
         public virtual void SetHeight(float height, float transitionSpeed)
         {
             SetHeight(Mathf.Clamp(transform.localScale.y, height, Time.deltaTime * transitionSpeed));
+        }
+
+        protected float GetDefaultHeight()
+        {
+            CrouchState state = CrouchState.GetState(this);
+            return state != null ? state.StandHeight : 1f;
         }
 
         public static MovementStateMachine GetInstance(Collider collider)

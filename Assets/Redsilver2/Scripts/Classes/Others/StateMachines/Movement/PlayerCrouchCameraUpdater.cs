@@ -14,14 +14,12 @@ namespace RedSilver2.Framework.StateMachines.Extensions
         [SerializeField] private Vector3 crouchPosition;
         [SerializeField] private Vector3 standPosition;
 
-        private PlayerCrouchState state;
-        private PlayerMovementStateMachine stateMachine;
+        [SerializeField][HideInInspector] private PlayerMovementStateMachine stateMachine;
 
         public PlayerCrouchCameraUpdater() { }
 
 #if UNITY_EDITOR
-        public void Validate(PlayerCrouchState state, PlayerMovementStateMachine stateMachine) {
-           this.state = state;
+        public void Validate(PlayerMovementStateMachine stateMachine) {
            this.stateMachine = stateMachine;
         }
 #endif
@@ -36,15 +34,16 @@ namespace RedSilver2.Framework.StateMachines.Extensions
 
 
         public void LateUpdate() {
-            bool isCrouching = state != null ? state.IsCrouching : false;
+            bool isCrouching = CrouchState.IsStateMachineCrouching(stateMachine);
             if(transform != null) transform.localPosition = Vector3.Lerp(transform.localPosition, isCrouching ?  crouchPosition : standPosition, Time.deltaTime * GetCrouchSpeed(isCrouching)); 
         }
 
         private float GetCrouchSpeed(bool isCrouching)
         {
-            if (state != null && isCrouching) return state.CrouchHeightTransitionSpeed;
-            else if (stateMachine != null && !isCrouching) return stateMachine.HeightTransitionSpeed;
-            else return 0f;
+            CrouchState state = CrouchState.GetState(stateMachine);
+            if (state == null) return 1f;
+
+            return state.IsCrouching ? state.CrouchHeightTransitionSpeed : state.StandHeightTransitionSpeed;
         }
         
     }

@@ -20,6 +20,5 @@ namespace RedSilver2.Framework.StateMachines
         {
             _rigidbody?.MovePosition(nextPosition);
         }
- 
     }
 }

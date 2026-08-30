@@ -3,35 +3,22 @@ using UnityEngine;
 namespace RedSilver2.Framework.StateMachines.States
 {
     [System.Serializable]
-    public abstract class IdolState : MovementState
+    public sealed class IdolState : MovementState
     {
         [Space]
         [SerializeField] private float moveSpeedTransition;
         public const MovementStateType TYPE = MovementStateType.Idol;
        
-        public IdolState() : base() { 
-        
-        }
+        public IdolState() : base() {  }
 
 
 #if UNITY_EDITOR
-        public void Validate(MovementStateMachine stateMachine)
-        {
-            SetStateMachine(stateMachine);
-            Validate();
-        }
-
         protected override void Validate()
         {
             base.Validate();
             moveSpeedTransition = Mathf.Clamp(moveSpeedTransition, 0f, float.MaxValue);
         }
 #endif
-
-        private void SetStateMachine(MovementStateMachine stateMachine) { 
-            this.MovementStateMachine = stateMachine;
-            SetStateMachine(stateMachine as UpdatableStateMachine);
-        }
 
         public sealed override bool CanTransition()
         {

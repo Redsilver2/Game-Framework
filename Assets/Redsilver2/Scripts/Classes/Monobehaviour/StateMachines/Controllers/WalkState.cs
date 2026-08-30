@@ -3,7 +3,7 @@ using UnityEngine;
 namespace RedSilver2.Framework.StateMachines.States
 {
     [System.Serializable]
-    public abstract class WalkState : MovementState
+    public sealed class WalkState : MovementState
     {
         [Space]
         [SerializeField] private float walkSpeed;

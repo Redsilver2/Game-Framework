@@ -36,8 +36,13 @@ namespace RedSilver2.Framework.StateMachines
         private void LateUpdate() { onLateUpdate?.Invoke(); }
 
         protected virtual void OnUpdate() {
-            if(!doesCurrentStateExist) {
-                foreach(State state in ActifStates) {
+            State[] states = ActifStates;
+
+            if (!doesCurrentStateExist && states != null) {
+                Debug.Log(states.Length);
+
+                foreach (State state in ActifStates) {
+                    Debug.Log(state != null ? state.Name : string.Empty);
                     if (state == null || !state.CanTransition()) continue;
                     ChangeState(state);
                     break;
@@ -70,15 +75,18 @@ namespace RedSilver2.Framework.StateMachines
 
         protected sealed override void OnStateAdded(State state)
         {
+            base.OnStateAdded(state);
             OnStateAdded(state as UpdatableState);
         }
         protected virtual void OnStateAdded(UpdatableState state)
         {
+
             onStateRemoved?.Invoke(state);
         }
 
         protected sealed override void OnStateRemoved(State state)
         {
+            base.OnStateRemoved(state);
             OnStateAdded(state as UpdatableState);
         }
         protected virtual void OnStateRemoved(UpdatableState state)

@@ -1,3 +1,4 @@
+using RedSilver2.Framework.StateMachines.Events;
 using RedSilver2.Framework.StateMachines.States;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,8 +9,8 @@ namespace RedSilver2.Framework.StateMachines
     public abstract class StateMachine : MonoBehaviour
     {
         private State currentState;
-
         private List<State> states;
+
         private List<State> actifStates;
         private UnityEvent onEnabled, onDisabled;
 
@@ -31,7 +32,7 @@ namespace RedSilver2.Framework.StateMachines
 
         protected virtual void Awake()
         {
-            states = new List<State>();
+            states      = new List<State>();
             actifStates = new List<State>();
 
             onEnabled  = new UnityEvent();
@@ -62,14 +63,17 @@ namespace RedSilver2.Framework.StateMachines
         protected void AddState(State state)
         {
             if (states == null || !CanAddState(state) || states.Contains(state)) return;
+            state?.Added();
+
             states?.Add(state);
             onStateAdded?.Invoke(state);
         }
 
         public void AddActifState(State state)
         {
-            if (states == null || !states.Contains(state)) return; 
+            if (states == null || !states.Contains(state)) return;
             else if (actifStates == null || state == null || actifStates.Contains(state)) return;
+        
 
             actifStates?.Add(state);
             onActifStateAdded?.Invoke(state);
@@ -82,7 +86,9 @@ namespace RedSilver2.Framework.StateMachines
             if(actifStates != null)
                 if (actifStates.Contains(state)) { actifStates?.Remove(state); }
 
+            state?.Removed();
             onStateRemoved?.Invoke(state);
+          
             states?.Remove(state);
         }
 
@@ -134,8 +140,24 @@ namespace RedSilver2.Framework.StateMachines
         protected virtual void OnEnabled() { }
         protected virtual void OnDisabled() { }
 
-        protected abstract void OnStateAdded(State state);
-        protected abstract void OnStateRemoved(State state);
+        protected virtual void OnStateAdded(State state)
+        {
+            if (states != null) {
+                foreach (State _state in states) {
+                    _state?.AddTransitionState(state);
+                    state?.AddTransitionState(_state);
+                }
+            }
+        }
+        protected virtual void OnStateRemoved(State state)
+        {
+            if (states != null) {
+                foreach (State _state in states) {
+                    _state?.RemoveTransitionState(state);
+                    state?.RemoveTransitionState(_state);
+                }
+            }
+        }
 
         protected virtual void OnStateEntered(State state)
         {
@@ -165,7 +187,7 @@ namespace RedSilver2.Framework.StateMachines
 
             for (int i = 0; i < states.Count; i++) {
                 if(states[i] == null) continue;
-                string _state = states[i].StateName;
+                string _state = states[i].Name;
 
                 if(string.IsNullOrEmpty(_state) || _state != stateName) continue;
                 return states[i];

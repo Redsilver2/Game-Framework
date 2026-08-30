@@ -26,11 +26,6 @@ namespace RedSilver2.Framework.StateMachines.Extensions
 
             source = GetComponent<AudioSource>();
             tagSoundDatas = new Dictionary<string, MovementSoundData>();
-
-            foreach(MovementSoundData data in movementSoundDatas) {
-                if (data == null || tagSoundDatas.ContainsKey(data.groundTag.ToLower())) return;
-                tagSoundDatas?.Add(data.groundTag.ToLower(), data);
-            }
         }
 
         protected override void SetStateMachineEvents(MovementStateMachine stateMachine, bool isAddingEvents)
@@ -71,7 +66,7 @@ namespace RedSilver2.Framework.StateMachines.Extensions
             source.pitch  = Random.Range(0.6f, 0.8f);
             source.volume = Random.Range(0.8f, 1f);
 
-            source.clip = GetRandomAudioClip(currentData.moveAudioClips);
+            //source.clip = GetRandomAudioClip(currentData.moveAudioClips);
             source.Play();
         }
 

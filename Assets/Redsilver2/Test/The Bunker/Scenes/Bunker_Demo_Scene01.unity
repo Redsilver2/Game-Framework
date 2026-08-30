@@ -645,15 +645,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.DoorStateMachine
   handle: {fileID: 392872284}
   openState:
+    events: []
     stateMachine: {fileID: 392872288}
     defaultDuration: 0
     desiredPosition: {x: 0, y: 0, z: 0}
     desiredRotation: {x: 0, y: 0, z: 0}
   closeState:
+    events: []
     stateMachine: {fileID: 392872288}
     defaultDuration: 0
     desiredPosition: {x: 0, y: 0, z: 0}
     desiredRotation: {x: 0, y: 0, z: 0}
+  references:
+    version: 2
+    RefIds: []
 --- !u!1001 &468967267
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -975,15 +980,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.DoorStateMachine
   handle: {fileID: 1960062247}
   openState:
+    events: []
     stateMachine: {fileID: 603077994}
     defaultDuration: 0
     desiredPosition: {x: 0, y: 0, z: 0}
     desiredRotation: {x: 0, y: 0, z: 0}
   closeState:
+    events: []
     stateMachine: {fileID: 603077994}
     defaultDuration: 0
     desiredPosition: {x: 0, y: 0, z: 0}
     desiredRotation: {x: 0, y: 0, z: 0}
+  references:
+    version: 2
+    RefIds: []
 --- !u!4 &603077995
 Transform:
   m_ObjectHideFlags: 0
@@ -2480,15 +2490,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.DoorStateMachine
   handle: {fileID: 1607124414}
   openState:
+    events: []
     stateMachine: {fileID: 1367059352}
     defaultDuration: 0
     desiredPosition: {x: 0, y: 0, z: 0}
     desiredRotation: {x: 0, y: 0, z: 0}
   closeState:
+    events: []
     stateMachine: {fileID: 1367059352}
     defaultDuration: 0
     desiredPosition: {x: 0, y: 0, z: 0}
     desiredRotation: {x: 0, y: 0, z: 0}
+  references:
+    version: 2
+    RefIds: []
 --- !u!114 &1367059358
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3663,15 +3678,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.DoorStateMachine
   handle: {fileID: 2094717040}
   openState:
+    events: []
     stateMachine: {fileID: 2094717044}
     defaultDuration: 0
     desiredPosition: {x: 0, y: 0, z: 0}
     desiredRotation: {x: 0, y: 0, z: 0}
   closeState:
+    events: []
     stateMachine: {fileID: 2094717044}
     defaultDuration: 0
     desiredPosition: {x: 0, y: 0, z: 0}
     desiredRotation: {x: 0, y: 0, z: 0}
+  references:
+    version: 2
+    RefIds: []
 --- !u!114 &268820437674400116
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3798,7 +3818,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f90685cd6cf10649860081d418f7c7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Dialogs.SubtitleAudioSetup
-  audioInfo: {fileID: 11400000, guid: 9367748c14e547a4eb86ad8ac9a3cd2d, type: 2}
+  audioInfo: {fileID: 0}
 --- !u!82 &1568030025500472595
 AudioSource:
   m_ObjectHideFlags: 0
@@ -4067,11 +4087,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0612e0eea0170f429b3af4688cf1eec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.Extensions.MovementSoundExtension
-  movementSoundDatas:
-  - {fileID: 11400000, guid: f69868cf11da42b48adc76fa6953aaac, type: 2}
-  - {fileID: 11400000, guid: 296fdf3592dcab54f93ea598d65ea24e, type: 2}
-  - {fileID: 11400000, guid: b00cb1d02a88e7040a51545eb2427fad, type: 2}
-  soundTriggerTime: 0.5
+  movementSoundDatas: []
+  soundTriggerTime: 0
 --- !u!114 &9091687914289102627
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4084,8 +4101,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49b4e1869be83464a9f9ace3d4ae849d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Inventories.InventoryUI
-  canWrapIndex: 1
-  inventory: {fileID: 9091687914289102628}
+  canWrapIndex: 0
+  inventory: {fileID: 0}
 --- !u!114 &9091687914289102628
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4129,130 +4146,95 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63e85299cd878444fbfbbe680f58ed9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.PlayerCharacterControllerStateMachine
+  movements:
+  - rid: 5416424768575897877
+  - rid: 5416424768575897878
+  - rid: 5416424768575897879
+  - rid: 5416424768575897883
   groundCheckRange: 1.5
   is2DMovement: 0
-  defaultFallSpeed: -10
-  fallTransitionSpeed: 2
-  defaultHeight: 2
-  heightTransitionSpeed: 10
   moveInputSetting: {fileID: 11400000, guid: 34e9a3b820b865e438822ed3a624d62a, type: 2}
-  idolState:
-    stateMachine: {fileID: 9091687914289102630}
-    updatableStateMachine: {fileID: 9091687914289102630}
-    MovementStateMachine: {fileID: 9091687914289102630}
-    moveSpeedTransition: 10
-    positionSwayMotion:
-      transform: {fileID: 190184649}
-      lateUpdateSpeed: 0
-      updateSpeed: 0
-      resetSpeed: 0
-      origin: {x: 0, y: 0}
-      min: {x: 0, y: 0}
-      max: {x: 0, y: 0}
-    rotationSwayMotion:
-      transform: {fileID: 190184649}
-      lateUpdateSpeed: 0
-      updateSpeed: 0
-      resetSpeed: 0
-      origin: {x: 0, y: 0}
-      min: {x: 0, y: 0}
-      max: {x: 0, y: 0}
-  fallState:
-    stateMachine: {fileID: 9091687914289102630}
-    updatableStateMachine: {fileID: 9091687914289102630}
-    MovementStateMachine: {fileID: 9091687914289102630}
-    airbornTimeTransitionTrigger: 0.02
-    moveSpeed: 0.5
-    moveTransitionSpeed: 0
-    fallSpeed: -20
-    fallTransitionSpeed: 10
-  walkState:
-    stateMachine: {fileID: 9091687914289102630}
-    updatableStateMachine: {fileID: 9091687914289102630}
-    MovementStateMachine: {fileID: 9091687914289102630}
-    walkSpeed: 5
-    moveTransitionSpeed: 10
-    positionSwayMotion:
-      transform: {fileID: 190184649}
-      lateUpdateSpeed: 0
-      updateSpeed: 0
-      resetSpeed: 0
-      origin: {x: 0, y: 0}
-      min: {x: 0, y: 0}
-      max: {x: 0, y: 0}
-    rotationSwayMotion:
-      transform: {fileID: 190184649}
-      lateUpdateSpeed: 0
-      updateSpeed: 0
-      resetSpeed: 0
-      origin: {x: 0, y: 0}
-      min: {x: 0, y: 0}
-      max: {x: 0, y: 0}
-  jumpState:
-    stateMachine: {fileID: 9091687914289102630}
-    updatableStateMachine: {fileID: 9091687914289102630}
-    MovementStateMachine: {fileID: 9091687914289102630}
-    jumpForce: 0
-    maxJumpCount: 1
-    maxJumpDelay: 0
-    inputSetting: {fileID: 11400000, guid: a9d391630c40d6943945932a946a9df0, type: 2}
-  crouchState:
-    stateMachine: {fileID: 9091687914289102630}
-    updatableStateMachine: {fileID: 9091687914289102630}
-    MovementStateMachine: {fileID: 9091687914289102630}
-    crouchMoveSpeed: 1.5
-    crouchMoveTransitionSpeed: 10
-    crouchHeight: 1
-    crouchHeightTransitionSpeed: 10
-    unCrouchSafetyCheckDistance: 1.5
-    hasToHoldInput: 1
-    pressInput: {fileID: 11400000, guid: 1faffc1e4c2cd3943a96937c4b8401fb, type: 2}
-    holdInput: {fileID: 11400000, guid: 61364bc8a312b1c4c9ca563f361e9b55, type: 2}
-    cameraUpdater:
-      transform: {fileID: 1594589319}
-      crouchPosition: {x: 0, y: 0.75, z: 0}
-      standPosition: {x: 0, y: 1.5, z: 0}
-    positionSwayMotion:
-      transform: {fileID: 190184649}
-      lateUpdateSpeed: 0
-      updateSpeed: 0
-      resetSpeed: 0
-      origin: {x: 0, y: 0}
-      min: {x: 0, y: 0}
-      max: {x: 0, y: 0}
-    rotationSwayMotion:
-      transform: {fileID: 190184649}
-      lateUpdateSpeed: 0
-      updateSpeed: 0
-      resetSpeed: 0
-      origin: {x: 0, y: 0}
-      min: {x: 0, y: 0}
-      max: {x: 0, y: 0}
-  runState:
-    stateMachine: {fileID: 9091687914289102630}
-    updatableStateMachine: {fileID: 9091687914289102630}
-    MovementStateMachine: {fileID: 9091687914289102630}
-    runSpeed: 10
-    runTransitionSpeed: 10
-    hasToHoldInput: 1
-    pressInput: {fileID: 11400000, guid: 4c71ffb6cf65a0b49964f02a90a49771, type: 2}
-    holdInput: {fileID: 11400000, guid: cd01e6854305f9c42a71654f72ddbaf6, type: 2}
-    positionSwayMotion:
-      transform: {fileID: 190184649}
-      lateUpdateSpeed: 0
-      updateSpeed: 0
-      resetSpeed: 0
-      origin: {x: 0, y: 0}
-      min: {x: 0, y: 0}
-      max: {x: 0, y: 0}
-    rotationSwayMotion:
-      transform: {fileID: 190184649}
-      lateUpdateSpeed: 0
-      updateSpeed: 0
-      resetSpeed: 0
-      origin: {x: 0, y: 0}
-      min: {x: 0, y: 0}
-      max: {x: 0, y: 0}
+  references:
+    version: 2
+    RefIds:
+    - rid: 5416424768575897877
+      type: {class: Idol, ns: RedSilver2.Framework.StateMachines.States, asm: Assembly-CSharp}
+      data:
+        name: Idol
+        baseState:
+          rid: 5416424768575897880
+        stateMachine: {fileID: 9091687914289102630}
+    - rid: 5416424768575897878
+      type: {class: Fall, ns: RedSilver2.Framework.StateMachines.States, asm: Assembly-CSharp}
+      data:
+        name: Fall
+        baseState:
+          rid: 5416424768575897881
+        stateMachine: {fileID: 9091687914289102630}
+    - rid: 5416424768575897879
+      type: {class: Walk, ns: RedSilver2.Framework.StateMachines, asm: Assembly-CSharp}
+      data:
+        name: Walk
+        baseState:
+          rid: 5416424768575897882
+        stateMachine: {fileID: 9091687914289102630}
+    - rid: 5416424768575897880
+      type: {class: IdolState, ns: RedSilver2.Framework.StateMachines.States, asm: Assembly-CSharp}
+      data:
+        events: []
+        stateMachine: {fileID: 9091687914289102630}
+        updatableStateMachine: {fileID: 9091687914289102630}
+        MovementStateMachine: {fileID: 9091687914289102630}
+        moveSpeedTransition: 10
+    - rid: 5416424768575897881
+      type: {class: FallState, ns: RedSilver2.Framework.StateMachines.States, asm: Assembly-CSharp}
+      data:
+        events: []
+        stateMachine: {fileID: 9091687914289102630}
+        updatableStateMachine: {fileID: 9091687914289102630}
+        MovementStateMachine: {fileID: 9091687914289102630}
+        airbornTimeTransitionTrigger: 0.02
+        moveSpeed: 0
+        moveTransitionSpeed: 0
+        canAffectMovementSpeed: 0
+        fallSpeed: -30
+        fallTransitionSpeed: 10
+        groundedFallSpeed: -10
+        groundedFallTransitionSpeed: 10
+    - rid: 5416424768575897882
+      type: {class: WalkState, ns: RedSilver2.Framework.StateMachines.States, asm: Assembly-CSharp}
+      data:
+        events: []
+        stateMachine: {fileID: 9091687914289102630}
+        updatableStateMachine: {fileID: 9091687914289102630}
+        MovementStateMachine: {fileID: 9091687914289102630}
+        walkSpeed: 5
+        moveTransitionSpeed: 10
+    - rid: 5416424768575897883
+      type: {class: Land, ns: RedSilver2.Framework.StateMachines.States, asm: Assembly-CSharp}
+      data:
+        name: Land
+        baseState:
+          rid: 5416424768575897884
+        stateMachine: {fileID: 9091687914289102630}
+    - rid: 5416424768575897884
+      type: {class: LandState, ns: RedSilver2.Framework.StateMachines.States, asm: Assembly-CSharp}
+      data:
+        events:
+        - rid: 5416424768575897886
+        stateMachine: {fileID: 9091687914289102630}
+        updatableStateMachine: {fileID: 9091687914289102630}
+        MovementStateMachine: {fileID: 9091687914289102630}
+    - rid: 5416424768575897886
+      type: {class: LandSound, ns: RedSilver2.Framework.StateMachines.Extensions, asm: Assembly-CSharp}
+      data:
+        name: 
+        source: {fileID: 1568030025500472595}
+        data: {fileID: 11400000, guid: 2d960960eb5a4374c813a870c024eded, type: 2}
+        minPitch: 1
+        maxPitch: 2
+        minVolume: 0.5
+        maxVolume: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

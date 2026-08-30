@@ -1,3 +1,4 @@
+using RedSilver2.Framework.StateMachines.Events;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -7,12 +8,18 @@ namespace RedSilver2.Framework.StateMachines.States
 {
     [System.Serializable]
     public abstract class State {
-        [SerializeField][HideInInspector] private StateMachine stateMachine;
+        [SerializeField, SerializeReference] private List<StateEvent> events;
+        [SerializeField, HideInInspector] private StateMachine stateMachine;
 
         private bool isEnabled;
-        private string stateName;
-        private string[] incompatibleTransitionStates;
+        private string name;
+
+        private readonly string[] incompatibleTransitionStates;
         private readonly List<State> transitionStates;
+
+
+        private readonly UnityEvent onAdded;
+        private readonly UnityEvent onRemoved;
 
         private readonly UnityEvent onEntered;
         private readonly UnityEvent onExited;
@@ -24,20 +31,30 @@ namespace RedSilver2.Framework.StateMachines.States
         private readonly UnityEvent<State> onTransitionStateRemoved;
 
         public bool IsEnabled => isEnabled;
-        public string StateName => stateName;
+        public string Name => name;
+
+        public string[] IncompatibleTransitionStates => incompatibleTransitionStates != null ? incompatibleTransitionStates : new string[0];
+
+        public StateEvent[] Events => events != null ? events.ToArray() : new StateEvent[0];
         public State[] TransitionStates => transitionStates != null ? transitionStates.ToArray() : new State[0];
 
         protected State() {
-            transitionStates = new List<State>();
             SetIncompatibleTransitionStates(ref incompatibleTransitionStates);
+            
+            transitionStates = new List<State>();
+            events = new List<StateEvent>();
+
+
+            onAdded = new UnityEvent();
+            onRemoved  = new UnityEvent();
 
             onEnabled  = new UnityEvent();
             onDisabled = new UnityEvent();
 
-            onEntered = new UnityEvent();
-            onExited  = new UnityEvent();
+            onEntered  = new UnityEvent();
+            onExited   = new UnityEvent();
 
-            onTransitionStateAdded = new UnityEvent<State>();
+            onTransitionStateAdded   = new UnityEvent<State>();
             onTransitionStateRemoved = new UnityEvent<State>();
 
             AddOnEnteredListener(OnEntered);
@@ -45,6 +62,32 @@ namespace RedSilver2.Framework.StateMachines.States
 
             AddOnEnabledListener(OnEnabled);
             AddOnDisabledListener(OnDisabled);
+        }
+
+        public void AddEvent(StateEvent _event)
+        {
+            if (events == null || _event == null) return;
+            else if (!events.Contains(_event)) {
+                if (_event.IsValid(this, stateMachine) && _event.IsValid(this, stateMachine)) {
+                    events?.Add(_event);
+                }
+            }
+        }
+
+        public void RemoveEvent(StateEvent _event)
+        {
+            if (events == null || _event == null) return;
+            else if (events.Contains(_event)) {
+                events?.Remove(_event);
+            }
+        }
+
+
+
+        public bool IsCurrent()
+        {
+            if(stateMachine == null) return false;
+            return stateMachine.IsCurrentState(this);
         }
 
         protected void SetStateMachine(StateMachine stateMachine) {
@@ -61,17 +104,19 @@ namespace RedSilver2.Framework.StateMachines.States
         public void Enter() { onEntered?.Invoke(); }
         public void Exit()  { onExited?.Invoke();  }
 
+        public void Added()   { onAdded?.Invoke(); }
+        public void Removed() { onRemoved?.Invoke(); }
 
-        private void AddTransitionState(State state) {
+
+        public void AddTransitionState(State state) {
             if (CanAddTransitionState(state)) {
                 transitionStates?.Add(state);
                 onTransitionStateAdded?.Invoke(state);
             }
         }
 
-        private void RemoveTransitionState(State state) {
+        public void RemoveTransitionState(State state) {
             if (transitionStates == null || !transitionStates.Contains(state)) return;
-            if (this is IdolState) Debug.Log("wtf?  " + state.StateName);
             onTransitionStateRemoved?.Invoke(state);
             transitionStates?.Remove(state);
         }
@@ -86,56 +131,38 @@ namespace RedSilver2.Framework.StateMachines.States
         }
 
         protected virtual void OnDisabled() {
-            if (stateMachine != null) {
-                foreach (State _state in stateMachine.ActifStates) {
-                    RemoveTransitionState(_state);
-                }
-            }
-
-            stateMachine?.RemoveOnActifStateAddedListener(OnActifStateAdded);
-            stateMachine?.RemoveOnActifStateRemovedListener(OnActifStateRemoved);
-
             stateMachine?.RemoveActifState(this);
             isEnabled = false;
         }
 
         protected virtual void OnEnabled() {
-            stateMachine?.AddActifState(this);
-
-            if (stateMachine != null) {
-                foreach (State state in stateMachine.ActifStates)
-                    AddTransitionState(state);
-            }
-
-            stateMachine?.AddOnActifStateAddedListener(OnActifStateAdded);
-            stateMachine?.AddOnActifStateRemovedListener(OnActifStateRemoved);
-
+            stateMachine?.AddActifState(this); 
             isEnabled = true;
         }
 
-        protected virtual void OnEntered() { }
-        protected virtual void OnExited()  { }
-
-        protected virtual void OnActifStateAdded(State state)
-        {
-            AddTransitionState(state);
+        protected virtual void OnEntered() {
+           if(events != null) {
+                foreach (StateEvent _event in events)
+                    _event?.Add(this, stateMachine);
+           }   
         }
-
-        protected virtual void OnActifStateRemoved(State state)
-        {
-            RemoveTransitionState(state);
+        protected virtual void OnExited()  {
+            if (events != null) {
+                foreach (StateEvent _event in events)
+                    _event?.Remove(this, stateMachine);
+            }
         }
 
         protected void SetStateName(string stateName)
         {
-            this.stateName = string.IsNullOrEmpty(stateName) ? string.Empty : stateName;
+            this.name = string.IsNullOrEmpty(stateName) ? string.Empty : stateName;
         }
 
         protected virtual bool CanAddTransitionState(State state)
         {
-            if (stateMachine == null || state == null || state.StateName == stateName || state == this) return false;
+            if (stateMachine == null || state == null || state.Name == name || state == this) return false;
             else if (transitionStates == null || transitionStates.Contains(state)) return false;
-            else if (incompatibleTransitionStates == null || incompatibleTransitionStates.Contains(state.StateName.ToLower())) return false;
+            else if (incompatibleTransitionStates == null || incompatibleTransitionStates.Contains(state.Name.ToLower())) return false;
 
             return stateMachine.ContainsState(state);
         }
@@ -144,6 +171,24 @@ namespace RedSilver2.Framework.StateMachines.States
         {
             if (stateMachine == null || !isEnabled || !stateMachine.ContainsState(this)) return false;
             return true;
+        }
+
+        public void AddOnAddedListener(UnityAction action)
+        {
+            if (action != null) onAdded?.AddListener(action);
+        }
+        public void RemoveOnAddedListener(UnityAction action)
+        {
+            if (action != null) onAdded?.RemoveListener(action);
+        }
+
+        public void AddOnRemovedListener(UnityAction action)
+        {
+            if (action != null) onRemoved?.AddListener(action);
+        }
+        public void RemoveOnRemovedListener(UnityAction action)
+        {
+            if (action != null) onRemoved?.RemoveListener(action);
         }
 
         public void AddOnEnteredListener(UnityAction action) {
@@ -211,9 +256,25 @@ namespace RedSilver2.Framework.StateMachines.States
             return this.stateMachine == stateMachine;
         }
 
+        protected virtual void SetIncompatibleTransitionStates(string[] incompatibleTransitionStates)
+        {
+            incompatibleTransitionStates = incompatibleTransitionStates != null ? incompatibleTransitionStates : new string[0];
+        }
+
 #if UNITY_EDITOR
        
-        protected virtual void Validate() { }
+        protected virtual void Validate() {
+
+        }
+
+        protected virtual void Validate(StateEvent _event) {
+
+        }
 #endif
+
+        public static StateMachine GetStateMachine(State state)
+        {
+            return state != null ? state.stateMachine : null;
+        }
     }
 }

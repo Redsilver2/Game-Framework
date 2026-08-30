@@ -19,21 +19,22 @@ namespace RedSilver2.Framework.StateMachines
             controller?.Move(nextPosition);
         }
 
-
-        public sealed override void SetHeight(float height)
-        {
-            if (controller != null) {
-                controller.height = height;
-                controller.center = Vector3.zero + Vector3.up * Mathf.Clamp01(controller.height / DefaultHeight);
-            }
-        }
-
         protected sealed override bool GetGroundCheckResult(out string groundTag)
         {
             groundTag = string.Empty;
             if(controller == null || !controller.isGrounded) return false;
             return base.GetGroundCheckResult(out groundTag);
         }
+
+        public sealed override void SetHeight(float height)
+        {
+            if (controller != null)
+            {
+                controller.height = height;
+                controller.center = Vector3.zero + Vector3.up * Mathf.Clamp01(controller.height / GetDefaultHeight());
+            }
+        }
+
 
         public sealed override void SetHeight(float height, float transitionSpeed)
         {

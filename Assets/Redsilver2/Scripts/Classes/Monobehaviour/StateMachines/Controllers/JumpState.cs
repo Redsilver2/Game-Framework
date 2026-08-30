@@ -4,7 +4,7 @@ using UnityEngine;
 namespace RedSilver2.Framework.StateMachines.States {
 
     [System.Serializable]
-    public abstract class JumpState : MovementState {
+    public sealed class JumpState : MovementState {
        
         [Space]
         [SerializeField] private float jumpForce;
@@ -33,7 +33,7 @@ namespace RedSilver2.Framework.StateMachines.States {
 
         public  const MovementStateType TYPE = MovementStateType.Jump;
 
-        protected JumpState() : base()
+        public JumpState() : base()
         {
             currentJumpCount = 0;
             currentJumpDelay = 0f;
@@ -41,12 +41,8 @@ namespace RedSilver2.Framework.StateMachines.States {
         }
 
 #if UNITY_EDITOR
-        public void Validate(MovementStateMachine stateMachine) {
-            SetStateMachine(stateMachine);
-            Validate();
-        }
-
         protected override void Validate() {
+            base.Validate();
             jumpForce    = Mathf.Clamp(jumpForce, 0f, float.MaxValue);
             maxJumpCount = (uint)Mathf.Clamp(maxJumpCount, 1, uint.MaxValue); 
             maxJumpDelay = Mathf.Clamp(maxJumpDelay, 0f, float.MaxValue);       
@@ -64,8 +60,7 @@ namespace RedSilver2.Framework.StateMachines.States {
         }
 
         protected override void OnEntered() {
-            MovementStateMachine?.ResetAirbornTime();
-            
+            MovementStateMachine?.ResetAirbornTime();         
             base.OnEntered();
          
             if(MovementStateMachine != null) {
@@ -95,13 +90,10 @@ namespace RedSilver2.Framework.StateMachines.States {
             base.OnDisabled();
         }
 
-        public virtual void Update() {
-            currentJumpDelay = Mathf.Clamp(currentJumpDelay - Time.deltaTime, 0f, maxJumpDelay);
-        }
-
+        public void Update() { currentJumpDelay = Mathf.Clamp(currentJumpDelay - Time.deltaTime, 0f, maxJumpDelay); }
+       
         public void ResetJumpCount() { currentJumpCount = 0; }
-
-        protected void SetIsJumping(bool isJumping) { this.isJumping = isJumping;  }
+        public void SetIsJumping(bool isJumping) { this.isJumping = isJumping;  }
         protected sealed override void SetMovementStateType(ref MovementStateType type) { type = TYPE; }
 
         public sealed override bool CanTransition() {
