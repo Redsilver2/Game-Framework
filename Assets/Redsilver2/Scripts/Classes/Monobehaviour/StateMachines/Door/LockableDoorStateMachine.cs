@@ -25,8 +25,6 @@ namespace RedSilver2.Framework.StateMachines
         protected override void OnValidate()
         {
             base.OnValidate();
-            lockState?.SetStateMachine(this);
-            unlockState?.SetStateMachine(this);
         }
 #endif
         protected override void Awake()

@@ -6,19 +6,10 @@ namespace RedSilver2.Framework.StateMachines.States
     [System.Serializable]
     public sealed class LockDoorState : DoorState
     {
-        private LockableDoorStateMachine LockableDoorStateMachine;
-
         public const DoorStateType TYPE = DoorStateType.Locked;
 
-        public LockDoorState() : base() {
+        public LockDoorState(LockableDoorStateMachine stateMachine) : base(stateMachine) {
 
-        }
-
-        public void SetStateMachine(LockableDoorStateMachine stateMachine)
-        {
-            this.DoorStateMachine         = stateMachine;
-            this.LockableDoorStateMachine = stateMachine;
-            SetStateMachine(stateMachine as StateMachine);
         }
 
         protected sealed override void SetDoorStateType(ref DoorStateType type) {
@@ -29,10 +20,10 @@ namespace RedSilver2.Framework.StateMachines.States
 
         }
 
-        public sealed override bool CanTransition()
-        {
-            if (LockableDoorStateMachine == null) return false;
-            return base.CanTransition() && !LockableDoorStateMachine.IsLocked;
+        public sealed override bool CanTransition() {
+            LockableDoorStateMachine stateMachine = DoorStateMachine as LockableDoorStateMachine;
+            if (stateMachine == null) return false;
+            return base.CanTransition() && !stateMachine.IsLocked;
         }
 
         protected sealed override void SetIncompatibleTransitionStates(ref string[] incompatibleStates) {

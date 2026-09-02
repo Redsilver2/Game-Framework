@@ -15,7 +15,7 @@ namespace RedSilver2.Framework.StateMachines
 
         public const LightSourceItemStateType TYPE = LightSourceItemStateType.On;
 
-        public LightSourceItemOnState() : base() {
+        public LightSourceItemOnState(LightSourceItemStateMachine stateMachine) : base(stateMachine) {
 
         }
 

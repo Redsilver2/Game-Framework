@@ -1,14 +1,18 @@
 using RedSilver2.Framework.Interactions;
+using UnityEngine;
 
 namespace RedSilver2.Framework.StateMachines.States {
 
     [System.Serializable]
     public abstract class DoorState : State {
         private DoorStateType type;
-        protected DoorStateMachine DoorStateMachine;
+        [SerializeReference, HideInInspector] private DoorStateMachine doorStateMachine;
+      
+        protected DoorStateMachine DoorStateMachine => doorStateMachine;
         public DoorStateType Type => type;
 
-        protected DoorState() : base() {
+        protected DoorState(DoorStateMachine stateMachine) : base(stateMachine) {
+            this.doorStateMachine = stateMachine;
             SetDoorStateType(ref type);
         }
 
@@ -25,7 +29,7 @@ namespace RedSilver2.Framework.StateMachines.States {
 
         public override bool CanTransition()
         {
-            if(DoorStateMachine == null) return false;
+            if(doorStateMachine == null) return false;
             return base.CanTransition();
         }
 

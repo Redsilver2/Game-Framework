@@ -8,15 +8,15 @@ namespace RedSilver2.Framework.StateMachines.States
 {
     [System.Serializable]
     public abstract class State {
+        [HideInInspector] public string name;
+        [SerializeField, HideInInspector] private string[] incompatibleTransitionStates;
+
         [SerializeField, SerializeReference] private List<StateEvent> events;
-        [SerializeField, HideInInspector] private StateMachine stateMachine;
+        [SerializeField, HideInInspector] private List<State> transitionStates;
+        [SerializeReference, HideInInspector] private StateMachine stateMachine;
 
         private bool isEnabled;
-        private string name;
-
-        private readonly string[] incompatibleTransitionStates;
-        private readonly List<State> transitionStates;
-
+        private bool isEntered;
 
         private readonly UnityEvent onAdded;
         private readonly UnityEvent onRemoved;
@@ -38,14 +38,15 @@ namespace RedSilver2.Framework.StateMachines.States
         public StateEvent[] Events => events != null ? events.ToArray() : new StateEvent[0];
         public State[] TransitionStates => transitionStates != null ? transitionStates.ToArray() : new State[0];
 
-        protected State() {
+
+        protected State(StateMachine stateMachine) {
             SetIncompatibleTransitionStates(ref incompatibleTransitionStates);
-            
+            isEntered = false;
+
             transitionStates = new List<State>();
             events = new List<StateEvent>();
 
-
-            onAdded = new UnityEvent();
+            onAdded    = new UnityEvent();
             onRemoved  = new UnityEvent();
 
             onEnabled  = new UnityEvent();
@@ -57,41 +58,54 @@ namespace RedSilver2.Framework.StateMachines.States
             onTransitionStateAdded   = new UnityEvent<State>();
             onTransitionStateRemoved = new UnityEvent<State>();
 
+            this.stateMachine = stateMachine;
+
             AddOnEnteredListener(OnEntered);
             AddOnExitedListener(OnExited);
 
             AddOnEnabledListener(OnEnabled);
             AddOnDisabledListener(OnDisabled);
+
+            AddOnAddedListener(OnAdded);
+            AddOnRemovedListener(OnRemoved);
         }
 
         public void AddEvent(StateEvent _event)
         {
             if (events == null || _event == null) return;
-            else if (!events.Contains(_event)) {
-                if (_event.IsValid(this, stateMachine) && _event.IsValid(this, stateMachine)) {
-                    events?.Add(_event);
-                }
+            else if (!events.Contains(_event) && _event.IsOwner(this) && !ContainsEvent(name)) {
+                events?.Add(_event);
+                if (Application.isPlaying && isEnabled) _event.Enable();
             }
         }
 
         public void RemoveEvent(StateEvent _event)
         {
             if (events == null || _event == null) return;
-            else if (events.Contains(_event)) {
+            else if (events.Contains(_event) && _event.IsOwner(this)) {
+                if (Application.isPlaying) _event.Disable();
                 events?.Remove(_event);
             }
         }
 
+        public bool ContainsEvent(StateEvent _event) {
+            if (events == null || _event == null) return false;
+            return events.Contains(_event);
+        }
+
+        public bool ContainsEvent(string name)
+        {
+            if(events == null || string.IsNullOrEmpty(name)) return false;
+            name = name.ToLower();
+
+            return events.Where(x => x != null).Where(x => x.Compare(name)).Count() > 0;
+        }
 
 
         public bool IsCurrent()
         {
             if(stateMachine == null) return false;
             return stateMachine.IsCurrentState(this);
-        }
-
-        protected void SetStateMachine(StateMachine stateMachine) {
-            this.stateMachine = stateMachine;
         }
 
         public void Enable() {
@@ -101,8 +115,22 @@ namespace RedSilver2.Framework.StateMachines.States
             if(isEnabled) onDisabled?.Invoke(); 
         }
 
-        public void Enter() { onEntered?.Invoke(); }
-        public void Exit()  { onExited?.Invoke();  }
+        public void Enter()
+        {
+            if (!isEntered) {
+                onEntered?.Invoke();
+                isEntered = true;
+            }
+        }
+
+        public void Exit()
+        {
+            if (isEntered) {
+                onExited?.Invoke();
+                isEntered = false;
+            }
+        }
+
 
         public void Added()   { onAdded?.Invoke(); }
         public void Removed() { onRemoved?.Invoke(); }
@@ -131,27 +159,29 @@ namespace RedSilver2.Framework.StateMachines.States
         }
 
         protected virtual void OnDisabled() {
+            if (events != null) 
+                foreach (StateEvent _event in events)
+                    _event?.Disable();
+
+
             stateMachine?.RemoveActifState(this);
             isEnabled = false;
         }
 
         protected virtual void OnEnabled() {
+            if (events != null) 
+                foreach (StateEvent _event in events)
+                    _event?.Enable();
+           
             stateMachine?.AddActifState(this); 
             isEnabled = true;
         }
 
-        protected virtual void OnEntered() {
-           if(events != null) {
-                foreach (StateEvent _event in events)
-                    _event?.Add(this, stateMachine);
-           }   
-        }
-        protected virtual void OnExited()  {
-            if (events != null) {
-                foreach (StateEvent _event in events)
-                    _event?.Remove(this, stateMachine);
-            }
-        }
+        protected virtual void OnEntered() { }
+        protected virtual void OnExited()  { }
+
+        protected virtual void OnAdded() { }
+        protected virtual void OnRemoved() { }
 
         protected void SetStateName(string stateName)
         {
@@ -263,8 +293,8 @@ namespace RedSilver2.Framework.StateMachines.States
 
 #if UNITY_EDITOR
        
-        protected virtual void Validate() {
-
+        public virtual void Validate() {
+            events = events != null ? events.Where(x => x != null).ToList() : new List<StateEvent>();
         }
 
         protected virtual void Validate(StateEvent _event) {

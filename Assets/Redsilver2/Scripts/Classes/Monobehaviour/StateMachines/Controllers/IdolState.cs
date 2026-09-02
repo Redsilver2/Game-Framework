@@ -3,17 +3,19 @@ using UnityEngine;
 namespace RedSilver2.Framework.StateMachines.States
 {
     [System.Serializable]
-    public sealed class IdolState : MovementState
+    public abstract class IdolState : MovementState
     {
         [Space]
         [SerializeField] private float moveSpeedTransition;
         public const MovementStateType TYPE = MovementStateType.Idol;
-       
-        public IdolState() : base() {  }
+
+        public float MoveSpeedTransition => moveSpeedTransition;
+
+        public IdolState(MovementStateMachine stateMachine) : base(stateMachine) {  }
 
 
 #if UNITY_EDITOR
-        protected override void Validate()
+        public override void Validate()
         {
             base.Validate();
             moveSpeedTransition = Mathf.Clamp(moveSpeedTransition, 0f, float.MaxValue);
@@ -22,20 +24,26 @@ namespace RedSilver2.Framework.StateMachines.States
 
         public sealed override bool CanTransition()
         {
-            if (!base.CanTransition() || MovementStateMachine == null) return false;
+            MovementStateMachine movementStateMachine = GetMovementStateMachine(this);
+            if (!base.CanTransition() || movementStateMachine == null) return false;
            
-            return !MovementStateMachine.IsMoving && MovementStateMachine.IsGrounded
-                && !RunState.IsStateMachineRunning(MovementStateMachine) && !CrouchState.IsStateMachineCrouching(MovementStateMachine)
-                && !JumpState.IsStateMachineJumping(MovementStateMachine);     
+            return !movementStateMachine.IsMoving && movementStateMachine.IsGrounded
+                && !RunState.GetIsRunning(movementStateMachine) && !CrouchState.GetIsCrouching(movementStateMachine)
+                && !JumpState.GetIsJumping(movementStateMachine);     
         }
 
         protected sealed override void OnUpdate() {
             base.OnUpdate();
-            MovementStateMachine?.SetMoveSpeed(0f, moveSpeedTransition);
+            GetMovementStateMachine(this)?.SetMoveSpeed(0f, moveSpeedTransition);
         }
 
         protected sealed override void SetMovementStateType(ref MovementStateType type) {
             type = TYPE;
+        }
+
+        public void SetMoveSpeedTransition(float moveSpeedTransition)
+        {
+            this.moveSpeedTransition = Mathf.Clamp(moveSpeedTransition, 0f, float.MaxValue);
         }
 
         public static IdolState GetState(MovementStateMachine stateMachine)

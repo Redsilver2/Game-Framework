@@ -16,7 +16,7 @@ namespace RedSilver2.Framework.StateMachines
 
         private readonly ConsumableItemStateMachine stateMachine;
 
-        protected ConsumableItemState() : base() {
+        protected ConsumableItemState(ConsumableItemStateMachine stateMachine) : base(stateMachine) {
 
         }
 

@@ -9,22 +9,8 @@ namespace RedSilver2.Framework.StateMachines.States
 
         public const DoorStateType TYPE = DoorStateType.Close;
 
-        public CloseDoorState() : base() {
+        public CloseDoorState(DoorStateMachine stateMachine) : base(stateMachine) {
 
-        }
-
-#if UNITY_EDITOR
-        public void Validate(DoorStateMachine stateMachine)
-        {
-            SetStateMachine(stateMachine);
-            Validate();
-        }
-#endif
-
-        private void SetStateMachine(DoorStateMachine stateMachine)
-        {
-            this.DoorStateMachine = stateMachine;
-            SetStateMachine(stateMachine as StateMachine);
         }
 
         protected sealed override void SetDoorStateType(ref DoorStateType type) {

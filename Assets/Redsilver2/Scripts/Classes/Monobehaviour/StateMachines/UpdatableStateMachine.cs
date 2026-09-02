@@ -11,20 +11,11 @@ namespace RedSilver2.Framework.StateMachines
         private UnityEvent onUpdate;
         private UnityEvent onLateUpdate;
 
-        private UnityEvent<UpdatableState> onStateAdded, onStateRemoved;
-        private UnityEvent<UpdatableState> onStateEntered, onStateExited;
-
         protected override void Awake()
         {
             base.Awake();
             onUpdate = new UnityEvent();
             onLateUpdate = new UnityEvent();
-
-            onStateAdded   = new UnityEvent<UpdatableState>();
-            onStateRemoved = new UnityEvent<UpdatableState>();
-
-            onStateEntered = new UnityEvent<UpdatableState>();
-            onStateExited  = new UnityEvent<UpdatableState>();
 
             doesCurrentStateExist = false; 
 
@@ -39,10 +30,7 @@ namespace RedSilver2.Framework.StateMachines
             State[] states = ActifStates;
 
             if (!doesCurrentStateExist && states != null) {
-                Debug.Log(states.Length);
-
                 foreach (State state in ActifStates) {
-                    Debug.Log(state != null ? state.Name : string.Empty);
                     if (state == null || !state.CanTransition()) continue;
                     ChangeState(state);
                     break;
@@ -52,46 +40,10 @@ namespace RedSilver2.Framework.StateMachines
         protected virtual void OnLateUpdate() { }
 
 
-        protected sealed override void OnStateEntered(State state)
+        protected override void OnStateEntered(State state)
         {
             base.OnStateEntered(state);
-            OnStateEntered(state as UpdatableState);
-        }
-        protected virtual void OnStateEntered(UpdatableState state)
-        {
-            onStateEntered?.Invoke(state);
             doesCurrentStateExist = state != null ? true : false;
-        }
-
-        protected sealed override void OnStateExited(State state)
-        {
-            base.OnStateExited(state);
-            OnStateExited(state as UpdatableState);
-        }
-        protected virtual void OnStateExited(UpdatableState state)
-        {
-            onStateEntered?.Invoke(state);
-        }
-
-        protected sealed override void OnStateAdded(State state)
-        {
-            base.OnStateAdded(state);
-            OnStateAdded(state as UpdatableState);
-        }
-        protected virtual void OnStateAdded(UpdatableState state)
-        {
-
-            onStateRemoved?.Invoke(state);
-        }
-
-        protected sealed override void OnStateRemoved(State state)
-        {
-            base.OnStateRemoved(state);
-            OnStateAdded(state as UpdatableState);
-        }
-        protected virtual void OnStateRemoved(UpdatableState state)
-        {
-            onStateRemoved?.Invoke(state);
         }
 
         public void AddOnUpdateListener(UnityAction action)
@@ -112,41 +64,6 @@ namespace RedSilver2.Framework.StateMachines
             if (action != null) onLateUpdate?.RemoveListener(action);
         }
 
-        public void AddOnStateAddedListener(UnityAction<UpdatableState> action)
-        {
-            if (action != null) onStateAdded?.AddListener(action);
-        }
-        public void RemoveOnStateAddedListener(UnityAction<UpdatableState> action)
-        {
-            if (action != null) onStateAdded?.RemoveListener(action);
-        }
-
-        public void AddOnStateRemovedListener(UnityAction<UpdatableState> action)
-        {
-            if (action != null) onStateRemoved?.AddListener(action);
-        }
-        public void RemoveOnStateRemovedListener(UnityAction<UpdatableState> action)
-        {
-            if (action != null) onStateRemoved?.RemoveListener(action);
-        }
-
-        public void AddOnStateEnteredListener(UnityAction<UpdatableState> action)
-        {
-            if (action != null) onStateEntered?.AddListener(action);
-        }
-        public void RemoveOnStateEnteredListener(UnityAction<UpdatableState> action)
-        {
-            if (action != null) onStateEntered?.RemoveListener(action);
-        }
-
-        public void AddOnStateExitedListener(UnityAction<UpdatableState> action)
-        {
-            if (action != null) onStateExited?.AddListener(action);
-        }
-        public void RemoveOnStateExitedListener(UnityAction<UpdatableState> action)
-        {
-            if (action != null) onStateExited?.RemoveListener(action);
-        }
 
         protected sealed override bool CanAddState(State state)
         {

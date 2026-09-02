@@ -9,10 +9,55 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dcc8d868fd79b07429b6fdad0465c73f, type: 3}
+  m_Script: {fileID: 11500000, guid: a7387e038bc2e964887b6c3dd8bcdba4, type: 3}
   m_Name: New Land Sound
-  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.Extensions.LandSoundData
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.Extensions.MovementSoundData
   datas:
-  - groundType: 0
+  - name: Dirt
     clips:
-    - {fileID: 8300000, guid: 9f64b39bb0d9bb9479aefa8adeee958e, type: 3}
+    - {fileID: 8300000, guid: 4ee510d055a182742b4e5f2aad1dd949, type: 3}
+    - {fileID: 8300000, guid: b535b07b5e3221b4bad07a37cefdd5fd, type: 3}
+    - {fileID: 8300000, guid: 8c2227492d6a2ee48a867773116b6fda, type: 3}
+    - {fileID: 8300000, guid: 200ab6fca5cf4444083de1e549c28b7f, type: 3}
+    - {fileID: 8300000, guid: 1322ac00434338e4fa3a70802f52d600, type: 3}
+    - {fileID: 8300000, guid: 8bc7bed82d0ee0b4b9044827bd74c61c, type: 3}
+    - {fileID: 8300000, guid: c6054141ed201c14eb7e6e003ad3153b, type: 3}
+    - {fileID: 8300000, guid: 0cb71253545021243b6805ac25412ea6, type: 3}
+    - {fileID: 8300000, guid: 572f2688d6b3ce24c919c6b534a7c266, type: 3}
+    - {fileID: 8300000, guid: d5e04b26cde3f244482d492d56245147, type: 3}
+    - {fileID: 8300000, guid: 842de5ac04491ea42b5a2356082d1db6, type: 3}
+    - {fileID: 8300000, guid: 3fafd21e06544334b8c640a84a768272, type: 3}
+    - {fileID: 8300000, guid: bc948c84377111a4ca8fefc42d7349dd, type: 3}
+    - {fileID: 8300000, guid: b0f4b66be8b579e459dc7c9b253da60a, type: 3}
+    - {fileID: 8300000, guid: 649e8ca2552611e469f3702909a90472, type: 3}
+    - {fileID: 8300000, guid: 0ad9da0f9aa55104eb4e50f832e300ed, type: 3}
+    - {fileID: 8300000, guid: 34a3566566d310f4590674ba81f37123, type: 3}
+    - {fileID: 8300000, guid: d0796c07e76748d44aa947c54560b3c6, type: 3}
+    - {fileID: 8300000, guid: 138de325ddf0af5429b26fa3a22bec8e, type: 3}
+    - {fileID: 8300000, guid: 1b2943566b81a0b4ca9b8591e3c7c8c0, type: 3}
+    - {fileID: 8300000, guid: 2fb2814441fac084ab1a81f2db044843, type: 3}
+  - name: Snow
+    clips:
+    - {fileID: 8300000, guid: 24f865c645829764b87dadb22fd82ee6, type: 3}
+    - {fileID: 8300000, guid: c0ee6b470d2709b408bdb31b7d773171, type: 3}
+    - {fileID: 8300000, guid: 1719e4b4ce9a5d04d813cfbf38742a38, type: 3}
+    - {fileID: 8300000, guid: 79b46cc975afd9f4786853c10056565a, type: 3}
+    - {fileID: 8300000, guid: 7e6fe04cc1c4bbd48a8d6ddb24de0d05, type: 3}
+    - {fileID: 8300000, guid: b2e0e0f1d1ec18c46a449c65339dd654, type: 3}
+    - {fileID: 8300000, guid: f1a812a732900fd40b0b391bd0ca5058, type: 3}
+    - {fileID: 8300000, guid: 0968b967f2fd5d2448ff89f596898449, type: 3}
+    - {fileID: 8300000, guid: 53a68c793df6ebe4682039607af9e426, type: 3}
+    - {fileID: 8300000, guid: be28c353ef94ca14092e028084fcaece, type: 3}
+    - {fileID: 8300000, guid: c64248910c5f56344b63a019303a29f8, type: 3}
+    - {fileID: 8300000, guid: 403507700ea14a34db53f1f7d689d326, type: 3}
+    - {fileID: 8300000, guid: c827862265190d24b8f7a4bc0ec2a8a6, type: 3}
+    - {fileID: 8300000, guid: 3608a12363cdf8646979afd30d7c50ec, type: 3}
+    - {fileID: 8300000, guid: ce16b72bddf61964fb239a1c31319a7f, type: 3}
+    - {fileID: 8300000, guid: 6b2f3dc19ac483940a9d109877d326fe, type: 3}
+    - {fileID: 8300000, guid: d2598b97c1216ae4b84175fb7fb37377, type: 3}
+    - {fileID: 8300000, guid: eea5c7fa973a1fe4fadfab49842c15b6, type: 3}
+    - {fileID: 8300000, guid: 4b833f755fdc7ac4baa23ab7e5ad4ac8, type: 3}
+    - {fileID: 8300000, guid: 83cdd37711c8e304a81fd2023efcbfcd, type: 3}
+    - {fileID: 8300000, guid: 559a02576f61634448103255d3549df9, type: 3}
+  - name: Metal
+    clips: []

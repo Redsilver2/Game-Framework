@@ -1,13 +1,14 @@
+using RedSilver2.Framework.StateMachines.Extensions;
 using UnityEngine;
 
 namespace RedSilver2.Framework.StateMachines.States
 {
     [System.Serializable]
-    public sealed class CrouchState : MovementState
+    public abstract class CrouchState : MovementState
     {
         [Space]
-        [SerializeField] private float crouchMoveSpeed;
-        [SerializeField] private float crouchMoveTransitionSpeed;
+        [SerializeField] private float moveSpeed;
+        [SerializeField] private float moveTransitionSpeed;
 
         [Space]
         [SerializeField] private float crouchHeight;
@@ -19,7 +20,10 @@ namespace RedSilver2.Framework.StateMachines.States
 
 
         [Space]
-        [SerializeField] private float unCrouchSafetyCheckDistance;
+        [SerializeField] private float crouchSafetyCheckDistance;
+
+        public float MoveSpeed => moveSpeed;
+        public float MoveTransitionSpeed => moveTransitionSpeed;
 
         private bool isCrouching;
         private bool canChangeState;
@@ -33,16 +37,19 @@ namespace RedSilver2.Framework.StateMachines.States
         public float CrouchHeightTransitionSpeed => crouchHeightTransitionSpeed;
         public float StandHeightTransitionSpeed => standHeightTransitionSpeed;
 
+        public float CrouchSafetyCheckDistance => crouchSafetyCheckDistance;
+
+        private const string SOUND_EVENT = "Crouch Sound";
         public const MovementStateType TYPE = MovementStateType.Crouch;
 
-        public CrouchState() : base() {
+        public CrouchState(MovementStateMachine stateMachine) : base(stateMachine) {
             isCrouching = false;
         }
 
 
 #if UNITY_EDITOR
-        protected override void Validate() {
-            crouchMoveSpeed = Mathf.Clamp(crouchMoveSpeed, 0f, float.MaxValue);
+        public override void Validate() {
+            moveSpeed = Mathf.Clamp(moveSpeed, 0f, float.MaxValue);
           
             standHeight = Mathf.Clamp(standHeight, 0f, float.MaxValue);
             crouchHeight = Mathf.Clamp(crouchHeight, 0f, standHeight);
@@ -50,10 +57,10 @@ namespace RedSilver2.Framework.StateMachines.States
             crouchHeightTransitionSpeed = Mathf.Clamp(crouchHeightTransitionSpeed, 0f, float.MaxValue);
             standHeightTransitionSpeed = Mathf.Clamp(standHeightTransitionSpeed, 0f, float.MaxValue);
            
-            crouchMoveTransitionSpeed   = Mathf.Clamp(crouchMoveTransitionSpeed, 0f, float.MaxValue);
-            unCrouchSafetyCheckDistance = Mathf.Clamp(unCrouchSafetyCheckDistance, 0f, float.MaxValue);
+            moveTransitionSpeed   = Mathf.Clamp(moveTransitionSpeed, 0f, float.MaxValue);
+            crouchSafetyCheckDistance = Mathf.Clamp(crouchSafetyCheckDistance, 0f, float.MaxValue);
 
-          
+            if(!ContainsEvent(SOUND_EVENT)) AddEvent(new MovementWalkSound(SOUND_EVENT, this));
         }
 #endif
         public void SetIsCrouching(bool isCrouching)
@@ -62,17 +69,41 @@ namespace RedSilver2.Framework.StateMachines.States
         }
 
         public sealed override bool CanTransition() {
-            return base.CanTransition() && IsStateMachineCrouching(MovementStateMachine);
+            return base.CanTransition() && isCrouching;
         }
 
-        public void Update()
+        protected override void OnAdded()
         {
-            MovementStateMachine?.SetHeight(isCrouching ? crouchHeight : standHeight, isCrouching ? crouchHeightTransitionSpeed : standHeightTransitionSpeed);
+            base.OnAdded();
+            GetMovementStateMachine(this)?.AddOnUpdateListener(Update);
         }
+
+        protected override void OnRemoved()
+        {
+            base.OnRemoved();
+            GetMovementStateMachine(this)?.RemoveOnUpdateListener(Update);
+            isCrouching = false;
+        }
+
+        public void SetMoveSpeed(float moveSpeed) { this.moveSpeed = moveSpeed;  }
+        public void SetMoveTransitionSpeed(float moveTransitionSpeed) { this.moveTransitionSpeed = moveTransitionSpeed; }
+
+        public void SetStandHeight(float standHeight) { this.standHeight = standHeight; }
+        public void SetCrouchHeight(float crouchHeight) { this.crouchHeight = crouchHeight; }
+
+        public void SetCrouchHeightTransitionSpeed(float crouchHeightTransitionSpeed) { this.crouchHeightTransitionSpeed = crouchHeightTransitionSpeed; }
+        public void SetStandHeightTransitionSpeed(float crouchHeightTransitionSpeed) { this.crouchHeightTransitionSpeed = crouchHeightTransitionSpeed; }
+        public void SetCrouchSafetyCheckDistance(float crouchSafetyCheckDistance) { this.crouchSafetyCheckDistance = crouchSafetyCheckDistance; }
+
+        protected virtual void Update()
+        {
+            GetMovementStateMachine(this)?.SetHeight(isCrouching ? crouchHeight : standHeight, isCrouching ? crouchHeightTransitionSpeed : standHeightTransitionSpeed);
+        }
+
 
         protected sealed override void OnUpdate() {
             base.OnUpdate();
-            MovementStateMachine?.SetMoveSpeed(crouchMoveSpeed, crouchMoveTransitionSpeed);
+            GetMovementStateMachine(this)?.SetMoveSpeed(moveSpeed, moveTransitionSpeed);
         }
 
         protected sealed override void SetMovementStateType(ref MovementStateType type) {
@@ -98,9 +129,11 @@ namespace RedSilver2.Framework.StateMachines.States
 
         protected sealed override void UpdateStateTransitions()
         {
-            if(MovementStateMachine != null) {
-                Transform transform = MovementStateMachine.transform;
-                canChangeState = !Physics.Raycast(transform.position, transform.up, unCrouchSafetyCheckDistance, ~(1 << GetLayerToIgnore()));
+            MovementStateMachine movementStateMachine = GetMovementStateMachine(this);
+
+            if(movementStateMachine != null) {
+                Transform transform = movementStateMachine.transform;
+                canChangeState = !Physics.Raycast(transform.position, transform.up, crouchSafetyCheckDistance, ~(1 << GetLayerToIgnore()));
                
                 if (canChangeState) { base.UpdateStateTransitions(); }
                 else { isCrouching = true; }
@@ -122,7 +155,7 @@ namespace RedSilver2.Framework.StateMachines.States
             if (state != null) state.isCrouching = true; 
         }
 
-        public static bool IsStateMachineCrouching(MovementStateMachine stateMachine){
+        public static bool GetIsCrouching(MovementStateMachine stateMachine){
             CrouchState state = GetState(stateMachine);
             return state != null ? state.IsCrouching : false;   
         }

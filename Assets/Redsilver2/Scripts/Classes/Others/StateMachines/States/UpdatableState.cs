@@ -8,20 +8,17 @@ namespace RedSilver2.Framework.StateMachines.States
     {
         private UnityEvent onUpdate;
         private UnityEvent onLateUpdate;
-        [SerializeField][HideInInspector] private UpdatableStateMachine updatableStateMachine;
+        [SerializeReference, HideInInspector] private UpdatableStateMachine updatableStateMachine;
 
 
-        protected UpdatableState() : base() {         
+        protected UpdatableState(UpdatableStateMachine stateMachine) : base(stateMachine) {
+            this.updatableStateMachine = stateMachine;
+
             onUpdate     = new UnityEvent();
             onLateUpdate = new UnityEvent();
 
             AddOnUpdateListener(OnUpdate);
             AddOnLateUpdateListener(OnLateUpdate);
-        }
-
-        protected void SetStateMachine(UpdatableStateMachine stateMachine) {
-            this.updatableStateMachine = stateMachine;   
-            SetStateMachine(stateMachine as StateMachine);
         }
 
         protected override void OnEntered() {
@@ -63,5 +60,9 @@ namespace RedSilver2.Framework.StateMachines.States
             return state != null ? state.updatableStateMachine : null;
         }
 
+        public static UpdatableStateMachine GetUpdatableStateMachine(UpdatableState state)
+        {
+            return state != null ? state.updatableStateMachine : null;
+        }
     }
 }

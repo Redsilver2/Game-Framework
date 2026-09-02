@@ -27,17 +27,6 @@ namespace RedSilver2.Framework.StateMachines
         public CloseDoorState CloseState   => closeState;
 
 
-
-#if UNITY_EDITOR
-        protected override void OnValidate()
-        {
-            base.OnValidate();
-
-            openState?.Validate(this);
-            closeState?.Validate(this);
-        } 
-#endif
-
         protected override void Awake()
         {
             base.Awake();

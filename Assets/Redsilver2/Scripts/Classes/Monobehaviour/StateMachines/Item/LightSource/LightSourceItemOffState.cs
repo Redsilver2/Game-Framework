@@ -9,7 +9,7 @@ namespace RedSilver2.Framework.StateMachines.States {
 
         public const LightSourceItemStateType TYPE = LightSourceItemStateType.Off;
 
-        public LightSourceItemOffState() : base()
+        public LightSourceItemOffState(LightSourceItemStateMachine stateMachine) : base(stateMachine)
         {
         }
 

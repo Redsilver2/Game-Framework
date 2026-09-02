@@ -8,19 +8,38 @@ namespace RedSilver2.Framework.StateMachines.Events
     public abstract class StateEvent
     {
         [HideInInspector] public string name;
+        [SerializeReference, HideInInspector] private State state;
 
         private bool isEnabled = false;
+
         public bool IsEnabled => isEnabled;
 
-        protected StateEvent()  { }
+        protected StateEvent(string name, State state)  {
+            this.name  = name;
+            this.state = state;
+            isEnabled  = false;
+        }
 
+        public void Enable() {
+            if (!isEnabled) {
+                Enable(state);
+                isEnabled = true;
+            }
+        }
 
-        public abstract void Add(State state, StateMachine stateMachine);
-        public abstract void Remove(State state, StateMachine stateMachine);
+        public void Disable() {
+            if (isEnabled)  {
+                Disable(state);
+                isEnabled = false;
+            }
+        }
 
+        protected abstract void Enable(State state);
+        protected abstract void Disable(State state);
 
-        public virtual bool IsValid(State state, StateMachine stateMachine) {
-            return state != null && stateMachine != null;
+        public bool IsOwner(State state)
+        {
+            return this.state == state;
         }
 
         public bool Compare(string eventName)

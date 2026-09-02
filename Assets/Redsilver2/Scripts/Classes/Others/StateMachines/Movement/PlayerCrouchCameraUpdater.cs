@@ -34,7 +34,7 @@ namespace RedSilver2.Framework.StateMachines.Extensions
 
 
         public void LateUpdate() {
-            bool isCrouching = CrouchState.IsStateMachineCrouching(stateMachine);
+            bool isCrouching = CrouchState.GetIsCrouching(stateMachine);
             if(transform != null) transform.localPosition = Vector3.Lerp(transform.localPosition, isCrouching ?  crouchPosition : standPosition, Time.deltaTime * GetCrouchSpeed(isCrouching)); 
         }
 

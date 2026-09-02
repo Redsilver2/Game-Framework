@@ -1,4 +1,5 @@
 using RedSilver2.Framework.StateMachines.Controllers;
+using RedSilver2.Framework.StateMachines.Extensions;
 using System;
 using System.Linq;
 using UnityEngine;
@@ -6,27 +7,32 @@ using UnityEngine;
 namespace RedSilver2.Framework.StateMachines.States
 {
     [System.Serializable]
-    public sealed class RunState : MovementState {
+    public abstract class RunState : MovementState {
         [Space]
-        [SerializeField] private float runSpeed;
-        [SerializeField] private float runTransitionSpeed;
+        [SerializeField] private float moveSpeed;
+        [SerializeField] private float moveTransitionSpeed;
 
         private bool isRunning;
 
-        public float RunSpeed => runSpeed;
-        public float RunTransitionSpeed => runTransitionSpeed;
+        public float MoveSpeed => moveSpeed;
+        public float MoveTransitionSpeed => moveTransitionSpeed;
         public bool IsRunning => isRunning;
+
+        private const string SOUND_EVENT = "Walk Sound";
+
         public const MovementStateType TYPE = MovementStateType.Run;
 
-        public RunState() : base() { }
+        public RunState(MovementStateMachine stateMachine) : base(stateMachine) { }
 
 
 #if UNITY_EDITOR
-        protected override void Validate()
+        public override void Validate()
         {
             base.Validate();
-            runSpeed = Mathf.Clamp(runSpeed, 0f, float.MaxValue);
-            runTransitionSpeed = Mathf.Clamp(runTransitionSpeed, 0f, float.MaxValue);
+            moveSpeed = Mathf.Clamp(moveSpeed, 0f, float.MaxValue);
+
+            moveTransitionSpeed = Mathf.Clamp(moveTransitionSpeed, 0f, float.MaxValue);
+            if (!ContainsEvent(SOUND_EVENT)) AddEvent(new MovementWalkSound(SOUND_EVENT, this));
         }
 #endif
 
@@ -56,11 +62,11 @@ namespace RedSilver2.Framework.StateMachines.States
         }
 
         public void SetRunSpeed(float runSpeed) {
-            this.runSpeed = runSpeed;
+            this.moveSpeed = runSpeed;
         }
        
         public void SetRunTransitionSpeed(float runTransitionSpeed) {
-            this.runTransitionSpeed = runTransitionSpeed;
+            this.moveTransitionSpeed = runTransitionSpeed;
         }
 
 
@@ -71,7 +77,7 @@ namespace RedSilver2.Framework.StateMachines.States
 
         protected sealed override void OnUpdate() {
             base.OnUpdate();
-            MovementStateMachine?.SetMoveSpeed(this.runSpeed, runTransitionSpeed);
+            GetMovementStateMachine(this)?.SetMoveSpeed(this.moveSpeed, moveTransitionSpeed);
         }
 
         public void SetIsRunning(bool isRunning) {
@@ -79,7 +85,7 @@ namespace RedSilver2.Framework.StateMachines.States
         }
 
         public sealed override bool CanTransition() {
-            return base.CanTransition() && IsStateMachineRunning(MovementStateMachine);
+            return base.CanTransition() && GetIsRunning(GetMovementStateMachine(this));
         }
 
        
@@ -88,7 +94,7 @@ namespace RedSilver2.Framework.StateMachines.States
             return stateMachine.GetState(TYPE) as RunState;
         }
 
-        public static bool IsStateMachineRunning(MovementStateMachine stateMachine) {
+        public static bool GetIsRunning(MovementStateMachine stateMachine) {
             RunState state = GetState(stateMachine);
             return state != null ? state.IsRunning : false;
         }

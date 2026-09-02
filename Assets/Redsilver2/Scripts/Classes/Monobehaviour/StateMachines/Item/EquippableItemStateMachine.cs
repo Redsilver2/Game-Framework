@@ -38,9 +38,6 @@ namespace RedSilver2.Framework.StateMachines
 
         private EquippableItemState currentState;
         private EquippableItemAnimationController controller;
-
-        private UnityEvent<EquippableItemState> onStateAdded,   onStateRemoved;
-        private UnityEvent<EquippableItemState> onStateEntered, onStateExited;
         private UnityEvent<Vector3> onGroundTouched;
 
         private IEnumerator dropCoroutine;
@@ -70,12 +67,6 @@ namespace RedSilver2.Framework.StateMachines
         
             canPerformActions = false;
             item = GetComponent<EquippableItem>();
-
-            onStateAdded = new UnityEvent<EquippableItemState>();
-            onStateExited = new UnityEvent<EquippableItemState>();
-
-            onStateEntered = new UnityEvent<EquippableItemState>();
-            onStateExited = new UnityEvent<EquippableItemState>();
 
             onGroundTouched = new UnityEvent<Vector3>();
 
@@ -219,87 +210,16 @@ namespace RedSilver2.Framework.StateMachines
             Debug.DrawRay(transform.position, Vector3.down, Color.green, 5f);
         }
 
-        public override void ChangeState(State state)
+        public sealed override void ChangeState(State state)
         {
             if (IsEquipped()) base.ChangeState(state);
         }
 
-        protected sealed override void OnStateEntered(UpdatableState state)
+        protected override void OnStateEntered(State state)
         {
             base.OnStateEntered(state);
-            OnStateEntered(state as EquippableItemState);
-        }
-        protected sealed override void OnStateExited(UpdatableState state)
-        {
-            base.OnStateExited(state);
-            OnStateExited(state as  EquippableItemState);
-        }
-
-        protected sealed override void OnStateAdded(UpdatableState state)
-        {
-            base.OnStateAdded(state);
-            OnStateAdded(state as EquippableItemState);
-        }
-        protected sealed override void OnStateRemoved(UpdatableState state)
-        {
-            base.OnStateRemoved(state);
-            OnStateRemoved(state as EquippableItemState);
-        }
-
-        protected virtual void OnStateAdded(EquippableItemState state)
-        {
-            onStateAdded?.Invoke(state);    
-        }
-        protected virtual void OnStateEntered(EquippableItemState state)
-        {
-            currentState = state;
+            currentState = state as EquippableItemState;
             stateChangeCooldown = 0f;
-            onStateEntered?.Invoke(state);
-        }
-
-        protected virtual void OnStateExited(EquippableItemState state)
-        {
-            onStateExited?.Invoke(state);
-        }
-        protected virtual void OnStateRemoved(EquippableItemState state)
-        {
-            onStateRemoved?.Invoke(state);
-        }
-
-        public void AddOnStateAddedListener(UnityAction<EquippableItemState> action)
-        {
-            if (action != null) onStateAdded?.AddListener(action);
-        }
-        public void RemoveOnStateAddedListener(UnityAction<EquippableItemState> action)
-        {
-            if (action != null) onStateAdded?.RemoveListener(action);
-        }
-
-        public void AddOnStateRemovedListener(UnityAction<EquippableItemState> action)
-        {
-            if (action != null) onStateRemoved?.AddListener(action);
-        }
-        public void RemoveOnStateRemovedListener(UnityAction<EquippableItemState> action)
-        {
-            if (action != null) onStateRemoved?.RemoveListener(action);
-        }
-
-        public void AddOnStateEnteredListener(UnityAction<EquippableItemState> action)
-        {
-            if (action != null) onStateEntered?.AddListener(action);
-        }
-        public void RemoveOnStateEnteredListener(UnityAction<EquippableItemState> action)
-        {
-            if (action != null) onStateEntered?.RemoveListener(action);
-        }
-
-        public void AddOnStateExitedListener(UnityAction<EquippableItemState> action)
-        {
-            if (action != null) onStateExited?.AddListener(action);
-        }
-        public void RemoveOnStateExitedListener(UnityAction<EquippableItemState> action)
-        {
-            if (action != null) onStateExited?.RemoveListener(action);
         }
 
         public void AddOnGroundTouchedListener(UnityAction<Vector3> action)

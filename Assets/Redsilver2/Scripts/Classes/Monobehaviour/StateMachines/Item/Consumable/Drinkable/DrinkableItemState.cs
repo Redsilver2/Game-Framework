@@ -8,8 +8,7 @@ namespace RedSilver2.Framework.StateMachines
         private DrinkableItemStateType type;
         public DrinkableItemStateType Type => type;
 
-        public DrinkableItemState() : base()
-        {
+        public DrinkableItemState(DrinkableItemStateMachine stateMachine) : base(stateMachine) {
             type = DrinkableItemStateType.Drink;
             SetStateName(type.ToString());
         }

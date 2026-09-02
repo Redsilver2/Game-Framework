@@ -14,13 +14,13 @@ namespace RedSilver2.Framework.StateMachines
         private float cooldown;
         public float Cooldown => cooldown;
 
-        protected EquippableItemState() : base() {
+        protected EquippableItemState(EquippableItemStateMachine stateMachine) : base(stateMachine) {
             cooldown = defaultCooldown;
         }
 
 
 #if UNITY_EDITOR
-        protected override void Validate()  {
+        public override void Validate()  {
             defaultCooldown = Mathf.Clamp(defaultCooldown, 0f, float.MaxValue);
         }
 #endif

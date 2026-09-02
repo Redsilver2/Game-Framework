@@ -7,13 +7,16 @@ namespace RedSilver2.Framework.StateMachines {
     [RequireComponent(typeof(LightSourceItemStateMachine))]
     public abstract class LightSourceItemState : EquippableItemState {
         private LightSourceItemStateType type;
-        protected readonly LightSourceItemStateMachine StateMachine;
+       [SerializeReference, HideInInspector] private LightSourceItemStateMachine stateMachine;
 
+        public LightSourceItemStateMachine StateMachine => stateMachine;
         public LightSourceItemStateType Type => type;
 
 
-        protected LightSourceItemState() : base()
+        protected LightSourceItemState(LightSourceItemStateMachine stateMachine) : base(stateMachine)
         {
+            this.stateMachine = stateMachine;
+
             SetLightSourceStateType(ref type);
             SetStateName(type.ToString());
         }

@@ -9,10 +9,6 @@ namespace RedSilver2.Framework.StateMachines
     public abstract class MovementStateMachine : UpdatableStateMachine
     {
         [Space]
-        [SerializeField, SerializeReference] private List<Movement> movements;
-
-
-        [Space]
         [SerializeField] private float groundCheckRange = 0f;
 
         [Space]
@@ -29,9 +25,6 @@ namespace RedSilver2.Framework.StateMachines
 
         private UnityEvent<Vector3> onMoved;
         private UnityEvent<string> onGroundTagChanged;
-
-        private UnityEvent<MovementState> onStateAdded, onStateRemoved;
-        private UnityEvent<MovementState> onStateEntered, onStateExited;
 
         private Collider _collider;
 
@@ -51,19 +44,9 @@ namespace RedSilver2.Framework.StateMachines
 
 #if UNITY_EDITOR
         protected override void OnValidate() {
-            base.OnValidate();
-
-            if(movements == null) movements = new List<Movement>();
-            else {
-                foreach (Movement movement in movements) movement?.Validate(this);
-            }
-          
+            base.OnValidate();   
             groundCheckRange = Mathf.Clamp(groundCheckRange, 0f, float.MaxValue);
-            if (GetMovement(MovementStateType.Idol) == null) AddMovement(new Idol());
-
         }
-
-        protected abstract void SetMovementStaetMachineType(ref MovementStateMachineType type);
 #endif
 
 
@@ -73,12 +56,6 @@ namespace RedSilver2.Framework.StateMachines
 
             onMoved            = new UnityEvent<Vector3>();
             onGroundTagChanged = new UnityEvent<string>();
-
-            onStateAdded   = new UnityEvent<MovementState>();
-            onStateRemoved = new UnityEvent<MovementState>();
-
-            onStateEntered = new UnityEvent<MovementState>();
-            onStateExited  = new UnityEvent<MovementState>();
 
             groundTag = string.Empty;
             isGrounded = false;
@@ -92,18 +69,7 @@ namespace RedSilver2.Framework.StateMachines
 
         protected virtual void Start()
         {
-            if (movements != null)
-            {
-                foreach (Movement movement in movements)  {
-                    MovementState state = movement != null ? movement.GetState() : null;
 
-                    if (state == null) continue;
-                    movement?.InitializeEvents();
-                   
-                    AddState(state);
-                    EnableState(state.Type);
-                }
-            }
         }
         private void OnDestroy()
         {
@@ -117,6 +83,9 @@ namespace RedSilver2.Framework.StateMachines
             }
         }
 
+        public void SetGroundCheckRange(float groundCheckRange) { this.groundCheckRange = groundCheckRange; }
+        public void SetIs2DMovement(bool is2DMovement) { this.is2DMovement = is2DMovement;  }
+
         public void ResetAirbornTime()
         {
             airbornTime = 0f;
@@ -127,43 +96,9 @@ namespace RedSilver2.Framework.StateMachines
             return CanAddState(state as MovementState);
         }
 
-        private bool CanAddState(MovementState state)
+        protected virtual bool CanAddState(MovementState state)
         {
-            if (state == null || GetState(state.Type) != state) return false;
-            return true;
-        }
-
-        protected sealed override void OnStateAdded(UpdatableState state) {
-            base.OnStateAdded(state);
-            OnStateAdded(state as MovementState);
-        }
-        protected virtual void OnStateAdded(MovementState state) {
-            onStateAdded?.Invoke(state);
-        }
-
-        protected sealed override void OnStateRemoved(UpdatableState state)
-        {
-            base.OnStateRemoved(state);
-            OnStateRemoved(state as MovementState);
-        }
-        protected sealed override void OnStateEntered(UpdatableState state)
-        {
-            base.OnStateEntered(state);
-            OnStateEntered(state as MovementState);
-        }
-        protected virtual void OnStateEntered(MovementState state) {
-            onStateEntered?.Invoke(state);
-        }
-
-        protected sealed override void OnStateExited(UpdatableState state)
-        {
-            base.OnStateExited(state);
-            OnStateExited(state as MovementState);
-        }
-
-        protected virtual void OnStateExited(MovementState state)
-        {
-            onStateExited?.Invoke(state);
+            return state != null ? true : false;
         }
 
         protected override void OnEnabled() {
@@ -184,7 +119,15 @@ namespace RedSilver2.Framework.StateMachines
             this.isMoving = false;
         }
 
+        public void AddState(MovementState state)
+        {
+            AddState(state as State);
+        }
 
+        public void RemoveState(MovementStateType type)
+        {
+            RemoveState(GetState(type));
+        }
 
         public void DisableState(MovementStateType type) {
             GetState(type)?.Disable();
@@ -216,63 +159,18 @@ namespace RedSilver2.Framework.StateMachines
             return GetState(type) != null;
         }
 
-        public virtual void AddMovement(Movement movement) {
-            if (movement == null || movements == null) return;
-            else if (!movements.Contains(movement)){
-                MovementState state = movement.GetState();
-                if (state == null || GetMovement(state.Type) != null) return;
+        public MovementState GetState(MovementStateType type) {
+            State[] states = States;
 
-                AddState(state);
-                movements?.Add(movement);
-            }
-        }
-
-        public virtual void RemoveMovement(MovementStateType type) {
-            RemoveMovement(GetMovement(type));
-        }
-
-        private void RemoveMovement(Movement movement)
-        {
-            if (movement == null || movements == null || !movements.Contains(movement)) return;
-            else if (!movements.Contains(movement))
-            {
-                RemoveState(movement.GetState());
-                movements?.Remove(movement);
-            }
-        }
-
-        public void ReplaceMovement(Movement movement)
-        {
-            if(movement != null) {
-                MovementState state = movement.GetState();
-                if(state != null) RemoveMovement(state.Type);
-
-                AddMovement(movement);
-            }
-        }
-
-        public bool ContainsMovement(MovementStateType state)
-        {
-            return GetMovement(state) != null;
-        }
-
-        private Movement GetMovement(MovementStateType type)
-        {
-            if(movements != null) {
-                foreach(Movement movement in movements) {
-                    MovementState state = movement != null ? movement.GetState() : null;
-                    if (state == null || state.Type != type) continue;
-                    return movement;
+            if(states != null) {
+                foreach(State state in states) {
+                    MovementState movementState = state as MovementState;
+                    if (movementState == null || movementState.Type != type) continue;
+                    return movementState;
                 }
             }
 
             return null;
-        }
-
-
-        public MovementState GetState(MovementStateType type) {
-            Movement movement = GetMovement(type);
-            return movement != null ? movement.GetState() : null;
         }
 
         protected void SetIsMoving(bool isMoving) {
@@ -320,41 +218,6 @@ namespace RedSilver2.Framework.StateMachines
             if (action != null) onGroundTagChanged?.RemoveListener(action);
         }
 
-        public void AddOnStateAddedListener(UnityAction<MovementState> action)
-        {
-            if (action != null) onStateAdded?.AddListener(action);
-        }
-        public void RemoveOnStateAddedListener(UnityAction<MovementState> action)
-        {
-            if (action != null) onStateAdded?.RemoveListener(action);
-        }
-
-        public void AddOnStateRemovedListener(UnityAction<MovementState> action)
-        {
-            if (action != null) onStateRemoved?.AddListener(action);
-        }
-        public void RemoveOnStateRemovedListener(UnityAction<MovementState> action)
-        {
-            if (action != null) onStateRemoved?.RemoveListener(action);
-        }
-
-        public void AddOnStateEnteredListener(UnityAction<MovementState> action)
-        {
-            if (action != null) onStateEntered?.AddListener(action);
-        }
-        public void RemoveOnStateEnteredListener(UnityAction<MovementState> action)
-        {
-            if (action != null) onStateEntered?.RemoveListener(action);
-        }
-
-        public void AddOnStateExitedListener(UnityAction<MovementState> action)
-        {
-            if (action != null) onStateExited?.AddListener(action);
-        }
-        public void RemoveOnStateExitedListener(UnityAction<MovementState> action)
-        {
-            if (action != null) onStateExited?.RemoveListener(action);
-        }
 
         public virtual void SetMoveSpeed(float moveSpeed)
         {

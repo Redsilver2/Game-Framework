@@ -1,7 +1,6 @@
                
 using RedSilver2.Framework.Inputs.Settings;
 using RedSilver2.Framework.Player;
-using RedSilver2.Framework.StateMachines.States;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -19,19 +18,12 @@ namespace RedSilver2.Framework.StateMachines.Controllers {
 
         public Vector2 MoveInput => moveInputSetting != null ? moveInputSetting.GetValue() : Vector2.zero;
         public CameraController CameraController => cameraController;
+        public KeyboardVector2InputSettings MoveInputSetting => moveInputSetting;
 
 #if UNITY_EDITOR
-
         protected override void OnValidate()
         {
             base.OnValidate();
-            if (GetState(MovementStateType.Fall) == null) { AddMovement(new Fall()); }
-            if (GetState(MovementStateType.Walk) == null) { AddMovement(new Walk()); }
-        }
-
-        protected sealed override void SetMovementStaetMachineType(ref MovementStateMachineType type)
-        {
-            type = MovementStateMachineType.Player;
         }
 #endif
 
@@ -67,14 +59,10 @@ namespace RedSilver2.Framework.StateMachines.Controllers {
         }
 
         protected override void OnUpdate() {
+            this.moveInputSetting?.Enable();
+
             base.OnUpdate();
             onMoveInputUpdate?.Invoke(moveInputSetting != null ? moveInputSetting.GetValue() : Vector2.zero);
-        }
-
-        public override void AddMovement(Movement movement)
-        {
-            if(movement == null) return;
-            else if (movement.IsType(MovementType.Player)) base.AddMovement(movement);
         }
 
         protected sealed override void OnLateUpdate() {
@@ -82,13 +70,7 @@ namespace RedSilver2.Framework.StateMachines.Controllers {
         }
 
         public void SetInputSetting(KeyboardVector2InputSettings inputSetting) {
-            this.moveInputSetting?.Disable();
             this.moveInputSetting = inputSetting;
-
-            if (inputSetting != null) {
-                if (enabled) inputSetting?.Enable();
-                else inputSetting?.Disable();
-            }
         }
 
         private void OnMoveInputUpdate(Vector2 input)

@@ -21,34 +21,20 @@ namespace RedSilver2.Framework.StateMachines {
         private Light _light;
         private LightSourceItemState currentState;
 
-        private IEnumerator drainLightUpdater;
-        
+        private IEnumerator drainLightUpdater; 
         private UnityEvent<float> onLifeTimeProgressUpdate;
-        private UnityEvent<LightSourceItemState> onStateAdded, onStateRemoved;
-        private UnityEvent<LightSourceItemState> onStateEntered, onStateExited;
 
         public float LifeTime    => lifetime;
         public float MaxLifeTime => maxLifeTime;
 
         public bool IsOn => isOn;   
 
-        public LightSourceItemState  CurrentState => currentState;
         public Light Light                        => _light;
-
-        public const string TURN_LIGHT_ON_ANIMATION_NAME  = "Turn Light On";
-        public const string TURN_LIGHT_OFF_ANIMATION_NAME = "Turn Light Off";
-
 
         protected override void Awake()
         {
             base.Awake();
             onLifeTimeProgressUpdate = new UnityEvent<float>();
-
-            onStateAdded = new UnityEvent<LightSourceItemState>();
-            onStateRemoved = new UnityEvent<LightSourceItemState>();
-
-            onStateEntered = new UnityEvent<LightSourceItemState>();
-            onStateExited = new UnityEvent<LightSourceItemState>();
 
            _light = transform.root != null ? transform.root.GetComponentInChildren<Light>() : 
                                                              GetComponentInChildren<Light>();
@@ -64,28 +50,9 @@ namespace RedSilver2.Framework.StateMachines {
             if(progress <= 0f)  ChangeState(LightSourceItemStateType.Off);
         }
 
-        protected sealed override void OnStateAdded(EquippableItemState state) {
+
+        protected override void OnStateAdded(State state) {
             base.OnStateAdded(state);
-            OnStateAdded(state as LightSourceItemState);
-        }
-
-        protected sealed override void OnStateEntered(EquippableItemState state) {
-            base.OnStateEntered(state);
-            OnStateEntered(state as LightSourceItemState);
-        }
-
-        protected sealed override void OnStateExited(EquippableItemState state) {
-            base.OnStateExited(state);
-            OnStateExited(state as LightSourceItemState);
-        }
-
-        protected sealed override void OnStateRemoved(EquippableItemState state) {
-            base.OnStateRemoved(state);
-            OnStateRemoved(state as LightSourceItemState);
-        }
-
-        protected virtual void OnStateAdded(LightSourceItemState state) {
-            onStateAdded?.Invoke(state);
 
             if (state != null) {
                 if(currentState == null) {
@@ -134,34 +101,6 @@ namespace RedSilver2.Framework.StateMachines {
             if(_light != null) _light.enabled = false;
         }
 
-        protected virtual void OnStateEntered(LightSourceItemState state) {
-            if (state != null) {
-                if (state.Type == LightSourceItemStateType.On) {
-                    isOn = true;
-                    GetLightSourceItemAnimationController()?.PlayTurnOnLightData();
-                }
-                else {
-                    isOn = false;
-                    GetLightSourceItemAnimationController()?.PlayTurnOffLightData();
-                }
-            }
-
-            currentState = state;
-            onStateEntered?.Invoke(state);   
-        }
-
-        protected virtual void OnStateExited(LightSourceItemState state) {
-
-            currentState = null;
-            onStateExited?.Invoke(state);
-        }
-
-        protected virtual void OnStateRemoved(LightSourceItemState state) {
-
-
-            onStateRemoved?.Invoke(state);
-        }
-
         protected override bool CanAddState(EquippableItemState state) {
 
             return base.CanAddState(state) && CanAddState(state as LightSourceItemState);
@@ -177,42 +116,6 @@ namespace RedSilver2.Framework.StateMachines {
         public void RemoveOnLifeTimeProgressUpdateListener(UnityAction<float> action)
         {
             if (action != null) onLifeTimeProgressUpdate?.RemoveListener(action);
-        }
-
-        public void AddOnStateAddedListener(UnityAction<LightSourceItemState> action)
-        {
-            if (action != null) onStateAdded?.AddListener(action);
-        }
-        public void RemoveOnStateAddedListener(UnityAction<LightSourceItemState> action)
-        {
-            if (action != null) onStateAdded?.RemoveListener(action);
-        }
-
-        public void AddOnStateRemovedListener(UnityAction<LightSourceItemState> action)
-        {
-            if (action != null) onStateRemoved?.AddListener(action);
-        }
-        public void RemoveOnStateRemovedListener(UnityAction<LightSourceItemState> action)
-        {
-            if (action != null) onStateRemoved?.RemoveListener(action);
-        }
-
-        public void AddOnStateEnteredListener(UnityAction<LightSourceItemState> action)
-        {
-            if (action != null) onStateEntered?.AddListener(action);
-        }
-        public void RemoveOnStateEnteredListener(UnityAction<LightSourceItemState> action)
-        {
-            if (action != null) onStateEntered?.RemoveListener(action);
-        }
-
-        public void AddOnStateExitedListener(UnityAction<LightSourceItemState> action)
-        {
-            if (action != null) onStateExited?.AddListener(action);
-        }
-        public void RemoveOnStateExitedListener(UnityAction<LightSourceItemState> action)
-        {
-            if (action != null) onStateExited?.RemoveListener(action);
         }
 
         public void SetDrainLifeTimeSpeed(float speed) { this.drainLifeTimeSpeed = Mathf.Clamp(speed, 0f, float.MaxValue); }

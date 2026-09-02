@@ -24,7 +24,7 @@ namespace RedSilver2.Framework.StateMachines.States
         private UnityEvent onUpdateStarted, onUpdateCompleted;
         private UnityEvent<float> onProgressionUpdate;
 
-        protected UpdatableDoorState() : base()
+        protected UpdatableDoorState(DoorStateMachine stateMachine) : base(stateMachine)
         {
             onUpdateStarted     = new UnityEvent();
             onUpdateCompleted   = new UnityEvent();

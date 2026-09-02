@@ -1,6 +1,6 @@
-using RedSilver2.Framework.StateMachines.Events;
 using RedSilver2.Framework.StateMachines.States;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -8,10 +8,11 @@ namespace RedSilver2.Framework.StateMachines
 {
     public abstract class StateMachine : MonoBehaviour
     {
-        private State currentState;
-        private List<State> states;
+        [SerializeField, SerializeReference] private List<State> states;
 
+        private State currentState;
         private List<State> actifStates;
+
         private UnityEvent onEnabled, onDisabled;
 
         private UnityEvent<State> onStateAdded, onStateRemoved;
@@ -27,12 +28,18 @@ namespace RedSilver2.Framework.StateMachines
 
 
 #if UNITY_EDITOR
-        protected virtual void OnValidate()  { }
+        protected virtual void OnValidate()  {
+            if (states != null) {
+                states = states.Where(x => x != null).ToList();
+
+                foreach (State state in states)
+                   state?.Validate();
+            }
+        }
 #endif
 
         protected virtual void Awake()
         {
-            states      = new List<State>();
             actifStates = new List<State>();
 
             onEnabled  = new UnityEvent();
@@ -60,7 +67,17 @@ namespace RedSilver2.Framework.StateMachines
         private void OnDisable() { onDisabled?.Invoke(); }
         private void OnEnable() { onEnabled?.Invoke(); }
 
-        protected void AddState(State state)
+        protected void EnableState(State state)
+        {
+            state?.Enable();
+        }
+
+        protected void DisableState(State state)
+        {
+            state?.Disable();
+        }
+
+        public void AddState(State state)
         {
             if (states == null || !CanAddState(state) || states.Contains(state)) return;
             state?.Added();
@@ -108,6 +125,7 @@ namespace RedSilver2.Framework.StateMachines
         {
             ChangeState(state, true);
         }
+
         public void ChangeState(string stateName)
         {
             ChangeState(GetState(stateName), true);
@@ -133,7 +151,7 @@ namespace RedSilver2.Framework.StateMachines
 
         protected virtual bool CanAddState(State state)
         {
-            if (states == null || state == null || states.Contains(state)) return false;
+            if (states == null || state == null || states.Contains(state) || State.GetStateMachine(state) == null) return false;
             return true;
         }
 

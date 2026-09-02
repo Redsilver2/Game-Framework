@@ -17,10 +17,6 @@ namespace RedSilver2.Framework.StateMachines
         private IEnumerator drinkingCoroutine;
         private UnityEvent<float> onProgressValueUpdate, onConsumed;
 
-
-        private UnityEvent<ConsumableItemState> onStateAdded, onStateRemoved;
-        private UnityEvent<ConsumableItemState> onStateEntered, onStateExited;
-
         public float         ConsumptionValue    => consumptionValue;
         public float         MaxConsumptionValue => maxConsumptionValue;
 
@@ -35,7 +31,7 @@ namespace RedSilver2.Framework.StateMachines
             SetMaxConsumptionValue(defaultMaxConsumptionValue);
             SetConsumptionValue(maxConsumptionValue);
 
-            GetConsumableItemAnimationController()?.GetConsumeData()?.AddOnFinishedListener(() => { ChangeState(null); });
+            GetConsumableItemAnimationController()?.GetConsumeData()?.AddOnFinishedListener(() => { ChangeState(null as State); });
             // Set State to Null
         }
 
@@ -65,51 +61,6 @@ namespace RedSilver2.Framework.StateMachines
             onProgressValueUpdate?.Invoke(maxConsumptionValue <= 0f ? 0f : Mathf.Clamp01(consumptionValue/maxConsumptionValue));
         }
 
-        protected sealed override void OnStateAdded(EquippableItemState state)
-        {
-            base.OnStateAdded(state);
-            OnStateAdded(state as ConsumableItemState);
-        }
-
-        protected sealed override void OnStateEntered(EquippableItemState state)
-        {
-            base.OnStateEntered(state);
-            OnStateEntered(state as ConsumableItemState);
-        }
-
-        protected sealed override void OnStateExited(EquippableItemState state)
-        {
-            base.OnStateExited(state);
-            OnStateExited(state as ConsumableItemState);
-        }
-
-        protected sealed override void OnStateRemoved(EquippableItemState state)
-        {
-            base.OnStateRemoved(state);
-            OnStateRemoved(state as ConsumableItemState);
-
-        }
-
-        protected virtual void OnStateAdded(ConsumableItemState state)
-        {
-            onStateAdded?.Invoke(state);
-        }
-
-        protected virtual void OnStateEntered(ConsumableItemState state)
-        {
-            onStateEntered?.Invoke(state);  
-        }
-
-        protected virtual void OnStateExited(ConsumableItemState state)
-        {
-            onStateExited?.Invoke(state);
-        }
-
-        protected virtual void OnStateRemoved(ConsumableItemState state)
-        {
-            onStateRemoved?.Invoke(state);
-        }
-
         public void StopConsuming() {
             if (drinkingCoroutine != null) StopCoroutine(drinkingCoroutine);
             drinkingCoroutine = null;
@@ -131,15 +82,6 @@ namespace RedSilver2.Framework.StateMachines
             }
 
             SetConsumptionValue(consumptionValue - consumption);
-        }
-
-        public  void ChangeState(ConsumableItemState state) {
-            ChangeState(state as State);
-        }
-
-        public sealed override void ChangeState(State state)
-        {
-            if(IsEquipped()) base.ChangeState(state);
         }
 
         protected sealed override bool CanAddState(EquippableItemState state)
@@ -170,49 +112,12 @@ namespace RedSilver2.Framework.StateMachines
             if (action != null) onProgressValueUpdate?.RemoveListener(action);
         }
 
-
         public void AddOnConsumedListener(UnityAction<float> action) {
             if (action != null) onConsumed?.AddListener(action);
         }
 
         public void RemoveOnConsumedListener(UnityAction<float> action) {
             if (action != null) onConsumed?.RemoveListener(action);
-        }
-
-        public void AddOnStateAddedListener(UnityAction<ConsumableItemState> action)
-        {
-            if (action != null) onStateAdded?.AddListener(action);
-        }
-        public void RemoveOnStateAddedListener(UnityAction<ConsumableItemState> action)
-        {
-            if (action != null) onStateAdded?.RemoveListener(action);
-        }
-
-        public void AddOnStateRemovedListener(UnityAction<ConsumableItemState> action)
-        {
-            if (action != null) onStateRemoved?.AddListener(action);
-        }
-        public void RemoveOnStateRemovedListener(UnityAction<ConsumableItemState> action)
-        {
-            if (action != null) onStateRemoved?.RemoveListener(action);
-        }
-
-        public void AddOnStateEnteredListener(UnityAction<ConsumableItemState> action)
-        {
-            if (action != null) onStateEntered?.AddListener(action);
-        }
-        public void RemoveOnStateEnteredListener(UnityAction<ConsumableItemState> action)
-        {
-            if (action != null) onStateEntered?.RemoveListener(action);
-        }
-
-        public void AddOnStateExitedListener(UnityAction<ConsumableItemState> action)
-        {
-            if (action != null) onStateExited?.AddListener(action);
-        }
-        public void RemoveOnStateExitedListener(UnityAction<ConsumableItemState> action)
-        {
-            if (action != null) onStateExited?.RemoveListener(action);
         }
 
         public ConsumableItemAnimationController GetConsumableItemAnimationController() {
