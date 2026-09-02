@@ -1,5 +1,6 @@
 
 using RedSilver2.Framework.StateMachines.States;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -47,6 +48,27 @@ namespace RedSilver2.Framework.StateMachines
             base.OnValidate();   
             groundCheckRange = Mathf.Clamp(groundCheckRange, 0f, float.MaxValue);
         }
+
+        protected override void DisplayDefaultSettings(Color foldoutColor, Color fieldColor)
+        {
+            base.DisplayDefaultSettings(foldoutColor, fieldColor);
+            SetIs2DMovement(EditorExtension.DisplayToggle("Is 2D Movement", is2DMovement, fieldColor));
+            SetGroundCheckRange(EditorExtension.DisplayFloatSlider("Ground Check Range", groundCheckRange, 0f, 1000f, fieldColor));
+        }
+
+
+
+        protected override State GetInspectorState(int stateIndex) {
+            Array values = GetInspectorValues();
+            if (values == null || stateIndex < 0 || stateIndex >= values.Length - 1) return null;
+            return GetInspectorState((MovementStateType)stateIndex);
+        }
+
+        protected override Array GetInspectorValues() {
+            return Enum.GetValues(typeof(MovementStateType));
+        }
+
+        protected abstract MovementState GetInspectorState(MovementStateType type); 
 #endif
 
 

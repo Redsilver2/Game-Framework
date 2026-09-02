@@ -62,6 +62,25 @@ namespace RedSilver2.Framework.StateMachines.States
 
             if(!ContainsEvent(SOUND_EVENT)) AddEvent(new MovementWalkSound(SOUND_EVENT, this));
         }
+
+        protected sealed override void DisplayBaseSettings(Color foldoutColor, Color fieldColor)
+        {
+            base.DisplayBaseSettings(foldoutColor, fieldColor);
+
+            SetMoveSpeed(EditorExtension.DisplayFloatSlider("Crouch Speed 💨", moveSpeed, 0f, 1000f, fieldColor));
+            SetMoveTransitionSpeed(EditorExtension.DisplayFloatSlider("Crouch Transition Speed ", moveTransitionSpeed, 0f, 1000f, fieldColor));
+
+            EditorExtension.Space(5f);
+            SetCrouchHeight(EditorExtension.DisplayFloatSlider("Crouch Height", crouchHeight, 0f, 1000f, fieldColor));
+            SetCrouchHeightTransitionSpeed(EditorExtension.DisplayFloatSlider("Crouch Height Transition Speed", crouchHeightTransitionSpeed, 0f, 1000f, fieldColor));
+
+            EditorExtension.Space(5f);
+            SetStandHeight(EditorExtension.DisplayFloatSlider("Stand Height", standHeight, 0f, 1000f, fieldColor));
+            SetStandHeightTransitionSpeed(EditorExtension.DisplayFloatSlider("Stand Height Transition Speed", standHeightTransitionSpeed, 0f, 1000f, fieldColor));
+
+            EditorExtension.Space(5f);
+            SetCrouchSafetyCheckDistance(EditorExtension.DisplayFloatSlider("Crouch Safety Check Distance", crouchSafetyCheckDistance, 0f, 1000f, fieldColor));
+        }
 #endif
         public void SetIsCrouching(bool isCrouching)
         {

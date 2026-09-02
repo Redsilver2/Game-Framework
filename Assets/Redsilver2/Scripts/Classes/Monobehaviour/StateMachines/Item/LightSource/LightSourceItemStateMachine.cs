@@ -1,5 +1,6 @@
 using RedSilver2.Framework.Animations;
 using RedSilver2.Framework.StateMachines.States;
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
@@ -30,6 +31,30 @@ namespace RedSilver2.Framework.StateMachines {
         public bool IsOn => isOn;   
 
         public Light Light                        => _light;
+
+#if UNITY_EDITOR
+        protected override void DisplayDefaultSettings(Color foldoutColor, Color fieldColor)
+        {
+            base.DisplayDefaultSettings(foldoutColor, fieldColor);
+
+        }
+
+        protected override State GetInspectorState(int stateIndex)
+        {
+            Array values = GetInspectorValues();
+            if (values == null || stateIndex < 0 || stateIndex >= values.Length) return null;
+            return GetInspectorState((LightSourceItemStateType)stateIndex);
+        }
+
+        protected override Array GetInspectorValues()
+        {
+            return Enum.GetValues(typeof(LightSourceItemStateType));
+        }
+
+        protected LightSourceItemState GetInspectorState(LightSourceItemStateType source) {
+            return null;
+        }
+#endif
 
         protected override void Awake()
         {

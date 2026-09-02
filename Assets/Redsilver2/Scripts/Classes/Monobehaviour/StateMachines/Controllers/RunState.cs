@@ -1,5 +1,3 @@
-using RedSilver2.Framework.StateMachines.Controllers;
-using RedSilver2.Framework.StateMachines.Extensions;
 using System;
 using System.Linq;
 using UnityEngine;
@@ -30,9 +28,14 @@ namespace RedSilver2.Framework.StateMachines.States
         {
             base.Validate();
             moveSpeed = Mathf.Clamp(moveSpeed, 0f, float.MaxValue);
-
             moveTransitionSpeed = Mathf.Clamp(moveTransitionSpeed, 0f, float.MaxValue);
-            if (!ContainsEvent(SOUND_EVENT)) AddEvent(new MovementWalkSound(SOUND_EVENT, this));
+        }
+
+        protected override void DisplayBaseSettings(Color foldoutColor, Color fieldColor)
+        {
+            EditorExtension.Space(2.5f);
+            SetRunSpeed(EditorExtension.DisplayFloatSlider("Run Speed 💨", moveSpeed, 0f, 1000f, fieldColor));
+            SetRunTransitionSpeed(EditorExtension.DisplayFloatSlider("Run Transition Speed", moveTransitionSpeed, 0f, 1000f, fieldColor));
         }
 #endif
 

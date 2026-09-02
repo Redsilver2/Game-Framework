@@ -1,6 +1,7 @@
                
 using RedSilver2.Framework.Inputs.Settings;
 using RedSilver2.Framework.Player;
+using RedSilver2.Framework.StateMachines.States;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -24,6 +25,28 @@ namespace RedSilver2.Framework.StateMachines.Controllers {
         protected override void OnValidate()
         {
             base.OnValidate();
+        }
+
+        protected override void DisplayDefaultSettings(Color foldoutColor, Color fieldColor)
+        {
+            base.DisplayDefaultSettings(foldoutColor, fieldColor);
+            SetInputSetting(EditorExtension.DisplayCustomField("Move Input Setting", false, moveInputSetting, fieldColor));
+        }
+
+        protected override MovementState GetInspectorState(MovementStateType type)
+        {
+            if (ContainsState(type)) return null;
+
+            switch (type) {
+                case MovementStateType.Idol:   return new PlayerIdolState(this);
+                case MovementStateType.Walk:   return new PlayerWalkState(this);
+                case MovementStateType.Fall:   return new PlayerFallState(this);
+                case MovementStateType.Jump:   return new PlayerJumpState(this);
+                case MovementStateType.Land:   return new PlayerLandState(this);
+                case MovementStateType.Crouch: return new PlayerCrouchState(this);
+                case MovementStateType.Run:    return new PlayerRunState(this);
+                default: return null;
+            }
         }
 #endif
 

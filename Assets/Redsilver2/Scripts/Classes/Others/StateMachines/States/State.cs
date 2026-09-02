@@ -1,8 +1,10 @@
 using RedSilver2.Framework.StateMachines.Events;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
+
 
 namespace RedSilver2.Framework.StateMachines.States
 {
@@ -14,6 +16,7 @@ namespace RedSilver2.Framework.StateMachines.States
         [SerializeField, SerializeReference] private List<StateEvent> events;
         [SerializeField, HideInInspector] private List<State> transitionStates;
         [SerializeReference, HideInInspector] private StateMachine stateMachine;
+
 
         private bool isEnabled;
         private bool isEntered;
@@ -79,6 +82,11 @@ namespace RedSilver2.Framework.StateMachines.States
             }
         }
 
+        public void RemoveEvent(string eventName)
+        {
+            RemoveEvent(GetEvent(eventName));
+        }
+
         public void RemoveEvent(StateEvent _event)
         {
             if (events == null || _event == null) return;
@@ -86,6 +94,13 @@ namespace RedSilver2.Framework.StateMachines.States
                 if (Application.isPlaying) _event.Disable();
                 events?.Remove(_event);
             }
+        }
+
+        protected StateEvent GetEvent(string eventName)
+        {
+            if(events == null) return null;
+            var results = events.Where(x => x != null).Where(x => x.Compare(eventName));
+            return results.Count() > 0 ? results.First() : null;
         }
 
         public bool ContainsEvent(StateEvent _event) {
@@ -292,13 +307,90 @@ namespace RedSilver2.Framework.StateMachines.States
         }
 
 #if UNITY_EDITOR
+        [SerializeReference, HideInInspector] private bool showBaseSettings;
        
+        [SerializeReference, HideInInspector] private bool showExtensions;
+        [SerializeReference, HideInInspector] private bool showTransitions;
+       
+        [SerializeReference, HideInInspector] private bool showCompatibleStates;
+        [SerializeReference, HideInInspector] private bool showIncompatibleStates;
+        
         public virtual void Validate() {
             events = events != null ? events.Where(x => x != null).ToList() : new List<StateEvent>();
         }
 
         protected virtual void Validate(StateEvent _event) {
 
+        }
+
+        public virtual void DrawInpsector(Color foldoutColor, Color fieldColor) {
+            EditorExtension.IncrementIndent();
+
+            if(this is not LandState) {
+                if (EditorExtension.DisplayFoldout("Base Settings", ref showBaseSettings, foldoutColor))
+                    DisplayBaseSettings(foldoutColor, fieldColor);
+            }
+
+            EditorExtension.Space(5f);
+
+            if (EditorExtension.DisplayFoldout("Extension", ref showExtensions, foldoutColor))
+                DisplayExenstions(foldoutColor, fieldColor);
+
+
+            EditorExtension.Space(5f);
+
+            if (EditorExtension.DisplayFoldout("Transitions", ref showTransitions, foldoutColor))
+                DisplayTransitions(foldoutColor, fieldColor);
+
+            EditorExtension.DecrementIndent();
+        }
+
+        protected virtual void DisplayBaseSettings(Color foldoutColor, Color fieldColor) { }
+
+        protected virtual void DisplayExenstions(Color foldoutColor, Color fieldColor) { }
+
+        private void DisplayTransitions(Color foldoutColor, Color fieldColor)
+        {
+            if (TryGetTransitionsInfo(out string[] compatible, out string[] incompatible)) {
+                EditorExtension.IncrementIndent();
+               
+                DisplayTransitions(compatible, "Compatible States", ref showCompatibleStates, foldoutColor, fieldColor);
+                DisplayTransitions(incompatible, "Incompatible States", ref showIncompatibleStates, foldoutColor, fieldColor);
+              
+                EditorExtension.DecrementIndent();
+            }
+        }
+
+        private void DisplayTransitions(string[] values, string label, ref bool showStates, Color foldoutColor, Color fieldColor)
+        {
+            if(values == null || values.Length == 0) return;
+
+            if (EditorExtension.DisplayFoldout(label, ref showStates, foldoutColor)) {
+                foreach (string s in values) EditorExtension.DisplayHelpBoxNone(s);
+            }
+
+        }
+
+        private bool TryGetTransitionsInfo(out string[] compatible, out string[] incompatible)
+        {
+            compatible    = new string[0];
+            incompatible = new string[0];
+
+            if (incompatibleTransitionStates == null) return false;
+            MovementStateType[] types = Enum.GetValues(typeof(MovementStateType)) as MovementStateType[];
+            
+            List<string> compatibleStates   = new List<string>();
+            List<string> incompatibleStates = new List<string>();
+
+            foreach (MovementStateType type in types)
+            {
+                if (incompatibleTransitionStates.Contains(type.ToString().ToLower())) incompatibleStates?.Add(type.ToString());
+                else compatibleStates?.Add(type.ToString());
+            }
+
+            compatible    = compatibleStates.ToArray();
+            incompatible = incompatibleStates.ToArray();
+            return true;
         }
 #endif
 

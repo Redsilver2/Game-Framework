@@ -1,5 +1,4 @@
 using RedSilver2.Framework.StateMachines.States;
-using UnityEngine;
 using UnityEngine.Events;
 
 namespace RedSilver2.Framework.StateMachines

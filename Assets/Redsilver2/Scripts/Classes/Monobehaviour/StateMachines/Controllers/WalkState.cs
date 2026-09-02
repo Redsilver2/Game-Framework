@@ -1,4 +1,5 @@
 using RedSilver2.Framework.StateMachines.Extensions;
+using UnityEditor;
 using UnityEngine;
 
 namespace RedSilver2.Framework.StateMachines.States
@@ -22,6 +23,8 @@ namespace RedSilver2.Framework.StateMachines.States
 
 
 #if UNITY_EDITOR
+        private bool showSoundExtension;
+
         public override void Validate()
         {
             base.Validate();
@@ -30,6 +33,28 @@ namespace RedSilver2.Framework.StateMachines.States
             moveTransitionSpeed = Mathf.Clamp(moveTransitionSpeed, 0f, float.MaxValue);
             if (!ContainsEvent(SOUND_EVENT)) AddEvent(new MovementWalkSound(SOUND_EVENT, this));
         }
+
+        protected sealed override void DisplayBaseSettings(Color foldoutColor, Color fieldColor) {
+            EditorExtension.Space(2.5f);
+
+
+            SetWalkSpeed(EditorExtension.DisplayFloatSlider("Walk Speed 💨", moveSpeed, 0f, 1000f, fieldColor));
+            SetTransitionSpeed(EditorExtension.DisplayFloatSlider("Walk Transition Speed", moveTransitionSpeed, 0f, 1000f, fieldColor));
+        }
+
+        protected override void DisplayExenstions(Color foldoutColor, Color fieldColor)
+        {
+            if (EditorExtension.DisplayFoldout("Sound", ref showSoundExtension, foldoutColor)){
+                if (!ContainsEvent("Walk Sound")){
+                    EditorExtension.DisplayButton("Add Sound", () => { AddEvent(new MovementWalkSound("Walk Sound", this)); });
+                }
+                else
+                {
+                    EditorExtension.DisplayButton("Remove Sound", () => { RemoveEvent("Walk Sound"); });
+                }
+            }
+        }
+
 #endif
 
         public sealed override bool CanTransition() {

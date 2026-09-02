@@ -40,6 +40,66 @@ namespace RedSilver2.Framework.StateMachines.States
 
         }
 
+#if UNITY_EDITOR
+
+        private bool showCameraSettings;
+        private bool showInputs;
+
+        public override void DrawInpsector(Color foldoutColor, Color fieldColor)
+        {
+            DrawCameraSettings(foldoutColor, fieldColor);
+            DrawInputSettings(foldoutColor, fieldColor);
+
+            base.DrawInpsector(foldoutColor, fieldColor);
+        }
+
+        private void DrawCameraSettings(Color foldoutColor, Color fieldColor)
+        {
+            EditorExtension.IncrementIndent();
+
+            if (EditorExtension.DisplayFoldout("Camera 📷", ref showCameraSettings, foldoutColor)) {
+                EditorExtension.IncrementIndent();
+
+                EditorExtension.Space(2.5f);         
+                SetCameraParent(EditorExtension.DisplayCustomField("Camera Parent", true, cameraParent, fieldColor));
+               
+                EditorExtension.Space(2.5f);
+                SetCrouchCameraPosition(EditorExtension.DisplayVector3Field("Crouch Position 📍", crouchCameraPosition, fieldColor));
+               
+                SetStandCameraPosition(EditorExtension.DisplayVector3Field("Stand Position 📍", standCameraPosition, fieldColor));
+                EditorExtension.DecrementIndent();
+            }
+
+
+            EditorExtension.DecrementIndent();
+        }
+
+        private void DrawInputSettings(Color foldoutColor, Color fieldColor)
+        {
+            EditorExtension.IncrementIndent();
+
+            if (EditorExtension.DisplayFoldout("Inputs 🕹️", ref showInputs, foldoutColor))
+            {
+                EditorExtension.IncrementIndent();
+                EditorExtension.Space(2.5f);
+
+                SetHasToHoldInput(EditorExtension.DisplayToggle("Has To Hold Input", hasToHoldInput, fieldColor));
+                SetIsVerifyingRunCondition(EditorExtension.DisplayToggle("Is Verifying Run Condition", isVerifyingRunCondition, fieldColor));
+
+                EditorExtension.Space(2.5f);
+                SetPressInput(EditorExtension.DisplayCustomField("Press Input", false, pressInput, fieldColor));
+
+                SetHoldInput(EditorExtension.DisplayCustomField("Hold Input", false, holdInput, fieldColor));
+                EditorExtension.DecrementIndent();
+            }
+
+            EditorExtension.DecrementIndent();
+        }
+
+
+
+#endif
+
         public void SetHasToHoldInput(bool hasToHoldInput)
         {
             this.hasToHoldInput = hasToHoldInput;

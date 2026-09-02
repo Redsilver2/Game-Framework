@@ -643,10 +643,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54e68e3477c76b245aa68349f5c19764, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.DoorStateMachine
-  states: []
   handle: {fileID: 392872284}
   openState:
     name: 
+    incompatibleTransitionStates: []
     events: []
     stateMachine: {fileID: 392872288}
     doorStateMachine: {fileID: 0}
@@ -655,6 +655,7 @@ MonoBehaviour:
     desiredRotation: {x: 0, y: 0, z: 0}
   closeState:
     name: 
+    incompatibleTransitionStates: []
     events: []
     stateMachine: {fileID: 392872288}
     doorStateMachine: {fileID: 0}
@@ -983,10 +984,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54e68e3477c76b245aa68349f5c19764, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.DoorStateMachine
-  states: []
   handle: {fileID: 1960062247}
   openState:
     name: 
+    incompatibleTransitionStates: []
     events: []
     stateMachine: {fileID: 603077994}
     doorStateMachine: {fileID: 0}
@@ -995,6 +996,7 @@ MonoBehaviour:
     desiredRotation: {x: 0, y: 0, z: 0}
   closeState:
     name: 
+    incompatibleTransitionStates: []
     events: []
     stateMachine: {fileID: 603077994}
     doorStateMachine: {fileID: 0}
@@ -1324,7 +1326,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49530662f34b4c140b36fdef6dd70f17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.DrinkableItemStateMachine
-  states: []
   itemParent: {fileID: 1347517727}
   parentRotation: {x: 0, y: 0, z: 0}
   parentPosition: {x: 0.418, y: -0.163, z: 0.59}
@@ -1333,9 +1334,6 @@ MonoBehaviour:
   dropCheckRange: 0.1
   dropFallSpeed: 1.5
   defaultMaxConsumptionValue: 100
-  references:
-    version: 2
-    RefIds: []
 --- !u!114 &770072914
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1519,7 +1517,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49530662f34b4c140b36fdef6dd70f17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.DrinkableItemStateMachine
-  states: []
   itemParent: {fileID: 672330127}
   parentRotation: {x: 0, y: 0, z: 0}
   parentPosition: {x: 0.418, y: -0.163, z: 0.59}
@@ -1528,9 +1525,6 @@ MonoBehaviour:
   dropCheckRange: 0.1
   dropFallSpeed: 1.5
   defaultMaxConsumptionValue: 100
-  references:
-    version: 2
-    RefIds: []
 --- !u!114 &841889628
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2507,10 +2501,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54e68e3477c76b245aa68349f5c19764, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.DoorStateMachine
-  states: []
   handle: {fileID: 1607124414}
   openState:
     name: 
+    incompatibleTransitionStates: []
     events: []
     stateMachine: {fileID: 1367059352}
     doorStateMachine: {fileID: 0}
@@ -2519,6 +2513,7 @@ MonoBehaviour:
     desiredRotation: {x: 0, y: 0, z: 0}
   closeState:
     name: 
+    incompatibleTransitionStates: []
     events: []
     stateMachine: {fileID: 1367059352}
     doorStateMachine: {fileID: 0}
@@ -3102,7 +3097,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e835e655befe62d478699201a36a2352, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.LightSourceStateMachine
-  states: []
   itemParent: {fileID: 1267500463}
   parentRotation: {x: 0, y: 0, z: 0}
   parentPosition: {x: -0.07, y: 0, z: 0.01}
@@ -3112,9 +3106,6 @@ MonoBehaviour:
   dropFallSpeed: 1.5
   defaultMaxLifeTime: 100
   drainLifeTimeSpeed: 1
-  references:
-    version: 2
-    RefIds: []
 --- !u!114 &1953040685
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3812,10 +3803,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54e68e3477c76b245aa68349f5c19764, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.DoorStateMachine
-  states: []
   handle: {fileID: 2094717040}
   openState:
     name: 
+    incompatibleTransitionStates: []
     events: []
     stateMachine: {fileID: 2094717044}
     doorStateMachine: {fileID: 0}
@@ -3824,6 +3815,7 @@ MonoBehaviour:
     desiredRotation: {x: 0, y: 0, z: 0}
   closeState:
     name: 
+    incompatibleTransitionStates: []
     events: []
     stateMachine: {fileID: 2094717044}
     doorStateMachine: {fileID: 0}
@@ -3973,7 +3965,7 @@ AudioSource:
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 0
-  m_Pitch: 1
+  m_Pitch: 0.76
   Loop: 0
   Mute: 0
   Spatialize: 0
@@ -4272,23 +4264,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63e85299cd878444fbfbbe680f58ed9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.PlayerCharacterControllerStateMachine
-  states:
-  - rid: 972954578703351900
-  groundCheckRange: 1.5
+  groundCheckRange: 0
   is2DMovement: 0
-  moveInputSetting: {fileID: 11400000, guid: 34e9a3b820b865e438822ed3a624d62a, type: 2}
-  references:
-    version: 2
-    RefIds:
-    - rid: 972954578703351900
-      type: {class: PlayerIdolState, ns: RedSilver2.Framework.StateMachines.States, asm: Assembly-CSharp}
-      data:
-        name: Idol
-        events: []
-        stateMachine: {fileID: 9091687914289102630}
-        updatableStateMachine: {fileID: 9091687914289102630}
-        movementStateMachine: {fileID: 9091687914289102630}
-        moveSpeedTransition: 0
+  moveInputSetting: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

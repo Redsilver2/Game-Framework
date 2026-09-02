@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public static class UnityExtensions
+public static class UnityExtension
 {
     public static float Set(this float current, float value)
     {

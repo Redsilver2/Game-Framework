@@ -1,4 +1,4 @@
-using RedSilver2.Framework.Inputs;
+
 using RedSilver2.Framework.Inputs.Settings;
 using RedSilver2.Framework.StateMachines.Controllers;
 using UnityEngine;
@@ -21,6 +21,30 @@ namespace RedSilver2.Framework.StateMachines.States
         public PlayerRunState(PlayerMovementStateMachine stateMachine) : base(stateMachine) {
 
         }
+
+#if UNITY_EDITOR
+        private bool showInputs;
+
+        public sealed override void DrawInpsector(Color foldoutColor, Color fieldColor)
+        {
+            EditorExtension.IncrementIndent();
+
+            if (EditorExtension.DisplayFoldout("Inputs 🕹️", ref showInputs, foldoutColor)) {
+                EditorExtension.IncrementIndent();
+                EditorExtension.Space(2.5f);
+
+                SetHasToHoldInput(EditorExtension.DisplayToggle("Has To Hold Input", hasToHoldInput, fieldColor));
+                SetPressInput(EditorExtension.DisplayCustomField("Press Input", false, pressInput, fieldColor));
+                SetHoldInput(EditorExtension.DisplayCustomField("Hold Input", false, holdInput, fieldColor));
+               
+                EditorExtension.DecrementIndent();
+            }
+
+            EditorExtension.DecrementIndent();
+
+            base.DrawInpsector(foldoutColor, fieldColor);
+        }
+#endif
 
         public void SetHasToHoldInput(bool hasToHoldInput)
         {

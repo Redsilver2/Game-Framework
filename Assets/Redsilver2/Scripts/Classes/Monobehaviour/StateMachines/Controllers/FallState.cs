@@ -1,4 +1,5 @@
 using System;
+using UnityEditor;
 using UnityEngine;
 
 namespace RedSilver2.Framework.StateMachines.States
@@ -57,6 +58,27 @@ namespace RedSilver2.Framework.StateMachines.States
 
             groundedFallSpeed = Mathf.Clamp(groundedFallSpeed, float.MinValue, 0f);
             groundedFallTransitionSpeed = Mathf.Clamp(groundedFallTransitionSpeed, 0f, float.MaxValue);
+        }
+
+        protected override void DisplayBaseSettings(Color foldoutColor, Color fieldColor)
+        {
+            base.DisplayBaseSettings(foldoutColor, fieldColor);
+            SetAirbornTransitionTrigger(EditorExtension.DisplayFloatSlider("Airborn Transition Trigger", airbornTransitionTrigger, 0f, 1000f, fieldColor));
+
+            EditorExtension.Space(5f);
+            SetGroundedFallSpeed(EditorExtension.DisplayFloatSlider("Grounded Fall Speed", groundedFallSpeed, -1000f, 0f, fieldColor));
+            SetGroundedFallTransitionSpeed(EditorExtension.DisplayFloatSlider("Grounded Fall Transition Speed", groundedFallTransitionSpeed, 0f, 1000f, fieldColor));
+           
+            EditorExtension.Space(5f);
+            SetFallSpeed(EditorExtension.DisplayFloatSlider("Fall Speed", fallSpeed, -1000f, 0f, fieldColor));
+            SetFallTransitionSpeed(EditorExtension.DisplayFloatSlider("Fall Transition Speed", fallTransitionSpeed, 0f, 1000f, fieldColor));
+
+            EditorExtension.Space(5f);
+            SetCanAffectMovementSpeed(EditorExtension.DisplayToggle("Can Affect Movement Speed", canAffectMovementSpeed, fieldColor));
+
+            EditorExtension.Space(5f);
+            SetMoveSpeed(EditorExtension.DisplayFloatSlider("Move Speed 💨", moveSpeed, 0f, 1000f, fieldColor));
+            SetMoveTransitionSpeed(EditorExtension.DisplayFloatSlider("Move Transition Speed", moveTransitionSpeed, 0f, 1000f, fieldColor));
         }
 #endif
 

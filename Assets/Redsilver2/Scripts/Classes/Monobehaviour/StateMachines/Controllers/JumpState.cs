@@ -50,6 +50,13 @@ namespace RedSilver2.Framework.StateMachines.States {
             maxJumpDelay = Mathf.Clamp(maxJumpDelay, 0f, float.MaxValue);  
             if(!ContainsEvent(SOUND_EVENT)) AddEvent(new JumpSound(SOUND_EVENT, this));
         }
+
+        protected override void DisplayBaseSettings(Color foldoutColor, Color fieldColor)
+        {
+            SetJumpForce(EditorExtension.DisplayFloatSlider("Jump Force 💪", jumpForce, 0f, 1000f          , fieldColor));
+            SetMaxJumpCount(EditorExtension.DisplayUIntSlider("Max Jump Count ❓", maxJumpCount, 100       , fieldColor));
+            SetMaxJumpDelay(EditorExtension.DisplayFloatSlider("Max Jump Delay ⌛", maxJumpDelay, 0f, 1000f, fieldColor));
+        }
 #endif
 
         protected sealed override MovementStateType[] GetDefaultInvalidTypes()

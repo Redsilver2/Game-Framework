@@ -59,6 +59,11 @@ namespace RedSilver2.Framework.StateMachines
             dropCheckRange = Mathf.Clamp(dropCheckRange, 0.1f, float.MaxValue);
             dropFallSpeed = Mathf.Clamp(dropFallSpeed, 0f, float.MaxValue);
         }
+
+        protected override void DisplayDefaultSettings(Color foldoutColor, Color fieldColor) {
+            base.DisplayDefaultSettings(foldoutColor, fieldColor);
+
+        }
 #endif
 
         protected override void Awake() {

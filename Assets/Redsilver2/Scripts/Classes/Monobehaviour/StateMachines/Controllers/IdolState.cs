@@ -20,6 +20,11 @@ namespace RedSilver2.Framework.StateMachines.States
             base.Validate();
             moveSpeedTransition = Mathf.Clamp(moveSpeedTransition, 0f, float.MaxValue);
         }
+
+        protected sealed override void DisplayBaseSettings(Color foldoutColor, Color fieldColor) {
+            EditorExtension.Space(2.5f);
+            SetMoveSpeedTransition(EditorExtension.DisplayFloatSlider("Move Transition Speed ", moveSpeedTransition, 0f, 1000f, fieldColor));
+        }
 #endif
 
         public sealed override bool CanTransition()

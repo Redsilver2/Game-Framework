@@ -14,7 +14,28 @@ namespace RedSilver2.Framework.StateMachines
         public PlayerJumpState(PlayerMovementStateMachine stateMachine) : base(stateMachine) {
 
         }
-        
+
+#if UNITY_EDITOR
+        private bool showInputs;
+
+        public sealed override void DrawInpsector(Color foldoutColor, Color fieldColor)
+        {
+            EditorExtension.IncrementIndent();
+
+            if (EditorExtension.DisplayFoldout("Inputs 🕹️", ref showInputs, foldoutColor)) {
+                EditorExtension.IncrementIndent();
+                EditorExtension.Space(2.5f);
+              
+                SetPressInput(EditorExtension.DisplayCustomField("Press Input", false, pressInput, fieldColor));
+                EditorExtension.DecrementIndent();
+            }
+
+            EditorExtension.DecrementIndent();
+
+            base.DrawInpsector(foldoutColor, fieldColor);
+        }
+#endif
+
         public void SetPressInput(PressInputSettings pressInput) {
             this.pressInput = pressInput;
         }

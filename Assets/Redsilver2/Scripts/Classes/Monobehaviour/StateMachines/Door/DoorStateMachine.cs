@@ -1,5 +1,6 @@
 using RedSilver2.Framework.Interactions;
 using RedSilver2.Framework.StateMachines.States;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -25,6 +26,19 @@ namespace RedSilver2.Framework.StateMachines
 
         public OpenDoorState  OpenState    => openState;
         public CloseDoorState CloseState   => closeState;
+
+#if UNITY_EDITOR
+
+        protected override State GetInspectorState(int stateIndex)
+        {
+            return null;
+        }
+
+        protected override Array GetInspectorValues()
+        {
+            return null;
+        }
+#endif
 
 
         protected override void Awake()
