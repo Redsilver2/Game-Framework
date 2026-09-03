@@ -11,11 +11,10 @@ namespace RedSilver2.Framework.StateMachines.Controllers {
     {
         [Space]
         [SerializeField] private KeyboardVector2InputSettings moveInputSetting;
+        [SerializeField, HideInInspector] private CameraController cameraController;
+        [SerializeField, HideInInspector] private UnityEvent<Vector2> onMoveInputUpdate;
 
         private Vector3 nextPosition;
-
-        private CameraController cameraController;
-        private UnityEvent<Vector2> onMoveInputUpdate;
 
         public Vector2 MoveInput => moveInputSetting != null ? moveInputSetting.GetValue() : Vector2.zero;
         public CameraController CameraController => cameraController;
@@ -53,8 +52,6 @@ namespace RedSilver2.Framework.StateMachines.Controllers {
 
         protected override void Awake() {
             base.Awake();
-            onMoveInputUpdate = new UnityEvent<Vector2>();
-
             cameraController = transform.root != null ? transform.root.GetComponentInChildren<CameraController>() :
                                                                        GetComponentInChildren<CameraController>();
 

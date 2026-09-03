@@ -43,6 +43,8 @@ namespace RedSilver2.Framework.StateMachines
         protected override void Update()
         {
             MovementStateMachine stateMachine = GetMovementStateMachine(this);
+            pressInput?.Enable();
+
             base.Update();
 
             if(stateMachine != null && pressInput != null && CurrentJumpDelay <= 0f && JumpCount < MaxJumpCount) {

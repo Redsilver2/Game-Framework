@@ -6,34 +6,39 @@ namespace RedSilver2.Framework.StateMachines.States
     [System.Serializable]
     public abstract class UpdatableState : State
     {
-        private UnityEvent onUpdate;
-        private UnityEvent onLateUpdate;
-        [SerializeReference, HideInInspector] private UpdatableStateMachine updatableStateMachine;
+        [SerializeField, HideInInspector] private UnityEvent onUpdate;
+        [SerializeField, HideInInspector] private UnityEvent onLateUpdate;
+        [SerializeField, SerializeReference, HideInInspector] private UpdatableStateMachine updatableStateMachine;
 
 
         protected UpdatableState(UpdatableStateMachine stateMachine) : base(stateMachine) {
             this.updatableStateMachine = stateMachine;
-
-            onUpdate     = new UnityEvent();
-            onLateUpdate = new UnityEvent();
-
-            AddOnUpdateListener(OnUpdate);
-            AddOnLateUpdateListener(OnLateUpdate);
         }
 
         protected override void OnEntered() {
             base.OnEntered();
+
+            AddOnUpdateListener(OnUpdate);
+            AddOnLateUpdateListener(OnLateUpdate);
+
             updatableStateMachine?.AddOnUpdateListener(InvokeOnUpdateEvent);
             updatableStateMachine?.AddOnLateUpdateListener(InvokeOnLateUpdateEvent);
         }
 
         protected override void OnExited() {
             base.OnExited();
+
+           
+            RemoveOnUpdateListener(OnUpdate);
+            RemoveOnLateUpdateListener(OnLateUpdate);
+
             updatableStateMachine?.RemoveOnUpdateListener(InvokeOnUpdateEvent);
             updatableStateMachine?.RemoveOnLateUpdateListener(InvokeOnLateUpdateEvent);
         }
 
-        private void InvokeOnUpdateEvent()     { onUpdate?.Invoke();     }
+        private void InvokeOnUpdateEvent()     {
+            onUpdate?.Invoke();    
+        }
         private void InvokeOnLateUpdateEvent() { onLateUpdate?.Invoke(); }
 
         protected virtual void OnUpdate()     { UpdateStateTransitions(); }

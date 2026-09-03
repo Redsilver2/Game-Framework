@@ -144,6 +144,9 @@ namespace RedSilver2.Framework.StateMachines.States
         protected override void Update()
         {
             MovementStateMachine stateMachine = GetMovementStateMachine(this);
+           
+            holdInput?.Enable();
+            pressInput?.Enable();
 
             if (stateMachine != null && IsEnabled) {
                 if (stateMachine.IsMoving && stateMachine.IsGrounded && !JumpState.GetIsJumping(stateMachine)){

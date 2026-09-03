@@ -643,12 +643,49 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54e68e3477c76b245aa68349f5c19764, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.DoorStateMachine
+  states: []
+  showEditorSettings: 0
+  showDefaultSettings: 0
+  showStateCreation: 0
+  showStates: 
+  lockStates: 
+  foldoutColor: {r: 0, g: 0, b: 0, a: 0}
+  fieldColor: {r: 0, g: 0, b: 0, a: 0}
   handle: {fileID: 392872284}
   openState:
     name: 
     incompatibleTransitionStates: []
     events: []
     stateMachine: {fileID: 392872288}
+    onAdded:
+      m_PersistentCalls:
+        m_Calls: []
+    onRemoved:
+      m_PersistentCalls:
+        m_Calls: []
+    onEntered:
+      m_PersistentCalls:
+        m_Calls: []
+    onExited:
+      m_PersistentCalls:
+        m_Calls: []
+    onEnabled:
+      m_PersistentCalls:
+        m_Calls: []
+    onDisabled:
+      m_PersistentCalls:
+        m_Calls: []
+    onTransitionStateAdded:
+      m_PersistentCalls:
+        m_Calls: []
+    onTransitionStateRemoved:
+      m_PersistentCalls:
+        m_Calls: []
+    showBaseSettings: 0
+    showExtensions: 0
+    showTransitions: 0
+    showCompatibleStates: 0
+    showIncompatibleStates: 0
     doorStateMachine: {fileID: 0}
     defaultDuration: 0
     desiredPosition: {x: 0, y: 0, z: 0}
@@ -658,6 +695,35 @@ MonoBehaviour:
     incompatibleTransitionStates: []
     events: []
     stateMachine: {fileID: 392872288}
+    onAdded:
+      m_PersistentCalls:
+        m_Calls: []
+    onRemoved:
+      m_PersistentCalls:
+        m_Calls: []
+    onEntered:
+      m_PersistentCalls:
+        m_Calls: []
+    onExited:
+      m_PersistentCalls:
+        m_Calls: []
+    onEnabled:
+      m_PersistentCalls:
+        m_Calls: []
+    onDisabled:
+      m_PersistentCalls:
+        m_Calls: []
+    onTransitionStateAdded:
+      m_PersistentCalls:
+        m_Calls: []
+    onTransitionStateRemoved:
+      m_PersistentCalls:
+        m_Calls: []
+    showBaseSettings: 0
+    showExtensions: 0
+    showTransitions: 0
+    showCompatibleStates: 0
+    showIncompatibleStates: 0
     doorStateMachine: {fileID: 0}
     defaultDuration: 0
     desiredPosition: {x: 0, y: 0, z: 0}
@@ -984,12 +1050,49 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54e68e3477c76b245aa68349f5c19764, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.DoorStateMachine
+  states: []
+  showEditorSettings: 0
+  showDefaultSettings: 0
+  showStateCreation: 0
+  showStates: 
+  lockStates: 
+  foldoutColor: {r: 0, g: 0, b: 0, a: 0}
+  fieldColor: {r: 0, g: 0, b: 0, a: 0}
   handle: {fileID: 1960062247}
   openState:
     name: 
     incompatibleTransitionStates: []
     events: []
     stateMachine: {fileID: 603077994}
+    onAdded:
+      m_PersistentCalls:
+        m_Calls: []
+    onRemoved:
+      m_PersistentCalls:
+        m_Calls: []
+    onEntered:
+      m_PersistentCalls:
+        m_Calls: []
+    onExited:
+      m_PersistentCalls:
+        m_Calls: []
+    onEnabled:
+      m_PersistentCalls:
+        m_Calls: []
+    onDisabled:
+      m_PersistentCalls:
+        m_Calls: []
+    onTransitionStateAdded:
+      m_PersistentCalls:
+        m_Calls: []
+    onTransitionStateRemoved:
+      m_PersistentCalls:
+        m_Calls: []
+    showBaseSettings: 0
+    showExtensions: 0
+    showTransitions: 0
+    showCompatibleStates: 0
+    showIncompatibleStates: 0
     doorStateMachine: {fileID: 0}
     defaultDuration: 0
     desiredPosition: {x: 0, y: 0, z: 0}
@@ -999,6 +1102,35 @@ MonoBehaviour:
     incompatibleTransitionStates: []
     events: []
     stateMachine: {fileID: 603077994}
+    onAdded:
+      m_PersistentCalls:
+        m_Calls: []
+    onRemoved:
+      m_PersistentCalls:
+        m_Calls: []
+    onEntered:
+      m_PersistentCalls:
+        m_Calls: []
+    onExited:
+      m_PersistentCalls:
+        m_Calls: []
+    onEnabled:
+      m_PersistentCalls:
+        m_Calls: []
+    onDisabled:
+      m_PersistentCalls:
+        m_Calls: []
+    onTransitionStateAdded:
+      m_PersistentCalls:
+        m_Calls: []
+    onTransitionStateRemoved:
+      m_PersistentCalls:
+        m_Calls: []
+    showBaseSettings: 0
+    showExtensions: 0
+    showTransitions: 0
+    showCompatibleStates: 0
+    showIncompatibleStates: 0
     doorStateMachine: {fileID: 0}
     defaultDuration: 0
     desiredPosition: {x: 0, y: 0, z: 0}
@@ -1326,6 +1458,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49530662f34b4c140b36fdef6dd70f17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.DrinkableItemStateMachine
+  states: []
+  showEditorSettings: 0
+  showDefaultSettings: 0
+  showStateCreation: 0
+  showStates: 
+  lockStates: 
+  foldoutColor: {r: 0, g: 0, b: 0, a: 0}
+  fieldColor: {r: 0, g: 0, b: 0, a: 0}
   itemParent: {fileID: 1347517727}
   parentRotation: {x: 0, y: 0, z: 0}
   parentPosition: {x: 0.418, y: -0.163, z: 0.59}
@@ -1334,6 +1474,9 @@ MonoBehaviour:
   dropCheckRange: 0.1
   dropFallSpeed: 1.5
   defaultMaxConsumptionValue: 100
+  references:
+    version: 2
+    RefIds: []
 --- !u!114 &770072914
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1517,6 +1660,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49530662f34b4c140b36fdef6dd70f17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.DrinkableItemStateMachine
+  states: []
+  showEditorSettings: 0
+  showDefaultSettings: 0
+  showStateCreation: 0
+  showStates: 
+  lockStates: 
+  foldoutColor: {r: 0, g: 0, b: 0, a: 0}
+  fieldColor: {r: 0, g: 0, b: 0, a: 0}
   itemParent: {fileID: 672330127}
   parentRotation: {x: 0, y: 0, z: 0}
   parentPosition: {x: 0.418, y: -0.163, z: 0.59}
@@ -1525,6 +1676,9 @@ MonoBehaviour:
   dropCheckRange: 0.1
   dropFallSpeed: 1.5
   defaultMaxConsumptionValue: 100
+  references:
+    version: 2
+    RefIds: []
 --- !u!114 &841889628
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2501,12 +2655,49 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54e68e3477c76b245aa68349f5c19764, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.DoorStateMachine
+  states: []
+  showEditorSettings: 0
+  showDefaultSettings: 0
+  showStateCreation: 0
+  showStates: 
+  lockStates: 
+  foldoutColor: {r: 0, g: 0, b: 0, a: 0}
+  fieldColor: {r: 0, g: 0, b: 0, a: 0}
   handle: {fileID: 1607124414}
   openState:
     name: 
     incompatibleTransitionStates: []
     events: []
     stateMachine: {fileID: 1367059352}
+    onAdded:
+      m_PersistentCalls:
+        m_Calls: []
+    onRemoved:
+      m_PersistentCalls:
+        m_Calls: []
+    onEntered:
+      m_PersistentCalls:
+        m_Calls: []
+    onExited:
+      m_PersistentCalls:
+        m_Calls: []
+    onEnabled:
+      m_PersistentCalls:
+        m_Calls: []
+    onDisabled:
+      m_PersistentCalls:
+        m_Calls: []
+    onTransitionStateAdded:
+      m_PersistentCalls:
+        m_Calls: []
+    onTransitionStateRemoved:
+      m_PersistentCalls:
+        m_Calls: []
+    showBaseSettings: 0
+    showExtensions: 0
+    showTransitions: 0
+    showCompatibleStates: 0
+    showIncompatibleStates: 0
     doorStateMachine: {fileID: 0}
     defaultDuration: 0
     desiredPosition: {x: 0, y: 0, z: 0}
@@ -2516,6 +2707,35 @@ MonoBehaviour:
     incompatibleTransitionStates: []
     events: []
     stateMachine: {fileID: 1367059352}
+    onAdded:
+      m_PersistentCalls:
+        m_Calls: []
+    onRemoved:
+      m_PersistentCalls:
+        m_Calls: []
+    onEntered:
+      m_PersistentCalls:
+        m_Calls: []
+    onExited:
+      m_PersistentCalls:
+        m_Calls: []
+    onEnabled:
+      m_PersistentCalls:
+        m_Calls: []
+    onDisabled:
+      m_PersistentCalls:
+        m_Calls: []
+    onTransitionStateAdded:
+      m_PersistentCalls:
+        m_Calls: []
+    onTransitionStateRemoved:
+      m_PersistentCalls:
+        m_Calls: []
+    showBaseSettings: 0
+    showExtensions: 0
+    showTransitions: 0
+    showCompatibleStates: 0
+    showIncompatibleStates: 0
     doorStateMachine: {fileID: 0}
     defaultDuration: 0
     desiredPosition: {x: 0, y: 0, z: 0}
@@ -3097,6 +3317,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e835e655befe62d478699201a36a2352, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.LightSourceStateMachine
+  states: []
+  showEditorSettings: 1
+  showDefaultSettings: 1
+  showStateCreation: 1
+  showStates: 010101
+  lockStates: 000000
+  foldoutColor: {r: 0, g: 0, b: 0, a: 0.525}
+  fieldColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
   itemParent: {fileID: 1267500463}
   parentRotation: {x: 0, y: 0, z: 0}
   parentPosition: {x: -0.07, y: 0, z: 0.01}
@@ -3106,6 +3334,9 @@ MonoBehaviour:
   dropFallSpeed: 1.5
   defaultMaxLifeTime: 100
   drainLifeTimeSpeed: 1
+  references:
+    version: 2
+    RefIds: []
 --- !u!114 &1953040685
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3803,12 +4034,49 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54e68e3477c76b245aa68349f5c19764, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.DoorStateMachine
+  states: []
+  showEditorSettings: 0
+  showDefaultSettings: 0
+  showStateCreation: 0
+  showStates: 
+  lockStates: 
+  foldoutColor: {r: 0, g: 0, b: 0, a: 0}
+  fieldColor: {r: 0, g: 0, b: 0, a: 0}
   handle: {fileID: 2094717040}
   openState:
     name: 
     incompatibleTransitionStates: []
     events: []
     stateMachine: {fileID: 2094717044}
+    onAdded:
+      m_PersistentCalls:
+        m_Calls: []
+    onRemoved:
+      m_PersistentCalls:
+        m_Calls: []
+    onEntered:
+      m_PersistentCalls:
+        m_Calls: []
+    onExited:
+      m_PersistentCalls:
+        m_Calls: []
+    onEnabled:
+      m_PersistentCalls:
+        m_Calls: []
+    onDisabled:
+      m_PersistentCalls:
+        m_Calls: []
+    onTransitionStateAdded:
+      m_PersistentCalls:
+        m_Calls: []
+    onTransitionStateRemoved:
+      m_PersistentCalls:
+        m_Calls: []
+    showBaseSettings: 0
+    showExtensions: 0
+    showTransitions: 0
+    showCompatibleStates: 0
+    showIncompatibleStates: 0
     doorStateMachine: {fileID: 0}
     defaultDuration: 0
     desiredPosition: {x: 0, y: 0, z: 0}
@@ -3818,6 +4086,35 @@ MonoBehaviour:
     incompatibleTransitionStates: []
     events: []
     stateMachine: {fileID: 2094717044}
+    onAdded:
+      m_PersistentCalls:
+        m_Calls: []
+    onRemoved:
+      m_PersistentCalls:
+        m_Calls: []
+    onEntered:
+      m_PersistentCalls:
+        m_Calls: []
+    onExited:
+      m_PersistentCalls:
+        m_Calls: []
+    onEnabled:
+      m_PersistentCalls:
+        m_Calls: []
+    onDisabled:
+      m_PersistentCalls:
+        m_Calls: []
+    onTransitionStateAdded:
+      m_PersistentCalls:
+        m_Calls: []
+    onTransitionStateRemoved:
+      m_PersistentCalls:
+        m_Calls: []
+    showBaseSettings: 0
+    showExtensions: 0
+    showTransitions: 0
+    showCompatibleStates: 0
+    showIncompatibleStates: 0
     doorStateMachine: {fileID: 0}
     defaultDuration: 0
     desiredPosition: {x: 0, y: 0, z: 0}
@@ -4264,9 +4561,408 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63e85299cd878444fbfbbe680f58ed9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.PlayerCharacterControllerStateMachine
-  groundCheckRange: 0
+  states:
+  - rid: 972954605875626143
+  - rid: 972954605875626144
+  - rid: 972954605875626160
+  - rid: 972954605875626161
+  - rid: 972954605875626192
+  - rid: 972954605875626202
+  showEditorSettings: 0
+  showDefaultSettings: 1
+  showStateCreation: 1
+  showStates: 0101010001010001
+  lockStates: 0101010101010100
+  foldoutColor: {r: 0, g: 0, b: 0, a: 0.525}
+  fieldColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
+  groundCheckRange: 1.5
   is2DMovement: 0
-  moveInputSetting: {fileID: 0}
+  moveInputSetting: {fileID: 11400000, guid: 34e9a3b820b865e438822ed3a624d62a, type: 2}
+  cameraController: {fileID: 0}
+  onMoveInputUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  references:
+    version: 2
+    RefIds:
+    - rid: 972954605875626143
+      type: {class: PlayerIdolState, ns: RedSilver2.Framework.StateMachines.States, asm: Assembly-CSharp}
+      data:
+        name: Idol
+        incompatibleTransitionStates:
+        - idol
+        - land
+        - 
+        events: []
+        stateMachine: {fileID: 9091687914289102630}
+        onAdded:
+          m_PersistentCalls:
+            m_Calls: []
+        onRemoved:
+          m_PersistentCalls:
+            m_Calls: []
+        onEntered:
+          m_PersistentCalls:
+            m_Calls: []
+        onExited:
+          m_PersistentCalls:
+            m_Calls: []
+        onEnabled:
+          m_PersistentCalls:
+            m_Calls: []
+        onDisabled:
+          m_PersistentCalls:
+            m_Calls: []
+        onTransitionStateAdded:
+          m_PersistentCalls:
+            m_Calls: []
+        onTransitionStateRemoved:
+          m_PersistentCalls:
+            m_Calls: []
+        showBaseSettings: 1
+        showExtensions: 0
+        showTransitions: 1
+        showCompatibleStates: 1
+        showIncompatibleStates: 1
+        onUpdate:
+          m_PersistentCalls:
+            m_Calls: []
+        onLateUpdate:
+          m_PersistentCalls:
+            m_Calls: []
+        updatableStateMachine: {fileID: 9091687914289102630}
+        movementStateMachine: {fileID: 9091687914289102630}
+        moveSpeedTransition: 10
+    - rid: 972954605875626144
+      type: {class: PlayerWalkState, ns: RedSilver2.Framework.StateMachines.States, asm: Assembly-CSharp}
+      data:
+        name: Walk
+        incompatibleTransitionStates:
+        - walk
+        - land
+        - 
+        events:
+        - rid: 972954605875626286
+        stateMachine: {fileID: 9091687914289102630}
+        onAdded:
+          m_PersistentCalls:
+            m_Calls: []
+        onRemoved:
+          m_PersistentCalls:
+            m_Calls: []
+        onEntered:
+          m_PersistentCalls:
+            m_Calls: []
+        onExited:
+          m_PersistentCalls:
+            m_Calls: []
+        onEnabled:
+          m_PersistentCalls:
+            m_Calls: []
+        onDisabled:
+          m_PersistentCalls:
+            m_Calls: []
+        onTransitionStateAdded:
+          m_PersistentCalls:
+            m_Calls: []
+        onTransitionStateRemoved:
+          m_PersistentCalls:
+            m_Calls: []
+        showBaseSettings: 1
+        showExtensions: 1
+        showTransitions: 1
+        showCompatibleStates: 0
+        showIncompatibleStates: 0
+        onUpdate:
+          m_PersistentCalls:
+            m_Calls: []
+        onLateUpdate:
+          m_PersistentCalls:
+            m_Calls: []
+        updatableStateMachine: {fileID: 9091687914289102630}
+        movementStateMachine: {fileID: 9091687914289102630}
+        moveSpeed: 10
+        moveTransitionSpeed: 10
+    - rid: 972954605875626160
+      type: {class: PlayerCrouchState, ns: RedSilver2.Framework.StateMachines.States, asm: Assembly-CSharp}
+      data:
+        name: Crouch
+        incompatibleTransitionStates:
+        - crouch
+        - land
+        - fall
+        - 
+        events:
+        - rid: 972954605875626163
+        stateMachine: {fileID: 9091687914289102630}
+        onAdded:
+          m_PersistentCalls:
+            m_Calls: []
+        onRemoved:
+          m_PersistentCalls:
+            m_Calls: []
+        onEntered:
+          m_PersistentCalls:
+            m_Calls: []
+        onExited:
+          m_PersistentCalls:
+            m_Calls: []
+        onEnabled:
+          m_PersistentCalls:
+            m_Calls: []
+        onDisabled:
+          m_PersistentCalls:
+            m_Calls: []
+        onTransitionStateAdded:
+          m_PersistentCalls:
+            m_Calls: []
+        onTransitionStateRemoved:
+          m_PersistentCalls:
+            m_Calls: []
+        showBaseSettings: 1
+        showExtensions: 0
+        showTransitions: 1
+        showCompatibleStates: 1
+        showIncompatibleStates: 1
+        onUpdate:
+          m_PersistentCalls:
+            m_Calls: []
+        onLateUpdate:
+          m_PersistentCalls:
+            m_Calls: []
+        updatableStateMachine: {fileID: 9091687914289102630}
+        movementStateMachine: {fileID: 9091687914289102630}
+        moveSpeed: 10
+        moveTransitionSpeed: 10
+        crouchHeight: 1
+        crouchHeightTransitionSpeed: 10
+        standHeight: 2
+        standHeightTransitionSpeed: 10
+        crouchSafetyCheckDistance: 1.6
+        cameraParent: {fileID: 0}
+        crouchCameraPosition: {x: 0, y: 0, z: 0}
+        standCameraPosition: {x: 0, y: 0, z: 0}
+        hasToHoldInput: 1
+        isVerifyingRunCondition: 1
+        pressInput: {fileID: 11400000, guid: 1faffc1e4c2cd3943a96937c4b8401fb, type: 2}
+        holdInput: {fileID: 11400000, guid: 61364bc8a312b1c4c9ca563f361e9b55, type: 2}
+    - rid: 972954605875626161
+      type: {class: PlayerJumpState, ns: RedSilver2.Framework.StateMachines, asm: Assembly-CSharp}
+      data:
+        name: Jump
+        incompatibleTransitionStates:
+        - idol
+        - walk
+        - run
+        - crouch
+        - jump
+        - land
+        - climb
+        - 
+        events:
+        - rid: 972954605875626164
+        stateMachine: {fileID: 9091687914289102630}
+        onAdded:
+          m_PersistentCalls:
+            m_Calls: []
+        onRemoved:
+          m_PersistentCalls:
+            m_Calls: []
+        onEntered:
+          m_PersistentCalls:
+            m_Calls: []
+        onExited:
+          m_PersistentCalls:
+            m_Calls: []
+        onEnabled:
+          m_PersistentCalls:
+            m_Calls: []
+        onDisabled:
+          m_PersistentCalls:
+            m_Calls: []
+        onTransitionStateAdded:
+          m_PersistentCalls:
+            m_Calls: []
+        onTransitionStateRemoved:
+          m_PersistentCalls:
+            m_Calls: []
+        showBaseSettings: 1
+        showExtensions: 0
+        showTransitions: 0
+        showCompatibleStates: 0
+        showIncompatibleStates: 0
+        onUpdate:
+          m_PersistentCalls:
+            m_Calls: []
+        onLateUpdate:
+          m_PersistentCalls:
+            m_Calls: []
+        updatableStateMachine: {fileID: 9091687914289102630}
+        movementStateMachine: {fileID: 9091687914289102630}
+        jumpForce: 0
+        maxJumpCount: 1
+        maxJumpDelay: 0
+        pressInput: {fileID: 0}
+    - rid: 972954605875626163
+      type: {class: MovementWalkSound, ns: RedSilver2.Framework.StateMachines.Extensions, asm: Assembly-CSharp}
+      data:
+        name: Crouch Sound
+        state:
+          rid: 972954605875626160
+        showSettings: 0
+        source: {fileID: 0}
+        data: {fileID: 0}
+        soundTriggerTime: 0
+        minPitch: 0
+        maxPitch: 0
+        minVolume: 0
+        maxVolume: 0
+    - rid: 972954605875626164
+      type: {class: JumpSound, ns: RedSilver2.Framework.StateMachines.Events, asm: Assembly-CSharp}
+      data:
+        name: Jump Sound
+        state:
+          rid: 972954605875626161
+        showSettings: 0
+        source: {fileID: 0}
+        data: {fileID: 0}
+        clips: []
+    - rid: 972954605875626192
+      type: {class: PlayerFallState, ns: RedSilver2.Framework.StateMachines.States, asm: Assembly-CSharp}
+      data:
+        name: Fall
+        incompatibleTransitionStates:
+        - idol
+        - walk
+        - run
+        - crouch
+        - jump
+        - fall
+        - climb
+        - 
+        events: []
+        stateMachine: {fileID: 9091687914289102630}
+        onAdded:
+          m_PersistentCalls:
+            m_Calls: []
+        onRemoved:
+          m_PersistentCalls:
+            m_Calls: []
+        onEntered:
+          m_PersistentCalls:
+            m_Calls: []
+        onExited:
+          m_PersistentCalls:
+            m_Calls: []
+        onEnabled:
+          m_PersistentCalls:
+            m_Calls: []
+        onDisabled:
+          m_PersistentCalls:
+            m_Calls: []
+        onTransitionStateAdded:
+          m_PersistentCalls:
+            m_Calls: []
+        onTransitionStateRemoved:
+          m_PersistentCalls:
+            m_Calls: []
+        showBaseSettings: 1
+        showExtensions: 0
+        showTransitions: 0
+        showCompatibleStates: 0
+        showIncompatibleStates: 0
+        onUpdate:
+          m_PersistentCalls:
+            m_Calls: []
+        onLateUpdate:
+          m_PersistentCalls:
+            m_Calls: []
+        updatableStateMachine: {fileID: 9091687914289102630}
+        movementStateMachine: {fileID: 9091687914289102630}
+        airbornTransitionTrigger: 0.2
+        moveSpeed: 0
+        moveTransitionSpeed: 0
+        canAffectMovementSpeed: 0
+        fallSpeed: -20
+        fallTransitionSpeed: 10
+        groundedFallSpeed: -10
+        groundedFallTransitionSpeed: 10
+    - rid: 972954605875626202
+      type: {class: PlayerLandState, ns: RedSilver2.Framework.StateMachines.States, asm: Assembly-CSharp}
+      data:
+        name: Land
+        incompatibleTransitionStates:
+        - land
+        - fall
+        - jump
+        - 
+        events:
+        - rid: 972954605875626203
+        stateMachine: {fileID: 9091687914289102630}
+        onAdded:
+          m_PersistentCalls:
+            m_Calls: []
+        onRemoved:
+          m_PersistentCalls:
+            m_Calls: []
+        onEntered:
+          m_PersistentCalls:
+            m_Calls: []
+        onExited:
+          m_PersistentCalls:
+            m_Calls: []
+        onEnabled:
+          m_PersistentCalls:
+            m_Calls: []
+        onDisabled:
+          m_PersistentCalls:
+            m_Calls: []
+        onTransitionStateAdded:
+          m_PersistentCalls:
+            m_Calls: []
+        onTransitionStateRemoved:
+          m_PersistentCalls:
+            m_Calls: []
+        showBaseSettings: 0
+        showExtensions: 0
+        showTransitions: 0
+        showCompatibleStates: 0
+        showIncompatibleStates: 0
+        onUpdate:
+          m_PersistentCalls:
+            m_Calls: []
+        onLateUpdate:
+          m_PersistentCalls:
+            m_Calls: []
+        updatableStateMachine: {fileID: 9091687914289102630}
+        movementStateMachine: {fileID: 9091687914289102630}
+    - rid: 972954605875626203
+      type: {class: LandSound, ns: RedSilver2.Framework.StateMachines.Extensions, asm: Assembly-CSharp}
+      data:
+        name: Land Sound
+        state:
+          rid: 972954605875626202
+        showSettings: 0
+        source: {fileID: 0}
+        data: {fileID: 0}
+        minPitch: 0
+        maxPitch: 0
+        minVolume: 0
+        maxVolume: 0
+    - rid: 972954605875626286
+      type: {class: MovementWalkSound, ns: RedSilver2.Framework.StateMachines.Extensions, asm: Assembly-CSharp}
+      data:
+        name: Walk Sound
+        state:
+          rid: 972954605875626144
+        showSettings: 1
+        source: {fileID: 1568030025500472595}
+        data: {fileID: 11400000, guid: 2d960960eb5a4374c813a870c024eded, type: 2}
+        soundTriggerTime: 100
+        minPitch: 0
+        maxPitch: 0
+        minVolume: 100
+        maxVolume: 100
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

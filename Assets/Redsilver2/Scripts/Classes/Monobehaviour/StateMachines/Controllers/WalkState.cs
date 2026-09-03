@@ -1,11 +1,11 @@
+using RedSilver2.Framework.StateMachines.Events;
 using RedSilver2.Framework.StateMachines.Extensions;
-using UnityEditor;
 using UnityEngine;
 
 namespace RedSilver2.Framework.StateMachines.States
 {
     [System.Serializable]
-    public abstract class WalkState : MovementState
+    public abstract partial class WalkState : MovementState
     {
         [Space]
         [SerializeField] private float moveSpeed;
@@ -14,48 +14,11 @@ namespace RedSilver2.Framework.StateMachines.States
         public float MoveSpeed => moveSpeed;
         public float MoveTransitionSpeed => moveTransitionSpeed;
 
-        private const string SOUND_EVENT = "Walk Sound";
         public const MovementStateType TYPE = MovementStateType.Walk;
 
         public WalkState(MovementStateMachine stateMachine) : base(stateMachine) {
            
         }
-
-
-#if UNITY_EDITOR
-        private bool showSoundExtension;
-
-        public override void Validate()
-        {
-            base.Validate();
-            moveSpeed = Mathf.Clamp(moveSpeed, 0f, float.MaxValue);
-            
-            moveTransitionSpeed = Mathf.Clamp(moveTransitionSpeed, 0f, float.MaxValue);
-            if (!ContainsEvent(SOUND_EVENT)) AddEvent(new MovementWalkSound(SOUND_EVENT, this));
-        }
-
-        protected sealed override void DisplayBaseSettings(Color foldoutColor, Color fieldColor) {
-            EditorExtension.Space(2.5f);
-
-
-            SetWalkSpeed(EditorExtension.DisplayFloatSlider("Walk Speed 💨", moveSpeed, 0f, 1000f, fieldColor));
-            SetTransitionSpeed(EditorExtension.DisplayFloatSlider("Walk Transition Speed", moveTransitionSpeed, 0f, 1000f, fieldColor));
-        }
-
-        protected override void DisplayExenstions(Color foldoutColor, Color fieldColor)
-        {
-            if (EditorExtension.DisplayFoldout("Sound", ref showSoundExtension, foldoutColor)){
-                if (!ContainsEvent("Walk Sound")){
-                    EditorExtension.DisplayButton("Add Sound", () => { AddEvent(new MovementWalkSound("Walk Sound", this)); });
-                }
-                else
-                {
-                    EditorExtension.DisplayButton("Remove Sound", () => { RemoveEvent("Walk Sound"); });
-                }
-            }
-        }
-
-#endif
 
         public sealed override bool CanTransition() {
             MovementStateMachine movementStateMachine = GetMovementStateMachine(this);
@@ -82,15 +45,61 @@ namespace RedSilver2.Framework.StateMachines.States
             this.moveTransitionSpeed = Mathf.Clamp(transitionSpeed, 0f, float.MaxValue);
         }
 
-        public static WalkState GetState(MovementStateMachine stateMachine) { 
-            if(stateMachine == null) return null;
-            return stateMachine.GetState(TYPE) as WalkState;
-        }
-
-
         protected sealed override MovementStateType[] GetDefaultInvalidTypes()
         {
             return new MovementStateType[] { TYPE, LandState.TYPE };
         }
+
+        public static WalkState GetState(MovementStateMachine stateMachine) { 
+            if(stateMachine == null) return null;
+            return stateMachine.GetState(TYPE) as WalkState;
+        }
+    }
+
+    public abstract partial class WalkState : MovementState
+    {
+
+#if UNITY_EDITOR
+        private bool showSoundEvent;
+        private const string SOUND_EVENT = "Walk Sound";
+
+        public override void Validate()
+        {
+            base.Validate();
+
+            moveSpeed = Mathf.Clamp(moveSpeed, 0f, float.MaxValue);
+            moveTransitionSpeed = Mathf.Clamp(moveTransitionSpeed, 0f, float.MaxValue);
+        }
+
+        protected sealed override void DisplayBaseSettings(Color foldoutColor, Color fieldColor)
+        {
+            EditorExtension.Space(2.5f);
+            SetWalkSpeed(EditorExtension.DisplayFloatSlider("Walk Speed 💨", moveSpeed, 0f, 1000f, fieldColor));
+            SetTransitionSpeed(EditorExtension.DisplayFloatSlider("Walk Transition Speed", moveTransitionSpeed, 0f, 1000f, fieldColor));
+        }
+
+        protected override void DisplayExenstions(Color foldoutColor, Color fieldColor)
+        {
+            EditorExtension.IncrementIndent();
+
+            if (EditorExtension.DisplayFoldout("Sound", ref showSoundEvent, foldoutColor))
+            {
+                StateEvent _event = GetEvent(SOUND_EVENT);
+
+                if (_event == null)  {
+                    EditorExtension.DisplayButton("Add Sound", () => { AddEvent(new MovementWalkSound(SOUND_EVENT, this)); });
+                }
+                else {
+                    EditorExtension.DisplayButton("Remove Sound", () => { RemoveEvent(SOUND_EVENT); });
+                    _event?.DrawInspector(foldoutColor, fieldColor);
+                }
+            }
+
+            EditorExtension.DecrementIndent();
+
+        }
+
+#endif
+
     }
 }

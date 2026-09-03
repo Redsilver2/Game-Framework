@@ -1,6 +1,5 @@
 using RedSilver2.Framework.StateMachines.States;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace RedSilver2.Framework.StateMachines.Events
 {
@@ -53,5 +52,21 @@ namespace RedSilver2.Framework.StateMachines.Events
             if (_event == null) return false;
             return Compare(_event.name);
         }
+
+#if UNITY_EDITOR
+       [SerializeField, HideInInspector] private bool showSettings;
+
+        public void DrawInspector(Color foldoutColor, Color fieldColor) {
+            EditorExtension.IncrementIndent();
+
+            if (EditorExtension.DisplayFoldout("Settings", ref showSettings, foldoutColor))  {
+                DrawInspectorSettings(foldoutColor, fieldColor);
+            }
+
+            EditorExtension.DecrementIndent();
+        }
+
+        protected virtual void DrawInspectorSettings(Color foldoutColor, Color fieldColor) { }
+#endif 
     }
 }

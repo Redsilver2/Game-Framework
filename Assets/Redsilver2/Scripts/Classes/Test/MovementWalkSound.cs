@@ -7,7 +7,7 @@ namespace RedSilver2.Framework.StateMachines.Extensions
 {
     [RequireComponent(typeof(AudioSource))]
     [System.Serializable]
-    public sealed class MovementWalkSound : MovementSound
+    public sealed partial class MovementWalkSound : MovementSound
     {
         [Space]
         [SerializeField] private float soundTriggerTime;
@@ -22,15 +22,18 @@ namespace RedSilver2.Framework.StateMachines.Extensions
 
         private float currentSoundTriggerTime;
 
-        public MovementWalkSound(string name, WalkState state) : base(name, state) {
-            Debug.Log("Creating with.. " + state);
-        }
-
-        public MovementWalkSound(string name, RunState state) : base(name, state) {
+        public MovementWalkSound(string name, WalkState state) : base(name, state)
+        {
 
         }
 
-        public MovementWalkSound(string name, CrouchState state) : base(name, state) {
+        public MovementWalkSound(string name, RunState state) : base(name, state)
+        {
+
+        }
+
+        public MovementWalkSound(string name, CrouchState state) : base(name, state)
+        {
 
         }
 
@@ -38,22 +41,20 @@ namespace RedSilver2.Framework.StateMachines.Extensions
         protected sealed override void Enable(MovementState state)
         {
             currentSoundTriggerTime = 0f;
-            Debug.Log("what " + state);
-
-
             state?.AddOnUpdateListener(OnUpdate(state));
         }
 
-        protected sealed override void Disable(MovementState state){
+        protected sealed override void Disable(MovementState state)
+        {
             state?.RemoveOnUpdateListener(OnUpdate(state));
         }
 
-        private UnityAction OnUpdate(MovementState state) {
-            string groundTag  = string.Empty;
+        private UnityAction OnUpdate(MovementState state)
+        {
+            string groundTag = string.Empty;
             AudioClip[] clips = null;
 
-            return () =>
-            {
+            return () => {
                 MovementStateMachine stateMachine = MovementState.GetMovementStateMachine(state);
                 MovementSoundData data = Data;
 
@@ -71,10 +72,12 @@ namespace RedSilver2.Framework.StateMachines.Extensions
                     AudioSource source = Source;
                     currentSoundTriggerTime = 0f;
 
-                    if (source != null && clips != null) {
+                    if (source != null && clips != null)
+                    {
 
                         AudioClip clip = clips.Length <= 0 ? null : clips[Random.Range(0, clips.Length)];
-                        if (clip != null) {
+                        if (clip != null)
+                        {
                             source.volume = Random.Range(minVolume, maxVolume);
                             source.pitch = Random.Range(minPitch, maxPitch);
                             source?.PlayOneShot(clip);
@@ -84,6 +87,22 @@ namespace RedSilver2.Framework.StateMachines.Extensions
 
             };
         }
+    }
 
+    public sealed partial class MovementWalkSound : MovementSound {
+#if UNITY_EDITOR
+        protected override void DrawInspectorSettings(Color foldoutColor, Color fieldColor)
+        {
+            base.DrawInspectorSettings(foldoutColor, fieldColor);
+            soundTriggerTime = EditorExtension.DisplayFloatSlider("Sound Trigger Time", soundTriggerTime, 0f, 100f, fieldColor);
+            minPitch = EditorExtension.DisplayFloatSlider("MinPitch", minPitch, 0f, 100f, fieldColor);
+         
+            maxPitch = EditorExtension.DisplayFloatSlider("Max Pitch", maxPitch, 0f, 100f, fieldColor);
+            minVolume = EditorExtension.DisplayFloatSlider("Min Volume", minVolume, 0f, 100f, fieldColor);
+
+            maxVolume = EditorExtension.DisplayFloatSlider("Max Volume", maxVolume, 0f, 100f, fieldColor);
+        }
+
+#endif
     }
 }

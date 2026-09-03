@@ -12,10 +12,10 @@ namespace RedSilver2.Framework.StateMachines
 
         protected override void Awake()
         {
-            base.Awake();
             onUpdate = new UnityEvent();
             onLateUpdate = new UnityEvent();
 
+            base.Awake();
             doesCurrentStateExist = false; 
 
             AddOnUpdateListener(OnUpdate);
@@ -29,7 +29,7 @@ namespace RedSilver2.Framework.StateMachines
             State[] states = ActifStates;
 
             if (!doesCurrentStateExist && states != null) {
-                foreach (State state in ActifStates) {
+                foreach (State state in states) {
                     if (state == null || !state.CanTransition()) continue;
                     ChangeState(state);
                     break;
@@ -49,6 +49,7 @@ namespace RedSilver2.Framework.StateMachines
         {
             if (action != null) onUpdate?.AddListener(action);
         }
+
         public void RemoveOnUpdateListener(UnityAction action)
         {
             if (action != null) onUpdate?.RemoveListener(action);

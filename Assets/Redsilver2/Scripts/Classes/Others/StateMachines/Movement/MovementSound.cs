@@ -29,5 +29,15 @@ namespace RedSilver2.Framework.StateMachines.Events
         {
             this.data = data;
         }
+
+#if UNITY_EDITOR
+        protected override void DrawInspectorSettings(Color foldoutColor, Color fieldColor)
+        {
+            base.DrawInspectorSettings(foldoutColor, fieldColor);
+            source = EditorExtension.DisplayCustomField("Audio Source", true, source, fieldColor);
+            data   = EditorExtension.DisplayCustomField("Sound Data", false, data, fieldColor);
+        }
+
+#endif
     }
 }

@@ -15,23 +15,23 @@ namespace RedSilver2.Framework.StateMachines.States
 
         [SerializeField, SerializeReference] private List<StateEvent> events;
         [SerializeField, HideInInspector] private List<State> transitionStates;
-        [SerializeReference, HideInInspector] private StateMachine stateMachine;
-
-
+        [SerializeField, SerializeReference, HideInInspector] private StateMachine stateMachine;
         private bool isEnabled;
+
+        private bool isInitialized;
         private bool isEntered;
 
-        private readonly UnityEvent onAdded;
-        private readonly UnityEvent onRemoved;
+        [SerializeField, HideInInspector] private UnityEvent onAdded;
+        [SerializeField, HideInInspector] private UnityEvent onRemoved;
 
-        private readonly UnityEvent onEntered;
-        private readonly UnityEvent onExited;
+        [SerializeField, HideInInspector] private UnityEvent onEntered;
+        [SerializeField, HideInInspector] private UnityEvent onExited;
 
-        private readonly UnityEvent onEnabled;
-        private readonly UnityEvent onDisabled;
+        [SerializeField, HideInInspector] private UnityEvent onEnabled;
+        [SerializeField, HideInInspector] private UnityEvent onDisabled;
 
-        private readonly UnityEvent<State> onTransitionStateAdded;
-        private readonly UnityEvent<State> onTransitionStateRemoved;
+        [SerializeField, HideInInspector] private UnityEvent<State> onTransitionStateAdded;
+        [SerializeField, HideInInspector] private UnityEvent<State> onTransitionStateRemoved;
 
         public bool IsEnabled => isEnabled;
         public string Name => name;
@@ -44,33 +44,25 @@ namespace RedSilver2.Framework.StateMachines.States
 
         protected State(StateMachine stateMachine) {
             SetIncompatibleTransitionStates(ref incompatibleTransitionStates);
+            isInitialized = false;
+
+            isEnabled = false;
             isEntered = false;
 
-            transitionStates = new List<State>();
-            events = new List<StateEvent>();
+            onAdded = new UnityEvent();
+            onRemoved = new UnityEvent();
 
-            onAdded    = new UnityEvent();
-            onRemoved  = new UnityEvent();
+            onEntered = new UnityEvent();
+            onExited = new UnityEvent();
 
-            onEnabled  = new UnityEvent();
+            onEnabled = new UnityEvent();
             onDisabled = new UnityEvent();
 
-            onEntered  = new UnityEvent();
-            onExited   = new UnityEvent();
-
-            onTransitionStateAdded   = new UnityEvent<State>();
+            onTransitionStateAdded = new UnityEvent<State>();
             onTransitionStateRemoved = new UnityEvent<State>();
 
+            transitionStates = new List<State>();
             this.stateMachine = stateMachine;
-
-            AddOnEnteredListener(OnEntered);
-            AddOnExitedListener(OnExited);
-
-            AddOnEnabledListener(OnEnabled);
-            AddOnDisabledListener(OnDisabled);
-
-            AddOnAddedListener(OnAdded);
-            AddOnRemovedListener(OnRemoved);
         }
 
         public void AddEvent(StateEvent _event)
@@ -91,7 +83,7 @@ namespace RedSilver2.Framework.StateMachines.States
         {
             if (events == null || _event == null) return;
             else if (events.Contains(_event) && _event.IsOwner(this)) {
-                if (Application.isPlaying) _event.Disable();
+                if (Application.isPlaying) _event?.Disable();
                 events?.Remove(_event);
             }
         }
@@ -116,6 +108,51 @@ namespace RedSilver2.Framework.StateMachines.States
             return events.Where(x => x != null).Where(x => x.Compare(name)).Count() > 0;
         }
 
+        public void Intialize()
+        {
+            if(isInitialized || !Application.isPlaying) return;
+
+            if (transitionStates == null) transitionStates = new List<State>();
+
+            stateMachine?.AddOnActifStateAddedListener(OnActifAdded);
+            stateMachine?.AddOnActifStateRemovedListener(OnActifRemoved);
+
+            AddOnEnteredListener(OnEntered);
+            AddOnExitedListener(OnExited);
+
+            AddOnEnabledListener(OnEnabled);
+            AddOnDisabledListener(OnDisabled);
+
+            AddOnAddedListener(OnAdded);
+            AddOnRemovedListener(OnRemoved);
+
+            onAdded?.Invoke();
+            isInitialized = true;
+        }
+
+        public void Unintialize()
+        {
+            if (!isInitialized || !Application.isPlaying) return;
+            
+            onRemoved?.Invoke();   
+            stateMachine?.RemoveActifState(this);
+
+            RemoveOnEnteredListener(OnEntered);
+            RemoveOnExitedListener(OnExited);
+
+            RemoveOnEnabledListener(OnEnabled);
+            RemoveOnDisabledListener(OnDisabled);
+
+            RemoveOnAddedListener(OnAdded);
+            RemoveOnRemovedListener(OnRemoved);
+
+            stateMachine?.RemoveOnActifStateAddedListener(OnActifAdded);
+            stateMachine?.RemoveOnActifStateRemovedListener(OnActifRemoved);
+
+            isInitialized = false;
+        }
+
+
 
         public bool IsCurrent()
         {
@@ -124,32 +161,29 @@ namespace RedSilver2.Framework.StateMachines.States
         }
 
         public void Enable() {
-            if (!isEnabled) onEnabled?.Invoke();
+            if (!isEnabled && isInitialized) {
+                Debug.Log("?");
+                onEnabled?.Invoke();
+            }
         }
+
         public void Disable() { 
-            if(isEnabled) onDisabled?.Invoke(); 
+            if(isEnabled && isInitialized) onDisabled?.Invoke(); 
         }
 
         public void Enter()
         {
-            if (!isEntered) {
-                onEntered?.Invoke();
-                isEntered = true;
-            }
+            if (stateMachine == null || isEntered || !isInitialized || !stateMachine.IsCurrentState(this)) return;
+            isEntered = true;
+            onEntered?.Invoke();
         }
 
         public void Exit()
         {
-            if (isEntered) {
-                onExited?.Invoke();
-                isEntered = false;
-            }
+            if (stateMachine == null || !isEntered || !isInitialized || !stateMachine.IsCurrentState(this)) return;
+            isEntered = false;
+            onExited?.Invoke();
         }
-
-
-        public void Added()   { onAdded?.Invoke(); }
-        public void Removed() { onRemoved?.Invoke(); }
-
 
         public void AddTransitionState(State state) {
             if (CanAddTransitionState(state)) {
@@ -178,16 +212,15 @@ namespace RedSilver2.Framework.StateMachines.States
                 foreach (StateEvent _event in events)
                     _event?.Disable();
 
-
             stateMachine?.RemoveActifState(this);
             isEnabled = false;
         }
 
         protected virtual void OnEnabled() {
-            if (events != null) 
+            if (events != null)
                 foreach (StateEvent _event in events)
                     _event?.Enable();
-           
+      
             stateMachine?.AddActifState(this); 
             isEnabled = true;
         }
@@ -195,8 +228,26 @@ namespace RedSilver2.Framework.StateMachines.States
         protected virtual void OnEntered() { }
         protected virtual void OnExited()  { }
 
-        protected virtual void OnAdded() { }
-        protected virtual void OnRemoved() { }
+        protected virtual void OnAdded() { 
+            if(stateMachine != null) 
+                foreach(State state in stateMachine.ActifStates)
+                    AddTransitionState(state);
+
+            Debug.Log(transitionStates.Count);
+        }
+        protected virtual void OnRemoved() {
+            if (stateMachine != null)
+                foreach (State state in stateMachine.ActifStates)
+                    RemoveTransitionState(state);
+        }
+
+        private void OnActifAdded(State state) {
+            AddTransitionState(state);
+            Debug.Log(transitionStates.Count);
+        }
+        private void OnActifRemoved(State state) {
+            RemoveTransitionState(state);
+        }
 
         protected void SetStateName(string stateName)
         {
@@ -324,6 +375,7 @@ namespace RedSilver2.Framework.StateMachines.States
         }
 
         public virtual void DrawInpsector(Color foldoutColor, Color fieldColor) {
+            Validate();
             EditorExtension.IncrementIndent();
 
             if(this is not LandState) {

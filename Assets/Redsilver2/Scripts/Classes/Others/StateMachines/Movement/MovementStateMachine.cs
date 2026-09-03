@@ -9,11 +9,8 @@ namespace RedSilver2.Framework.StateMachines
 {
     public abstract class MovementStateMachine : UpdatableStateMachine
     {
-        [Space]
-        [SerializeField] private float groundCheckRange = 0f;
-
-        [Space]
-        [SerializeField] private bool is2DMovement;
+        [SerializeField, HideInInspector] private float groundCheckRange = 0f;
+        [SerializeField, HideInInspector] private bool is2DMovement;
 
         private float moveSpeed;
         private float fallSpeed;
@@ -74,10 +71,10 @@ namespace RedSilver2.Framework.StateMachines
 
         protected override void Awake()
         {
-            base.Awake();
-
-            onMoved            = new UnityEvent<Vector3>();
+            onMoved = new UnityEvent<Vector3>();
             onGroundTagChanged = new UnityEvent<string>();
+
+            base.Awake();
 
             groundTag = string.Empty;
             isGrounded = false;
@@ -89,10 +86,6 @@ namespace RedSilver2.Framework.StateMachines
             AddOnGroundTagChangedListener(OnGroundTagChanged);
         }
 
-        protected virtual void Start()
-        {
-
-        }
         private void OnDestroy()
         {
             if (instances != null && _collider != null) {

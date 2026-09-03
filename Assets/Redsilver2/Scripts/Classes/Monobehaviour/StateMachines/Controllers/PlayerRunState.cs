@@ -64,7 +64,10 @@ namespace RedSilver2.Framework.StateMachines.States
 
         public void Update() {
             MovementStateMachine stateMachine = GetMovementStateMachine(this);
-         
+
+            holdInput?.Enable();
+            pressInput?.Enable();   
+
             if (stateMachine != null && IsEnabled) {
                 if (stateMachine.IsMoving && stateMachine.IsGrounded && !JumpState.GetIsJumping(stateMachine) && CrouchState.GetIsCrouching(stateMachine)) {
                     if      (hasToHoldInput  && holdInput  != null) SetIsRunning(holdInput.GetValue());

@@ -111,7 +111,7 @@ namespace RedSilver2.Framework.StateMachines.States
         public void SetCrouchHeight(float crouchHeight) { this.crouchHeight = crouchHeight; }
 
         public void SetCrouchHeightTransitionSpeed(float crouchHeightTransitionSpeed) { this.crouchHeightTransitionSpeed = crouchHeightTransitionSpeed; }
-        public void SetStandHeightTransitionSpeed(float crouchHeightTransitionSpeed) { this.crouchHeightTransitionSpeed = crouchHeightTransitionSpeed; }
+        public void SetStandHeightTransitionSpeed(float standHeightTransitionSpeed) { this.standHeightTransitionSpeed = standHeightTransitionSpeed; }
         public void SetCrouchSafetyCheckDistance(float crouchSafetyCheckDistance) { this.crouchSafetyCheckDistance = crouchSafetyCheckDistance; }
 
         protected virtual void Update()

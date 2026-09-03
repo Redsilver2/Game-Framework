@@ -87,7 +87,19 @@ namespace RedSilver2.Framework.StateMachines.States
             this.fallSpeed = groundedFallSpeed;
         }
 
-        public void Update()
+        protected override void OnAdded()
+        {
+            base.OnAdded();
+            GetUpdatableStateMachine(this)?.AddOnUpdateListener(Update);
+        }
+
+        protected override void OnRemoved()
+        {
+            base.OnRemoved();
+            GetUpdatableStateMachine(this)?.RemoveOnUpdateListener(Update);
+        }
+
+        private void Update()
         {
             MovementStateMachine movementStateMachine = GetMovementStateMachine(this);
 
@@ -141,7 +153,7 @@ namespace RedSilver2.Framework.StateMachines.States
 
         public void SetGroundedFallTransitionSpeed(float groundedFallTransitionSpeed)
         {
-            this.groundedFallSpeed = groundedFallTransitionSpeed;
+            this.groundedFallTransitionSpeed = groundedFallTransitionSpeed;
         }
 
         public void SetCanAffectMovementSpeed(bool canAffectMovementSpeed)
