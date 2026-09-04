@@ -1,16 +1,19 @@
 using RedSilver2.Framework.StateMachines.States;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace RedSilver2.Framework.StateMachines
 {
     public abstract partial class StateMachine : MonoBehaviour
     {
-        [SerializeField, SerializeReference, HideInInspector] private List<State> states;
+        [SerializeField, HideInInspector] private bool enableStateAutomatically;
+        [SerializeField, HideInInspector] private Dictionary<string, StateData> states;
 
         private State currentState;
         private List<State> actifStates;
@@ -28,24 +31,23 @@ namespace RedSilver2.Framework.StateMachines
         private UnityEvent<State>  onActifStateRemoved;
 
         public State CurrentState => currentState;
-        public State[] States     => states != null ? states.ToArray() : new State[0];
         public State[] ActifStates => actifStates != null ? actifStates.ToArray() : new State[0];
 
         protected virtual void Awake()
         {
-            actifStates = new List<State>();
-            onEnabled   = new UnityEvent();
+            actifStates       = new List<State>();
+            onEnabled         = new UnityEvent();
 
-            onDisabled = new UnityEvent();
-            onStateAdded = new UnityEvent<State>();
+            onDisabled        = new UnityEvent();
+            onStateAdded      = new UnityEvent<State>();
             
-            onStateRemoved = new UnityEvent<State>();
-            onStateEntered = new UnityEvent<State>();
+            onStateRemoved    = new UnityEvent<State>();
+            onStateEntered    = new UnityEvent<State>();
 
-            onStateExited = new UnityEvent<State>();
+            onStateExited     = new UnityEvent<State>();
             onActifStateAdded = new UnityEvent<State>();
 
-            onActifStateAdded = new UnityEvent<State>();
+            onActifStateAdded   = new UnityEvent<State>();
             onActifStateRemoved = new UnityEvent<State>();
 
             AddOnStateAddedListener(OnStateAdded);
@@ -62,7 +64,7 @@ namespace RedSilver2.Framework.StateMachines
         {
 
             if (states != null)  {
-                foreach (State state in states) {
+                foreach (State state in GetStates()) {
                     state?.Intialize();
                     state?.Enable();
                 }
@@ -75,21 +77,17 @@ namespace RedSilver2.Framework.StateMachines
 
         public void AddState(State state)
         {
-            if (states == null || !CanAddState(state) || states.Contains(state)) return;
+            if (states == null || state == null || !CanAddState(state) || states.ContainsKey(state.Name)) return;
             state?.Intialize();
 
-            states?.Add(state);
+            states?.Add(state.name, new StateData(state));
             onStateAdded?.Invoke(state);
         }
 
         public void AddActifState(State state)
         {
-            Debug.Log(!states.Contains(state) + " | " + actifStates.Contains(state));
-
-            if (states == null || !states.Contains(state)) return;
+            if (states == null || state == null || !states.ContainsKey(state.Name)) return;
             else if (actifStates == null || state == null || actifStates.Contains(state)) return;
-
-            Debug.Log("Actif: " + state);
 
             actifStates?.Add(state);
             onActifStateAdded?.Invoke(state);
@@ -97,7 +95,7 @@ namespace RedSilver2.Framework.StateMachines
 
         public void RemoveState(State state)
         {
-            if (states == null || state == null || !states.Contains(state)) return;
+            if (states == null || state == null || !states.ContainsKey(state.Name)) return;
    
             if(actifStates != null)
                 if (actifStates.Contains(state)) { actifStates?.Remove(state); }
@@ -105,12 +103,12 @@ namespace RedSilver2.Framework.StateMachines
             state?.Unintialize();
 
             onStateRemoved?.Invoke(state);
-            states?.Remove(state);
+            states?.Remove(state.Name);
         }
 
         public void RemoveActifState(State state)
         {
-            if (states == null || !states.Contains(state)) return;
+            if (states == null || state == null || !states.ContainsKey(state.Name)) return;
             else if (actifStates == null || state == null || !actifStates.Contains(state)) return;
 
             if(currentState == state) ChangeState(null as State, true);
@@ -137,7 +135,10 @@ namespace RedSilver2.Framework.StateMachines
         public void ChangeState(State state, bool checkSimilarity)
         {
             if (states == null || actifStates == null || (this.currentState == state && checkSimilarity)) return;
-            else if (state != null && !states.Contains(state) && !actifStates.Contains(state)) return;
+            else if (state != null){
+                if (!states.ContainsKey(state.Name) && !actifStates.Contains(state))
+                    return;
+            }
 
             onStateExited?.Invoke(currentState);
             onStateEntered?.Invoke(state);
@@ -150,7 +151,7 @@ namespace RedSilver2.Framework.StateMachines
 
         protected virtual bool CanAddState(State state)
         {
-            if (states == null || state == null || states.Contains(state) || State.GetStateMachine(state) == null) return false;
+            if (states == null || state == null || states.ContainsKey(state.Name) || State.GetStateMachine(state) == null) return false;
             return true;
         }
 
@@ -160,7 +161,7 @@ namespace RedSilver2.Framework.StateMachines
         protected virtual void OnStateAdded(State state)
         {
             if (states != null) {
-                foreach (State _state in states) {
+                foreach (State _state in GetStates()) {
                     _state?.AddTransitionState(state);
                     state?.AddTransitionState(_state);
                 }
@@ -169,7 +170,7 @@ namespace RedSilver2.Framework.StateMachines
         protected virtual void OnStateRemoved(State state)
         {
             if (states != null) {
-                foreach (State _state in states) {
+                foreach (State _state in GetStates()) {
                     _state?.RemoveTransitionState(state);
                     state?.RemoveTransitionState(_state);
                 }
@@ -195,22 +196,26 @@ namespace RedSilver2.Framework.StateMachines
         public bool ContainsState(State state)
         {
             if (states == null || state == null) return false;
-            return states.Contains(state);
+            return states.ContainsKey(state.Name);
         }
 
         public State GetState(string stateName)
         {
-            if (states == null || string.IsNullOrEmpty(stateName)) return null;
+            if (states == null || string.IsNullOrEmpty(stateName) || !states.ContainsKey(stateName)) return null;
+            return states[stateName].State;
+        }
 
-            for (int i = 0; i < states.Count; i++) {
-                if(states[i] == null) continue;
-                string _state = states[i].Name;
+        public State[] GetStates()
+        {   
+            List<State> states = new List<State>();
+            if(states == null) return states.ToArray();
 
-                if(string.IsNullOrEmpty(_state) || _state != stateName) continue;
-                return states[i];
+            foreach(var value in this.states.Values) {
+               if(value == null) continue;
+                states?.Add(value.State);
             }
 
-            return null;
+            return states.ToArray();
         }
 
 
@@ -275,7 +280,6 @@ namespace RedSilver2.Framework.StateMachines
 
         public void RemoveOnActifStateAddedListener(UnityAction<State> action)
         {
-            Debug.Log(action);
             if (action != null) onActifStateAdded?.RemoveListener(action);
         }
 
@@ -289,6 +293,17 @@ namespace RedSilver2.Framework.StateMachines
         {
             if (action != null) onActifStateRemoved?.RemoveListener(action);
         }
+
+        [System.Serializable]
+        private class StateData {
+            [SerializeField, SerializeReference, HideInInspector] private State state;
+            public State State => state;
+
+            public StateData(State state)
+            {
+                this.state = state;
+            }
+        }
     }
 
     public abstract partial class StateMachine : MonoBehaviour
@@ -296,82 +311,149 @@ namespace RedSilver2.Framework.StateMachines
 #if UNITY_EDITOR
         [SerializeField, HideInInspector] private bool showEditorSettings;
         [SerializeField, HideInInspector] private bool showDefaultSettings;
-        [SerializeField, HideInInspector] private bool showStateCreation;
+        [SerializeField, HideInInspector] private bool showStateFoldout;
+        [SerializeField, HideInInspector] private bool showStateAddOrRemove;
+        [SerializeField, HideInInspector] private bool showDefaultStates;
+        [SerializeField, HideInInspector] private bool showDefaultEditorSettings;
+
+        [SerializeField, HideInInspector] private int addStateSelectedIndex;
 
         [SerializeField, HideInInspector] private bool[] showStates;
         [SerializeField, HideInInspector] private bool[] lockStates;
 
-        [SerializeField, HideInInspector] private Color foldoutColor = new Color(0f, 0f, 0f, 0.525f);
-        [SerializeField, HideInInspector] private Color fieldColor = new Color(0.2f, 0.2f, 0.2f, 1f);
+        [SerializeField, HideInInspector] private Color defaultFoldoutColor;
+        [SerializeField, HideInInspector] private Color defaultFieldColor;
 
-        protected Color FoldoutColor => foldoutColor;
-        protected Color FieldColor => fieldColor;
+        [SerializeField, HideInInspector] private Color defaultButtonColor;
+        [SerializeField, HideInInspector] private Color defaultBackgroundColor;
+
+        [SerializeField, HideInInspector] private StateInspectorVisualizer stateVisualizer;
 
         protected virtual void OnValidate()
         {
-            if (states != null)
-            {
-                states = states.Where(x => x != null).ToList();
-
-                foreach (State state in states)
+            if (states != null) {
+                foreach (State state in GetStates())
                     state?.Validate();
             }
         }
 
         public virtual void DrawInspector()
         {
-            EditorExtension.IncrementIndent();
-
-            if (EditorExtension.DisplayFoldout("Default Settings ⚙️", ref showDefaultSettings, foldoutColor))
-            {
+            EditorExtension.DrawVerticalHelpBox(() => {
+                EditorExtension.Space(5f);
                 EditorExtension.IncrementIndent();
-                EditorExtension.Space(5f);
 
-                DisplayDefaultSettings(foldoutColor, fieldColor);
-                EditorExtension.DecrementIndent();
-            }
+                if (EditorExtension.DisplayFoldout("Default Settings ⚙️", ref showDefaultSettings, defaultFoldoutColor)) {
 
-            EditorGUILayout.Space(5f);
-
-            if (EditorExtension.DisplayFoldout($"States", ref showStateCreation, foldoutColor))
-            {
-                EditorExtension.Space(5f);
-                Array values = GetInspectorValues();
-
-                if (values != null)
-                {
-                    EditorExtension.IncrementIndent();
-                    DisplayAddAllStateButton(values);
-                    DisplayRemoveAllStateButton();
-
-                    EditorExtension.Space(5f);
-                    DisplayStates(values);
-                    EditorExtension.DecrementIndent();
+                    EditorExtension.DrawVerticalHelpBox(() => {
+                       DisplayDefaultSettings(defaultFoldoutColor, defaultFieldColor);
+                    }, defaultBackgroundColor);
                 }
-            }
 
-            EditorExtension.Space(5f);
+                if (EditorExtension.DisplayFoldout($"States", ref showStateFoldout, defaultFoldoutColor)) {
+                    Array values = GetInspectorValues();
 
-            if (EditorExtension.DisplayFoldout("Editor Settings", ref showEditorSettings, foldoutColor))
-            {
-                EditorExtension.IncrementIndent();
-                EditorExtension.Space(5f);
+                    if (values != null) {
+                        EditorExtension.IncrementIndent();
+                        EditorExtension.Space(5f);
 
-                foldoutColor = EditorExtension.DisplayColorField("Foldout Color 🎨", foldoutColor, fieldColor);
-                fieldColor = EditorExtension.DisplayColorField("Field Color 🎨", fieldColor, fieldColor);
+                        if (EditorExtension.DisplayFoldout("Add / Remove", ref showStateAddOrRemove, defaultFoldoutColor))
+                        {
+                            EditorExtension.DrawVerticalHelpBox(() => {
+                                AddSpecificState(values, ref addStateSelectedIndex);
+
+                                EditorExtension.DrawHorizontalHelpBox(() => {
+                                    DisplayAddAllStateButton(values);
+                                    DisplayRemoveAllStateButton();
+                                }, defaultBackgroundColor);
+
+                            }, defaultBackgroundColor, false);
+                        }
+
+                        EditorExtension.Space(5f);
+
+                        if (EditorExtension.DisplayFoldout("Show", ref showDefaultStates, defaultFoldoutColor)) {
+                            EditorExtension.DrawVerticalHelpBox(() => {
+                                DisplayStates(values);
+                            }, defaultBackgroundColor);
+                        }
+
+                        EditorExtension.Space(10f);
+                        EditorExtension.DecrementIndent();
+                    }
+                }
 
 
-                EditorExtension.Space(2.5f);
+                if (EditorExtension.DisplayFoldout("Editor Settings", ref showEditorSettings, defaultFoldoutColor))
+                {
+                    EditorExtension.DrawVerticalHelpBox(() => {
+                        if(EditorExtension.DisplayFoldout("Default", ref showDefaultEditorSettings, defaultFoldoutColor)) {
+                            EditorExtension.Space(10f);
+                            defaultFoldoutColor = EditorExtension.DisplayColorField("Default Foldout Color 🎨", defaultFoldoutColor);
+                           
+                            EditorExtension.Space(5f);
+                            EditorExtension.DisplayButton("Reset Default Foldout Color", defaultButtonColor, () => { defaultFoldoutColor = new Color(0f, 0f, 0f, 0.6588f); });
 
-                EditorExtension.DisplayButton("Reset Colors", () => {
-                    foldoutColor = new Color(0f, 0f, 0f, 0.525f);
-                    fieldColor = new Color(0.2f, 0.2f, 0.2f, 1f);
-                });
+                            EditorExtension.Space(10f);
+                            defaultFieldColor = EditorExtension.DisplayColorField("Default Field Color 🎨", defaultFieldColor);
+                           
+                            EditorExtension.Space(5f);
+                            EditorExtension.DisplayButton("Reset Default Field Color", defaultButtonColor, () => { defaultFieldColor = new Color(0f, 0f, 0f, 0.5176f); });
+
+                            EditorExtension.Space(10f);
+                            defaultButtonColor = EditorExtension.DisplayColorField("Default Button Color 🎨", defaultButtonColor);
+                          
+                            EditorExtension.Space(5f);
+                            EditorExtension.DisplayButton("Reset Default Button Color", defaultButtonColor, () => { defaultButtonColor = new Color(0f, 0f, 0f, 0.4627f); });
+
+                            EditorExtension.Space(10f);
+                            defaultBackgroundColor = EditorExtension.DisplayColorField("Default Background Color 🎨", defaultBackgroundColor);
+                           
+                            EditorExtension.Space(5f);
+                            EditorExtension.DisplayButton("Reset Default Background Color", defaultButtonColor, () => { defaultBackgroundColor = new Color(0f, 0f, 0f, 0.4627f); });
+                        }
+
+                        EditorExtension.Space(10f);
+                        stateVisualizer?.DrawInpsector(defaultFoldoutColor, defaultButtonColor);
+                    }, defaultBackgroundColor, true);
+                }
 
                 EditorExtension.DecrementIndent();
+            }, defaultBackgroundColor);
+
+
+        }
+
+        private void AddSpecificState(Array values, ref int selectedState)
+        {
+
+            if (values == null) return;
+            List<string> inspectorStatesNames = new List<string>();
+            List<int> inspectorStatesIndexes = new List<int>();
+
+            for (int i = 0; i < values.Length; i++)
+            {
+                var value = values.GetValue(i);
+                if (value == null || ContainsState(value.ToString())) continue;
+
+                inspectorStatesNames.Add(value.ToString());
+                inspectorStatesIndexes.Add(i);
             }
 
-            EditorExtension.DecrementIndent();
+            if (inspectorStatesNames.Count > 0) {
+                int _stateIndex = selectedState;
+
+                EditorExtension.DrawHorizontalHelpBox(() => {
+                    _stateIndex = Mathf.Clamp(_stateIndex, 0, inspectorStatesIndexes.Count - 1);
+                    _stateIndex = EditorGUILayout.Popup(_stateIndex, inspectorStatesNames.ToArray());
+
+                    if (_stateIndex >= 0 && _stateIndex <= inspectorStatesNames.Count - 1) {
+                        EditorExtension.DisplayButton("Add State ➕", () => { AddState(GetInspectorState(_stateIndex)); });
+                    }
+                }, defaultBackgroundColor);
+
+                selectedState = _stateIndex;
+            }
         }
 
         private void DisplayAddAllStateButton(Array values)
@@ -380,9 +462,7 @@ namespace RedSilver2.Framework.StateMachines
 
             EditorExtension.DisplayButton("Add All States ➕", () => {
                 for (int i = 0; i < values.Length; i++)
-                {
                     AddState(GetInspectorState(i));
-                }
             });
         }
 
@@ -391,7 +471,7 @@ namespace RedSilver2.Framework.StateMachines
             if (states == null || states.Count <= 0) return;
 
             EditorExtension.DisplayButton("Remove All States ➕", () => {
-                State[] _states = states.ToArray();
+                State[] _states = GetStates();
 
                 for (int i = 0; i < _states.Length; i++)
                     RemoveState(_states[i]);
@@ -409,9 +489,10 @@ namespace RedSilver2.Framework.StateMachines
             SetFoldoutChecks(ref showStates, values.Length);
             SetFoldoutChecks(ref lockStates, values.Length);
 
-            for (int i = 0; i < values.Length; i++)
-            {
-                if (values.GetValue(i) == null) continue;
+
+
+            for (int i = 0; i < values.Length; i++) {
+                if (values.GetValue(i) == null) continue;;
                 DisplayState(values.GetValue(i).ToString(), i, ref showStates[i]);
             }
         }
@@ -425,36 +506,78 @@ namespace RedSilver2.Framework.StateMachines
         private void DisplayState(string stateName, int stateIndex, ref bool stateShown)
         {
             State state = GetState(stateName);
-            string label = state != null ? $"{stateName} ✅ " + (lockStates[stateIndex] ? "🔒" : "🔓") : $"{stateName} ❌";
+            string label = $"{stateName} " + (lockStates[stateIndex] ? "🔒" : "🔓");
+            if (state == null || stateVisualizer == null) return;
+            EditorExtension.Space(10f);
 
-            if (EditorExtension.DisplayFoldout(label, ref stateShown, foldoutColor))
-            {
-                if (state == null)
-                {
+            if (EditorExtension.DisplayFoldout(label, ref stateShown, stateVisualizer.FoldoutColor)) {
+                EditorExtension.DrawVerticalHelpBox(() => {
                     EditorExtension.Space(5f);
-                    EditorExtension.DisplayButton($"Add {stateName} ➕", () => { AddState(GetInspectorState(stateIndex)); });
-                }
-                else
-                {
-                    EditorExtension.Space(5f);
-                    EditorExtension.DisplayButton(lockStates[stateIndex] ? "Unlock State 🔓" : "Lock State 🔒", () => { lockStates[stateIndex] = !lockStates[stateIndex]; });
+
+                    EditorGUILayout.BeginHorizontal();
+                    EditorExtension.DisplayButton(lockStates[stateIndex] ? "Unlock State 🔓" : "Lock State 🔒", stateVisualizer.ButtonColor, () => { lockStates[stateIndex] = !lockStates[stateIndex]; });
+                    EditorExtension.DisplayButton($"Reset {stateName} 🔄", stateVisualizer.ButtonColor, () => {
+                        RemoveState(GetState(stateName));
+                        AddState(GetInspectorState(stateIndex));
+                    });
+
 
                     if (!lockStates[stateIndex])
-                        EditorExtension.DisplayButton($"Remove {stateName} ➖", () => { RemoveState(state); });
+                        EditorExtension.DisplayButton($"Remove {stateName} ➖", stateVisualizer.ButtonColor, () => { RemoveState(state); });
 
+                    EditorGUILayout.EndHorizontal();
                     EditorExtension.Space(5f);
-                    state?.DrawInpsector(foldoutColor, fieldColor);
-                }
+                }, stateVisualizer.BackgroundColor, true);
 
                 EditorExtension.Space(5f);
+                state?.DrawInpsector(stateVisualizer);
             }
-
-            EditorExtension.Space(2.5f);
         }
 
 
         protected abstract State GetInspectorState(int stateIndex);
         protected abstract Array GetInspectorValues();
+
+        [System.Serializable]
+        public class StateInspectorVisualizer {
+            [SerializeField, HideInInspector] private bool showVisualizer;
+
+            [SerializeField, HideInInspector] private Color foldoutColor;
+            [SerializeField, HideInInspector] private Color buttonColor;
+            [SerializeField, HideInInspector] private Color backgroundColor;
+
+            public Color FoldoutColor => foldoutColor;
+            public Color ButtonColor => buttonColor;
+            public Color BackgroundColor => backgroundColor;
+
+            public void SetFoldoutColor(Color foldoutColor) { this.foldoutColor = foldoutColor; }
+            public void SetButtonColor(Color buttonColor)   { this.buttonColor  = buttonColor;  }
+            public void SetBackgroundColor(Color backgroundColor) { this.backgroundColor = backgroundColor; }
+
+            private StateInspectorVisualizer() { }
+
+            public void DrawInpsector(Color foldoutColor, Color buttonColor) {
+                if(EditorExtension.DisplayFoldout("State Visualizer", ref showVisualizer, foldoutColor)) {
+                    EditorExtension.Space(10f);
+                    this.foldoutColor = EditorExtension.DisplayColorField("State Foldout Color 🎨", this.foldoutColor);
+
+                    EditorExtension.Space(5f);
+                    EditorExtension.DisplayButton("Reset State Foldout Color", buttonColor, () => { this.foldoutColor = new Color(0f, 0f, 0f, 0.6588f); });
+
+                    EditorExtension.Space(10f);
+                    this.buttonColor = EditorExtension.DisplayColorField("State Button Color 🎨", this.buttonColor);
+
+                    EditorExtension.Space(5f);
+                    EditorExtension.DisplayButton("Reset State Button Color", buttonColor, () => { this.buttonColor = new Color(0f, 0f, 0f, 0.4627f); });
+
+                    EditorExtension.Space(10f);
+                    backgroundColor = EditorExtension.DisplayColorField("State Background Color 🎨", backgroundColor);
+
+                    EditorExtension.Space(5f);
+                    EditorExtension.DisplayButton("Reset State Background Color", buttonColor, () => { backgroundColor = new Color(0.161f, 0.161f, 0.161f, 0.008f); });
+                }
+            }
+        }
 #endif
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 namespace RedSilver2.Framework.StateMachines.States
 {
     [System.Serializable]
-    public abstract class MovementState : UpdatableState
+    public abstract partial class MovementState : UpdatableState
     {
         [SerializeField][HideInInspector] private MovementStateMachine movementStateMachine;
 
@@ -59,5 +59,11 @@ namespace RedSilver2.Framework.StateMachines.States
         {
             return state != null ? state.movementStateMachine : null;
         }
+    }
+
+    public abstract partial class MovementState : UpdatableState
+    {
+#if UNITY_EDITOR
+#endif
     }
 }

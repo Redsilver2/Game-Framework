@@ -38,13 +38,7 @@ namespace RedSilver2.Framework.StateMachines
 
         public DrinkableItemState GetState(DrinkableItemStateType type)
         {
-            foreach(State state in States) {
-                DrinkableItemState _state = state as DrinkableItemState;
-                if (_state == null || _state.Type != type) continue;
-                return _state;
-            }
-
-            return null;
+            return GetState(type.ToString()) as DrinkableItemState;
         }
 
     }

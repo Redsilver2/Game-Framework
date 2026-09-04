@@ -1,20 +1,18 @@
 using RedSilver2.Framework.StateMachines.States;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace RedSilver2.Framework.StateMachines.Events
 {
     [System.Serializable]
     public abstract class StateEvent
     {
-        [HideInInspector] public string name;
         [SerializeReference, HideInInspector] private State state;
-
         private bool isEnabled = false;
 
         public bool IsEnabled => isEnabled;
 
-        protected StateEvent(string name, State state)  {
-            this.name  = name;
+        protected StateEvent(State state)  {
             this.state = state;
             isEnabled  = false;
         }
@@ -35,38 +33,44 @@ namespace RedSilver2.Framework.StateMachines.Events
 
         protected abstract void Enable(State state);
         protected abstract void Disable(State state);
+        protected abstract string GetName();
 
-        public bool IsOwner(State state)
-        {
+        public bool IsOwner(State state) {
             return this.state == state;
-        }
-
-        public bool Compare(string eventName)
-        {
-            if(string.IsNullOrEmpty(eventName) || string.IsNullOrEmpty(name)) return false;
-            return eventName.ToLower() == name.ToLower();
-        }
-
-        public virtual bool Compare(StateEvent _event)
-        {
-            if (_event == null) return false;
-            return Compare(_event.name);
         }
 
 #if UNITY_EDITOR
        [SerializeField, HideInInspector] private bool showSettings;
+         
+        public void DrawInspector(StateMachine.StateInspectorVisualizer visualizer) {
 
-        public void DrawInspector(Color foldoutColor, Color fieldColor) {
+            if (visualizer == null) return;
+
+            EditorExtension.DrawVerticalHelpBox(() =>{
+                DrawInspectorSettings(visualizer);
+            }, visualizer.BackgroundColor, true);
+        }
+
+        protected virtual void DrawInspectorSettings(StateMachine.StateInspectorVisualizer visualizer) { }
+
+        protected static void DrawInspector(State state, string eventName, ref bool showEvent, StateMachine.StateInspectorVisualizer visualizer, UnityAction onAddUpdate, UnityAction onRemoveUpdate)
+        {
+            if (state == null) return;
+            EditorExtension.Space(5f);
             EditorExtension.IncrementIndent();
 
-            if (EditorExtension.DisplayFoldout("Settings", ref showSettings, foldoutColor))  {
-                DrawInspectorSettings(foldoutColor, fieldColor);
+            if (EditorExtension.DisplayFoldout(eventName, ref showEvent, visualizer.FoldoutColor)) {
+                StateEvent _event = state.GetEvent(eventName);
+
+                if (_event == null) { onAddUpdate?.Invoke(); }
+                else { 
+                    onRemoveUpdate?.Invoke();
+                    _event?.DrawInspector(visualizer);
+                }
             }
 
             EditorExtension.DecrementIndent();
         }
-
-        protected virtual void DrawInspectorSettings(Color foldoutColor, Color fieldColor) { }
 #endif 
     }
 }

@@ -45,55 +45,46 @@ namespace RedSilver2.Framework.StateMachines.States
         private bool showCameraSettings;
         private bool showInputs;
 
-        public override void DrawInpsector(Color foldoutColor, Color fieldColor)
+        public override void DrawInpsector(StateMachine.StateInspectorVisualizer visualizer)
         {
-            DrawCameraSettings(foldoutColor, fieldColor);
-            DrawInputSettings(foldoutColor, fieldColor);
+            base.DrawInpsector(visualizer);
 
-            base.DrawInpsector(foldoutColor, fieldColor);
+            DrawCameraSettings(visualizer);
+            DrawInputSettings(visualizer);
         }
 
-        private void DrawCameraSettings(Color foldoutColor, Color fieldColor)
+        private void DrawCameraSettings(StateMachine.StateInspectorVisualizer visualizer)
         {
-            EditorExtension.IncrementIndent();
+            if (visualizer == null) return;
+            else if (EditorExtension.DisplayFoldout("Camera 📷", ref showCameraSettings, visualizer.FoldoutColor)) {
+                EditorExtension.DrawVerticalHelpBox(() => {
+                    EditorExtension.Space(2.5f);
+                    SetCameraParent(EditorExtension.DisplayCustomField("Camera Parent", true, cameraParent));
 
-            if (EditorExtension.DisplayFoldout("Camera 📷", ref showCameraSettings, foldoutColor)) {
-                EditorExtension.IncrementIndent();
+                    EditorExtension.Space(2.5f);
+                    SetCrouchCameraPosition(EditorExtension.DisplayVector3Field("Crouch Position 📍", crouchCameraPosition));
 
-                EditorExtension.Space(2.5f);         
-                SetCameraParent(EditorExtension.DisplayCustomField("Camera Parent", true, cameraParent, fieldColor));
-               
-                EditorExtension.Space(2.5f);
-                SetCrouchCameraPosition(EditorExtension.DisplayVector3Field("Crouch Position 📍", crouchCameraPosition, fieldColor));
-               
-                SetStandCameraPosition(EditorExtension.DisplayVector3Field("Stand Position 📍", standCameraPosition, fieldColor));
-                EditorExtension.DecrementIndent();
+                    SetStandCameraPosition(EditorExtension.DisplayVector3Field("Stand Position 📍", standCameraPosition));
+                }, visualizer.BackgroundColor, true);
             }
-
-
-            EditorExtension.DecrementIndent();
         }
 
-        private void DrawInputSettings(Color foldoutColor, Color fieldColor)
+        private void DrawInputSettings(StateMachine.StateInspectorVisualizer visualizer)
         {
-            EditorExtension.IncrementIndent();
+            if (visualizer == null) return;
+            else if (EditorExtension.DisplayFoldout("Inputs 🕹️", ref showInputs, visualizer.FoldoutColor)) {
+                EditorExtension.DrawVerticalHelpBox(() => {
+                    EditorExtension.Space(2.5f);
 
-            if (EditorExtension.DisplayFoldout("Inputs 🕹️", ref showInputs, foldoutColor))
-            {
-                EditorExtension.IncrementIndent();
-                EditorExtension.Space(2.5f);
+                    SetHasToHoldInput(EditorExtension.DisplayToggle("Has To Hold Input", hasToHoldInput));
+                    SetIsVerifyingRunCondition(EditorExtension.DisplayToggle("Is Verifying Run Condition", isVerifyingRunCondition));
 
-                SetHasToHoldInput(EditorExtension.DisplayToggle("Has To Hold Input", hasToHoldInput, fieldColor));
-                SetIsVerifyingRunCondition(EditorExtension.DisplayToggle("Is Verifying Run Condition", isVerifyingRunCondition, fieldColor));
+                    EditorExtension.Space(2.5f);
+                    SetPressInput(EditorExtension.DisplayCustomField("Press Input", false, pressInput));
 
-                EditorExtension.Space(2.5f);
-                SetPressInput(EditorExtension.DisplayCustomField("Press Input", false, pressInput, fieldColor));
-
-                SetHoldInput(EditorExtension.DisplayCustomField("Hold Input", false, holdInput, fieldColor));
-                EditorExtension.DecrementIndent();
+                    SetHoldInput(EditorExtension.DisplayCustomField("Hold Input", false, holdInput));
+                }, visualizer.BackgroundColor, true);
             }
-
-            EditorExtension.DecrementIndent();
         }
 
 

@@ -60,8 +60,7 @@ namespace RedSilver2.Framework.StateMachines.States
     {
 
 #if UNITY_EDITOR
-        private bool showSoundEvent;
-        private const string SOUND_EVENT = "Walk Sound";
+        [SerializeField, HideInInspector] private bool showGroundWalkAudio;
 
         public override void Validate()
         {
@@ -71,32 +70,19 @@ namespace RedSilver2.Framework.StateMachines.States
             moveTransitionSpeed = Mathf.Clamp(moveTransitionSpeed, 0f, float.MaxValue);
         }
 
-        protected sealed override void DisplayBaseSettings(Color foldoutColor, Color fieldColor)
+        protected sealed override void DisplayBaseSettings(StateMachine.StateInspectorVisualizer visualizer)
         {
+            base.DisplayBaseSettings(visualizer);
+
             EditorExtension.Space(2.5f);
-            SetWalkSpeed(EditorExtension.DisplayFloatSlider("Walk Speed 💨", moveSpeed, 0f, 1000f, fieldColor));
-            SetTransitionSpeed(EditorExtension.DisplayFloatSlider("Walk Transition Speed", moveTransitionSpeed, 0f, 1000f, fieldColor));
+            SetWalkSpeed(EditorExtension.DisplayFloatSlider("Walk Speed 💨", moveSpeed, 0f, 1000f));
+            SetTransitionSpeed(EditorExtension.DisplayFloatSlider("Walk Transition Speed", moveTransitionSpeed, 0f, 1000f));
         }
 
-        protected override void DisplayExenstions(Color foldoutColor, Color fieldColor)
+        protected override void DisplayExtensions(StateMachine.StateInspectorVisualizer visualizer)
         {
-            EditorExtension.IncrementIndent();
-
-            if (EditorExtension.DisplayFoldout("Sound", ref showSoundEvent, foldoutColor))
-            {
-                StateEvent _event = GetEvent(SOUND_EVENT);
-
-                if (_event == null)  {
-                    EditorExtension.DisplayButton("Add Sound", () => { AddEvent(new MovementWalkSound(SOUND_EVENT, this)); });
-                }
-                else {
-                    EditorExtension.DisplayButton("Remove Sound", () => { RemoveEvent(SOUND_EVENT); });
-                    _event?.DrawInspector(foldoutColor, fieldColor);
-                }
-            }
-
-            EditorExtension.DecrementIndent();
-
+            base.DisplayExtensions(visualizer);
+            GroundWalkAudio.DrawInspector(this, ref showGroundWalkAudio, visualizer);
         }
 
 #endif

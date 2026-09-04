@@ -42,20 +42,33 @@ namespace RedSilver2.Framework.StateMachines.States {
         }
 
 #if UNITY_EDITOR
+        [SerializeField, HideInInspector] private bool showJumpAudio;
+
         public override void Validate() {
             base.Validate();
             jumpForce    = Mathf.Clamp(jumpForce, 0f, float.MaxValue);
             maxJumpCount = (uint)Mathf.Clamp(maxJumpCount, 1, uint.MaxValue); 
           
             maxJumpDelay = Mathf.Clamp(maxJumpDelay, 0f, float.MaxValue);  
-            if(!ContainsEvent(SOUND_EVENT)) AddEvent(new JumpSound(SOUND_EVENT, this));
         }
 
-        protected override void DisplayBaseSettings(Color foldoutColor, Color fieldColor)
+        protected override void DisplayBaseSettings(StateMachine.StateInspectorVisualizer visualizer)
         {
-            SetJumpForce(EditorExtension.DisplayFloatSlider("Jump Force 💪", jumpForce, 0f, 1000f          , fieldColor));
-            SetMaxJumpCount(EditorExtension.DisplayUIntSlider("Max Jump Count ❓", maxJumpCount, 100       , fieldColor));
-            SetMaxJumpDelay(EditorExtension.DisplayFloatSlider("Max Jump Delay ⌛", maxJumpDelay, 0f, 1000f, fieldColor));
+            if (visualizer == null) return;
+
+            SetJumpForce(EditorExtension.DisplayFloatSlider("Jump Force 💪", jumpForce, 0f, 1000f));
+            SetMaxJumpCount(EditorExtension.DisplayUIntSlider("Max Jump Count ❓", maxJumpCount, 100));
+            SetMaxJumpDelay(EditorExtension.DisplayFloatSlider("Max Jump Delay ⌛", maxJumpDelay, 0f, 1000f));
+
+            base.DisplayBaseSettings(visualizer);
+        }
+
+        protected override void DisplayExtensions(StateMachine.StateInspectorVisualizer visualizer)
+        {
+            if (visualizer == null) return;
+
+            base.DisplayExtensions(visualizer);
+            JumpAudio.DrawInspector(this, ref showJumpAudio, visualizer);
         }
 #endif
 

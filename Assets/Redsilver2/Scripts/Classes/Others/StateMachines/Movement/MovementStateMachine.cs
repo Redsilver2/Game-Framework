@@ -49,8 +49,8 @@ namespace RedSilver2.Framework.StateMachines
         protected override void DisplayDefaultSettings(Color foldoutColor, Color fieldColor)
         {
             base.DisplayDefaultSettings(foldoutColor, fieldColor);
-            SetIs2DMovement(EditorExtension.DisplayToggle("Is 2D Movement", is2DMovement, fieldColor));
-            SetGroundCheckRange(EditorExtension.DisplayFloatSlider("Ground Check Range", groundCheckRange, 0f, 1000f, fieldColor));
+            SetIs2DMovement(EditorExtension.DisplayToggle("Is 2D Movement", is2DMovement));
+            SetGroundCheckRange(EditorExtension.DisplayFloatSlider("Ground Check Range", groundCheckRange, 0f, 1000f));
         }
 
 
@@ -175,17 +175,8 @@ namespace RedSilver2.Framework.StateMachines
         }
 
         public MovementState GetState(MovementStateType type) {
-            State[] states = States;
 
-            if(states != null) {
-                foreach(State state in states) {
-                    MovementState movementState = state as MovementState;
-                    if (movementState == null || movementState.Type != type) continue;
-                    return movementState;
-                }
-            }
-
-            return null;
+            return GetState(type.ToString()) as MovementState;
         }
 
         protected void SetIsMoving(bool isMoving) {

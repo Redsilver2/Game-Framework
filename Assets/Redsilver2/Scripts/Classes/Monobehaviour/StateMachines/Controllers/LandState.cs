@@ -5,7 +5,7 @@ using RedSilver2.Framework.StateMachines.Extensions;
 namespace RedSilver2.Framework.StateMachines.States
 {
     [System.Serializable]
-    public abstract class LandState : MovementState
+    public abstract partial class LandState : MovementState
     {
         private const string SOUND_EVENT = "Land Sound";
         public const MovementStateType TYPE = MovementStateType.Land;
@@ -13,14 +13,6 @@ namespace RedSilver2.Framework.StateMachines.States
         public LandState(MovementStateMachine stateMachine) : base(stateMachine) {
 
         }
-
-#if UNITY_EDITOR
-        public sealed override void Validate()
-        {
-            base.Validate();
-            if (!ContainsEvent(SOUND_EVENT)) AddEvent(new LandSound(SOUND_EVENT, this));
-        }
-#endif
 
         public sealed override bool CanTransition()
         {
@@ -55,5 +47,16 @@ namespace RedSilver2.Framework.StateMachines.States
         {
             return new MovementStateType[] { TYPE, FallState.TYPE, JumpState.TYPE };
         }
+    }
+
+    public abstract partial class LandState : MovementState
+    {
+#if UNITY_EDITOR
+        public override void Validate()
+        {
+            base.Validate();
+            CanShowBaseSettings = false;
+        }
+#endif
     }
 }

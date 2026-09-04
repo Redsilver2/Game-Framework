@@ -5,15 +5,21 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 
 namespace RedSilver2.Framework.StateMachines.States
 {
     [System.Serializable]
-    public abstract class State {
+    public abstract partial class State {
         [HideInInspector] public string name;
         [SerializeField, HideInInspector] private string[] incompatibleTransitionStates;
 
-        [SerializeField, SerializeReference] private List<StateEvent> events;
+
+        [SerializeField] private Dictionary<string, StateEventData> events;
+
         [SerializeField, HideInInspector] private List<State> transitionStates;
         [SerializeField, SerializeReference, HideInInspector] private StateMachine stateMachine;
         private bool isEnabled;
@@ -37,8 +43,6 @@ namespace RedSilver2.Framework.StateMachines.States
         public string Name => name;
 
         public string[] IncompatibleTransitionStates => incompatibleTransitionStates != null ? incompatibleTransitionStates : new string[0];
-
-        public StateEvent[] Events => events != null ? events.ToArray() : new StateEvent[0];
         public State[] TransitionStates => transitionStates != null ? transitionStates.ToArray() : new State[0];
 
 
@@ -49,63 +53,48 @@ namespace RedSilver2.Framework.StateMachines.States
             isEnabled = false;
             isEntered = false;
 
-            onAdded = new UnityEvent();
-            onRemoved = new UnityEvent();
+            events = new Dictionary<string, StateEventData>();
 
-            onEntered = new UnityEvent();
-            onExited = new UnityEvent();
+            onAdded    = new UnityEvent();
+            onRemoved  = new UnityEvent();
 
-            onEnabled = new UnityEvent();
+            onEntered  = new UnityEvent();
+            onExited   = new UnityEvent();
+
+            onEnabled  = new UnityEvent();
             onDisabled = new UnityEvent();
 
-            onTransitionStateAdded = new UnityEvent<State>();
+            onTransitionStateAdded   = new UnityEvent<State>();
             onTransitionStateRemoved = new UnityEvent<State>();
 
-            transitionStates = new List<State>();
+            transitionStates  = new List<State>();
             this.stateMachine = stateMachine;
         }
 
-        public void AddEvent(StateEvent _event)
+        public void AddEvent(string name, StateEvent _event)
         {
-            if (events == null || _event == null) return;
-            else if (!events.Contains(_event) && _event.IsOwner(this) && !ContainsEvent(name)) {
-                events?.Add(_event);
+            if (events == null || _event == null || string.IsNullOrEmpty(name)) return;
+            else if (!ContainsEvent(name) && _event.IsOwner(this)) {
+                events?.Add(name.ToLower(), new StateEventData(_event));
                 if (Application.isPlaying && isEnabled) _event.Enable();
             }
         }
 
-        public void RemoveEvent(string eventName)
+        public void RemoveEvent(string name)
         {
-            RemoveEvent(GetEvent(eventName));
+            if (events == null || !ContainsEvent(name)) return;
+            events?.Remove(name.ToLower());  
         }
 
-        public void RemoveEvent(StateEvent _event)
+        public StateEvent GetEvent(string name)
         {
-            if (events == null || _event == null) return;
-            else if (events.Contains(_event) && _event.IsOwner(this)) {
-                if (Application.isPlaying) _event?.Disable();
-                events?.Remove(_event);
-            }
+            if(events == null || !ContainsEvent(name)) return null;
+            return events[name.ToLower()].Event;
         }
 
-        protected StateEvent GetEvent(string eventName)
-        {
-            if(events == null) return null;
-            var results = events.Where(x => x != null).Where(x => x.Compare(eventName));
-            return results.Count() > 0 ? results.First() : null;
-        }
-
-        public bool ContainsEvent(StateEvent _event) {
-            if (events == null || _event == null) return false;
-            return events.Contains(_event);
-        }
-
-        public bool ContainsEvent(string name)
-        {
+        public bool ContainsEvent(string name) {
             if(events == null || string.IsNullOrEmpty(name)) return false;
-            name = name.ToLower();
-
-            return events.Where(x => x != null).Where(x => x.Compare(name)).Count() > 0;
+            return events.ContainsKey(name.ToLower());
         }
 
         public void Intialize()
@@ -161,10 +150,7 @@ namespace RedSilver2.Framework.StateMachines.States
         }
 
         public void Enable() {
-            if (!isEnabled && isInitialized) {
-                Debug.Log("?");
-                onEnabled?.Invoke();
-            }
+            if (!isEnabled && isInitialized) { onEnabled?.Invoke(); }
         }
 
         public void Disable() { 
@@ -208,18 +194,30 @@ namespace RedSilver2.Framework.StateMachines.States
         }
 
         protected virtual void OnDisabled() {
-            if (events != null) 
-                foreach (StateEvent _event in events)
-                    _event?.Disable();
+            if (events != null)
+            {
+                StateEventData[] datas = events.Values.ToArray();
+
+                foreach (StateEventData data in datas) {
+                    if (data == null) continue;
+                    data.Event?.Disable();
+                }
+
+            }
 
             stateMachine?.RemoveActifState(this);
             isEnabled = false;
         }
 
         protected virtual void OnEnabled() {
-            if (events != null)
-                foreach (StateEvent _event in events)
-                    _event?.Enable();
+            if (events != null) {
+                StateEventData[] datas = events.Values.ToArray();
+
+                foreach (StateEventData data in datas) {
+                    if(data == null) continue;
+                    data.Event?.Enable();
+                }
+            }
       
             stateMachine?.AddActifState(this); 
             isEnabled = true;
@@ -232,8 +230,6 @@ namespace RedSilver2.Framework.StateMachines.States
             if(stateMachine != null) 
                 foreach(State state in stateMachine.ActifStates)
                     AddTransitionState(state);
-
-            Debug.Log(transitionStates.Count);
         }
         protected virtual void OnRemoved() {
             if (stateMachine != null)
@@ -357,81 +353,121 @@ namespace RedSilver2.Framework.StateMachines.States
             incompatibleTransitionStates = incompatibleTransitionStates != null ? incompatibleTransitionStates : new string[0];
         }
 
-#if UNITY_EDITOR
-        [SerializeReference, HideInInspector] private bool showBaseSettings;
-       
-        [SerializeReference, HideInInspector] private bool showExtensions;
-        [SerializeReference, HideInInspector] private bool showTransitions;
-       
-        [SerializeReference, HideInInspector] private bool showCompatibleStates;
-        [SerializeReference, HideInInspector] private bool showIncompatibleStates;
-        
-        public virtual void Validate() {
-            events = events != null ? events.Where(x => x != null).ToList() : new List<StateEvent>();
-        }
-
-        protected virtual void Validate(StateEvent _event) {
-
-        }
-
-        public virtual void DrawInpsector(Color foldoutColor, Color fieldColor) {
-            Validate();
-            EditorExtension.IncrementIndent();
-
-            if(this is not LandState) {
-                if (EditorExtension.DisplayFoldout("Base Settings", ref showBaseSettings, foldoutColor))
-                    DisplayBaseSettings(foldoutColor, fieldColor);
-            }
-
-            EditorExtension.Space(5f);
-
-            if (EditorExtension.DisplayFoldout("Extension", ref showExtensions, foldoutColor))
-                DisplayExenstions(foldoutColor, fieldColor);
-
-
-            EditorExtension.Space(5f);
-
-            if (EditorExtension.DisplayFoldout("Transitions", ref showTransitions, foldoutColor))
-                DisplayTransitions(foldoutColor, fieldColor);
-
-            EditorExtension.DecrementIndent();
-        }
-
-        protected virtual void DisplayBaseSettings(Color foldoutColor, Color fieldColor) { }
-
-        protected virtual void DisplayExenstions(Color foldoutColor, Color fieldColor) { }
-
-        private void DisplayTransitions(Color foldoutColor, Color fieldColor)
+        public static StateMachine GetStateMachine(State state)
         {
-            if (TryGetTransitionsInfo(out string[] compatible, out string[] incompatible)) {
+            return state != null ? state.stateMachine : null;
+        }
+
+        // Rare Comment: Hopefully they allow abstract classes serialization soon for Dictionnaries bruh-
+
+        [System.Serializable]
+        private sealed class StateEventData {
+           [SerializeField, SerializeReference, HideInInspector] private StateEvent _event;
+           public StateEvent Event => _event;
+
+           public StateEventData(StateEvent _event){
+                this._event = _event;
+           }
+        }
+    }
+    
+    public abstract partial class State
+    {
+#if UNITY_EDITOR
+        protected bool CanShowBaseSettings;
+        protected bool CanShowExtensions;
+        protected bool CanShowTransitions;
+
+        [SerializeField, HideInInspector] private bool showBaseSettings;
+        [SerializeField, HideInInspector] private bool showExtensions;
+        [SerializeField, HideInInspector] private bool showTransitions;
+
+        [SerializeField, HideInInspector] private bool showCompatibleStates;
+        [SerializeField, HideInInspector] private bool showIncompatibleStates;
+
+        public virtual void Validate() {
+            CanShowBaseSettings = true;
+            CanShowExtensions   = true;
+            CanShowTransitions  = true;
+        }
+
+        public virtual void DrawInpsector(StateMachine.StateInspectorVisualizer visualizer)
+        {
+            Validate();
+            if (visualizer == null) return;
+
+            if (CanShowBaseSettings) {
+                if (EditorExtension.DisplayFoldout("Base Settings", ref showBaseSettings, visualizer.FoldoutColor))
+                {
+                    EditorExtension.DrawVerticalHelpBox(() => {
+                        DisplayBaseSettings(visualizer);
+                    }, visualizer.BackgroundColor);
+                }
+
+            }
+            else { showBaseSettings = false; }
+
+            if (CanShowExtensions) {
+                if (EditorExtension.DisplayFoldout("Extensions", ref showExtensions, visualizer.FoldoutColor)) {
+                    EditorExtension.DrawVerticalHelpBox(() => {
+                        DisplayExtensions(visualizer);
+                    }, visualizer.BackgroundColor);
+                }
+            }
+            else { showExtensions = false; }
+
+            if (CanShowTransitions) {
+                if (EditorExtension.DisplayFoldout("Transitions", ref showTransitions, visualizer.FoldoutColor))
+                {
+                    DisplayTransitions(visualizer);
+                }
+            }
+            else { showTransitions = false; }
+
+        }
+
+        protected virtual void DisplayBaseSettings(StateMachine.StateInspectorVisualizer visualizer) { }
+
+        protected virtual void DisplayExtensions(StateMachine.StateInspectorVisualizer visualizer) { }
+
+        private void DisplayTransitions(StateMachine.StateInspectorVisualizer visualizer)
+        {
+
+            if (visualizer == null) return;
+            else if (TryGetTransitionsInfo(out string[] compatible, out string[] incompatible))
+            {
                 EditorExtension.IncrementIndent();
-               
-                DisplayTransitions(compatible, "Compatible States", ref showCompatibleStates, foldoutColor, fieldColor);
-                DisplayTransitions(incompatible, "Incompatible States", ref showIncompatibleStates, foldoutColor, fieldColor);
-              
+
+                DisplayTransitions(compatible, "Compatible States", ref showCompatibleStates, visualizer);
+                DisplayTransitions(incompatible, "Incompatible States", ref showIncompatibleStates, visualizer);
+
                 EditorExtension.DecrementIndent();
             }
         }
 
-        private void DisplayTransitions(string[] values, string label, ref bool showStates, Color foldoutColor, Color fieldColor)
+        private void DisplayTransitions(string[] values, string label, ref bool showStates, StateMachine.StateInspectorVisualizer visualizer)
         {
-            if(values == null || values.Length == 0) return;
-
-            if (EditorExtension.DisplayFoldout(label, ref showStates, foldoutColor)) {
-                foreach (string s in values) EditorExtension.DisplayHelpBoxNone(s);
+            if (values == null || visualizer == null || values.Length == 0) return;
+            if (EditorExtension.DisplayFoldout(label, ref showStates, visualizer.FoldoutColor))  {
+                EditorExtension.DrawVerticalHelpBox(() => {
+                    foreach (string s in values) {
+                        if (string.IsNullOrEmpty(s)) continue;
+                        EditorGUILayout.LabelField(s, EditorStyles.boldLabel);
+                    }
+                }, visualizer.BackgroundColor);
             }
 
         }
 
         private bool TryGetTransitionsInfo(out string[] compatible, out string[] incompatible)
         {
-            compatible    = new string[0];
+            compatible = new string[0];
             incompatible = new string[0];
 
             if (incompatibleTransitionStates == null) return false;
             MovementStateType[] types = Enum.GetValues(typeof(MovementStateType)) as MovementStateType[];
-            
-            List<string> compatibleStates   = new List<string>();
+
+            List<string> compatibleStates = new List<string>();
             List<string> incompatibleStates = new List<string>();
 
             foreach (MovementStateType type in types)
@@ -440,15 +476,12 @@ namespace RedSilver2.Framework.StateMachines.States
                 else compatibleStates?.Add(type.ToString());
             }
 
-            compatible    = compatibleStates.ToArray();
+            compatible = compatibleStates.ToArray();
             incompatible = incompatibleStates.ToArray();
             return true;
         }
 #endif
-
-        public static StateMachine GetStateMachine(State state)
-        {
-            return state != null ? state.stateMachine : null;
-        }
     }
 }
+
+

@@ -3,7 +3,7 @@ using UnityEngine;
 namespace RedSilver2.Framework.StateMachines.States
 {
     [System.Serializable]
-    public abstract class IdolState : MovementState
+    public abstract partial class IdolState : MovementState
     {
         [Space]
         [SerializeField] private float moveSpeedTransition;
@@ -12,20 +12,6 @@ namespace RedSilver2.Framework.StateMachines.States
         public float MoveSpeedTransition => moveSpeedTransition;
 
         public IdolState(MovementStateMachine stateMachine) : base(stateMachine) {  }
-
-
-#if UNITY_EDITOR
-        public override void Validate()
-        {
-            base.Validate();
-            moveSpeedTransition = Mathf.Clamp(moveSpeedTransition, 0f, float.MaxValue);
-        }
-
-        protected sealed override void DisplayBaseSettings(Color foldoutColor, Color fieldColor) {
-            EditorExtension.Space(2.5f);
-            SetMoveSpeedTransition(EditorExtension.DisplayFloatSlider("Move Transition Speed ", moveSpeedTransition, 0f, 1000f, fieldColor));
-        }
-#endif
 
         public sealed override bool CanTransition()
         {
@@ -61,5 +47,23 @@ namespace RedSilver2.Framework.StateMachines.States
         {
             return new MovementStateType[] { TYPE, LandState.TYPE };
         }
+    }
+
+    public abstract partial class IdolState : MovementState
+    {
+
+#if UNITY_EDITOR
+        public override void Validate()
+        {
+            base.Validate();
+            moveSpeedTransition = Mathf.Clamp(moveSpeedTransition, 0f, float.MaxValue);
+        }
+
+        protected sealed override void DisplayBaseSettings(StateMachine.StateInspectorVisualizer visualizer)
+        {
+            base.DisplayBaseSettings(visualizer);
+            SetMoveSpeedTransition(EditorExtension.DisplayFloatSlider("Move Transition Speed ", moveSpeedTransition, 0f, 1000f)); 
+        }
+#endif
     }
 }

@@ -25,24 +25,25 @@ namespace RedSilver2.Framework.StateMachines.States
 #if UNITY_EDITOR
         private bool showInputs;
 
-        public sealed override void DrawInpsector(Color foldoutColor, Color fieldColor)
+        public sealed override void DrawInpsector(StateMachine.StateInspectorVisualizer visualizer)
         {
-            EditorExtension.IncrementIndent();
 
-            if (EditorExtension.DisplayFoldout("Inputs 🕹️", ref showInputs, foldoutColor)) {
-                EditorExtension.IncrementIndent();
+            base.DrawInpsector(visualizer);
+
+            if (visualizer == null) return;
+            else if (EditorExtension.DisplayFoldout("Inputs 🕹️", ref showInputs, visualizer.FoldoutColor))
+            {
                 EditorExtension.Space(2.5f);
 
-                SetHasToHoldInput(EditorExtension.DisplayToggle("Has To Hold Input", hasToHoldInput, fieldColor));
-                SetPressInput(EditorExtension.DisplayCustomField("Press Input", false, pressInput, fieldColor));
-                SetHoldInput(EditorExtension.DisplayCustomField("Hold Input", false, holdInput, fieldColor));
-               
-                EditorExtension.DecrementIndent();
+                EditorExtension.DrawVerticalHelpBox(() =>
+                {
+                    EditorExtension.IncrementIndent();
+                    SetHasToHoldInput(EditorExtension.DisplayToggle("Has To Hold Input", hasToHoldInput));
+                    SetPressInput(EditorExtension.DisplayCustomField("Press Input", false, pressInput));
+                    SetHoldInput(EditorExtension.DisplayCustomField("Hold Input", false, holdInput));
+                    EditorExtension.DecrementIndent();
+                }); ;
             }
-
-            EditorExtension.DecrementIndent();
-
-            base.DrawInpsector(foldoutColor, fieldColor);
         }
 #endif
 
@@ -58,7 +59,6 @@ namespace RedSilver2.Framework.StateMachines.States
 
         public void SetHoldInput(HoldInputSettings holdInput)
         {
-            Debug.Log("hold: " + holdInput);
             this.holdInput = holdInput;
         }
 

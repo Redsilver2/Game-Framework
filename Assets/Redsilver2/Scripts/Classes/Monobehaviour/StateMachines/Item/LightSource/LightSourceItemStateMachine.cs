@@ -174,13 +174,7 @@ namespace RedSilver2.Framework.StateMachines {
 
         public LightSourceItemState GetState(LightSourceItemStateType type)
         {
-            foreach(State state in States) {
-                LightSourceItemState _state = state as LightSourceItemState;
-                if(_state == null || _state.Type != type) continue;
-                return _state;
-            }
-
-            return null;
+            return GetState(type.ToString()) as LightSourceItemState;
         }
     }
 }

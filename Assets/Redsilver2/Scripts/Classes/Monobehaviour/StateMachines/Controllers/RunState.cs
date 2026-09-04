@@ -1,3 +1,4 @@
+using RedSilver2.Framework.StateMachines.Extensions;
 using System;
 using System.Linq;
 using UnityEngine;
@@ -5,7 +6,7 @@ using UnityEngine;
 namespace RedSilver2.Framework.StateMachines.States
 {
     [System.Serializable]
-    public abstract class RunState : MovementState {
+    public abstract partial class RunState : MovementState {
         [Space]
         [SerializeField] private float moveSpeed;
         [SerializeField] private float moveTransitionSpeed;
@@ -21,23 +22,6 @@ namespace RedSilver2.Framework.StateMachines.States
         public const MovementStateType TYPE = MovementStateType.Run;
 
         public RunState(MovementStateMachine stateMachine) : base(stateMachine) { }
-
-
-#if UNITY_EDITOR
-        public override void Validate()
-        {
-            base.Validate();
-            moveSpeed = Mathf.Clamp(moveSpeed, 0f, float.MaxValue);
-            moveTransitionSpeed = Mathf.Clamp(moveTransitionSpeed, 0f, float.MaxValue);
-        }
-
-        protected override void DisplayBaseSettings(Color foldoutColor, Color fieldColor)
-        {
-            EditorExtension.Space(2.5f);
-            SetRunSpeed(EditorExtension.DisplayFloatSlider("Run Speed 💨", moveSpeed, 0f, 1000f, fieldColor));
-            SetRunTransitionSpeed(EditorExtension.DisplayFloatSlider("Run Transition Speed", moveTransitionSpeed, 0f, 1000f, fieldColor));
-        }
-#endif
 
         protected sealed override MovementStateType[] GetDefaultInvalidTypes()
         {
@@ -101,6 +85,37 @@ namespace RedSilver2.Framework.StateMachines.States
             RunState state = GetState(stateMachine);
             return state != null ? state.IsRunning : false;
         }
+
+    }
+    public abstract partial class RunState : MovementState
+    {
+#if UNITY_EDITOR
+        [SerializeField, HideInInspector] private bool showGroundWalkAudio;
+
+        public override void Validate()
+        {
+            base.Validate();
+            moveSpeed = Mathf.Clamp(moveSpeed, 0f, float.MaxValue);
+            moveTransitionSpeed = Mathf.Clamp(moveTransitionSpeed, 0f, float.MaxValue);
+        }
+
+        protected override void DisplayBaseSettings(StateMachine.StateInspectorVisualizer visualizer)
+        {
+            base.DisplayBaseSettings(visualizer);
+            if(visualizer == null) return;
+
+            EditorExtension.Space(2.5f);
+            SetRunSpeed(EditorExtension.DisplayFloatSlider("Run Speed 💨", moveSpeed, 0f, 1000f));
+            SetRunTransitionSpeed(EditorExtension.DisplayFloatSlider("Run Transition Speed", moveTransitionSpeed, 0f, 1000f));
+        }
+
+        protected override void DisplayExtensions(StateMachine.StateInspectorVisualizer visualizer)
+        {
+            base.DisplayExtensions(visualizer);
+            if(visualizer == null) return;
+            GroundWalkAudio.DrawInspector(this, ref showGroundWalkAudio, visualizer);
+        }
+#endif
 
     }
 }

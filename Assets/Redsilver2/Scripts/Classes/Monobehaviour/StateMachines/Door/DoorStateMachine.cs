@@ -1,7 +1,6 @@
 using RedSilver2.Framework.Interactions;
 using RedSilver2.Framework.StateMachines.States;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -11,21 +10,12 @@ namespace RedSilver2.Framework.StateMachines
     {
         [SerializeField] private Transform handle;
 
-        [Space]
-        [SerializeField] private OpenDoorState  openState;
-
-        [Space]
-        [SerializeField] private CloseDoorState closeState;
-
         private bool isOpen;
         private UnityEvent<DoorState> onStateEntered, onStateExited;
         private UnityEvent<DoorState> onStateAdded, onStateRemoved;
 
         public bool      IsOpen => isOpen;
         public Transform Handle => handle;
-
-        public OpenDoorState  OpenState    => openState;
-        public CloseDoorState CloseState   => closeState;
 
 #if UNITY_EDITOR
 
@@ -41,8 +31,7 @@ namespace RedSilver2.Framework.StateMachines
 #endif
 
 
-        protected override void Awake()
-        {
+        protected override void Awake() {
             base.Awake();
 
             onStateAdded   = new UnityEvent<DoorState>();
@@ -50,21 +39,18 @@ namespace RedSilver2.Framework.StateMachines
 
             onStateEntered = new UnityEvent<DoorState>();
             onStateExited  = new UnityEvent<DoorState>();
-           
-            AddState(openState);
-            AddState(closeState);
         }
 
         public virtual void Open()  {
             if (!isOpen) {
-                ChangeState(openState);
+                ChangeState(DoorStateType.Open);
                 isOpen = true;
             }
         }
         public void Close()
         {
             if (isOpen) {
-                ChangeState(closeState);
+                ChangeState(DoorStateType.Close);
                 isOpen = false;
             }
         }
@@ -140,38 +126,13 @@ namespace RedSilver2.Framework.StateMachines
             if (action != null) onStateRemoved?.RemoveListener(action);
         }
 
-        public virtual void ChangeState(DoorStateType type)
+        protected void ChangeState(DoorStateType type)
         {
-            switch (type) {
-                case DoorStateType.Open:     ChangeState(openState); break;
-                case DoorStateType.Close:    ChangeState(closeState); break;
-            }
+            ChangeState(GetState(type));
         }
-
-        public virtual void AddState(DoorStateType type) {
-            switch (type) {
-                case DoorStateType.Open:      AddState(openState);   break;
-                case DoorStateType.Close:     AddState(closeState);  break;
-            }
-        }
-
-        public virtual void RemoveState(DoorStateType type) {
-            switch (type) {
-                case DoorStateType.Open:     RemoveState(openState);   break;
-                case DoorStateType.Close:    RemoveState(closeState);  break;
-            }
-        }
-
 
         public DoorState GetState(DoorStateType type) {
-            foreach(State state in States) {
-                DoorState _state = state as DoorState;
-                if (_state == null || _state.Type != type) continue;
-
-                return _state;
-            }
-
-            return null;
+            return GetState(type.ToString()) as DoorState;
         }
     }
 

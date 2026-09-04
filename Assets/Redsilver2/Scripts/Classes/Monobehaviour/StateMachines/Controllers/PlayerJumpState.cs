@@ -18,21 +18,17 @@ namespace RedSilver2.Framework.StateMachines
 #if UNITY_EDITOR
         private bool showInputs;
 
-        public sealed override void DrawInpsector(Color foldoutColor, Color fieldColor)
+        public sealed override void DrawInpsector(StateMachine.StateInspectorVisualizer visualizer)
         {
-            EditorExtension.IncrementIndent();
-
-            if (EditorExtension.DisplayFoldout("Inputs 🕹️", ref showInputs, foldoutColor)) {
-                EditorExtension.IncrementIndent();
-                EditorExtension.Space(2.5f);
-              
-                SetPressInput(EditorExtension.DisplayCustomField("Press Input", false, pressInput, fieldColor));
-                EditorExtension.DecrementIndent();
+            if (visualizer == null) return;
+            else if (EditorExtension.DisplayFoldout("Inputs 🕹️", ref showInputs, visualizer.FoldoutColor)) {
+                EditorExtension.DrawVerticalHelpBox(() => {
+                    SetPressInput(EditorExtension.DisplayCustomField("Press Input", false, pressInput));
+                }, visualizer.FoldoutColor, true);
             }
 
-            EditorExtension.DecrementIndent();
 
-            base.DrawInpsector(foldoutColor, fieldColor);
+            base.DrawInpsector(visualizer);
         }
 #endif
 

@@ -29,7 +29,7 @@ namespace RedSilver2.Framework.StateMachines.Controllers {
         protected override void DisplayDefaultSettings(Color foldoutColor, Color fieldColor)
         {
             base.DisplayDefaultSettings(foldoutColor, fieldColor);
-            SetInputSetting(EditorExtension.DisplayCustomField("Move Input Setting", false, moveInputSetting, fieldColor));
+            SetInputSetting(EditorExtension.DisplayCustomField("Move Input Setting", false, moveInputSetting));
         }
 
         protected override MovementState GetInspectorState(MovementStateType type)

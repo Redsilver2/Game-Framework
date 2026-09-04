@@ -6,40 +6,13 @@ using UnityEngine.Events;
 namespace RedSilver2.Framework.StateMachines.Extensions
 {
     [System.Serializable]
-    public sealed class LandSound : MovementSound
+    public sealed partial class LandSound : MovementAudio
     {
-
         [Space]
-        [SerializeField] private float minPitch;
-        [SerializeField] private float maxPitch;
+        [SerializeField] private MovementSoundData data;
+        private const string EVENT_NAME = "Land Audio";
 
-        [Space]
-        [SerializeField] private float minVolume;
-        [SerializeField] private float maxVolume;
-
-        public LandSound(string name, LandState state) : base(name, state) {
-
-        }
-
-        public void SetMinPitch(float minPitch)
-        {
-            this.minPitch = minPitch;
-        }
-
-        public void SetMaxPitch(float maxPitch)
-        {
-            this.maxPitch = maxPitch;
-        }
-
-        public void SetMinVolume(float minVolume)
-        {
-            this.minVolume = minVolume;
-        }
-
-        public void SetMaxVolume(float maxVolume)
-        {
-            this.maxVolume = maxVolume;
-        }
+        public LandSound(LandState state) : base(state) { }
 
         protected sealed override void Enable(MovementState state) {
             state?.AddOnEnteredListener(GetOnEnteredListener(state));
@@ -53,24 +26,47 @@ namespace RedSilver2.Framework.StateMachines.Extensions
         private UnityAction GetOnEnteredListener(MovementState state)
         {
             return () => {
-                Enter(Source, Data, MovementState.GetMovementStateMachine(state));
+                Enter(Source, data, MovementState.GetMovementStateMachine(state));
             };
+        }
+
+
+        protected sealed override string GetName() {
+            return "Land Audio";
         }
 
         private void Enter(AudioSource source, MovementSoundData data, MovementStateMachine stateMachine)
         {
             if (stateMachine == null || source == null || data == null) return;
             AudioClip[] clips = data.GetClips(stateMachine.GroundTag);
-           
+
             if (clips == null || clips.Length == 0) return;
             AudioClip clip = clips[Random.Range(0, clips.Length - 1)];
-            
-            if (source == null) return;
-            source.pitch = Random.Range(minPitch, maxPitch);
-                source.volume = Random.Range(minVolume, maxVolume);
 
-                source.clip = clip;
-                source.Play();
+            if (source == null) return;
+            source.clip = clip;
+            source.Play();
         }
+
+        public static LandSound GetEvent(MovementState state) {
+            if (state == null) return null;
+            return state.GetEvent(EVENT_NAME) as LandSound;
+        }
+    }
+
+    public sealed partial class LandSound : MovementAudio {
+#if UNITY_EDITOR
+        public static void DrawInspector(LandState state, ref bool showEvent, StateMachine.StateInspectorVisualizer visualizer)
+        {
+            DrawInspector(state, EVENT_NAME, ref showEvent, visualizer,
+              () => {
+                  EditorExtension.DisplayButton($"Add {EVENT_NAME}", () => { state?.AddEvent(EVENT_NAME, new LandSound(state)); });
+              },
+              () =>
+              {
+                  EditorExtension.DisplayButton($"Remove {EVENT_NAME}", () => { state?.RemoveEvent(EVENT_NAME); });
+              });
+        }
+#endif
     }
 }

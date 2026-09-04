@@ -4,7 +4,7 @@ namespace RedSilver2.Framework.StateMachines.Events {
     [System.Serializable]
     public abstract class MovementStateEvent : UpdatableStateEvent {
 
-        protected MovementStateEvent(string name, MovementState state) : base(name, state) {
+        protected MovementStateEvent(MovementState state) : base(state) {
     
         }
 

@@ -5,7 +5,7 @@ namespace RedSilver2.Framework.StateMachines.Events
     [System.Serializable]
     public abstract class UpdatableStateEvent : StateEvent
     {
-        protected UpdatableStateEvent(string name, UpdatableState state) : base(name, state) {
+        protected UpdatableStateEvent(UpdatableState state) : base(state) {
                  
         }
 

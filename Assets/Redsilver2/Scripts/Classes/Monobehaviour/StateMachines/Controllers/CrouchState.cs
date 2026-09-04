@@ -1,10 +1,9 @@
-using RedSilver2.Framework.StateMachines.Extensions;
 using UnityEngine;
 
 namespace RedSilver2.Framework.StateMachines.States
 {
     [System.Serializable]
-    public abstract class CrouchState : MovementState
+    public abstract partial class CrouchState : MovementState
     {
         [Space]
         [SerializeField] private float moveSpeed;
@@ -46,42 +45,6 @@ namespace RedSilver2.Framework.StateMachines.States
             isCrouching = false;
         }
 
-
-#if UNITY_EDITOR
-        public override void Validate() {
-            moveSpeed = Mathf.Clamp(moveSpeed, 0f, float.MaxValue);
-          
-            standHeight = Mathf.Clamp(standHeight, 0f, float.MaxValue);
-            crouchHeight = Mathf.Clamp(crouchHeight, 0f, standHeight);
-
-            crouchHeightTransitionSpeed = Mathf.Clamp(crouchHeightTransitionSpeed, 0f, float.MaxValue);
-            standHeightTransitionSpeed = Mathf.Clamp(standHeightTransitionSpeed, 0f, float.MaxValue);
-           
-            moveTransitionSpeed   = Mathf.Clamp(moveTransitionSpeed, 0f, float.MaxValue);
-            crouchSafetyCheckDistance = Mathf.Clamp(crouchSafetyCheckDistance, 0f, float.MaxValue);
-
-            if(!ContainsEvent(SOUND_EVENT)) AddEvent(new MovementWalkSound(SOUND_EVENT, this));
-        }
-
-        protected sealed override void DisplayBaseSettings(Color foldoutColor, Color fieldColor)
-        {
-            base.DisplayBaseSettings(foldoutColor, fieldColor);
-
-            SetMoveSpeed(EditorExtension.DisplayFloatSlider("Crouch Speed 💨", moveSpeed, 0f, 1000f, fieldColor));
-            SetMoveTransitionSpeed(EditorExtension.DisplayFloatSlider("Crouch Transition Speed ", moveTransitionSpeed, 0f, 1000f, fieldColor));
-
-            EditorExtension.Space(5f);
-            SetCrouchHeight(EditorExtension.DisplayFloatSlider("Crouch Height", crouchHeight, 0f, 1000f, fieldColor));
-            SetCrouchHeightTransitionSpeed(EditorExtension.DisplayFloatSlider("Crouch Height Transition Speed", crouchHeightTransitionSpeed, 0f, 1000f, fieldColor));
-
-            EditorExtension.Space(5f);
-            SetStandHeight(EditorExtension.DisplayFloatSlider("Stand Height", standHeight, 0f, 1000f, fieldColor));
-            SetStandHeightTransitionSpeed(EditorExtension.DisplayFloatSlider("Stand Height Transition Speed", standHeightTransitionSpeed, 0f, 1000f, fieldColor));
-
-            EditorExtension.Space(5f);
-            SetCrouchSafetyCheckDistance(EditorExtension.DisplayFloatSlider("Crouch Safety Check Distance", crouchSafetyCheckDistance, 0f, 1000f, fieldColor));
-        }
-#endif
         public void SetIsCrouching(bool isCrouching)
         {
             this.isCrouching = isCrouching;
@@ -178,5 +141,46 @@ namespace RedSilver2.Framework.StateMachines.States
             CrouchState state = GetState(stateMachine);
             return state != null ? state.IsCrouching : false;   
         }
+    }
+
+    public abstract partial class CrouchState : MovementState
+    {
+
+#if UNITY_EDITOR
+        public override void Validate()
+        {
+            base.Validate();
+            moveSpeed = Mathf.Clamp(moveSpeed, 0f, float.MaxValue);
+
+            standHeight = Mathf.Clamp(standHeight, 0f, float.MaxValue);
+            crouchHeight = Mathf.Clamp(crouchHeight, 0f, standHeight);
+
+            crouchHeightTransitionSpeed = Mathf.Clamp(crouchHeightTransitionSpeed, 0f, float.MaxValue);
+            standHeightTransitionSpeed = Mathf.Clamp(standHeightTransitionSpeed, 0f, float.MaxValue);
+
+            moveTransitionSpeed = Mathf.Clamp(moveTransitionSpeed, 0f, float.MaxValue);
+            crouchSafetyCheckDistance = Mathf.Clamp(crouchSafetyCheckDistance, 0f, float.MaxValue);
+        }
+
+        protected sealed override void DisplayBaseSettings(StateMachine.StateInspectorVisualizer visualizer)
+        {
+            base.DisplayBaseSettings(visualizer);
+            if (visualizer == null) return;
+
+            SetMoveSpeed(EditorExtension.DisplayFloatSlider("Crouch Speed 💨", moveSpeed, 0f, 1000f));
+            SetMoveTransitionSpeed(EditorExtension.DisplayFloatSlider("Crouch Transition Speed ", moveTransitionSpeed, 0f, 1000f));
+
+            EditorExtension.Space(5f);
+            SetCrouchHeight(EditorExtension.DisplayFloatSlider("Crouch Height", crouchHeight, 0f, 1000f));
+            SetCrouchHeightTransitionSpeed(EditorExtension.DisplayFloatSlider("Crouch Height Transition Speed", crouchHeightTransitionSpeed, 0f, 1000f));
+
+            EditorExtension.Space(5f);
+            SetStandHeight(EditorExtension.DisplayFloatSlider("Stand Height", standHeight, 0f, 1000f));
+            SetStandHeightTransitionSpeed(EditorExtension.DisplayFloatSlider("Stand Height Transition Speed", standHeightTransitionSpeed, 0f, 1000f));
+
+            EditorExtension.Space(5f);
+            SetCrouchSafetyCheckDistance(EditorExtension.DisplayFloatSlider("Crouch Safety Check Distance", crouchSafetyCheckDistance, 0f, 1000f));
+        }
+#endif
     }
 }
