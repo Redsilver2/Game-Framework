@@ -6,18 +6,18 @@ namespace RedSilver2.Framework.StateMachines.Events
 {
     public class MouseMovementTiltMotion : MovementTiltMotion
     {
-        protected sealed override void SetStateMachineEvents(PlayerMovementStateMachine stateMachine, bool isAddingEvents)
+        public MouseMovementTiltMotion(string name, PlayerMovementStateMachine stateMachine) : base(name, stateMachine)
         {
-            CameraController controller = stateMachine != null ? stateMachine.CameraController : null;
+        }
 
-            if (isAddingEvents) {
-                controller?.AddOnLateUpdateListener(OnLateUpdate);
-                controller?.AddOnUpdateListener(OnInputUpdate);
-            }
-            else {
-                controller?.RemoveOnLateUpdateListener(OnLateUpdate);
-                controller?.RemoveOnUpdateListener(OnInputUpdate);
-            }
+        protected override void Disable(MovementStateMachine stateMachine)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        protected override void Enable(MovementStateMachine stateMachine)
+        {
+            throw new System.NotImplementedException();
         }
 
         protected sealed override void UpdateRotation(Vector2 input, ref Vector3 desired)

@@ -46,7 +46,7 @@ namespace RedSilver2.Framework.StateMachines.Events
         [SerializeField, HideInInspector] private bool showAddClip;
         [SerializeField, HideInInspector] private bool showRemoveClip;
 
-        protected override void DrawInspectorSettings(StateMachine.StateInspectorVisualizer visualizer)
+        protected override void DrawInspectorSettings(StateMachine.InspectorVisualizer visualizer)
         {
             base.DrawInspectorSettings(visualizer);
             if (visualizer == null) return;
@@ -107,7 +107,7 @@ namespace RedSilver2.Framework.StateMachines.Events
             }       
         }
 
-        public static void DrawInspector(JumpState state, ref bool showEvent, StateMachine.StateInspectorVisualizer visualizer) {
+        public static void DrawInspector(JumpState state, ref bool showEvent, StateMachine.InspectorVisualizer visualizer) {
             DrawInspector(state, EVENT_NAME, ref showEvent, visualizer,
               () => {
                   EditorExtension.DisplayButton($"Add {EVENT_NAME}", () => { state?.AddEvent(EVENT_NAME, new JumpAudio(state)); });

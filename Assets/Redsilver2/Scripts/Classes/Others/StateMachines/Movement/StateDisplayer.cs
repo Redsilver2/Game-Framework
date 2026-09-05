@@ -8,17 +8,22 @@ namespace RedSilver2.Framework.StateMachines.Events
     {
         [SerializeField] private TextMeshProUGUI displayer;
 
-        protected override void SetStateMachineEvents(StateMachine stateMachine, bool isAddingEvents) {
-            if (isAddingEvents) { 
-                stateMachine?.AddOnStateEnteredListener(OnStateEntered);
-                stateMachine?.AddOnStateExitedListener(OnStateExited);
-            }
-            else {
-                stateMachine?.RemoveOnStateEnteredListener(OnStateEntered);
-                stateMachine?.RemoveOnStateExitedListener(OnStateExited);
-            }
+        public StateDisplayer(string name, StateMachine stateMachine) : base(name, stateMachine) {
 
         }
+
+        protected sealed override void Disable(StateMachine stateMachine)
+        {
+            stateMachine?.RemoveOnStateEnteredListener(OnStateEntered);
+            stateMachine?.RemoveOnStateExitedListener(OnStateExited);
+        }
+
+        protected sealed override void Enable(StateMachine stateMachine)
+        {
+            stateMachine?.AddOnStateEnteredListener(OnStateEntered);
+            stateMachine?.AddOnStateExitedListener(OnStateExited);  
+        }
+
         private void OnStateEntered(State state) { if(displayer != null) displayer.text = state != null ?  state.Name : string.Empty; }
         private void OnStateExited(State state) { if (displayer != null) displayer.text = "None"; }
     }

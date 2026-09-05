@@ -45,7 +45,7 @@ namespace RedSilver2.Framework.StateMachines.States
         private bool showCameraSettings;
         private bool showInputs;
 
-        public override void DrawInpsector(StateMachine.StateInspectorVisualizer visualizer)
+        public override void DrawInpsector(StateMachine.InspectorVisualizer visualizer)
         {
             base.DrawInpsector(visualizer);
 
@@ -53,7 +53,7 @@ namespace RedSilver2.Framework.StateMachines.States
             DrawInputSettings(visualizer);
         }
 
-        private void DrawCameraSettings(StateMachine.StateInspectorVisualizer visualizer)
+        private void DrawCameraSettings(StateMachine.InspectorVisualizer visualizer)
         {
             if (visualizer == null) return;
             else if (EditorExtension.DisplayFoldout("Camera 📷", ref showCameraSettings, visualizer.FoldoutColor)) {
@@ -69,7 +69,7 @@ namespace RedSilver2.Framework.StateMachines.States
             }
         }
 
-        private void DrawInputSettings(StateMachine.StateInspectorVisualizer visualizer)
+        private void DrawInputSettings(StateMachine.InspectorVisualizer visualizer)
         {
             if (visualizer == null) return;
             else if (EditorExtension.DisplayFoldout("Inputs 🕹️", ref showInputs, visualizer.FoldoutColor)) {

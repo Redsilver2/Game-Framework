@@ -162,7 +162,7 @@ namespace RedSilver2.Framework.StateMachines.States
             crouchSafetyCheckDistance = Mathf.Clamp(crouchSafetyCheckDistance, 0f, float.MaxValue);
         }
 
-        protected sealed override void DisplayBaseSettings(StateMachine.StateInspectorVisualizer visualizer)
+        protected sealed override void DisplayBaseSettings(StateMachine.InspectorVisualizer visualizer)
         {
             base.DisplayBaseSettings(visualizer);
             if (visualizer == null) return;

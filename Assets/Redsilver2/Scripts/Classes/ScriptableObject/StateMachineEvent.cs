@@ -3,30 +3,41 @@ using UnityEngine.Events;
 
 namespace RedSilver2.Framework.StateMachines.Events
 {
-    public abstract class StateMachineEvent : MonoBehaviour {
+    [System.Serializable]
+    public abstract partial class StateMachineEvent {
+        [SerializeField, HideInInspector]                     private string name;
+        [SerializeField, SerializeReference, HideInInspector] private StateMachine stateMachine;
 
-        private StateMachine stateMachine;
-     
-        protected virtual void Awake()
-        {
-             stateMachine = transform.root == null ? GetComponentInChildren<StateMachine>()
-                                                   : transform.root.GetComponentInChildren<StateMachine>();
-        }
+        private bool isEnabled;
+        public string Name => name;
 
-        protected virtual void Start()
-        {
-            SetStateMachineEvents(stateMachine, true);
-        }
-
-        public void SetStateMachine(StateMachine stateMachine) {
-            SetStateMachineEvents(this.stateMachine, false);
-
+        protected StateMachineEvent(string name, StateMachine stateMachine) { 
+            this.name         = name;
             this.stateMachine = stateMachine;
-            SetStateMachineEvents(stateMachine, enabled);
+            isEnabled = false;
         }
 
-        private void OnEnable()  { SetStateMachineEvents(stateMachine, true); }
-        private void OnDisable() { SetStateMachineEvents(stateMachine, false); }
-        protected abstract void SetStateMachineEvents(StateMachine stateMachine, bool isAddingEvents);
+        public void Enable()  {
+            if(!isEnabled && Application.isPlaying) {
+                Enable(stateMachine);
+                isEnabled = true;
+            }
+        }
+
+        public void Disable() {
+            if(isEnabled && Application.isPlaying) {
+                Disable(stateMachine);
+                isEnabled = false;
+            }
+        }
+
+        protected abstract void Enable(StateMachine stateMachine);
+        protected abstract void Disable(StateMachine stateMachine);
+    }
+    public abstract partial class StateMachineEvent
+    {
+#if UNITY_EDITOR
+        public void DrawInspector() { }
+#endif
     }
 }

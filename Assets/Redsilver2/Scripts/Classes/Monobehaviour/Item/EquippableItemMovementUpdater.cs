@@ -31,12 +31,12 @@ namespace RedSilver2.Framework.Items
         {
             if (item != null) {
                 Transform transform = item.transform;
-                movementMotion?.SetStateMachine(transform.root != null ? transform.root.GetComponent<PlayerMovementStateMachine>() : null);
+                //movementMotion?.SetStateMachine(transform.root != null ? transform.root.GetComponent<PlayerMovementStateMachine>() : null);
             }
         }
 
         private void OnRemoved() {
-            movementMotion?.SetStateMachine(null);
+            //movementMotion?.SetStateMachine(null);
         }
 
         protected abstract void SetMovementMotion(ref MovementMotion motion);

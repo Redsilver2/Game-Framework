@@ -85,7 +85,7 @@ namespace RedSilver2.Framework.StateMachines.Extensions
 
     public sealed partial class GroundWalkAudio : MovementAudio {
 #if UNITY_EDITOR
-        protected override void DrawInspectorSettings(StateMachine.StateInspectorVisualizer visualizer)
+        protected override void DrawInspectorSettings(StateMachine.InspectorVisualizer visualizer)
         {
             base.DrawInspectorSettings(visualizer);
             if (visualizer == null) return;
@@ -96,56 +96,77 @@ namespace RedSilver2.Framework.StateMachines.Extensions
 
 
 
-        public static void DrawInspector(WalkState state, ref bool showEvent, StateMachine.StateInspectorVisualizer visualizer)
+        public static void DrawInspector(WalkState state, ref bool showEvent, StateMachine.InspectorVisualizer visualizer)
         {
-            if(visualizer == null) return;
-
-            DrawInspector(state, EVENT_NAME, ref showEvent, visualizer,
-              () => {
-                  EditorExtension.Space(10);
-                  EditorExtension.DisplayButton($"Add {EVENT_NAME}", visualizer.ButtonColor, () => { state?.AddEvent(EVENT_NAME, new GroundWalkAudio(state)); });
-              },
-              () =>
-              {
-
-                  EditorExtension.Space(10);
-                  EditorExtension.DisplayButton($"Remove {EVENT_NAME}", visualizer.ButtonColor, () => { state?.RemoveEvent(EVENT_NAME); });
-              });
-        }
-
-        public static void DrawInspector(RunState state, ref bool showEvent, StateMachine.StateInspectorVisualizer visualizer)
-        {
-            if (visualizer == null) return;
-
+            if (visualizer == null || state == null) return;
 
             DrawInspector(state, EVENT_NAME, ref showEvent, visualizer,
                           () => {
+                              EditorExtension.DrawVerticalHelpBox(() => {
 
-                              EditorExtension.Space(10);
-                              EditorExtension.DisplayButton($"Add {EVENT_NAME}", visualizer.ButtonColor, () => { state?.AddEvent(EVENT_NAME, new GroundWalkAudio(state)); });
+                                  EditorExtension.DisplayButton($"Add {EVENT_NAME}", visualizer.ButtonColor, () => {
+                                      state?.AddEvent(EVENT_NAME, new GroundWalkAudio(state));
+                                  });
+
+                              }, visualizer.BackgroundColor);
                           },
                           () =>
                           {
-
-                              EditorExtension.Space(10);
-                              EditorExtension.DisplayButton($"Remove {EVENT_NAME}", visualizer.ButtonColor, () => { state?.RemoveEvent(EVENT_NAME); });
-                          });
+                              EditorExtension.DrawVerticalHelpBox(() => {
+                                  EditorExtension.DisplayButton($"Remove {EVENT_NAME}", visualizer.ButtonColor, () => { state?.RemoveEvent(EVENT_NAME); });
+                                  GetEvent(state)?.DrawInspector(visualizer);
+                              }, visualizer.BackgroundColor);
+                          }
+              );
         }
 
-        public static void DrawInspector(CrouchState state, ref bool showEvent, StateMachine.StateInspectorVisualizer visualizer)
+        public static void DrawInspector(RunState state, ref bool showEvent, StateMachine.InspectorVisualizer visualizer)
         {
-            if (visualizer == null) return;
+            if (visualizer == null || state == null) return;
+
 
             DrawInspector(state, EVENT_NAME, ref showEvent, visualizer,
                           () => {
+                              EditorExtension.DrawVerticalHelpBox(() => {
 
-                              EditorExtension.Space(10);
-                              EditorExtension.DisplayButton($"Add {EVENT_NAME}", visualizer.ButtonColor, () => { state?.AddEvent(EVENT_NAME, new GroundWalkAudio(state)); });
-                          }, 
+                                  EditorExtension.DisplayButton($"Add {EVENT_NAME}", visualizer.ButtonColor, () => {
+                                      state?.AddEvent(EVENT_NAME, new GroundWalkAudio(state));
+                                  });
+
+                              }, visualizer.BackgroundColor);
+                          },
                           () =>
                           {
-                              EditorExtension.Space(10);
-                              EditorExtension.DisplayButton($"Remove {EVENT_NAME}", visualizer.ButtonColor, () => { state?.RemoveEvent(EVENT_NAME); });
+                              EditorExtension.DrawVerticalHelpBox(() => {
+                                  EditorExtension.DisplayButton($"Remove {EVENT_NAME}", visualizer.ButtonColor, () => { state?.RemoveEvent(EVENT_NAME); });
+                                  GetEvent(state)?.DrawInspector(visualizer);
+                              }, visualizer.BackgroundColor);
+
+                        
+                          });
+        }
+
+        public static void DrawInspector(CrouchState state, ref bool showEvent, StateMachine.InspectorVisualizer visualizer)
+        {
+            if (visualizer == null || state == null) return;
+            DrawInspector(state, EVENT_NAME, ref showEvent, visualizer,
+                          () => {
+                              EditorExtension.DrawVerticalHelpBox(() => {
+
+                                  EditorExtension.DisplayButton($"Add {EVENT_NAME}", visualizer.ButtonColor, () => {
+                                      state?.AddEvent(EVENT_NAME, new GroundWalkAudio(state));
+                                  });
+
+                              }, visualizer.BackgroundColor);
+                          },
+                          () =>
+                          {
+                              EditorExtension.DrawVerticalHelpBox(() => {
+                                  EditorExtension.DisplayButton($"Remove {EVENT_NAME}", visualizer.ButtonColor, () => { state?.RemoveEvent(EVENT_NAME); });
+                                  GetEvent(state)?.DrawInspector(visualizer);
+                              }, visualizer.BackgroundColor);
+
+
                           });
         }
 

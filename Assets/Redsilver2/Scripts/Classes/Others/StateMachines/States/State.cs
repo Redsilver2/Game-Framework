@@ -391,7 +391,7 @@ namespace RedSilver2.Framework.StateMachines.States
             CanShowTransitions  = true;
         }
 
-        public virtual void DrawInpsector(StateMachine.StateInspectorVisualizer visualizer)
+        public virtual void DrawInpsector(StateMachine.InspectorVisualizer visualizer)
         {
             Validate();
             if (visualizer == null) return;
@@ -409,9 +409,7 @@ namespace RedSilver2.Framework.StateMachines.States
 
             if (CanShowExtensions) {
                 if (EditorExtension.DisplayFoldout("Extensions", ref showExtensions, visualizer.FoldoutColor)) {
-                    EditorExtension.DrawVerticalHelpBox(() => {
-                        DisplayExtensions(visualizer);
-                    }, visualizer.BackgroundColor);
+                    DisplayExtensions(visualizer);
                 }
             }
             else { showExtensions = false; }
@@ -426,11 +424,11 @@ namespace RedSilver2.Framework.StateMachines.States
 
         }
 
-        protected virtual void DisplayBaseSettings(StateMachine.StateInspectorVisualizer visualizer) { }
+        protected virtual void DisplayBaseSettings(StateMachine.InspectorVisualizer visualizer) { }
 
-        protected virtual void DisplayExtensions(StateMachine.StateInspectorVisualizer visualizer) { }
+        protected virtual void DisplayExtensions(StateMachine.InspectorVisualizer visualizer) { }
 
-        private void DisplayTransitions(StateMachine.StateInspectorVisualizer visualizer)
+        private void DisplayTransitions(StateMachine.InspectorVisualizer visualizer)
         {
 
             if (visualizer == null) return;
@@ -445,16 +443,14 @@ namespace RedSilver2.Framework.StateMachines.States
             }
         }
 
-        private void DisplayTransitions(string[] values, string label, ref bool showStates, StateMachine.StateInspectorVisualizer visualizer)
+        private void DisplayTransitions(string[] values, string label, ref bool showStates, StateMachine.InspectorVisualizer visualizer)
         {
             if (values == null || visualizer == null || values.Length == 0) return;
             if (EditorExtension.DisplayFoldout(label, ref showStates, visualizer.FoldoutColor))  {
-                EditorExtension.DrawVerticalHelpBox(() => {
-                    foreach (string s in values) {
-                        if (string.IsNullOrEmpty(s)) continue;
-                        EditorGUILayout.LabelField(s, EditorStyles.boldLabel);
-                    }
-                }, visualizer.BackgroundColor);
+                foreach (string s in values) {
+                    if (string.IsNullOrEmpty(s)) continue;
+                    EditorGUILayout.LabelField(s, EditorStyles.boldLabel);
+                }
             }
 
         }

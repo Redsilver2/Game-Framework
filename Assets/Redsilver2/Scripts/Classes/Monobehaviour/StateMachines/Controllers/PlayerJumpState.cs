@@ -18,7 +18,7 @@ namespace RedSilver2.Framework.StateMachines
 #if UNITY_EDITOR
         private bool showInputs;
 
-        public sealed override void DrawInpsector(StateMachine.StateInspectorVisualizer visualizer)
+        public sealed override void DrawInpsector(StateMachine.InspectorVisualizer visualizer)
         {
             if (visualizer == null) return;
             else if (EditorExtension.DisplayFoldout("Inputs 🕹️", ref showInputs, visualizer.FoldoutColor)) {

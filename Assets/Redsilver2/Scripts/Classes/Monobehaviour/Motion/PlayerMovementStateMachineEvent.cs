@@ -3,13 +3,9 @@ using UnityEngine;
 
 
 namespace RedSilver2.Framework.StateMachines.Events {
-    public abstract class PlayerMovementStateMachineEvent : MovementStateMachineEvent
-    {
-        protected override void SetStateMachineEvents(MovementStateMachine stateMachine, bool isAddingEvents)
-        {
-            SetStateMachineEvents(stateMachine as PlayerMovementStateMachine, isAddingEvents);
-        }
+    public abstract class PlayerMovementStateMachineEvent : MovementStateMachineEvent {
+        protected PlayerMovementStateMachineEvent(string name, PlayerMovementStateMachine stateMachine) : base(name, stateMachine) {
 
-        protected abstract void SetStateMachineEvents(PlayerMovementStateMachine stateMachine, bool isAddingEvents);
+        }
     }
 }

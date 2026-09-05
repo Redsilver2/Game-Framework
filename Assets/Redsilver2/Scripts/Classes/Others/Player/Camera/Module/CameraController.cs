@@ -5,45 +5,19 @@ using UnityEngine;
 
 namespace RedSilver2.Framework.Player
 {
-    public abstract class CameraController : Vector2MouseConfigurationEvent
+    [System.Serializable]
+    public abstract partial class CameraController
     {
-
         [Space]
-        [SerializeField] private string cameraName;
+        [SerializeField, HideInInspector] private Camera camera;
 
-        [Space]
-        [SerializeField] private Transform body;
-        [SerializeField] private Transform head;
-
-        [Space]
-        [SerializeField] private float defaultSensitivityX;
-        [SerializeField] private float defaultSensitivityY;
-
-
-        [Space]
-        [SerializeField] private bool canDragHead;
-        [SerializeField] private float dragHeadSpeed;
-
-        [Space]
-        [SerializeField] private bool canDragBody;
-        [SerializeField] private float dragBodySpeed; 
-
-        protected float headRotation;
-        protected float bodyRotation;
-
-        private Vector3 originalHeadRotation;
-
-        public float HeadRotation => headRotation;
-        public float BodyRotation => bodyRotation;
-
-        public Transform Body => body;
-        public Transform Head => head;
+        [SerializeField, HideInInspector] private string cameraName;
+        [SerializeField, HideInInspector] private bool enabled;
 
         private static List<CameraController> modules;
-
         private static CameraController current;
-
         public static CameraController  Current => current;
+
         public static CameraController[] Modules
         {
             get
@@ -53,90 +27,26 @@ namespace RedSilver2.Framework.Player
             }
         }
 
-        public void RotateBody(float rotation) {
-            Rotate(rotation, ref bodyRotation);
+        public CameraController() {
+            cameraName   = string.Empty;
+            this.enabled = false;
         }
 
-        public void RotateHead(float rotation) {
-            Rotate(rotation, ref headRotation); 
-        }
-
-        private void Rotate(float rotation, ref float current)
+        public void SetCamera(Camera camera)
         {
-           current += Time.deltaTime * rotation;
+            this.camera = camera;
         }
 
-        protected override void OnLateUpdate()
-        {
-            Quaternion _headRotation = Quaternion.Euler(headRotation, originalHeadRotation.y, originalHeadRotation.z);
-            Quaternion _bodyRotation = Quaternion.Euler(originalHeadRotation.x, bodyRotation, originalHeadRotation.z);
-
-            UpdateTransform(canDragHead, dragHeadSpeed, _headRotation, head);
-            UpdateTransform(canDragBody, dragBodySpeed, _bodyRotation, body);
+        public void Update() {
+            if(camera != null) Update(camera);
         }
 
-        private void UpdateTransform(bool canDrag, float dragSpeed, Quaternion current, Transform transform)
-        {
-            if (transform != null)
-            {
-                if (canDrag) current = Quaternion.Slerp(transform.localRotation, current, Time.deltaTime * dragSpeed);
-                transform.localRotation = current;
-            }
+        public void LateUpdate() {
+            if (camera != null) LateUpdate(camera);
         }
 
-        protected override void OnUpdate(Vector2 vector)
-        {
-            base.OnUpdate(vector);
-            UpdateBodyRotation(body);
-            UpdateHeadRotation(head); 
-        }
-
-        protected virtual void UpdateBodyRotation(Transform body) {
-            if (body == null) {
-                bodyRotation = 0f;
-                return;
-            }
-
-            bodyRotation += Time.deltaTime * Input.x * defaultSensitivityX;
-        }
-
-        protected virtual void UpdateHeadRotation(Transform head)
-        {
-            if (head == null) {
-                headRotation = 0f;
-                return;
-            }
-
-            headRotation += Time.deltaTime * -Input.y * defaultSensitivityY;
-        }
-
-        public void SetOriginalHeadRotation(Vector3 rotation) {
-            originalHeadRotation = rotation;
-        }
-
-        public void SetOriginalBodyRotation(Vector3 rotation) {
-            originalHeadRotation = rotation;
-        }
-
-        public void SetCanDragHead(bool canDragHead)
-        {
-            this.canDragHead = canDragHead;
-        }
-
-        public void SetCanDragBody(bool canDragBody)
-        {
-            this.canDragBody = canDragBody;
-        }
-
-        public void SetDragHeadSpeed(float dragHeadSpeed)
-        {
-            this.dragHeadSpeed = dragHeadSpeed;
-        }
-
-        public void SetDragBodySpeed(float dragBodySpeed)
-        {
-            this.dragBodySpeed = dragBodySpeed;
-        }
+        protected abstract void Update(Camera camera);
+        protected abstract void LateUpdate(Camera camera);  
 
         public bool IsActifCameraController(CameraController controller) {
             if (current == null) return false;
@@ -195,5 +105,29 @@ namespace RedSilver2.Framework.Player
             if (results.Count() > 0) return results.First();
             return null;
         }
+    }
+
+    public abstract partial class CameraController {
+#if UNITY_EDITOR
+        [SerializeField] private bool showCameraFoldout;
+        [SerializeField, HideInInspector] private bool showBaseSettings;
+
+        public void DrawInspector(Color foldoutColor, Color buttonColor, Color backgroundColor) {
+
+            if (EditorExtension.DisplayFoldout("Camera Controller", ref showCameraFoldout, foldoutColor)) {
+                EditorExtension.DrawVerticalHelpBox(() => {
+                    if (EditorExtension.DisplayFoldout("Base Settings", ref showBaseSettings, foldoutColor)) {
+                        ShowBaseSettings(foldoutColor, buttonColor, backgroundColor);
+                    }
+                }, backgroundColor, true);
+            }
+        }
+
+        protected virtual void ShowBaseSettings(Color foldoutColor, Color buttonColor, Color backgroundColor) {
+            EditorExtension.Space(10f);
+            enabled = EditorExtension.DisplayToggle("Enable ", enabled);
+            camera  = EditorExtension.DisplayCustomField("Camera ", true, camera);
+        }
+#endif
     }
 }

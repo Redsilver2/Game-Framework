@@ -547,13 +547,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d6d7665595f0974dbc21b5ca5d787b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.Events.KeyboardMovementTiltMotion
-  defaultLerpSpeed: 5
-  directionUpdateSpeed: 5
-  rotationUpdateSpeed: 5
-  min: {x: 5, y: 0}
-  max: {x: 5, y: 5}
-  isTiltingContinuously: 1
-  tiltSpeed: 10
 --- !u!114 &379409359
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -578,10 +571,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 383dbdc64a957a848b380376d6b32e20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovementSwayMotion
-  defaultLerpSpeed: 5
-  positionUpdateSpeed: 10
-  min: {x: 0.05, y: 0.05}
-  max: {x: 0.05, y: 0}
 --- !u!1 &392872283
 GameObject:
   m_ObjectHideFlags: 0
@@ -658,7 +647,7 @@ MonoBehaviour:
   defaultFieldColor: {r: 0, g: 0, b: 0, a: 0}
   defaultButtonColor: {r: 0, g: 0, b: 0, a: 0}
   defaultBackgroundColor: {r: 0, g: 0, b: 0, a: 0}
-  stateVisualizer:
+  visualizer:
     showVisualizer: 0
     foldoutColor: {r: 0, g: 0, b: 0, a: 0}
     buttonColor: {r: 0, g: 0, b: 0, a: 0}
@@ -1001,7 +990,7 @@ MonoBehaviour:
   defaultFieldColor: {r: 0, g: 0, b: 0, a: 0}
   defaultButtonColor: {r: 0, g: 0, b: 0, a: 0}
   defaultBackgroundColor: {r: 0, g: 0, b: 0, a: 0}
-  stateVisualizer:
+  visualizer:
     showVisualizer: 0
     foldoutColor: {r: 0, g: 0, b: 0, a: 0}
     buttonColor: {r: 0, g: 0, b: 0, a: 0}
@@ -1188,13 +1177,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d6d7665595f0974dbc21b5ca5d787b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.Events.KeyboardMovementTiltMotion
-  defaultLerpSpeed: 5
-  directionUpdateSpeed: 5
-  rotationUpdateSpeed: 5
-  min: {x: 5, y: 0}
-  max: {x: 5, y: 5}
-  isTiltingContinuously: 1
-  tiltSpeed: 10
 --- !u!114 &754809372
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1219,10 +1201,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 383dbdc64a957a848b380376d6b32e20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovementSwayMotion
-  defaultLerpSpeed: 5
-  positionUpdateSpeed: 10
-  min: {x: 0.05, y: 0.05}
-  max: {x: 0.05, y: 0}
 --- !u!1 &770072904
 GameObject:
   m_ObjectHideFlags: 0
@@ -1345,7 +1323,7 @@ MonoBehaviour:
   defaultFieldColor: {r: 0, g: 0, b: 0, a: 0}
   defaultButtonColor: {r: 0, g: 0, b: 0, a: 0}
   defaultBackgroundColor: {r: 0, g: 0, b: 0, a: 0}
-  stateVisualizer:
+  visualizer:
     showVisualizer: 0
     foldoutColor: {r: 0, g: 0, b: 0, a: 0}
     buttonColor: {r: 0, g: 0, b: 0, a: 0}
@@ -1559,7 +1537,7 @@ MonoBehaviour:
   defaultFieldColor: {r: 0, g: 0, b: 0, a: 0}
   defaultButtonColor: {r: 0, g: 0, b: 0, a: 0}
   defaultBackgroundColor: {r: 0, g: 0, b: 0, a: 0}
-  stateVisualizer:
+  visualizer:
     showVisualizer: 0
     foldoutColor: {r: 0, g: 0, b: 0, a: 0}
     buttonColor: {r: 0, g: 0, b: 0, a: 0}
@@ -1709,13 +1687,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d6d7665595f0974dbc21b5ca5d787b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.Events.KeyboardMovementTiltMotion
-  defaultLerpSpeed: 5
-  directionUpdateSpeed: 5
-  rotationUpdateSpeed: 5
-  min: {x: 5, y: 0}
-  max: {x: 5, y: 5}
-  isTiltingContinuously: 1
-  tiltSpeed: 10
 --- !u!114 &920773169
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1740,10 +1711,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 383dbdc64a957a848b380376d6b32e20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovementSwayMotion
-  defaultLerpSpeed: 5
-  positionUpdateSpeed: 10
-  min: {x: 0.05, y: 0.05}
-  max: {x: 0.05, y: 0}
 --- !u!1 &938722455
 GameObject:
   m_ObjectHideFlags: 0
@@ -1834,11 +1801,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3d5e1a3f6b78814e8b293c842152ffe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.Events.MouseMovementTiltMotion
-  defaultLerpSpeed: 10
-  directionUpdateSpeed: 50
-  rotationUpdateSpeed: 10
-  min: {x: 5, y: 20}
-  max: {x: 5, y: 20}
 --- !u!1 &1013899970
 GameObject:
   m_ObjectHideFlags: 0
@@ -1920,7 +1882,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 778b266f0d803d84dacaefc602ce5996, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.Events.StateDisplayer
-  displayer: {fileID: 1039532734}
 --- !u!114 &1039532734
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2566,7 +2527,7 @@ MonoBehaviour:
   defaultFieldColor: {r: 0, g: 0, b: 0, a: 0}
   defaultButtonColor: {r: 0, g: 0, b: 0, a: 0}
   defaultBackgroundColor: {r: 0, g: 0, b: 0, a: 0}
-  stateVisualizer:
+  visualizer:
     showVisualizer: 0
     foldoutColor: {r: 0, g: 0, b: 0, a: 0}
     buttonColor: {r: 0, g: 0, b: 0, a: 0}
@@ -2679,11 +2640,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3d5e1a3f6b78814e8b293c842152ffe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.Events.MouseMovementTiltMotion
-  defaultLerpSpeed: 10
-  directionUpdateSpeed: 50
-  rotationUpdateSpeed: 10
-  min: {x: 5, y: 20}
-  max: {x: 5, y: 20}
 --- !u!1001 &1533362341
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2803,11 +2759,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3d5e1a3f6b78814e8b293c842152ffe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.Events.MouseMovementTiltMotion
-  defaultLerpSpeed: 10
-  directionUpdateSpeed: 10
-  rotationUpdateSpeed: 10
-  min: {x: 10, y: 10}
-  max: {x: 10, y: 10}
 --- !u!1 &1607124412
 GameObject:
   m_ObjectHideFlags: 0
@@ -2991,7 +2942,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 778b266f0d803d84dacaefc602ce5996, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.Events.StateDisplayer
-  displayer: {fileID: 1712459078}
 --- !u!1001 &1745779785
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3111,11 +3061,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3d5e1a3f6b78814e8b293c842152ffe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.Events.MouseMovementTiltMotion
-  defaultLerpSpeed: 10
-  directionUpdateSpeed: 50
-  rotationUpdateSpeed: 10
-  min: {x: 5, y: 20}
-  max: {x: 5, y: 20}
 --- !u!1 &1953040681
 GameObject:
   m_ObjectHideFlags: 0
@@ -3153,18 +3098,18 @@ MonoBehaviour:
   states: []
   showEditorSettings: 1
   showDefaultSettings: 1
-  showStateFoldout: 0
+  showStateFoldout: 1
   showStateAddOrRemove: 0
-  showDefaultStates: 0
-  showDefaultEditorSettings: 0
+  showDefaultStates: 1
+  showDefaultEditorSettings: 1
   addStateSelectedIndex: 0
   showStates: 010101y
   lockStates: 000000y
-  defaultFoldoutColor: {r: 0, g: 0, b: 0, a: 0}
-  defaultFieldColor: {r: 0, g: 0, b: 0, a: 0}
-  defaultButtonColor: {r: 0, g: 0, b: 0, a: 0}
-  defaultBackgroundColor: {r: 0, g: 0, b: 0, a: 0}
-  stateVisualizer:
+  defaultFoldoutColor: {r: 0, g: 0, b: 0, a: 0.6588}
+  defaultFieldColor: {r: 0, g: 0, b: 0, a: 0.5176}
+  defaultButtonColor: {r: 0, g: 0, b: 0, a: 0.4627}
+  defaultBackgroundColor: {r: 0, g: 0, b: 0, a: 0.4627}
+  visualizer:
     showVisualizer: 0
     foldoutColor: {r: 0, g: 0, b: 0, a: 0}
     buttonColor: {r: 0, g: 0, b: 0, a: 0}
@@ -3893,7 +3838,7 @@ MonoBehaviour:
   defaultFieldColor: {r: 0, g: 0, b: 0, a: 0}
   defaultButtonColor: {r: 0, g: 0, b: 0, a: 0}
   defaultBackgroundColor: {r: 0, g: 0, b: 0, a: 0}
-  stateVisualizer:
+  visualizer:
     showVisualizer: 0
     foldoutColor: {r: 0, g: 0, b: 0, a: 0}
     buttonColor: {r: 0, g: 0, b: 0, a: 0}
@@ -3914,6 +3859,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3722fd76c2e948b4f83c20aa66601d08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Player.FPSCameraController
+  input: {x: 0, y: 0}
   settings: {fileID: 11400000, guid: d93f0af85a0a23640a6af905b2e29e5e, type: 2}
   cameraName: AAA
   body: {fileID: 1038957370103312475}
@@ -3924,6 +3870,9 @@ MonoBehaviour:
   dragHeadSpeed: 0
   canDragBody: 0
   dragBodySpeed: 0
+  headRotation: 0
+  bodyRotation: 0
+  originalHeadRotation: {x: 0, y: 0, z: 0}
   minHeadRotation: -45
   maxHeadRotation: 45
   canLerpHeadRotation: 0
@@ -4341,52 +4290,63 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63e85299cd878444fbfbbe680f58ed9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.PlayerCharacterControllerStateMachine
-  enableStateAutomatically: 0
+  enableStateAutomatically: 1
   states:
   - key: 
     value:
       state:
         rid: -2
+  - key: Land
+    value:
+      state:
+        rid: 972954643982450953
+  - key: Fall
+    value:
+      state:
+        rid: 972954643982450952
+  - key: Walk
+    value:
+      state:
+        rid: 972954643982450950
   - key: Idol
     value:
       state:
-        rid: 972954643982450846
+        rid: 972954643982450951
   showEditorSettings: 0
-  showDefaultSettings: 0
+  showDefaultSettings: 1
   showStateFoldout: 0
-  showStateAddOrRemove: 0
-  showDefaultStates: 0
+  showStateAddOrRemove: 1
+  showDefaultStates: 1
   showDefaultEditorSettings: 0
   addStateSelectedIndex: 0
-  showStates: 0000000000000100y
-  lockStates: 0001000101010100y
+  showStates: 0101000000000000y
+  lockStates: 0100000101010100y
   defaultFoldoutColor: {r: 0, g: 0, b: 0, a: 0.6588}
   defaultFieldColor: {r: 0, g: 0, b: 0, a: 0.5176}
   defaultButtonColor: {r: 0, g: 0, b: 0, a: 0.3254902}
   defaultBackgroundColor: {r: 0, g: 0, b: 0, a: 0.4627}
-  stateVisualizer:
+  visualizer:
     showVisualizer: 0
-    foldoutColor: {r: 0, g: 0, b: 0, a: 0.6588}
-    buttonColor: {r: 0, g: 0, b: 0, a: 0.49803922}
-    backgroundColor: {r: 0.16037738, g: 0.16037738, b: 0.16037738, a: 0.007843138}
+    foldoutColor: {r: 0, g: 0, b: 0, a: 0.70980394}
+    buttonColor: {r: 0, g: 0, b: 0, a: 0.4627}
+    backgroundColor: {r: 0.11320752, g: 0.11320752, b: 0.11320752, a: 1}
   groundCheckRange: 1.5
-  is2DMovement: 0
   moveInputSetting: {fileID: 11400000, guid: 34e9a3b820b865e438822ed3a624d62a, type: 2}
-  cameraController: {fileID: 0}
-  onMoveInputUpdate:
-    m_PersistentCalls:
-      m_Calls: []
+  handler:
+    rid: 972954671511240704
+  previousControlType: 2
+  controlType: 2
   references:
     version: 2
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 972954643982450846
-      type: {class: PlayerIdolState, ns: RedSilver2.Framework.StateMachines.States, asm: Assembly-CSharp}
+    - rid: 972954643982450950
+      type: {class: PlayerWalkState, ns: RedSilver2.Framework.StateMachines.States, asm: Assembly-CSharp}
       data:
-        name: Idol
+        name: Walk
         incompatibleTransitionStates:
-        - idol
+        - walk
         - land
         - 
         events: []
@@ -4428,7 +4388,194 @@ MonoBehaviour:
             m_Calls: []
         updatableStateMachine: {fileID: 9091687914289102630}
         movementStateMachine: {fileID: 9091687914289102630}
-        moveSpeedTransition: 0
+        moveSpeed: 10
+        moveTransitionSpeed: 10
+        showGroundWalkAudio: 1
+    - rid: 972954643982450951
+      type: {class: PlayerIdolState, ns: RedSilver2.Framework.StateMachines.States, asm: Assembly-CSharp}
+      data:
+        name: Idol
+        incompatibleTransitionStates:
+        - idol
+        - land
+        - 
+        events: []
+        stateMachine: {fileID: 9091687914289102630}
+        onAdded:
+          m_PersistentCalls:
+            m_Calls: []
+        onRemoved:
+          m_PersistentCalls:
+            m_Calls: []
+        onEntered:
+          m_PersistentCalls:
+            m_Calls: []
+        onExited:
+          m_PersistentCalls:
+            m_Calls: []
+        onEnabled:
+          m_PersistentCalls:
+            m_Calls: []
+        onDisabled:
+          m_PersistentCalls:
+            m_Calls: []
+        onTransitionStateAdded:
+          m_PersistentCalls:
+            m_Calls: []
+        onTransitionStateRemoved:
+          m_PersistentCalls:
+            m_Calls: []
+        showBaseSettings: 1
+        showExtensions: 1
+        showTransitions: 0
+        showCompatibleStates: 0
+        showIncompatibleStates: 0
+        onUpdate:
+          m_PersistentCalls:
+            m_Calls: []
+        onLateUpdate:
+          m_PersistentCalls:
+            m_Calls: []
+        updatableStateMachine: {fileID: 9091687914289102630}
+        movementStateMachine: {fileID: 9091687914289102630}
+        moveSpeedTransition: 10
+    - rid: 972954643982450952
+      type: {class: PlayerFallState, ns: RedSilver2.Framework.StateMachines.States, asm: Assembly-CSharp}
+      data:
+        name: Fall
+        incompatibleTransitionStates:
+        - idol
+        - walk
+        - run
+        - crouch
+        - jump
+        - fall
+        - climb
+        - 
+        events: []
+        stateMachine: {fileID: 9091687914289102630}
+        onAdded:
+          m_PersistentCalls:
+            m_Calls: []
+        onRemoved:
+          m_PersistentCalls:
+            m_Calls: []
+        onEntered:
+          m_PersistentCalls:
+            m_Calls: []
+        onExited:
+          m_PersistentCalls:
+            m_Calls: []
+        onEnabled:
+          m_PersistentCalls:
+            m_Calls: []
+        onDisabled:
+          m_PersistentCalls:
+            m_Calls: []
+        onTransitionStateAdded:
+          m_PersistentCalls:
+            m_Calls: []
+        onTransitionStateRemoved:
+          m_PersistentCalls:
+            m_Calls: []
+        showBaseSettings: 1
+        showExtensions: 0
+        showTransitions: 1
+        showCompatibleStates: 0
+        showIncompatibleStates: 1
+        onUpdate:
+          m_PersistentCalls:
+            m_Calls: []
+        onLateUpdate:
+          m_PersistentCalls:
+            m_Calls: []
+        updatableStateMachine: {fileID: 9091687914289102630}
+        movementStateMachine: {fileID: 9091687914289102630}
+        airbornTransitionTrigger: 0.02
+        moveSpeed: 0
+        moveTransitionSpeed: 0
+        canAffectMovementSpeed: 0
+        fallSpeed: -20
+        fallTransitionSpeed: 10
+        groundedFallSpeed: -10
+        groundedFallTransitionSpeed: 10
+    - rid: 972954643982450953
+      type: {class: PlayerLandState, ns: RedSilver2.Framework.StateMachines.States, asm: Assembly-CSharp}
+      data:
+        name: Land
+        incompatibleTransitionStates:
+        - land
+        - fall
+        - jump
+        - 
+        events: []
+        stateMachine: {fileID: 9091687914289102630}
+        onAdded:
+          m_PersistentCalls:
+            m_Calls: []
+        onRemoved:
+          m_PersistentCalls:
+            m_Calls: []
+        onEntered:
+          m_PersistentCalls:
+            m_Calls: []
+        onExited:
+          m_PersistentCalls:
+            m_Calls: []
+        onEnabled:
+          m_PersistentCalls:
+            m_Calls: []
+        onDisabled:
+          m_PersistentCalls:
+            m_Calls: []
+        onTransitionStateAdded:
+          m_PersistentCalls:
+            m_Calls: []
+        onTransitionStateRemoved:
+          m_PersistentCalls:
+            m_Calls: []
+        showBaseSettings: 0
+        showExtensions: 0
+        showTransitions: 0
+        showCompatibleStates: 0
+        showIncompatibleStates: 0
+        onUpdate:
+          m_PersistentCalls:
+            m_Calls: []
+        onLateUpdate:
+          m_PersistentCalls:
+            m_Calls: []
+        updatableStateMachine: {fileID: 9091687914289102630}
+        movementStateMachine: {fileID: 9091687914289102630}
+    - rid: 972954671511240704
+      type: {class: PlayerFirstPersonMovementUpdater, ns: RedSilver2.Framework.StateMachines.Events, asm: Assembly-CSharp}
+      data:
+        stateMachine: {fileID: 9091687914289102630}
+        cameraController:
+          rid: 972954671511240705
+    - rid: 972954671511240705
+      type: {class: FPSCameraController, ns: RedSilver2.Framework.Player, asm: Assembly-CSharp}
+      data:
+        camera: {fileID: 3330947504947525347}
+        cameraName: 
+        enabled: 1
+        showCameraFoldout: 1
+        showBaseSettings: 1
+        inputSettings: {fileID: 11400000, guid: d93f0af85a0a23640a6af905b2e29e5e, type: 2}
+        parent: {fileID: 190184649}
+        body: {fileID: 1038957370103312475}
+        head: {fileID: 190184649}
+        defaultSensitivityX: 30.4
+        defaultSensitivityY: 31.8
+        minHeadRotation: -45
+        maxHeadRotation: 45
+        canLerpHeadRotation: 0
+        headRotationReturnSpeed: 1
+        canDragHead: 0
+        dragHeadSpeed: 1
+        canDragBody: 0
+        dragBodySpeed: 1
+        originalHeadRotation: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

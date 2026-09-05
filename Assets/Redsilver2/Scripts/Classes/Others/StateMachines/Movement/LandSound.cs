@@ -56,7 +56,7 @@ namespace RedSilver2.Framework.StateMachines.Extensions
 
     public sealed partial class LandSound : MovementAudio {
 #if UNITY_EDITOR
-        public static void DrawInspector(LandState state, ref bool showEvent, StateMachine.StateInspectorVisualizer visualizer)
+        public static void DrawInspector(LandState state, ref bool showEvent, StateMachine.InspectorVisualizer visualizer)
         {
             DrawInspector(state, EVENT_NAME, ref showEvent, visualizer,
               () => {

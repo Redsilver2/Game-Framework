@@ -60,7 +60,7 @@ namespace RedSilver2.Framework.StateMachines.States
             groundedFallTransitionSpeed = Mathf.Clamp(groundedFallTransitionSpeed, 0f, float.MaxValue);
         }
 
-        protected override void DisplayBaseSettings(StateMachine.StateInspectorVisualizer visualizer)
+        protected override void DisplayBaseSettings(StateMachine.InspectorVisualizer visualizer)
         {
             base.DisplayBaseSettings(visualizer);
             if (visualizer == null) return;
@@ -169,13 +169,6 @@ namespace RedSilver2.Framework.StateMachines.States
             this.airbornTransitionTrigger = airbornTransitionTrigger;
         }
 
-        public static FallState GetState(MovementStateMachine stateMachine)
-        {
-            if(stateMachine == null) return null;
-            return stateMachine.GetState(TYPE) as FallState;    
-        }
-
-
         protected sealed override MovementStateType[] GetDefaultInvalidTypes()
         {
             var results = Enum.GetValues(typeof(MovementStateType)) as MovementStateType[];
@@ -185,6 +178,18 @@ namespace RedSilver2.Framework.StateMachines.States
         protected sealed override MovementStateType[] GetRequiredTypes()
         {
             return new MovementStateType[] { LandState.TYPE };
+        }
+
+        public static FallState GetState(MovementStateMachine stateMachine)
+        {
+            if (stateMachine == null) return null;
+            return stateMachine.GetState(TYPE) as FallState;
+        }
+
+        public static float GetFallSpeed(MovementStateMachine stateMachine)
+        {
+            FallState state = GetState(stateMachine);
+            return state != null ? state.FallSpeed : 0f;
         }
     }
 }

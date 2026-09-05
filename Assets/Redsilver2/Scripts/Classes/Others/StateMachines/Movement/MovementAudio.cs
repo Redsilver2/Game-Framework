@@ -18,7 +18,7 @@ namespace RedSilver2.Framework.StateMachines.Events
         }
 
 #if UNITY_EDITOR
-        protected override void DrawInspectorSettings(StateMachine.StateInspectorVisualizer visualizer) {
+        protected override void DrawInspectorSettings(StateMachine.InspectorVisualizer visualizer) {
             base.DrawInspectorSettings(visualizer);
             source = EditorExtension.DisplayCustomField("Audio Source", true, source);
         }

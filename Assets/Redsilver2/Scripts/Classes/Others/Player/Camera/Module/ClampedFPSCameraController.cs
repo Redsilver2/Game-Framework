@@ -1,6 +1,7 @@
 using RedSilver2.Framework.Player;
 using UnityEngine;
 
+[System.Serializable]
 public class ClampedFPSCameraController : FPSCameraController
 {
     [Space]
@@ -10,6 +11,11 @@ public class ClampedFPSCameraController : FPSCameraController
     [Space]
     [SerializeField] private bool canLerpBodyRotation;
     [SerializeField] private float bodyRotationReturnSpeed;
+
+    public ClampedFPSCameraController() : base()
+    {
+
+    }
 
     public void SetMinBodyRotation(float minBodyRotation)
     {
@@ -33,11 +39,11 @@ public class ClampedFPSCameraController : FPSCameraController
         this.bodyRotationReturnSpeed = bodyRotationReturnSpeed;
     }
 
-    protected override void OnUpdate(Vector2 vector)
+    protected override void Update(Camera camera)
     {
         minBodyRotation = Mathf.Clamp(minBodyRotation, float.MinValue, 0f);
         maxBodyRotation = Mathf.Clamp(maxBodyRotation, 0f, float.MaxValue);
-        base.OnUpdate(vector);
+        base.Update();
     }
 
     protected override void UpdateBodyRotation(Transform body)

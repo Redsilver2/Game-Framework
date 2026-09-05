@@ -9,7 +9,7 @@ namespace RedSilver2.Framework.Items
     {
         protected sealed override void SetMovementMotion(ref MovementMotion motion)
         {
-            motion = gameObject.GetOrAddComponent<KeyboardMovementTiltMotion>();
+            //motion = gameObject.GetOrAddComponent<KeyboardMovementTiltMotion>();
         }
     }
 }

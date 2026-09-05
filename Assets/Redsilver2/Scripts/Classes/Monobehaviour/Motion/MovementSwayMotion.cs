@@ -1,3 +1,4 @@
+using RedSilver2.Framework.StateMachines;
 using RedSilver2.Framework.StateMachines.Controllers;
 using RedSilver2.Framework.StateMachines.Events;
 using UnityEngine;
@@ -12,6 +13,10 @@ public class MovementSwayMotion : MovementMotion
 
     private Vector3 original;
     private Vector3 desired;
+
+    public MovementSwayMotion(string name, PlayerMovementStateMachine stateMachine) : base(name, stateMachine)
+    {
+    }
 
     protected float DefaultLerpSpeed => defaultLerpSpeed;
     protected float MinX => original.x - min.x;
@@ -35,20 +40,8 @@ public class MovementSwayMotion : MovementMotion
         this.max = maxPosition;
     }
 
-    protected sealed override void SetStateMachineEvents(PlayerMovementStateMachine stateMachine, bool isAddingEvents)
-    {
-        if (isAddingEvents) {
-            stateMachine?.AddOnLateUpdateListener(OnLateUpdate);
-            stateMachine?.AddOnMoveInputUpdateListener(OnInputUpdate);
-        }
-        else {
-            stateMachine?.RemoveOnLateUpdateListener(OnLateUpdate);
-            stateMachine?.RemoveOnMoveInputUpdateListener(OnInputUpdate);
-        }
-    }
-
     protected sealed override void OnLateUpdate()  {
-        transform.localPosition = Vector3.Lerp(transform.localPosition, desired, Time.deltaTime * positionUpdateSpeed);
+      //  transform.localPosition = Vector3.Lerp(transform.localPosition, desired, Time.deltaTime * positionUpdateSpeed);
     }
 
     protected sealed override void OnInputUpdate(Vector2 vector) {
@@ -82,5 +75,14 @@ public class MovementSwayMotion : MovementMotion
             y = Mathf.Lerp(Original.y, MaxY, absSin);
             x = Mathf.Lerp(Original.x, MaxX, absSin);
         }
+    }
+
+    protected override void Enable(MovementStateMachine stateMachine)
+    {
+        stateMachine?.AddOnLateUpdateListener(OnLateUpdate);
+    }
+
+    protected override void Disable(MovementStateMachine stateMachine) {
+        stateMachine?.RemoveOnLateUpdateListener(OnLateUpdate);
     }
 }

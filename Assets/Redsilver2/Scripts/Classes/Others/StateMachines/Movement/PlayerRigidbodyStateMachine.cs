@@ -20,5 +20,15 @@ namespace RedSilver2.Framework.StateMachines
         {
             _rigidbody?.MovePosition(nextPosition);
         }
+
+
+
+        [System.Serializable]
+        private enum MovementControlType {
+            SideScroll,
+            TopDown,
+            FirstPerson,
+            ThirdPerson
+        }
     }
 }

@@ -59,7 +59,7 @@ namespace RedSilver2.Framework.StateMachines.States
             moveSpeedTransition = Mathf.Clamp(moveSpeedTransition, 0f, float.MaxValue);
         }
 
-        protected sealed override void DisplayBaseSettings(StateMachine.StateInspectorVisualizer visualizer)
+        protected sealed override void DisplayBaseSettings(StateMachine.InspectorVisualizer visualizer)
         {
             base.DisplayBaseSettings(visualizer);
             SetMoveSpeedTransition(EditorExtension.DisplayFloatSlider("Move Transition Speed ", moveSpeedTransition, 0f, 1000f)); 

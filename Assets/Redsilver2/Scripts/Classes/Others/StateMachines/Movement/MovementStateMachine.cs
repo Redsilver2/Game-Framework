@@ -10,7 +10,6 @@ namespace RedSilver2.Framework.StateMachines
     public abstract class MovementStateMachine : UpdatableStateMachine
     {
         [SerializeField, HideInInspector] private float groundCheckRange = 0f;
-        [SerializeField, HideInInspector] private bool is2DMovement;
 
         private float moveSpeed;
         private float fallSpeed;
@@ -38,7 +37,6 @@ namespace RedSilver2.Framework.StateMachines
         public float AirbornTime => airbornTime;
 
         public float GroundCheckRange => groundCheckRange;
-        public bool  Is2DMovement     => is2DMovement;
 
 #if UNITY_EDITOR
         protected override void OnValidate() {
@@ -46,10 +44,9 @@ namespace RedSilver2.Framework.StateMachines
             groundCheckRange = Mathf.Clamp(groundCheckRange, 0f, float.MaxValue);
         }
 
-        protected override void DisplayDefaultSettings(Color foldoutColor, Color fieldColor)
+        protected override void DisplayDefaultSettings(InspectorVisualizer visualizer)
         {
-            base.DisplayDefaultSettings(foldoutColor, fieldColor);
-            SetIs2DMovement(EditorExtension.DisplayToggle("Is 2D Movement", is2DMovement));
+            base.DisplayDefaultSettings(visualizer);
             SetGroundCheckRange(EditorExtension.DisplayFloatSlider("Ground Check Range", groundCheckRange, 0f, 1000f));
         }
 
@@ -99,7 +96,6 @@ namespace RedSilver2.Framework.StateMachines
         }
 
         public void SetGroundCheckRange(float groundCheckRange) { this.groundCheckRange = groundCheckRange; }
-        public void SetIs2DMovement(bool is2DMovement) { this.is2DMovement = is2DMovement;  }
 
         public void ResetAirbornTime()
         {
@@ -247,13 +243,10 @@ namespace RedSilver2.Framework.StateMachines
 
         protected virtual bool GetGroundCheckResult(out string groundTag) {
             groundTag = string.Empty;
-
-            // Do 2D Ground Check Here...
-            if (Is2DMovement) return true;
-            else return Get3DGroundCheckResult(groundCheckRange, out groundTag);
+            return GetGroundCheckResult(groundCheckRange, out groundTag);
         }
 
-        private bool Get3DGroundCheckResult(float groundCheckRange, out string groundTag)
+        private bool GetGroundCheckResult(float groundCheckRange, out string groundTag)
         {
             groundTag = string.Empty;
 

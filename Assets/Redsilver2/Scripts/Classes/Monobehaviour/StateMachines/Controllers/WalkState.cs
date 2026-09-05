@@ -70,7 +70,7 @@ namespace RedSilver2.Framework.StateMachines.States
             moveTransitionSpeed = Mathf.Clamp(moveTransitionSpeed, 0f, float.MaxValue);
         }
 
-        protected sealed override void DisplayBaseSettings(StateMachine.StateInspectorVisualizer visualizer)
+        protected sealed override void DisplayBaseSettings(StateMachine.InspectorVisualizer visualizer)
         {
             base.DisplayBaseSettings(visualizer);
 
@@ -79,7 +79,7 @@ namespace RedSilver2.Framework.StateMachines.States
             SetTransitionSpeed(EditorExtension.DisplayFloatSlider("Walk Transition Speed", moveTransitionSpeed, 0f, 1000f));
         }
 
-        protected override void DisplayExtensions(StateMachine.StateInspectorVisualizer visualizer)
+        protected override void DisplayExtensions(StateMachine.InspectorVisualizer visualizer)
         {
             base.DisplayExtensions(visualizer);
             GroundWalkAudio.DrawInspector(this, ref showGroundWalkAudio, visualizer);

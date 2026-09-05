@@ -1,4 +1,5 @@
 using RedSilver2.Framework.StateMachines.Controllers;
+using RedSilver2.Framework.StateMachines.Events;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -7,6 +8,7 @@ namespace RedSilver2.Framework.StateMachines
     [RequireComponent(typeof(CharacterController))]
     public sealed class PlayerCharacterControllerStateMachine : PlayerMovementStateMachine
     {
+        [SerializeField, HideInInspector] private MovementControlType controlType;
         private CharacterController controller;
 
         protected sealed override void Awake() {
@@ -39,6 +41,37 @@ namespace RedSilver2.Framework.StateMachines
         public sealed override void SetHeight(float height, float transitionSpeed)
         {
             if (controller != null) SetHeight(Mathf.Lerp(controller.height, height, Time.deltaTime * transitionSpeed));
+        }
+
+#if UNITY_EDITOR
+        protected override void DisplayMovementControlTypes(ref int previousValue)
+        {
+            base.DisplayMovementControlTypes(ref previousValue);
+            controlType = (MovementControlType)UnityEditor.EditorGUILayout.EnumPopup(controlType);
+
+            bool wasButtonPressed = false;
+            EditorExtension.DisplayButton($"Reset {controlType}", () => { wasButtonPressed = true; });
+           
+            if (wasButtonPressed) previousValue = -1;
+
+            if (previousValue != (int)controlType)
+            {
+                if      (controlType == MovementControlType.TopDown)      handler = new PlayerTopDown3DMovementUpdater(this);
+                else if (controlType == MovementControlType.SideScroller) handler = new PlayerSideScroller3DMovementUpdater(this);
+                else if (controlType == MovementControlType.FirstPerson)  handler = new PlayerFirstPersonMovementUpdater(this);
+                else handler = null;
+
+                previousValue = (int)controlType;
+            }
+        }
+#endif
+
+        [System.Serializable]
+        private enum MovementControlType {
+             SideScroller,
+             TopDown,
+             FirstPerson,
+             ThirdPerson
         }
     }
 }

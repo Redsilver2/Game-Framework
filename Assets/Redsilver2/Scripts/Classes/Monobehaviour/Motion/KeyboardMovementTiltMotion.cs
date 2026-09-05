@@ -10,17 +10,10 @@ namespace RedSilver2.Framework.StateMachines.Events
         [SerializeField] private bool isTiltingContinuously;
 
         [Space]
-        [SerializeField] private float tiltSpeed;    
+        [SerializeField] private float tiltSpeed;
 
-        protected sealed override void SetStateMachineEvents(PlayerMovementStateMachine stateMachine, bool isAddingEvents) {
-            if (isAddingEvents) {
-                stateMachine?.AddOnLateUpdateListener(OnLateUpdate);
-                stateMachine?.AddOnMoveInputUpdateListener(OnInputUpdate);
-            }
-            else {
-                stateMachine?.RemoveOnLateUpdateListener(OnLateUpdate);
-                stateMachine?.RemoveOnMoveInputUpdateListener(OnInputUpdate);
-            }
+        public KeyboardMovementTiltMotion(string name, PlayerMovementStateMachine stateMachine) : base(name, stateMachine)
+        {
         }
 
         protected sealed override float GetUpdatedRotation(float input, float current, float original, float directionUpdateSpeed, float min, float max)
@@ -35,6 +28,14 @@ namespace RedSilver2.Framework.StateMachines.Events
             return GetUpdatedRotation(current);
         }
 
+        protected override void Enable(MovementStateMachine stateMachine)
+        {
+            throw new System.NotImplementedException();
+        }
 
+        protected override void Disable(MovementStateMachine stateMachine)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

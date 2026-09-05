@@ -42,7 +42,7 @@ namespace RedSilver2.Framework.StateMachines.Events
 #if UNITY_EDITOR
        [SerializeField, HideInInspector] private bool showSettings;
          
-        public void DrawInspector(StateMachine.StateInspectorVisualizer visualizer) {
+        public void DrawInspector(StateMachine.InspectorVisualizer visualizer) {
 
             if (visualizer == null) return;
 
@@ -51,22 +51,16 @@ namespace RedSilver2.Framework.StateMachines.Events
             }, visualizer.BackgroundColor, true);
         }
 
-        protected virtual void DrawInspectorSettings(StateMachine.StateInspectorVisualizer visualizer) { }
+        protected virtual void DrawInspectorSettings(StateMachine.InspectorVisualizer visualizer) { }
 
-        protected static void DrawInspector(State state, string eventName, ref bool showEvent, StateMachine.StateInspectorVisualizer visualizer, UnityAction onAddUpdate, UnityAction onRemoveUpdate)
+        protected static void DrawInspector(State state, string eventName, ref bool showEvent, StateMachine.InspectorVisualizer visualizer, UnityAction onAddUpdate, UnityAction onRemoveUpdate)
         {
-            if (state == null) return;
-            EditorExtension.Space(5f);
+            if (state == null || visualizer == null) return;
             EditorExtension.IncrementIndent();
 
             if (EditorExtension.DisplayFoldout(eventName, ref showEvent, visualizer.FoldoutColor)) {
-                StateEvent _event = state.GetEvent(eventName);
-
-                if (_event == null) { onAddUpdate?.Invoke(); }
-                else { 
-                    onRemoveUpdate?.Invoke();
-                    _event?.DrawInspector(visualizer);
-                }
+                if (!state.ContainsEvent(eventName)) { onAddUpdate?.Invoke(); }
+                else { onRemoveUpdate?.Invoke(); }
             }
 
             EditorExtension.DecrementIndent();

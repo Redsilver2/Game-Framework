@@ -60,8 +60,8 @@ namespace RedSilver2.Framework.StateMachines
             dropFallSpeed = Mathf.Clamp(dropFallSpeed, 0f, float.MaxValue);
         }
 
-        protected override void DisplayDefaultSettings(Color foldoutColor, Color fieldColor) {
-            base.DisplayDefaultSettings(foldoutColor, fieldColor);
+        protected override void DisplayDefaultSettings(InspectorVisualizer visualizer) {
+            base.DisplayDefaultSettings(visualizer);
 
         }
 #endif

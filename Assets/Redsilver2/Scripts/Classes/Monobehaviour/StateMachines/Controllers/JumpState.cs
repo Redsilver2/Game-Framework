@@ -52,7 +52,7 @@ namespace RedSilver2.Framework.StateMachines.States {
             maxJumpDelay = Mathf.Clamp(maxJumpDelay, 0f, float.MaxValue);  
         }
 
-        protected override void DisplayBaseSettings(StateMachine.StateInspectorVisualizer visualizer)
+        protected override void DisplayBaseSettings(StateMachine.InspectorVisualizer visualizer)
         {
             if (visualizer == null) return;
 
@@ -63,7 +63,7 @@ namespace RedSilver2.Framework.StateMachines.States {
             base.DisplayBaseSettings(visualizer);
         }
 
-        protected override void DisplayExtensions(StateMachine.StateInspectorVisualizer visualizer)
+        protected override void DisplayExtensions(StateMachine.InspectorVisualizer visualizer)
         {
             if (visualizer == null) return;
 

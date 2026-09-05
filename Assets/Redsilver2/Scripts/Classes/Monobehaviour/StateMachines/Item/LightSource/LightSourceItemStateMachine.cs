@@ -33,9 +33,9 @@ namespace RedSilver2.Framework.StateMachines {
         public Light Light                        => _light;
 
 #if UNITY_EDITOR
-        protected override void DisplayDefaultSettings(Color foldoutColor, Color fieldColor)
+        protected override void DisplayDefaultSettings(InspectorVisualizer visualizer)
         {
-            base.DisplayDefaultSettings(foldoutColor, fieldColor);
+            base.DisplayDefaultSettings(visualizer);
 
         }
 

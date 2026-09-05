@@ -78,7 +78,12 @@ namespace RedSilver2.Framework.StateMachines
         public void AddState(State state)
         {
             if (states == null || state == null || !CanAddState(state) || states.ContainsKey(state.Name)) return;
-            state?.Intialize();
+            if (Application.isPlaying)  {
+                state?.Intialize();
+               if(enableStateAutomatically) state?.Enable();
+            }
+
+
 
             states?.Add(state.name, new StateData(state));
             onStateAdded?.Invoke(state);
@@ -327,7 +332,7 @@ namespace RedSilver2.Framework.StateMachines
         [SerializeField, HideInInspector] private Color defaultButtonColor;
         [SerializeField, HideInInspector] private Color defaultBackgroundColor;
 
-        [SerializeField, HideInInspector] private StateInspectorVisualizer stateVisualizer;
+        [SerializeField, HideInInspector] private InspectorVisualizer visualizer;
 
         protected virtual void OnValidate()
         {
@@ -346,7 +351,7 @@ namespace RedSilver2.Framework.StateMachines
                 if (EditorExtension.DisplayFoldout("Default Settings ⚙️", ref showDefaultSettings, defaultFoldoutColor)) {
 
                     EditorExtension.DrawVerticalHelpBox(() => {
-                       DisplayDefaultSettings(defaultFoldoutColor, defaultFieldColor);
+                       DisplayDefaultSettings(visualizer);
                     }, defaultBackgroundColor);
                 }
 
@@ -361,11 +366,12 @@ namespace RedSilver2.Framework.StateMachines
                         {
                             EditorExtension.DrawVerticalHelpBox(() => {
                                 AddSpecificState(values, ref addStateSelectedIndex);
+                                EditorExtension.Space(10f);
 
-                                EditorExtension.DrawHorizontalHelpBox(() => {
+                                EditorExtension.DrawHorizontal(() => {
                                     DisplayAddAllStateButton(values);
                                     DisplayRemoveAllStateButton();
-                                }, defaultBackgroundColor);
+                                });
 
                             }, defaultBackgroundColor, false);
                         }
@@ -387,34 +393,9 @@ namespace RedSilver2.Framework.StateMachines
                 if (EditorExtension.DisplayFoldout("Editor Settings", ref showEditorSettings, defaultFoldoutColor))
                 {
                     EditorExtension.DrawVerticalHelpBox(() => {
-                        if(EditorExtension.DisplayFoldout("Default", ref showDefaultEditorSettings, defaultFoldoutColor)) {
-                            EditorExtension.Space(10f);
-                            defaultFoldoutColor = EditorExtension.DisplayColorField("Default Foldout Color 🎨", defaultFoldoutColor);
-                           
-                            EditorExtension.Space(5f);
-                            EditorExtension.DisplayButton("Reset Default Foldout Color", defaultButtonColor, () => { defaultFoldoutColor = new Color(0f, 0f, 0f, 0.6588f); });
-
-                            EditorExtension.Space(10f);
-                            defaultFieldColor = EditorExtension.DisplayColorField("Default Field Color 🎨", defaultFieldColor);
-                           
-                            EditorExtension.Space(5f);
-                            EditorExtension.DisplayButton("Reset Default Field Color", defaultButtonColor, () => { defaultFieldColor = new Color(0f, 0f, 0f, 0.5176f); });
-
-                            EditorExtension.Space(10f);
-                            defaultButtonColor = EditorExtension.DisplayColorField("Default Button Color 🎨", defaultButtonColor);
-                          
-                            EditorExtension.Space(5f);
-                            EditorExtension.DisplayButton("Reset Default Button Color", defaultButtonColor, () => { defaultButtonColor = new Color(0f, 0f, 0f, 0.4627f); });
-
-                            EditorExtension.Space(10f);
-                            defaultBackgroundColor = EditorExtension.DisplayColorField("Default Background Color 🎨", defaultBackgroundColor);
-                           
-                            EditorExtension.Space(5f);
-                            EditorExtension.DisplayButton("Reset Default Background Color", defaultButtonColor, () => { defaultBackgroundColor = new Color(0f, 0f, 0f, 0.4627f); });
-                        }
+                        visualizer?.DrawInpsector("Default");
 
                         EditorExtension.Space(10f);
-                        stateVisualizer?.DrawInpsector(defaultFoldoutColor, defaultButtonColor);
                     }, defaultBackgroundColor, true);
                 }
 
@@ -436,8 +417,12 @@ namespace RedSilver2.Framework.StateMachines
                 var value = values.GetValue(i);
                 if (value == null || ContainsState(value.ToString())) continue;
 
-                inspectorStatesNames.Add(value.ToString());
-                inspectorStatesIndexes.Add(i);
+                EditorExtension.Space(10f);
+
+                EditorExtension.DrawHorizontal(() => {
+                    EditorExtension.DisplayBoldLabel(value.ToString());
+                    EditorExtension.DisplayButton($"Add {value.ToString()} State ➕", () => { AddState(GetInspectorState(i)); });
+                });
             }
 
             if (inspectorStatesNames.Count > 0) {
@@ -446,10 +431,6 @@ namespace RedSilver2.Framework.StateMachines
                 EditorExtension.DrawHorizontalHelpBox(() => {
                     _stateIndex = Mathf.Clamp(_stateIndex, 0, inspectorStatesIndexes.Count - 1);
                     _stateIndex = EditorGUILayout.Popup(_stateIndex, inspectorStatesNames.ToArray());
-
-                    if (_stateIndex >= 0 && _stateIndex <= inspectorStatesNames.Count - 1) {
-                        EditorExtension.DisplayButton("Add State ➕", () => { AddState(GetInspectorState(_stateIndex)); });
-                    }
                 }, defaultBackgroundColor);
 
                 selectedState = _stateIndex;
@@ -478,8 +459,8 @@ namespace RedSilver2.Framework.StateMachines
             });
         }
 
-        protected virtual void DisplayDefaultSettings(Color foldoutColor, Color fieldColor) {
-
+        protected virtual void DisplayDefaultSettings(InspectorVisualizer visualizer) {
+            enableStateAutomatically = EditorExtension.DisplayToggle("Enable State Automatically", enableStateAutomatically);
         }
 
         private void DisplayStates(Array values)
@@ -507,30 +488,30 @@ namespace RedSilver2.Framework.StateMachines
         {
             State state = GetState(stateName);
             string label = $"{stateName} " + (lockStates[stateIndex] ? "🔒" : "🔓");
-            if (state == null || stateVisualizer == null) return;
+            if (state == null || visualizer == null) return;
             EditorExtension.Space(10f);
 
-            if (EditorExtension.DisplayFoldout(label, ref stateShown, stateVisualizer.FoldoutColor)) {
+            if (EditorExtension.DisplayFoldout(label, ref stateShown, visualizer.FoldoutColor)) {
                 EditorExtension.DrawVerticalHelpBox(() => {
                     EditorExtension.Space(5f);
 
                     EditorGUILayout.BeginHorizontal();
-                    EditorExtension.DisplayButton(lockStates[stateIndex] ? "Unlock State 🔓" : "Lock State 🔒", stateVisualizer.ButtonColor, () => { lockStates[stateIndex] = !lockStates[stateIndex]; });
-                    EditorExtension.DisplayButton($"Reset {stateName} 🔄", stateVisualizer.ButtonColor, () => {
+                    EditorExtension.DisplayButton(lockStates[stateIndex] ? "Unlock State 🔓" : "Lock State 🔒", visualizer.ButtonColor, () => { lockStates[stateIndex] = !lockStates[stateIndex]; });
+                    EditorExtension.DisplayButton($"Reset {stateName} 🔄", visualizer.ButtonColor, () => {
                         RemoveState(GetState(stateName));
                         AddState(GetInspectorState(stateIndex));
                     });
 
 
                     if (!lockStates[stateIndex])
-                        EditorExtension.DisplayButton($"Remove {stateName} ➖", stateVisualizer.ButtonColor, () => { RemoveState(state); });
+                        EditorExtension.DisplayButton($"Remove {stateName} ➖", visualizer.ButtonColor, () => { RemoveState(state); });
 
                     EditorGUILayout.EndHorizontal();
                     EditorExtension.Space(5f);
-                }, stateVisualizer.BackgroundColor, true);
+                }, visualizer.BackgroundColor, true);
 
                 EditorExtension.Space(5f);
-                state?.DrawInpsector(stateVisualizer);
+                state?.DrawInpsector(visualizer);
             }
         }
 
@@ -539,7 +520,7 @@ namespace RedSilver2.Framework.StateMachines
         protected abstract Array GetInspectorValues();
 
         [System.Serializable]
-        public class StateInspectorVisualizer {
+        public class InspectorVisualizer {
             [SerializeField, HideInInspector] private bool showVisualizer;
 
             [SerializeField, HideInInspector] private Color foldoutColor;
@@ -554,27 +535,27 @@ namespace RedSilver2.Framework.StateMachines
             public void SetButtonColor(Color buttonColor)   { this.buttonColor  = buttonColor;  }
             public void SetBackgroundColor(Color backgroundColor) { this.backgroundColor = backgroundColor; }
 
-            private StateInspectorVisualizer() { }
+            private InspectorVisualizer() { }
 
-            public void DrawInpsector(Color foldoutColor, Color buttonColor) {
-                if(EditorExtension.DisplayFoldout("State Visualizer", ref showVisualizer, foldoutColor)) {
+            public void DrawInpsector(string foldoutLabel) {
+                if(EditorExtension.DisplayFoldout(foldoutLabel, ref showVisualizer, foldoutColor)) {
                     EditorExtension.Space(10f);
-                    this.foldoutColor = EditorExtension.DisplayColorField("State Foldout Color 🎨", this.foldoutColor);
+                    this.foldoutColor = EditorExtension.DisplayColorField("Foldout Color 🎨", foldoutColor);
 
                     EditorExtension.Space(5f);
-                    EditorExtension.DisplayButton("Reset State Foldout Color", buttonColor, () => { this.foldoutColor = new Color(0f, 0f, 0f, 0.6588f); });
+                    EditorExtension.DisplayButton("Reset Foldout Color", buttonColor, () => { foldoutColor = new Color(0f, 0f, 0f, 0.6588f); });
 
                     EditorExtension.Space(10f);
-                    this.buttonColor = EditorExtension.DisplayColorField("State Button Color 🎨", this.buttonColor);
+                    this.buttonColor = EditorExtension.DisplayColorField("Button Color 🎨", buttonColor);
 
                     EditorExtension.Space(5f);
-                    EditorExtension.DisplayButton("Reset State Button Color", buttonColor, () => { this.buttonColor = new Color(0f, 0f, 0f, 0.4627f); });
+                    EditorExtension.DisplayButton("Reset Button Color", buttonColor, () => { buttonColor = new Color(0f, 0f, 0f, 0.4627f); });
 
                     EditorExtension.Space(10f);
-                    backgroundColor = EditorExtension.DisplayColorField("State Background Color 🎨", backgroundColor);
+                    backgroundColor = EditorExtension.DisplayColorField("Background Color 🎨", backgroundColor);
 
                     EditorExtension.Space(5f);
-                    EditorExtension.DisplayButton("Reset State Background Color", buttonColor, () => { backgroundColor = new Color(0.161f, 0.161f, 0.161f, 0.008f); });
+                    EditorExtension.DisplayButton("ResetBackground Color", buttonColor, () => { backgroundColor = new Color(0.161f, 0.161f, 0.161f, 0.008f); });
                 }
             }
         }

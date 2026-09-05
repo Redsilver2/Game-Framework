@@ -1,3 +1,4 @@
+using RedSilver2.Framework.StateMachines.Controllers;
 using UnityEngine;
 using UnityEngine.Windows;
 
@@ -21,6 +22,10 @@ namespace RedSilver2.Framework.StateMachines.Events
 
         private Vector3 original;
         private Vector3 desired;
+
+        protected MovementTiltMotion(string name, PlayerMovementStateMachine stateMachine) : base(name, stateMachine)
+        {
+        }
 
         protected float DefaultLerpSpeed => defaultLerpSpeed;
       
@@ -49,7 +54,7 @@ namespace RedSilver2.Framework.StateMachines.Events
 
         protected sealed override void OnLateUpdate()
         {
-            transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.Euler(desired), Time.deltaTime * rotationUpdateSpeed);
+           // transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.Euler(desired), Time.deltaTime * rotationUpdateSpeed);
         }
 
         protected sealed override void OnInputUpdate(Vector2 vector)
