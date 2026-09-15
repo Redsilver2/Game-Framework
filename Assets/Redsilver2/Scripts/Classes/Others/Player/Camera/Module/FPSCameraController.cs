@@ -8,6 +8,7 @@ namespace RedSilver2.Framework.Player
     {
         [SerializeField, HideInInspector] private MouseVector2InputSettings inputSettings;
 
+        [Space]
         [SerializeField, HideInInspector] private Transform parent;
         [SerializeField, HideInInspector] private Transform body;
         [SerializeField, HideInInspector] private Transform head;
@@ -48,7 +49,7 @@ namespace RedSilver2.Framework.Player
 
         public void SetMinHeadRotation(float minHeadRotation)
         {
-            maxHeadRotation = Mathf.Clamp(maxHeadRotation, float.MaxValue, 0f);
+            maxHeadRotation = Mathf.Clamp(maxHeadRotation, float.MinValue, 0f);
             this.minHeadRotation = minHeadRotation;
         }
 
@@ -82,16 +83,22 @@ namespace RedSilver2.Framework.Player
         }
 
         protected override void LateUpdate(Camera camera) {
-            if (parent != null && camera != null) {
-                camera.transform.localPosition = Vector3.Lerp(camera.transform.localPosition, Vector3.zero, Time.deltaTime);
-                camera.transform.localRotation = Quaternion.Slerp(camera.transform.localRotation, Quaternion.identity, Time.deltaTime);
-            }
-
+            
             Quaternion _headRotation = Quaternion.Euler(headRotation, originalHeadRotation.y, originalHeadRotation.z);
             Quaternion _bodyRotation = Quaternion.Euler(originalHeadRotation.x, bodyRotation, originalHeadRotation.z);
 
+            UpdateCameraTransform(camera, 1f);
+
             UpdateTransform(canDragHead, dragHeadSpeed, _headRotation, head);
             UpdateTransform(canDragBody, dragBodySpeed, _bodyRotation, body);
+        }
+
+        protected virtual void UpdateCameraTransform(Camera camera, float updateSpeed)
+        {
+            if (camera != null) {
+                camera.transform.localPosition = Vector3.Lerp(camera.transform.localPosition, Vector3.zero, Time.deltaTime * updateSpeed);
+                camera.transform.localRotation = Quaternion.Slerp(camera.transform.localRotation, Quaternion.identity, Time.deltaTime * updateSpeed);
+            }
         }
 
         public void RotateBody(float rotation)
@@ -185,7 +192,7 @@ namespace RedSilver2.Framework.Player
     public partial class FPSCameraController : CameraController
     {
 #if UNITY_EDITOR
-        protected sealed override void ShowBaseSettings(Color foldoutColor, Color buttonColor, Color backgroundColor)
+        protected override void ShowBaseSettings(Color foldoutColor, Color buttonColor, Color backgroundColor)
         {
             base.ShowBaseSettings(foldoutColor, buttonColor, backgroundColor);
 

@@ -1,6 +1,6 @@
 using RedSilver2.Framework.Inputs;
 using RedSilver2.Framework.Inputs.Settings;
-using RedSilver2.Framework.Inventories;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -8,34 +8,37 @@ using UnityEngine.Events;
 
 namespace RedSilver2.Framework.Interactions
 {
-    public abstract class InteractionHandler : MonoBehaviour
+
+    [System.Serializable]
+    public abstract partial class InteractionHandler
     {
-        [SerializeField] private string handlerName;
-        [SerializeField] private float  interactionRange;
+        [SerializeField, HideInInspector] private bool  isEnabled;
+        [SerializeField, HideInInspector] private float interactionRange;
 
-        [Space]
-        [SerializeField] private PressInputSettings   pressSettings;
-        [SerializeField] private HoldInputSettings    holdSettings;
-        [SerializeField] private ReleaseInputSettings releaseSettings;
+        [SerializeField, HideInInspector] private PressInputSettings pressSettings;
+        [SerializeField, HideInInspector] private HoldInputSettings    holdSettings;
+        [SerializeField, HideInInspector] private ReleaseInputSettings releaseSettings;
 
-        [Space]
-        [SerializeField] private InteractionType[] allowedInteractionTypes;
+        [SerializeField, HideInInspector] private List<InteractionType> interactionTypesAllowed;
+
+        [SerializeField, HideInInspector] private UnityEvent onEnabled;
+        [SerializeField, HideInInspector] private UnityEvent onDisabled;
+
+        [SerializeField, HideInInspector] private UnityEvent<InteractionModule> onSelected;
+        [SerializeField, HideInInspector] private UnityEvent<InteractionModule> onUnselected;
+
         private bool isEmptySelectedInteraction;
-
-        private  InteractionModule        selectedInteraction;
-        private  Inventory inventory;
-
-        private UnityEvent<InteractionModule> onSelected;
-        private UnityEvent<InteractionModule> onUnselected;
+        private  InteractionModule selectedInteraction;
 
         public float InteractionRange => interactionRange;
-        public bool IsSelectingNextInteraction => InputManager.GetKeyDown(KeyboardKey.UpArrow);
+        public bool IsEnabled => isEnabled;
+
+        public bool IsSelectingNextInteraction     => InputManager.GetKeyDown(KeyboardKey.UpArrow);
         public bool IsSelectingPreviousInteraction => InputManager.GetKeyDown(KeyboardKey.DownArrow);
 
-        public InteractionModule SelectedInteraction => selectedInteraction;
-        public Inventory Inventory => inventory;
+        public InteractionModule    SelectedInteraction => selectedInteraction;
+        public PressInputSettings   PressSettings       => pressSettings;
 
-        public PressInputSettings   PressSettings   => pressSettings;
         public HoldInputSettings    HoldSettings    => holdSettings;
         public ReleaseInputSettings ReleaseSettings => releaseSettings;
         
@@ -47,13 +50,7 @@ namespace RedSilver2.Framework.Interactions
         private readonly static UnityEvent<InteractionModule>           onInteractionModuleAdded   = new UnityEvent<InteractionModule>();
         private readonly static UnityEvent<InteractionModule>           onInteractionModuleRemoved = new UnityEvent<InteractionModule>();
 
-        protected virtual void Awake() {
-            this.isEmptySelectedInteraction = true;
-            inventory = GetComponent<Inventory>();
-
-            this.onSelected   = new UnityEvent<InteractionModule>();
-            this.onUnselected = new UnityEvent<InteractionModule>();
-
+        protected InteractionHandler() {
             AddOnUnselectedListener(interaction => {
                 interaction?.Unselect(this);
                 this.selectedInteraction = null;
@@ -64,35 +61,42 @@ namespace RedSilver2.Framework.Interactions
                 interaction?.Select(this);
             });
 
+            this.isEmptySelectedInteraction = true;
             Instances?.Add(this);
         }
 
-        protected virtual void Start()
+
+        public void Enable()
         {
-            pressSettings?.Enable();
-            holdSettings?.Enable();
-            releaseSettings?.Enable();
+            if (!isEnabled)
+            {
+                pressSettings?.Enable();
+                holdSettings?.Enable();
+
+                releaseSettings?.Enable();
+                isEnabled = true;
+            }
         }
 
-        private void OnEnable()
+        public void Disable()
         {
-            pressSettings?.Enable();
-            holdSettings?.Enable();
-            releaseSettings?.Enable();
-        }
+            if (isEnabled)
+            {
+                pressSettings?.Disable();
+                holdSettings?.Disable();
+             
+                releaseSettings?.Disable();
+                SetSelectedInteraction(null);
 
-        private void OnDisable()
-        {
-            pressSettings?.Disable();
-            holdSettings?.Disable();
-            releaseSettings?.Disable();
-
-            SetSelectedInteraction(null);
+                onDisabled?.Invoke();
+                isEnabled = false;
+            }
         }
 
 
         public void Update()
         {
+            if (!isEnabled) return;
             InteractionModule interactionModule = GetInteractionModuleInstance(GetCollider(interactionRange));
 
             if (CanInteract(interactionModule) && !IsSelectedInteraction(interactionModule)) {
@@ -107,8 +111,8 @@ namespace RedSilver2.Framework.Interactions
 
         public bool CanInteract(InteractionModule module)
         {
-            if (module == null || !module.IsInteractable || allowedInteractionTypes == null) return false;
-            return allowedInteractionTypes.Contains(module.Type);
+            if (module == null || !module.IsInteractable || interactionTypesAllowed == null) return false;
+            return interactionTypesAllowed.Contains(module.Type);
         }
 
         private void SetSelectedInteraction(InteractionModule module)
@@ -215,32 +219,25 @@ namespace RedSilver2.Framework.Interactions
         {
             SetCurrent(Get(index));
         }
-        public static void SetCurrent(string name)
-        {
-            SetCurrent(Get(name));
-        }
-        public static void SetCurrent(Transform transform)
-        {
-            SetCurrent(Get(transform));
-        }
 
         public static void SetCurrent(InteractionHandler handler) {
-            Disable();
+            DisableCurrent();
             Current = handler;
-            Enable();
+            EnableCurrent();
         }
 
-        public static void Enable() {
-            SetEnabledState(true);
+        public static void EnableCurrent() {
+            SetCurrentState(true);
         }
-        public static void Disable()
+        public static void DisableCurrent()
         {
-            SetEnabledState(false);
+            SetCurrentState(false);
         }
 
-        private static void SetEnabledState(bool isEnabled)
+        private static void SetCurrentState(bool isEnabled)
         {
-            if (Current != null) Current.enabled = isEnabled;
+            if (isEnabled) Current?.Enable();
+            else           Current?.Disable();
         }
 
         public static InteractionHandler Get(int index)
@@ -248,23 +245,91 @@ namespace RedSilver2.Framework.Interactions
             if(Instances == null || Instances.Count <= 0) return null;
             return Instances[index];
         }
-        public static InteractionHandler Get(string name)
-        {
-            if (Instances == null || Instances.Count <= 0 || string.IsNullOrEmpty(name)) return null;
-            return Instances.Where(x => x != null)
-                            .Where(x => !string.IsNullOrEmpty(x.handlerName))
-                            .Where(x => x.handlerName.ToLower().Equals(name.ToLower()))
-                            .FirstOrDefault();
-        }
-        public static InteractionHandler Get(Transform transform) {
-            if (Instances == null || Instances.Count == 0) return null;
-            return Instances.Where(x => x != null).Where(x => x.transform.Equals(transform)).FirstOrDefault();
-        }
 
         public static InteractionHandler[] GetHandlers()
         {
             if (Instances == null || Instances.Count == 0) return null;
             return Instances.Where(x => x != null).ToArray();
         }
+    }
+
+    public abstract partial class InteractionHandler
+    {
+#if UNITY_EDITOR
+        [SerializeField, HideInInspector] private bool displayInteractionHandler;
+
+        [SerializeField, HideInInspector] private bool displayBaseSettings;
+        [SerializeField, HideInInspector] private bool showInteractionTypeAllowed;
+
+
+        public virtual void DrawInspector(Color foldoutColor, Color backgroundColor, Color buttonColor)
+        {
+            if (EditorExtension.DisplayFoldout("Interaction Handler", ref displayInteractionHandler, foldoutColor))
+            {
+                EditorExtension.DrawVerticalHelpBox(() =>
+                {
+                    EditorExtension.IncrementIndent();
+
+                    if (EditorExtension.DisplayFoldout("Base Settings", ref displayBaseSettings, foldoutColor))
+                    {
+                        EditorExtension.IncrementIndent();
+                        EditorExtension.Space(10f);
+                        DrawBaseSettings(foldoutColor, backgroundColor, buttonColor);
+                        DrawInteractionTypesAllowed(foldoutColor);
+
+                        EditorExtension.DecrementIndent();
+                    }
+
+                    EditorExtension.DecrementIndent();
+
+                }, backgroundColor);
+            }
+        }
+
+        private void DrawInteractionTypesAllowed(Color foldoutColor)
+        {
+
+
+            EditorExtension.Space(10f);
+
+            if (interactionTypesAllowed == null) return;
+            else if (EditorExtension.DisplayFoldout("Interactions Type Allowed", ref showInteractionTypeAllowed, foldoutColor))
+            {
+                EditorExtension.IncrementIndent();
+
+                foreach (InteractionType interaction in Enum.GetValues(typeof(InteractionType)))
+                {
+                    EditorExtension.Space(10f);
+
+                    EditorExtension.DrawHorizontal(() => {
+                        EditorExtension.Space(10f);
+                        EditorExtension.DisplayLabel(interaction.ToString());
+
+                        if (interactionTypesAllowed.Contains(interaction)) EditorExtension.DisplayButton("Remove", () => { interactionTypesAllowed?.Remove(interaction); });
+                        else EditorExtension.DisplayButton("Add", () => { interactionTypesAllowed?.Add(interaction); });
+                    });
+                }
+
+                EditorExtension.Space(10f);
+                EditorExtension.DecrementIndent();
+            }
+
+        }
+
+        protected virtual void DrawBaseSettings(Color foldoutColor, Color backgroundColor, Color buttonColor)
+        {
+            isEnabled        = EditorExtension.DisplayToggle("Is Enabled ", isEnabled);
+
+
+            EditorExtension.Space(10f);
+            interactionRange = EditorExtension.DisplayFloatSlider("Interaction Range ", interactionRange, 0f, 100f);
+
+            EditorExtension.Space(10f);
+            pressSettings = EditorExtension.DisplayCustomField("Press Settings", false, pressSettings);
+          
+            holdSettings  = EditorExtension.DisplayCustomField("Hold Settings", false, holdSettings);
+            releaseSettings = EditorExtension.DisplayCustomField("Release Settings", false, releaseSettings);
+        }
+#endif
     }
 }

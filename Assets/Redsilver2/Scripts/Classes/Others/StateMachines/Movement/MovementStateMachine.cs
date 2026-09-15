@@ -15,6 +15,9 @@ namespace RedSilver2.Framework.StateMachines
         private float fallSpeed;
 
         private bool isGrounded;
+        private bool isSwimming;
+
+        private bool isClimbing; 
         private bool isMoving;
 
         private string groundTag;
@@ -27,16 +30,20 @@ namespace RedSilver2.Framework.StateMachines
 
         private static readonly Dictionary<ulong, MovementStateMachine> instances = new Dictionary<ulong, MovementStateMachine>();
 
-        public float MoveSpeed => moveSpeed;
-        public float FallSpeed => fallSpeed;
+        public float MoveSpeed        => moveSpeed;
+        public float FallSpeed        => fallSpeed;
 
-        public string GroundTag => groundTag;
-        public bool IsMoving    => isMoving;
+        public string GroundTag       => groundTag;
+        public bool   IsMoving        => isMoving;
 
-        public bool IsGrounded   => isGrounded;
-        public float AirbornTime => airbornTime;
+        public bool  IsGrounded       => isGrounded;
+        public float AirbornTime      => airbornTime;
+
+        public bool IsClimbing        => isClimbing;
+        public bool IsSwimming        => isSwimming;
 
         public float GroundCheckRange => groundCheckRange;
+
 
 #if UNITY_EDITOR
         protected override void OnValidate() {
@@ -264,7 +271,7 @@ namespace RedSilver2.Framework.StateMachines
 
         public void Move(Vector3 nextPosition) {
             nextPosition = transform.right * nextPosition.x +
-                           transform.up * nextPosition.y +
+                           transform.up      * nextPosition.y +
                            transform.forward * nextPosition.z;
 
             onMoved?.Invoke(nextPosition);

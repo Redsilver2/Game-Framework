@@ -67,14 +67,14 @@ namespace RedSilver2.Framework
         {
             PlayerController.Disable();
             CameraController.Disable();
-            InteractionHandler.Disable();
+            InteractionHandler.DisableCurrent();
         }
 
         public static void EnableControls()
         {
             PlayerController.Enable();
             CameraController.Enable();
-            InteractionHandler.Enable();
+            InteractionHandler.EnableCurrent();
         }   
 
         public static bool IsGroundLayer(GameObject gameObject)

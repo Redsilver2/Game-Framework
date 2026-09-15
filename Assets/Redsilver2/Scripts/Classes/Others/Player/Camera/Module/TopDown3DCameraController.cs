@@ -11,18 +11,15 @@ namespace RedSilver2.Framework.Player
 
         protected sealed override void LateUpdate(Camera camera, Transform target)
         {
-            if (camera != null)
-            {
+            if (camera != null) {
                 camera.transform.localRotation = Quaternion.Slerp(camera.transform.localRotation, Quaternion.Euler(90f, 0f, 0f), Time.deltaTime);
 
-                if (target != null)
-                {
+                if (target != null) {
                     Vector3 result =  Vector3.right * target.transform.position.x +
                              Vector3.up      * (target.transform.position.y + height) +
                              Vector3.forward * target.transform.position.z;
 
                     camera.transform.localPosition = Vector3.Lerp(camera.transform.position, result, Time.deltaTime * 10f);
-                    target.localRotation = Quaternion.identity;
                 }
             }
         }

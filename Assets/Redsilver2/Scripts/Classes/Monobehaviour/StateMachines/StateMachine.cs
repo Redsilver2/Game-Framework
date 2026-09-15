@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using RedSilver2.Framework.StateMachines.Events;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -15,6 +17,8 @@ namespace RedSilver2.Framework.StateMachines
         [SerializeField, HideInInspector] private bool enableStateAutomatically;
         [SerializeField, HideInInspector] private Dictionary<string, StateData> states;
 
+        [SerializeField, HideInInspector] private Dictionary<string, StateMachineEventData> events;
+
         private State currentState;
         private List<State> actifStates;
 
@@ -22,32 +26,32 @@ namespace RedSilver2.Framework.StateMachines
         private UnityEvent onDisabled;
 
         private UnityEvent<State> onStateAdded;
-        private UnityEvent<State>  onStateRemoved;
-      
+        private UnityEvent<State> onStateRemoved;
+
         private UnityEvent<State> onStateEntered;
         private UnityEvent<State> onStateExited;
 
-        private UnityEvent<State>  onActifStateAdded;
-        private UnityEvent<State>  onActifStateRemoved;
+        private UnityEvent<State> onActifStateAdded;
+        private UnityEvent<State> onActifStateRemoved;
 
         public State CurrentState => currentState;
         public State[] ActifStates => actifStates != null ? actifStates.ToArray() : new State[0];
 
         protected virtual void Awake()
         {
-            actifStates       = new List<State>();
-            onEnabled         = new UnityEvent();
+            actifStates = new List<State>();
+            onEnabled = new UnityEvent();
 
-            onDisabled        = new UnityEvent();
-            onStateAdded      = new UnityEvent<State>();
-            
-            onStateRemoved    = new UnityEvent<State>();
-            onStateEntered    = new UnityEvent<State>();
+            onDisabled = new UnityEvent();
+            onStateAdded = new UnityEvent<State>();
 
-            onStateExited     = new UnityEvent<State>();
+            onStateRemoved = new UnityEvent<State>();
+            onStateEntered = new UnityEvent<State>();
+
+            onStateExited = new UnityEvent<State>();
             onActifStateAdded = new UnityEvent<State>();
 
-            onActifStateAdded   = new UnityEvent<State>();
+            onActifStateAdded = new UnityEvent<State>();
             onActifStateRemoved = new UnityEvent<State>();
 
             AddOnStateAddedListener(OnStateAdded);
@@ -63,7 +67,7 @@ namespace RedSilver2.Framework.StateMachines
         protected virtual void Start()
         {
 
-            if (states != null)  {
+            if (states != null) {
                 foreach (State state in GetStates()) {
                     state?.Intialize();
                     state?.Enable();
@@ -75,12 +79,37 @@ namespace RedSilver2.Framework.StateMachines
         private void OnDisable() { onDisabled?.Invoke(); }
         private void OnEnable() { onEnabled?.Invoke(); }
 
+        public void AddEvent(StateMachineEvent _event)
+        {
+            string eventName = _event != null ? _event.Name.ToLower() : string.Empty;
+
+
+            if (events == null || string.IsNullOrEmpty(eventName)) return;
+            else {
+                if (!events.ContainsKey(eventName)) events?.Add(eventName, null);
+               
+                if (events[eventName] == null || events[eventName]._Event == null) 
+                    events[eventName] = new StateMachineEventData(_event);
+
+            }
+        }
+
+        public void RemoveEvent(StateMachineEvent _event) {
+            string eventName = _event != null ? _event.Name.ToLower() : string.Empty;
+
+            if (events == null || string.IsNullOrEmpty(eventName) || !events.ContainsKey(eventName)) return;
+            else {
+                events?.Remove(eventName);
+            }
+        }
+
+
         public void AddState(State state)
         {
             if (states == null || state == null || !CanAddState(state) || states.ContainsKey(state.Name)) return;
-            if (Application.isPlaying)  {
+            if (Application.isPlaying) {
                 state?.Intialize();
-               if(enableStateAutomatically) state?.Enable();
+                if (enableStateAutomatically) state?.Enable();
             }
 
 
@@ -101,8 +130,8 @@ namespace RedSilver2.Framework.StateMachines
         public void RemoveState(State state)
         {
             if (states == null || state == null || !states.ContainsKey(state.Name)) return;
-   
-            if(actifStates != null)
+
+            if (actifStates != null)
                 if (actifStates.Contains(state)) { actifStates?.Remove(state); }
 
             state?.Unintialize();
@@ -116,7 +145,7 @@ namespace RedSilver2.Framework.StateMachines
             if (states == null || state == null || !states.ContainsKey(state.Name)) return;
             else if (actifStates == null || state == null || !actifStates.Contains(state)) return;
 
-            if(currentState == state) ChangeState(null as State, true);
+            if (currentState == state) ChangeState(null as State, true);
             Debug.Log("Removed: " + state);
 
             onActifStateRemoved?.Invoke(state);
@@ -140,7 +169,7 @@ namespace RedSilver2.Framework.StateMachines
         public void ChangeState(State state, bool checkSimilarity)
         {
             if (states == null || actifStates == null || (this.currentState == state && checkSimilarity)) return;
-            else if (state != null){
+            else if (state != null) {
                 if (!states.ContainsKey(state.Name) && !actifStates.Contains(state))
                     return;
             }
@@ -195,13 +224,22 @@ namespace RedSilver2.Framework.StateMachines
 
         public bool ContainsState(string stateName)
         {
-           return ContainsState(GetState(stateName));
+            return ContainsState(GetState(stateName));
         }
 
         public bool ContainsState(State state)
         {
             if (states == null || state == null) return false;
             return states.ContainsKey(state.Name);
+        }
+
+        public StateMachineEvent GetEvent(string eventName)
+        {
+            eventName = eventName.ToLower();
+            if (events == null || string.IsNullOrEmpty(eventName) || !events.ContainsKey(eventName)) return null;
+
+            StateMachineEventData data = events[eventName];
+            return data != null ? data._Event : null;
         }
 
         public State GetState(string stateName)
@@ -211,12 +249,12 @@ namespace RedSilver2.Framework.StateMachines
         }
 
         public State[] GetStates()
-        {   
+        {
             List<State> states = new List<State>();
-            if(states == null) return states.ToArray();
+            if (states == null) return states.ToArray();
 
-            foreach(var value in this.states.Values) {
-               if(value == null) continue;
+            foreach (var value in this.states.Values) {
+                if (value == null) continue;
                 states?.Add(value.State);
             }
 
@@ -280,7 +318,7 @@ namespace RedSilver2.Framework.StateMachines
 
         public void AddOnActifStateAddedListener(UnityAction<State> action)
         {
-            if(action != null) onActifStateAdded?.AddListener(action);
+            if (action != null) onActifStateAdded?.AddListener(action);
         }
 
         public void RemoveOnActifStateAddedListener(UnityAction<State> action)
@@ -309,12 +347,30 @@ namespace RedSilver2.Framework.StateMachines
                 this.state = state;
             }
         }
+
+        [System.Serializable]
+        private class StateMachineEventData
+        {
+            [SerializeField, SerializeReference, HideInInspector] private StateMachineEvent _event;
+            public StateMachineEvent _Event => _event;
+
+            public StateMachineEventData(StateMachineEvent _event) {
+                this._event = _event;
+            }
+
+        }
     }
 
     public abstract partial class StateMachine : MonoBehaviour
     {
 #if UNITY_EDITOR
         [SerializeField, HideInInspector] private bool showEditorSettings;
+
+        [SerializeField, HideInInspector] private bool showDebuggerSettings;
+
+        [SerializeField, HideInInspector] private bool showDebugStates;
+        [SerializeField, HideInInspector] private bool showDebugActifStates;
+
         [SerializeField, HideInInspector] private bool showDefaultSettings;
         [SerializeField, HideInInspector] private bool showStateFoldout;
         [SerializeField, HideInInspector] private bool showStateAddOrRemove;
@@ -347,6 +403,13 @@ namespace RedSilver2.Framework.StateMachines
             EditorExtension.DrawVerticalHelpBox(() => {
                 EditorExtension.Space(5f);
                 EditorExtension.IncrementIndent();
+
+                if (EditorExtension.DisplayFoldout("Debuggger 🛠️", ref showDebuggerSettings, defaultFoldoutColor))
+                {
+                    EditorExtension.DrawVerticalHelpBox(() => {
+                        DisplayDebugger(visualizer);
+                    }, defaultBackgroundColor);
+                }
 
                 if (EditorExtension.DisplayFoldout("Default Settings ⚙️", ref showDefaultSettings, defaultFoldoutColor)) {
 
@@ -457,6 +520,51 @@ namespace RedSilver2.Framework.StateMachines
                 for (int i = 0; i < _states.Length; i++)
                     RemoveState(_states[i]);
             });
+        }
+
+        protected virtual void DisplayDebugger(InspectorVisualizer visualizer) {
+            if (visualizer == null) return;
+
+            if (Application.isPlaying)
+            {
+                EditorExtension.DrawHorizontal(() =>
+                {
+                    EditorExtension.DisplayBoldLabel("Current State");
+                    EditorExtension.DisplayBoldLabel(currentState != null ? currentState.name : "None");
+                });
+
+                if(actifStates != null) {
+                    EditorExtension.IncrementIndent();
+                    EditorExtension.Space(10f);
+
+                    if (EditorExtension.DisplayFoldout("Actif States", ref showDebugStates, visualizer.FoldoutColor))
+                    {
+                        foreach(var state in actifStates) {
+                             if(state == null) continue;
+
+                            EditorExtension.Space(10f);
+                            EditorExtension.DisplayBoldLabel(state.Name);
+                        }
+                    }
+
+                    EditorExtension.DecrementIndent();
+                }
+
+            }
+            if(states != null) {
+                EditorExtension.IncrementIndent();
+                if (EditorExtension.DisplayFoldout("States", ref showDebugStates, visualizer.FoldoutColor)) {
+                    foreach(StateData data in states.Values) {
+                        State state = data != null ? data.State : null;
+                        if (state == null) continue;
+
+                        EditorExtension.Space(10f);
+                        EditorExtension.DisplayBoldLabel(state.Name);
+                    }
+                }
+
+                EditorExtension.DecrementIndent();
+            }
         }
 
         protected virtual void DisplayDefaultSettings(InspectorVisualizer visualizer) {

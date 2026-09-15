@@ -634,11 +634,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.DoorStateMachine
   enableStateAutomatically: 0
   states: []
-  events: []
   showEditorSettings: 0
-  showDebuggerSettings: 0
-  showDebugStates: 0
-  showDebugActifStates: 0
   showDefaultSettings: 0
   showStateFoldout: 0
   showStateAddOrRemove: 0
@@ -981,11 +977,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.DoorStateMachine
   enableStateAutomatically: 0
   states: []
-  events: []
   showEditorSettings: 0
-  showDebuggerSettings: 0
-  showDebugStates: 0
-  showDebugActifStates: 0
   showDefaultSettings: 0
   showStateFoldout: 0
   showStateAddOrRemove: 0
@@ -1318,11 +1310,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.DrinkableItemStateMachine
   enableStateAutomatically: 0
   states: []
-  events: []
   showEditorSettings: 0
-  showDebuggerSettings: 0
-  showDebugStates: 0
-  showDebugActifStates: 0
   showDefaultSettings: 0
   showStateFoldout: 0
   showStateAddOrRemove: 0
@@ -1536,11 +1524,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.DrinkableItemStateMachine
   enableStateAutomatically: 0
   states: []
-  events: []
   showEditorSettings: 0
-  showDebuggerSettings: 0
-  showDebugStates: 0
-  showDebugActifStates: 0
   showDefaultSettings: 0
   showStateFoldout: 0
   showStateAddOrRemove: 0
@@ -2288,6 +2272,120 @@ Transform:
   - {fileID: 938722456}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1305176061
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1305176062}
+  - component: {fileID: 1305176065}
+  - component: {fileID: 1305176064}
+  - component: {fileID: 1305176063}
+  m_Layer: 3
+  m_Name: Capsule
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1305176062
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1305176061}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1038957370103312475}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &1305176063
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1305176061}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!23 &1305176064
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1305176061}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1305176065
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1305176061}
+  m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &1347517726
 GameObject:
   m_ObjectHideFlags: 0
@@ -2530,11 +2628,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.DoorStateMachine
   enableStateAutomatically: 0
   states: []
-  events: []
   showEditorSettings: 0
-  showDebuggerSettings: 0
-  showDebugStates: 0
-  showDebugActifStates: 0
   showDefaultSettings: 0
   showStateFoldout: 0
   showStateAddOrRemove: 0
@@ -3116,11 +3210,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.LightSourceStateMachine
   enableStateAutomatically: 0
   states: []
-  events: []
   showEditorSettings: 1
-  showDebuggerSettings: 0
-  showDebugStates: 0
-  showDebugActifStates: 0
   showDefaultSettings: 1
   showStateFoldout: 1
   showStateAddOrRemove: 0
@@ -3849,11 +3939,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.StateMachines.DoorStateMachine
   enableStateAutomatically: 0
   states: []
-  events: []
   showEditorSettings: 0
-  showDebuggerSettings: 0
-  showDebugStates: 0
-  showDebugActifStates: 0
   showDefaultSettings: 0
   showStateFoldout: 0
   showStateAddOrRemove: 0
@@ -3949,6 +4035,7 @@ Transform:
   m_Children:
   - {fileID: 1594589319}
   - {fileID: 2035075333}
+  - {fileID: 1305176062}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1057482895335304216
@@ -4216,6 +4303,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec801026d1dc0e7488a31d2aa2db01bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Interactions.FPSInteractionHandler
+  handlerName: 
+  interactionRange: 5
+  pressSettings: {fileID: 11400000, guid: c434259b728c22d45a14be5b75906396, type: 2}
+  holdSettings: {fileID: 11400000, guid: 0511ed42ce24bfe4d80e0fc5df71aa34, type: 2}
+  releaseSettings: {fileID: 0}
+  allowedInteractionTypes: 0100000003000000i
 --- !u!114 &6121824776835189801
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4316,22 +4409,14 @@ MonoBehaviour:
     value:
       state:
         rid: 972954643982450951
-  - key: Jump
-    value:
-      state:
-        rid: 972954897845059682
-  events: []
   showEditorSettings: 0
-  showDebuggerSettings: 1
-  showDebugStates: 1
-  showDebugActifStates: 0
   showDefaultSettings: 1
-  showStateFoldout: 1
-  showStateAddOrRemove: 1
-  showDefaultStates: 1
+  showStateFoldout: 0
+  showStateAddOrRemove: 0
+  showDefaultStates: 0
   showDefaultEditorSettings: 0
   addStateSelectedIndex: 0
-  showStates: 0000010001000000y
+  showStates: 0000010000000000y
   lockStates: 0100000101010100y
   defaultFoldoutColor: {r: 0, g: 0, b: 0, a: 0.6588}
   defaultFieldColor: {r: 0, g: 0, b: 0, a: 0.5176}
@@ -4344,31 +4429,10 @@ MonoBehaviour:
     backgroundColor: {r: 0.11320752, g: 0.11320752, b: 0.11320752, a: 1}
   groundCheckRange: 1.5
   moveInputSetting: {fileID: 11400000, guid: 34e9a3b820b865e438822ed3a624d62a, type: 2}
-  movementPresets:
-  - key: 9
-    value:
-      preset:
-        rid: 972954871676010724
-  - key: 6
-    value:
-      preset:
-        rid: 972954871676010726
-  - key: 4
-    value:
-      preset:
-        rid: 972954871676010730
-  onMovementPresetChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  onMovementPresetAdded:
-    m_PersistentCalls:
-      m_Calls: []
-  onMovementPresetRemoved:
-    m_PersistentCalls:
-      m_Calls: []
-  displayMovementPresetsFoldout: 0
-  showMovementPresetsFoldout: 0
-  addOrRemoveMovementPresetsFoldout: 0
+  handler:
+    rid: 972954671511240704
+  previousControlType: 2
+  controlType: 2
   references:
     version: 2
     RefIds:
@@ -4458,7 +4522,7 @@ MonoBehaviour:
         onTransitionStateRemoved:
           m_PersistentCalls:
             m_Calls: []
-        showBaseSettings: 0
+        showBaseSettings: 1
         showExtensions: 1
         showTransitions: 0
         showCompatibleStates: 0
@@ -4511,7 +4575,7 @@ MonoBehaviour:
         onTransitionStateRemoved:
           m_PersistentCalls:
             m_Calls: []
-        showBaseSettings: 0
+        showBaseSettings: 1
         showExtensions: 0
         showTransitions: 1
         showCompatibleStates: 0
@@ -4580,67 +4644,26 @@ MonoBehaviour:
             m_Calls: []
         updatableStateMachine: {fileID: 9091687914289102630}
         movementStateMachine: {fileID: 9091687914289102630}
-    - rid: 972954871676010724
-      type: {class: PlayerMovementStateMachine/ThirdPersonMovementPreset, ns: RedSilver2.Framework.StateMachines.Controllers, asm: Assembly-CSharp}
+    - rid: 972954671511240704
+      type: {class: PlayerFirstPersonMovementUpdater, ns: RedSilver2.Framework.StateMachines.Events, asm: Assembly-CSharp}
       data:
-        cameraController:
-          rid: 972954871676010725
-        interactionHandler:
-          rid: -2
         stateMachine: {fileID: 9091687914289102630}
-        type: 9
-        displayMovementPreset: 0
-    - rid: 972954871676010725
-      type: {class: TPSCameraController, ns: RedSilver2.Framework.Player, asm: Assembly-CSharp}
-      data:
-        camera: {fileID: 3330947504947525347}
-        cameraName: 
-        enabled: 1
-        canRotateBody: 0
-        showCameraFoldout: 0
-        showBaseSettings: 0
-        inputSettings: {fileID: 11400000, guid: d93f0af85a0a23640a6af905b2e29e5e, type: 2}
-        parent: {fileID: 190184649}
-        body: {fileID: 1038957370103312475}
-        head: {fileID: 190184649}
-        defaultSensitivityX: 10
-        defaultSensitivityY: 10
-        minHeadRotation: -45
-        maxHeadRotation: 45
-        canLerpHeadRotation: 0
-        headRotationReturnSpeed: 1
-        canDragHead: 0
-        dragHeadSpeed: 1
-        canDragBody: 0
-        dragBodySpeed: 1
-        originalHeadRotation: {x: 0, y: 0, z: 0}
-        cameraPosition: {x: 0, y: 0, z: 0}
-        cameraRotation: {x: 0, y: 0, z: 0}
-    - rid: 972954871676010726
-      type: {class: PlayerMovementStateMachine/FirstPersonMovementPreset, ns: RedSilver2.Framework.StateMachines.Controllers, asm: Assembly-CSharp}
-      data:
         cameraController:
-          rid: 972954871676010727
-        interactionHandler:
-          rid: 972954871676010728
-        stateMachine: {fileID: 9091687914289102630}
-        type: 6
-        displayMovementPreset: 0
-    - rid: 972954871676010727
+          rid: 972954671511240705
+    - rid: 972954671511240705
       type: {class: FPSCameraController, ns: RedSilver2.Framework.Player, asm: Assembly-CSharp}
       data:
         camera: {fileID: 3330947504947525347}
         cameraName: 
         enabled: 1
-        canRotateBody: 0
-        showCameraFoldout: 0
-        showBaseSettings: 0
+        showCameraFoldout: 1
+        showBaseSettings: 1
         inputSettings: {fileID: 11400000, guid: d93f0af85a0a23640a6af905b2e29e5e, type: 2}
         parent: {fileID: 190184649}
         body: {fileID: 1038957370103312475}
         head: {fileID: 190184649}
-        defaultSensitivityX: 10
-        defaultSensitivityY: 10
+        defaultSensitivityX: 30.4
+        defaultSensitivityY: 31.8
         minHeadRotation: -45
         maxHeadRotation: 45
         canLerpHeadRotation: 0
@@ -4650,110 +4673,6 @@ MonoBehaviour:
         canDragBody: 0
         dragBodySpeed: 1
         originalHeadRotation: {x: 0, y: 0, z: 0}
-    - rid: 972954871676010728
-      type: {class: FPSInteractionHandler, ns: RedSilver2.Framework.Interactions, asm: Assembly-CSharp}
-      data:
-        isEnabled: 1
-        interactionRange: 0
-        pressSettings: {fileID: 11400000, guid: c434259b728c22d45a14be5b75906396, type: 2}
-        holdSettings: {fileID: 11400000, guid: 0511ed42ce24bfe4d80e0fc5df71aa34, type: 2}
-        releaseSettings: {fileID: 0}
-        interactionTypesAllowed: 
-        onEnabled:
-          m_PersistentCalls:
-            m_Calls: []
-        onDisabled:
-          m_PersistentCalls:
-            m_Calls: []
-        onSelected:
-          m_PersistentCalls:
-            m_Calls: []
-        onUnselected:
-          m_PersistentCalls:
-            m_Calls: []
-        displayInteractionHandler: 0
-        displayBaseSettings: 0
-        showInteractionTypeAllowed: 0
-        camera: {fileID: 3330947504947525347}
-    - rid: 972954871676010730
-      type: {class: PlayerMovementStateMachine/TopDown3DMovementPreset, ns: RedSilver2.Framework.StateMachines.Controllers, asm: Assembly-CSharp}
-      data:
-        cameraController:
-          rid: 972954871676010731
-        interactionHandler:
-          rid: -2
-        stateMachine: {fileID: 9091687914289102630}
-        type: 4
-        displayMovementPreset: 0
-    - rid: 972954871676010731
-      type: {class: TopDown3DCameraController, ns: RedSilver2.Framework.Player, asm: Assembly-CSharp}
-      data:
-        camera: {fileID: 3330947504947525347}
-        cameraName: 
-        enabled: 1
-        canRotateBody: 0
-        showCameraFoldout: 0
-        showBaseSettings: 1
-        target: {fileID: 190184649}
-        cameraPositionUpdateSpeed: 0
-        height: 10
-    - rid: 972954897845059682
-      type: {class: PlayerJumpState, ns: RedSilver2.Framework.StateMachines, asm: Assembly-CSharp}
-      data:
-        name: Jump
-        incompatibleTransitionStates:
-        - idol
-        - walk
-        - run
-        - crouch
-        - jump
-        - land
-        - climb
-        - 
-        events: []
-        stateMachine: {fileID: 9091687914289102630}
-        onAdded:
-          m_PersistentCalls:
-            m_Calls: []
-        onRemoved:
-          m_PersistentCalls:
-            m_Calls: []
-        onEntered:
-          m_PersistentCalls:
-            m_Calls: []
-        onExited:
-          m_PersistentCalls:
-            m_Calls: []
-        onEnabled:
-          m_PersistentCalls:
-            m_Calls: []
-        onDisabled:
-          m_PersistentCalls:
-            m_Calls: []
-        onTransitionStateAdded:
-          m_PersistentCalls:
-            m_Calls: []
-        onTransitionStateRemoved:
-          m_PersistentCalls:
-            m_Calls: []
-        showBaseSettings: 1
-        showExtensions: 0
-        showTransitions: 0
-        showCompatibleStates: 0
-        showIncompatibleStates: 0
-        onUpdate:
-          m_PersistentCalls:
-            m_Calls: []
-        onLateUpdate:
-          m_PersistentCalls:
-            m_Calls: []
-        updatableStateMachine: {fileID: 9091687914289102630}
-        movementStateMachine: {fileID: 9091687914289102630}
-        jumpForce: 10
-        maxJumpCount: 1
-        maxJumpDelay: 0
-        showJumpAudio: 0
-        pressInput: {fileID: 11400000, guid: a9d391630c40d6943945932a946a9df0, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

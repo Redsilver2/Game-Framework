@@ -64,7 +64,7 @@ namespace RedSilver2.Framework.Items
             base.OnSelectionUpdate(handler);
             if (handler != null) {
                 if (handler.IsPressed()) {
-                    Take(handler.Inventory);
+                    //Take(handler.Inventory);
                 }
             }
         }

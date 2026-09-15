@@ -3,29 +3,32 @@ using UnityEngine;
 namespace RedSilver2.Framework.Player
 {
     [System.Serializable]
-    public class TargetFollow3DCameraController : TargetFollowCameraController
+    public partial class TargetFollow3DCameraController : TargetFollowCameraController
     {
-        [SerializeField] private Vector2 positionOffset;
+        [SerializeField, HideInInspector] private Vector3 positionOffset;
+        [SerializeField, HideInInspector] private Vector3 rotation;
 
-        public TargetFollow3DCameraController() : base()
+        public TargetFollow3DCameraController() : base() { }
+
+        protected override void LateUpdate(Camera camera, Transform target)
         {
-        }
+            UpdateCameraRotation(camera, rotation);
 
-        protected sealed override void LateUpdate(Camera camera, Transform target)
+            UpdateCameraPosition(camera, target != null ? target.position + positionOffset : Vector3.zero);
+        }
+    }
+
+    public partial class TargetFollow3DCameraController : TargetFollowCameraController
+    {
+#if UNITY_EDITOR
+        protected override void ShowBaseSettings(Color foldoutColor, Color buttonColor, Color backgroundColor)
         {
-            if(camera != null) {
-                Vector3 position = Vector3.zero;
-                camera.transform.localRotation = Quaternion.Slerp(camera.transform.localRotation, Quaternion.identity, Time.deltaTime);
+            base.ShowBaseSettings(foldoutColor, buttonColor, backgroundColor);
 
-
-                if (target == null) {
-                    position = (Vector2.right * (target.position.x - positionOffset.x) +
-                                Vector2.up * (target.position.y - positionOffset.y));
-                }
-
-                camera.transform.position = Vector3.Lerp(camera.transform.position, position, Time.deltaTime);
-
-            }
+            EditorExtension.Space(10f);
+            positionOffset = EditorExtension.DisplayVector3Field("Position Offset", positionOffset);
+            rotation       = EditorExtension.DisplayVector3Field("Rotation", rotation);
         }
+#endif
     }
 }

@@ -1,16 +1,14 @@
-using RedSilver2.Framework.Inputs.Settings;
 using UnityEngine;
 
 namespace RedSilver2.Framework.Interactions
 {
-    public class FPSInteractionHandler : InteractionHandler
+    [System.Serializable]
+    public partial class FPSInteractionHandler : InteractionHandler
     {
-        private Camera camera;
+        [SerializeField, HideInInspector] private Camera camera;
 
-        protected sealed override void Awake()
-        {
-            camera = GetComponent<Camera>();
-            base.Awake();
+        public FPSInteractionHandler() : base() {
+
         }
 
         public void SetCamera(Camera camera) {
@@ -32,5 +30,18 @@ namespace RedSilver2.Framework.Interactions
             Physics.Raycast(transform.position, transform.forward, out RaycastHit hitInfo, interactionRange, ~GameManager.PlayerLayer);
             return hitInfo.collider;
         }
+    }
+
+    public partial class FPSInteractionHandler : InteractionHandler
+    {
+#if UNITY_EDITOR
+        protected override void DrawBaseSettings(Color foldoutColor, Color backgroundColor, Color buttonColor)
+        {
+            base.DrawBaseSettings(foldoutColor, backgroundColor, buttonColor);
+
+            EditorExtension.Space(10f);
+            camera = EditorExtension.DisplayCustomField("Camera ", true, camera);
+        }
+#endif
     }
 }

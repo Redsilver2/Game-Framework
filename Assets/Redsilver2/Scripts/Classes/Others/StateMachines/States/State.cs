@@ -239,7 +239,6 @@ namespace RedSilver2.Framework.StateMachines.States
 
         private void OnActifAdded(State state) {
             AddTransitionState(state);
-            Debug.Log(transitionStates.Count);
         }
         private void OnActifRemoved(State state) {
             RemoveTransitionState(state);

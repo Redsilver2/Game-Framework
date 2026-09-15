@@ -1,3 +1,4 @@
+using RedSilver2.Framework.Player;
 using RedSilver2.Framework.StateMachines.Controllers;
 using UnityEngine;
 
@@ -10,7 +11,7 @@ namespace RedSilver2.Framework.StateMachines.Events
 
 
         public PlayerTopDown2DMovementUpdater(PlayerMovementStateMachine stateMachine) : base(stateMachine) {
-
+            SetCameraController(new TopDown2DCameraController());
         }
 
         public void SetUpdateMode(TopDown2DMovementUpdateMode updateMode)

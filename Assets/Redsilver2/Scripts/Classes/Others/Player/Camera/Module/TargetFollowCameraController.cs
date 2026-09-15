@@ -6,24 +6,34 @@ namespace RedSilver2.Framework.Player
     public abstract partial class TargetFollowCameraController : CameraController
     {
         [SerializeField, HideInInspector] private Transform target;
+        [SerializeField, HideInInspector] private float cameraPositionUpdateSpeed;
 
-        protected TargetFollowCameraController() : base() 
-        {
-        }
+protected TargetFollowCameraController() : base() { }
 
         public void SetTarget(Transform target) {
             this.target = target;
         }
 
+
         protected sealed override void LateUpdate(Camera camera)  {
             LateUpdate(camera, target);
         }
 
-        protected sealed override void Update(Camera camera) {
+        protected  override void Update(Camera camera) {
             if (camera != null) camera.transform.SetParent(null);
         }
 
         protected abstract void LateUpdate(Camera camera, Transform target);
+
+        protected void UpdateCameraRotation(Camera camera, Vector3 rotation) { 
+         if (camera != null)
+                camera.transform.localRotation = Quaternion.Slerp(camera.transform.localRotation, Quaternion.Euler(rotation), Time.deltaTime);
+        }
+
+        protected void UpdateCameraPosition(Camera camera, Vector3 position) {
+           if(camera != null)
+            camera.transform.position = Vector3.Lerp(camera.transform.position, position, Time.deltaTime);
+        }
     }
 
     public abstract partial class TargetFollowCameraController : CameraController

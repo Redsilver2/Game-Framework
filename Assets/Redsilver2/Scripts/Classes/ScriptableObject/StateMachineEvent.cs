@@ -9,6 +9,8 @@ namespace RedSilver2.Framework.StateMachines.Events
         [SerializeField, SerializeReference, HideInInspector] private StateMachine stateMachine;
 
         private bool isEnabled;
+
+        public bool IsEnabled => isEnabled; 
         public string Name => name;
 
         protected StateMachineEvent(string name, StateMachine stateMachine) { 
