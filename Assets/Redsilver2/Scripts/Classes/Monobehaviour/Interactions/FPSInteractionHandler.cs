@@ -3,11 +3,11 @@ using UnityEngine;
 namespace RedSilver2.Framework.Interactions
 {
     [System.Serializable]
-    public partial class FPSInteractionHandler : InteractionHandler
+    public partial class CameraInteractionHandler : InteractionHandler
     {
         [SerializeField, HideInInspector] private Camera camera;
 
-        public FPSInteractionHandler() : base() {
+        public CameraInteractionHandler() : base() {
 
         }
 
@@ -32,7 +32,7 @@ namespace RedSilver2.Framework.Interactions
         }
     }
 
-    public partial class FPSInteractionHandler : InteractionHandler
+    public partial class CameraInteractionHandler : InteractionHandler
     {
 #if UNITY_EDITOR
         protected override void DrawBaseSettings(Color foldoutColor, Color backgroundColor, Color buttonColor)

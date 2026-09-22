@@ -13,8 +13,7 @@ namespace RedSilver2.Framework.Player
 
         [SerializeField, HideInInspector] private string cameraName;
         [SerializeField, HideInInspector] private bool enabled;
-
-        [SerializeField, HideInInspector] private bool canRotateBody;
+        public Camera Camera => camera;
 
         private static List<CameraController> modules;
         private static CameraController current;

@@ -28,10 +28,9 @@ namespace RedSilver2.Framework.StateMachines
 
         public sealed override void SetHeight(float height)
         {
-            if (controller != null)
-            {
+            if (controller != null) {
                 controller.height = height;
-                controller.center = Vector3.zero + Vector3.up * Mathf.Clamp01(controller.height / GetDefaultHeight());
+                controller.center = Vector3.up * Mathf.Clamp01(controller.height / GetDefaultHeight());
             }
         }
 

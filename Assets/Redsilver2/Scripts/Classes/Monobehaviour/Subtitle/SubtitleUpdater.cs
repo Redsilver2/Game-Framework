@@ -57,7 +57,6 @@ namespace RedSilver2.Framework.Dialogs {
         public void Stop() {
             if(handlers == null) return;
             foreach (SubtitleHandler handler in handlers) handler?.Stop(true);
-
             handlers?.Clear();
         }
 

@@ -270,7 +270,7 @@ namespace RedSilver2.Framework.StateMachines
         }
 
         public void Move(Vector3 nextPosition) {
-            nextPosition = transform.right * nextPosition.x +
+            nextPosition = transform.right   * nextPosition.x +
                            transform.up      * nextPosition.y +
                            transform.forward * nextPosition.z;
 

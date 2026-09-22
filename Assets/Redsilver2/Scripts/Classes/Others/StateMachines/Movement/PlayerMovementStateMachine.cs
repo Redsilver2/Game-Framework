@@ -1,8 +1,8 @@
 
 using RedSilver2.Framework.Inputs;
 using RedSilver2.Framework.Inputs.Settings;
-using RedSilver2.Framework.Interactions;
-using RedSilver2.Framework.Player;
+using RedSilver2.Framework.StateMachines.Events;
+using RedSilver2.Framework.StateMachines.Presets;
 using RedSilver2.Framework.StateMachines.States;
 using System;
 using System.Collections.Generic;
@@ -15,17 +15,16 @@ namespace RedSilver2.Framework.StateMachines.Controllers {
     public abstract partial class PlayerMovementStateMachine : MovementStateMachine
     {
         [SerializeField, HideInInspector] private KeyboardVector2InputSettings moveInputSetting;
-        [SerializeField, HideInInspector] private Dictionary<MovementPresetType, MovementPresetData> movementPresets;
+        [SerializeField, HideInInspector] private Dictionary<PlayerMovementPreset.PresetType, PlayerMovementPresetData>  movementPresetDatas;
 
 
-        [SerializeField, HideInInspector] private UnityEvent<MovementPresetType> onMovementPresetChanged;
-        [SerializeField, HideInInspector] private UnityEvent<MovementPresetType> onMovementPresetAdded;
-        [SerializeField, HideInInspector] private UnityEvent<MovementPresetType> onMovementPresetRemoved;
+        [SerializeField, HideInInspector] private UnityEvent<PlayerMovementPreset.PresetType> onMovementPresetChanged;
+        [SerializeField, HideInInspector] private UnityEvent<PlayerMovementPreset.PresetType> onMovementPresetAdded;
+        [SerializeField, HideInInspector] private UnityEvent<PlayerMovementPreset.PresetType> onMovementPresetRemoved;
 
         private int selectedIndex = 0;
         private Vector2 moveInput;
-        private MovementPreset currentMovementPreset;
-
+        private PlayerMovementPreset currentMovementPreset;
 
         public Vector2 MoveInput
         {
@@ -35,18 +34,23 @@ namespace RedSilver2.Framework.StateMachines.Controllers {
             }
         }
 
-        public MovementPreset CurrentMovementPreset => currentMovementPreset;
+        public PlayerMovementPreset CurrentMovementPreset => currentMovementPreset;
 
 
         protected override void Awake() {
             base.Awake();
+            AddOnMovementPresetChangedListener(OnMovementPresetChanged);
             if (enabled) moveInputSetting?.Enable();
         }
 
         protected override void Start()
         {
             base.Start();
-            SetMovementPreset(MovementPresetType.FirstPerson);
+            SetMovementPreset(PlayerMovementPreset.PresetType.FirstPerson);
+        }
+
+        protected virtual void OnMovementPresetChanged(PlayerMovementPreset.PresetType type) {
+            GetPreset(type)?.Enable();
         }
 
         protected override void OnEnabled() {
@@ -64,23 +68,20 @@ namespace RedSilver2.Framework.StateMachines.Controllers {
         protected override void OnUpdate() {
             this.moveInputSetting?.Enable();
             moveInput = moveInputSetting != null ? moveInputSetting.GetValue() : Vector2.zero;
-
-            SetIsMoving(moveInputSetting != null ? moveInputSetting.GetValue().magnitude > 0f : false);
+            
+            SetIsMoving(moveInput.magnitude > 0f);
 
             if (InputManager.GetKeyDown(KeyboardKey.L)) {
                 selectedIndex++;
-                if (selectedIndex >= movementPresets.Keys.Count) selectedIndex = 0;
+                if (selectedIndex >= movementPresetDatas.Keys.Count) selectedIndex = 0;
 
-                SetMovementPreset(movementPresets.Keys.ToArray()[selectedIndex]);
+                SetMovementPreset(movementPresetDatas.Keys.ToArray()[selectedIndex]);
             }
 
-            currentMovementPreset?.Update();
             base.OnUpdate();
         }
 
         protected sealed override void OnLateUpdate() {
-
-            currentMovementPreset?.LateUpdate();
             base.OnLateUpdate();
         }
 
@@ -88,607 +89,70 @@ namespace RedSilver2.Framework.StateMachines.Controllers {
             this.moveInputSetting = inputSetting;
         }
 
-        public void AddMovementPreset(MovementPresetType controlType) {
-            if (movementPresets == null || GetMovementPreset(controlType) != null) return;
+        public void AddMovementPreset(PlayerMovementPreset.PresetType controlType) {
+            if (movementPresetDatas == null || GetPreset(controlType) != null) return;
             else {
-                if (!movementPresets.ContainsKey(controlType)) movementPresets?.Add(controlType, null);
+                if (!movementPresetDatas.ContainsKey(controlType)) movementPresetDatas?.Add(controlType, default);
 
                 switch (controlType) {
-                    case MovementPresetType.SideScroller2D:         movementPresets[controlType] = new MovementPresetData(new SideScroller2DMovementPreset(this)); break;
-                    case MovementPresetType.SideScroller3D:         movementPresets[controlType] = new MovementPresetData(new SideScroller3DMovementPreset(this)); break;
+                    case PlayerMovementPreset.PresetType.SideScroller:  movementPresetDatas[controlType] = new PlayerMovementPresetData(new SideScrollerMovementPreset(this)); break;
+                    case PlayerMovementPreset.PresetType.TopDown:       movementPresetDatas[controlType] = new PlayerMovementPresetData(new TopDownMovementPreset(this));      break;
                    
-                    case MovementPresetType.TopDown2D:              movementPresets[controlType] = new MovementPresetData(new TopDown2DMovementPreset(this)); break;
-                    case MovementPresetType.TopDown2DTankControl:   movementPresets[controlType] = new MovementPresetData(new TopDown2DTankControlMovementPreset(this)); break;
-
-                    case MovementPresetType.TopDown3D:              movementPresets[controlType] = new MovementPresetData(new TopDown3DMovementPreset(this)); break;
-                    case MovementPresetType.TopDown3DTankControl:   movementPresets[controlType] = new MovementPresetData(new TopDown3DTankControlMovementPreset(this)); break;
-
-                    case MovementPresetType.FirstPerson:            movementPresets[controlType] = new MovementPresetData(new FirstPersonMovementPreset(this)); break;
-                    case MovementPresetType.ClampedFirstPerson:     movementPresets[controlType] = new MovementPresetData(new ClampedFirstPersonMovementPreset(this)); break;
-                    case MovementPresetType.FirstPersonTankControl: movementPresets[controlType] = new MovementPresetData(new FirstPersonTankControlMovementPreset(this)); break;
-
-                    case MovementPresetType.ThirdPerson: movementPresets[controlType] = new MovementPresetData(new ThirdPersonMovementPreset(this)); break;
+                    case PlayerMovementPreset.PresetType.FirstPerson:   movementPresetDatas[controlType] = new PlayerMovementPresetData(new FirstPersonMovementPreset(this)); break;
+                    case PlayerMovementPreset.PresetType.ThirdPerson:   movementPresetDatas[controlType] = new PlayerMovementPresetData(new ThirdPersonMovementPreset(this)); break;
                 }
-
-                if (movementPresets[controlType] != null && Application.isPlaying)
-                    onMovementPresetAdded?.Invoke(controlType);
+                
+                onMovementPresetAdded?.Invoke(controlType);
             }
         }
 
-        public void RemoveMovementPreset(MovementPresetType controlType) {
-            if (movementPresets == null || !movementPresets.ContainsKey(controlType)) return;
-            movementPresets?.Remove(controlType);
+        public void RemoveMovementPreset(PlayerMovementPreset.PresetType presetType) {
+            if (movementPresetDatas == null || !movementPresetDatas.ContainsKey(presetType)) return;
+            movementPresetDatas?.Remove(presetType);
 
-            if(Application.isPlaying) onMovementPresetRemoved?.Invoke(controlType);
+            if(Application.isPlaying) onMovementPresetRemoved?.Invoke(presetType);
         }
 
-        public void SetMovementPreset(MovementPresetType type)
+        public void SetMovementPreset(PlayerMovementPreset.PresetType presetType)
         {
-            if(currentMovementPreset == null || currentMovementPreset.Type != type)
+            if(currentMovementPreset == null || currentMovementPreset.Type != presetType)
             {
-                currentMovementPreset = GetMovementPreset(type);
-                onMovementPresetChanged?.Invoke(type);
+                currentMovementPreset?.Disable();
+                currentMovementPreset = GetPreset(presetType);
+                onMovementPresetChanged?.Invoke(presetType);
             }
         }
 
-        public void AddOnMovementPresetChangedListener(UnityAction<MovementPresetType> action) {
+        public void AddOnMovementPresetChangedListener(UnityAction<PlayerMovementPreset.PresetType> action) {
             if (action != null) onMovementPresetChanged?.AddListener(action);
         }
-        public void RemoveOnMovementPresetChangedListener(UnityAction<MovementPresetType> action)
+        public void RemoveOnMovementPresetChangedListener(UnityAction<PlayerMovementPreset.PresetType> action)
         {
             if (action != null) onMovementPresetChanged?.RemoveListener(action);
         }
 
-        public void AddOnMovementPresetAddedListener(UnityAction<MovementPresetType> action)
+        public void AddOnMovementPresetAddedListener(UnityAction<PlayerMovementPreset.PresetType> action)
         {
             if (action != null) onMovementPresetAdded?.AddListener(action);
         }
-        public void RemoveOnMovementPresetAddedListener(UnityAction<MovementPresetType> action)
+        public void RemoveOnMovementPresetAddedListener(UnityAction<PlayerMovementPreset.PresetType> action)
         {
             if (action != null) onMovementPresetAdded?.RemoveListener(action);
         }
 
-        public void AddOnMovementPresetRemovedListener(UnityAction<MovementPresetType> action)
+        public void AddOnMovementPresetRemovedListener(UnityAction<PlayerMovementPreset.PresetType> action)
         {
             if (action != null) onMovementPresetRemoved?.AddListener(action);
         }
-        public void RemoveOnMovementPresetRemovedListener(UnityAction<MovementPresetType> action)
+        public void RemoveOnMovementPresetRemovedListener(UnityAction<PlayerMovementPreset.PresetType> action)
         {
             if (action != null) onMovementPresetRemoved?.RemoveListener(action);
         }
 
-        public MovementPreset GetMovementPreset(MovementPresetType type)
+        public PlayerMovementPreset GetPreset(PlayerMovementPreset.PresetType presetType)
         {
-            if (movementPresets == null || !movementPresets.ContainsKey(type)) return null;
-            MovementPresetData data = movementPresets[type];
-        
-            return data != null ? data.Preset : null;
-        }
-    }
-
-    public abstract partial class PlayerMovementStateMachine : MovementStateMachine
-    {
-        [System.Serializable]
-        public enum MovementPresetType {
-            SideScroller2D,
-            SideScroller3D,
-
-            TopDown2D,
-            TopDown2DTankControl,
-
-            TopDown3D,
-            TopDown3DTankControl,
-
-            FirstPerson,
-            ClampedFirstPerson,
-            FirstPersonTankControl,
-
-            ThirdPerson,
-            ClampedThirdPerson,
-            ThirdPersonTankControl
-        }
-
-        [System.Serializable]
-        public class MovementPresetData
-        {
-            [SerializeField, SerializeReference, HideInInspector] private MovementPreset preset;
-            public MovementPreset Preset => preset;
-
-            public MovementPresetData(MovementPreset preset)
-            {
-                this.preset = preset;
-            }
-        }
-
-
-
-        [System.Serializable]
-        public abstract partial class MovementPreset 
-        {
-            [SerializeField, SerializeReference, HideInInspector] private CameraController   cameraController;
-            [SerializeField, SerializeReference, HideInInspector] private InteractionHandler interactionHandler;
-
-            [SerializeField, SerializeReference, HideInInspector] private PlayerMovementStateMachine stateMachine;
-            [SerializeField, HideInInspector] private MovementPresetType type;
-
-            public CameraController CameraController {
-                get { return cameraController; }
-                protected set {  cameraController = value; }
-            }
-
-            public InteractionHandler InteractionHandler
-            {
-                get           { return interactionHandler; }
-                protected set { interactionHandler = value; }
-            }
-
-            public MovementPresetType Type => type;
-            protected PlayerMovementStateMachine StateMachine => stateMachine;
-
-            protected MovementPreset(PlayerMovementStateMachine stateMachine) { 
-                this.stateMachine = stateMachine;
-                SetType(ref type);
-            }
-
-            public virtual void Update() {
-                cameraController?.Update();
-            }
-
-            public virtual void LateUpdate() {
-                if (stateMachine != null) {
-
-
-
-                    if (stateMachine.IsMoving) { Move(stateMachine); }
-
-
-
-                    Fall(stateMachine);
-                }
-
-
-                cameraController?.LateUpdate();
-            }
-
-            protected virtual void Swim(PlayerMovementStateMachine stateMachine) { }
-            protected virtual void Climb(PlayerMovementStateMachine stateMachine) { }
-
-            protected abstract void Fall(PlayerMovementStateMachine stateMachine);
-            protected abstract void Move(PlayerMovementStateMachine stateMachine);
-
-            protected abstract void SetType(ref MovementPresetType controlType);
-        }
-
-       
-        [System.Serializable]
-        public abstract partial class TankControlMovementPreset : MovementPreset {
-            [SerializeField, HideInInspector] private float rotationSpeed;
-            public float RotationSpeed => rotationSpeed;
-
-            protected TankControlMovementPreset(PlayerMovementStateMachine stateMachine) : base(stateMachine) {
-
-            }
-
-            public sealed override void LateUpdate()
-            {
-                LateUpdateTankControls();
-                base.LateUpdate();
-            }
-
-            private void LateUpdateTankControls() {
-                PlayerMovementStateMachine stateMachine = StateMachine;
-
-                if (stateMachine != null) {
-                    Vector2   input     = stateMachine.MoveInput;
-                    Transform transform = stateMachine.transform;
-
-                    if (Mathf.Abs(input.x) > 0f && Mathf.Abs(input.y) == 0f && transform != null) {
-                        LateUpdateTankControls(stateMachine.transform, rotationSpeed);
-                    }
-                }
-            }
-
-            public abstract void LateUpdateTankControls(Transform transform, float rotationSpeed);
-        }
-
-       
-        [System.Serializable]
-        public sealed partial class SideScroller2DMovementPreset : MovementPreset {
-            public SideScroller2DMovementPreset(PlayerMovementStateMachine stateMachine) : base(stateMachine) {
-                CameraController = new TargetFollow2DCameraController(); 
-            }
-
-            protected sealed override void Fall(PlayerMovementStateMachine stateMachine)
-            {
-                if (stateMachine == null) return;
-                stateMachine?.Move(Time.deltaTime * Vector2.up * stateMachine.FallSpeed);
-            }
-
-            protected sealed override void Move(PlayerMovementStateMachine stateMachine)
-            {
-                if (stateMachine == null) return; 
-                float inputX = stateMachine.MoveInput.x;
-               
-                Transform transform = stateMachine.transform;     
-                stateMachine?.Move(Time.deltaTime * (Vector2.right * inputX * stateMachine.MoveSpeed + Vector2.up * stateMachine.FallSpeed));
-            }
-
-            protected sealed override void SetType(ref MovementPresetType controlType) {
-                controlType = MovementPresetType.SideScroller2D;
-            }
-        }
-       
-      
-        [System.Serializable]
-        public sealed partial class SideScroller3DMovementPreset : MovementPreset
-        {
-            public SideScroller3DMovementPreset(PlayerMovementStateMachine stateMachine) : base(stateMachine)
-            {
-                CameraController = new TargetFollow3DCameraController();
-            }
-
-            protected sealed override void Fall(PlayerMovementStateMachine stateMachine)
-            {
-                if (stateMachine == null) return;
-                stateMachine?.Move(Time.deltaTime * Vector2.up * stateMachine.FallSpeed);
-            }
-
-            protected sealed override void Move(PlayerMovementStateMachine stateMachine)
-            {
-                if (stateMachine == null) return;
-                float inputX = stateMachine.MoveInput.x;
-
-                Transform transform = stateMachine.transform;
-                stateMachine?.Move(Time.deltaTime * (Vector3.right * inputX * stateMachine.MoveSpeed + Vector3.up * stateMachine.FallSpeed));
-            }
-
-            protected sealed override void SetType(ref MovementPresetType controlType)
-            {
-                controlType = MovementPresetType.SideScroller2D;
-            }
-        }
-
-      
-        [System.Serializable]
-        public sealed partial class TopDown2DMovementPreset : MovementPreset
-        {
-            public TopDown2DMovementPreset(PlayerMovementStateMachine stateMachine) : base(stateMachine)
-            {
-                CameraController = new TopDown2DCameraController();
-            }
-
-            protected sealed override void Fall(PlayerMovementStateMachine stateMachine)
-            {
-                if (stateMachine == null) return;
-                stateMachine?.Move(Time.deltaTime * Vector2.up * 0f);
-            }
-
-            protected sealed override void Move(PlayerMovementStateMachine stateMachine)
-            {
-                if (stateMachine == null) return;
-
-                Vector2 input = stateMachine.MoveInput;
-                float moveSpeed = stateMachine.MoveSpeed;
-
-                Transform transform = stateMachine.transform;
-                stateMachine?.Move(Time.deltaTime * (Vector2.right * input.x * moveSpeed +
-                                                     Vector2.up    * input.y * moveSpeed));
-            }
-
-            protected sealed override void SetType(ref MovementPresetType controlType)
-            {
-                controlType = MovementPresetType.TopDown2D;
-            }
-        }
-
-       
-        [System.Serializable]
-        public sealed partial class TopDown2DTankControlMovementPreset : TankControlMovementPreset
-        {
-            public TopDown2DTankControlMovementPreset(PlayerMovementStateMachine stateMachine) : base(stateMachine) {
-                CameraController = new TopDown2DCameraController();
-            }
-
-            protected sealed override void Fall(PlayerMovementStateMachine stateMachine)
-            {
-                if (stateMachine == null) return;
-                stateMachine?.Move(Time.deltaTime * Vector2.up * 0f);
-            }
-
-
-            public sealed override void LateUpdateTankControls(Transform transform, float rotationSpeed)
-            {
-                if (transform == null) return;
-                transform.localRotation *= Quaternion.Euler(Time.deltaTime * rotationSpeed * transform.forward);
-
-            }
-
-            protected sealed override void Move(PlayerMovementStateMachine stateMachine)
-            {
-                if (stateMachine == null) return;
-
-                float inputY = stateMachine.MoveInput.y;
-                float moveSpeed = stateMachine.MoveSpeed;
-
-                Transform transform = stateMachine.transform;
-                stateMachine?.Move(Time.deltaTime * (Vector2.up * inputY * moveSpeed));
-            }
-
-            protected sealed override void SetType(ref MovementPresetType controlType) {
-                controlType = MovementPresetType.TopDown2DTankControl;
-            }
-        }
-
-       
-        [System.Serializable]
-        public sealed partial class TopDown3DMovementPreset : MovementPreset
-        {
-            public TopDown3DMovementPreset(PlayerMovementStateMachine stateMachine) : base(stateMachine)
-            {
-                CameraController = new TopDown3DCameraController();
-            }
-
-            protected sealed override void Fall(PlayerMovementStateMachine stateMachine)
-            {
-                if (stateMachine == null) return;
-                stateMachine?.Move(Time.deltaTime * Vector2.up * stateMachine.FallSpeed);
-            }
-
-
-            protected sealed override void Move(PlayerMovementStateMachine stateMachine)
-            {
-                if (stateMachine == null) return;
-
-                Vector2 input   = stateMachine.MoveInput;
-                float moveSpeed = stateMachine.MoveSpeed;
-
-                Transform transform = stateMachine.transform;
-                stateMachine?.Move(Time.deltaTime * (Vector3.right   * input.x * moveSpeed +
-                                                     Vector3.forward * input.y * moveSpeed));
-
-                transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.identity, Time.deltaTime);
-            }
-
-            protected sealed override void SetType(ref MovementPresetType controlType)
-            {
-                controlType = MovementPresetType.TopDown3D;
-            }
-        }
-
-      
-        [System.Serializable]
-        public sealed partial class TopDown3DTankControlMovementPreset : TankControlMovementPreset
-        {
-            public TopDown3DTankControlMovementPreset(PlayerMovementStateMachine stateMachine) : base(stateMachine)
-            {
-                CameraController = new TopDown3DCameraController();
-            }
-
-            protected sealed override void Fall(PlayerMovementStateMachine stateMachine)
-            {
-                if (stateMachine == null) return;
-                stateMachine?.Move(Time.deltaTime * Vector2.up * stateMachine.FallSpeed);
-            }
-
-
-            public override void LateUpdateTankControls(Transform transform, float rotationSpeed)
-            {
-                transform.localRotation *= Quaternion.Euler(Time.deltaTime * rotationSpeed * Vector3.up);
-            }
-
-            protected sealed override void Move(PlayerMovementStateMachine stateMachine)
-            {
-                if (stateMachine == null) return;
-
-                Vector2 input = stateMachine.MoveInput;
-                float moveSpeed = stateMachine.MoveSpeed;
-
-                Transform transform = stateMachine.transform;
-                stateMachine?.Move(Time.deltaTime * (Vector3.forward * input.y * moveSpeed));
-            }
-
-            protected sealed override void SetType(ref MovementPresetType controlType)
-            {
-                controlType = MovementPresetType.TopDown3DTankControl;
-            }
-        }
-
-        
-        [System.Serializable]
-        public sealed partial class FirstPersonMovementPreset : MovementPreset
-        {
-            public FirstPersonMovementPreset(PlayerMovementStateMachine stateMachine) : base(stateMachine)
-            {
-                CameraController   = new FPSCameraController();
-                InteractionHandler = new FPSInteractionHandler();
-            }
-
-            protected sealed override void Fall(PlayerMovementStateMachine stateMachine)
-            {
-                if(stateMachine == null) return;
-                stateMachine?.Move(Time.deltaTime * Vector3.up * stateMachine.FallSpeed);
-            }
-
-            protected sealed override void Move(PlayerMovementStateMachine stateMachine)
-            {
-                if (stateMachine == null) return;
-
-                Vector2 input = stateMachine.MoveInput;
-                float moveSpeed = stateMachine.MoveSpeed;
-
-                Transform transform = stateMachine.transform;
-                stateMachine?.Move(Time.deltaTime * (Vector3.right   * input.x * moveSpeed +
-                                                     Vector3.forward * input.y * moveSpeed));
-            }
-
-            protected sealed override void SetType(ref MovementPresetType controlType)
-            {
-                controlType = MovementPresetType.FirstPerson;
-            }
-        }
-
-        [System.Serializable]
-        public sealed partial class FirstPersonTankControlMovementPreset : MovementPreset
-        {
-            public FirstPersonTankControlMovementPreset(PlayerMovementStateMachine stateMachine) : base(stateMachine) {
-                CameraController = new FPSCameraController();
-            }
-
-            protected sealed override void Fall(PlayerMovementStateMachine stateMachine)
-            {
-                if (stateMachine == null) return;
-                stateMachine?.Move(Time.deltaTime * Vector3.up * stateMachine.FallSpeed);
-            }
-
-            protected sealed override void Move(PlayerMovementStateMachine stateMachine)
-            {
-                if (stateMachine == null) return;
-
-                Vector2 input = stateMachine.MoveInput;
-                float moveSpeed = stateMachine.MoveSpeed;
-
-                Transform transform = stateMachine.transform;
-                stateMachine?.Move(Time.deltaTime * (Vector3.forward * input.y * moveSpeed));
-            }
-
-            protected sealed override void SetType(ref MovementPresetType controlType)
-            {
-                controlType = MovementPresetType.FirstPersonTankControl;
-            }
-        }
-
-
-        [System.Serializable]
-        public sealed partial class ClampedFirstPersonMovementPreset : MovementPreset
-        {
-            public ClampedFirstPersonMovementPreset(PlayerMovementStateMachine stateMachine) : base(stateMachine)
-            {
-                CameraController = new ClampedFPSCameraController();
-            }
-
-            protected sealed override void Fall(PlayerMovementStateMachine stateMachine)
-            {
-                stateMachine?.Move(Time.deltaTime * Vector3.up * stateMachine.FallSpeed);
-            }
-
-            protected sealed override void Move(PlayerMovementStateMachine stateMachine)
-            {
-                if (stateMachine == null) return;
-
-                Vector2 input = stateMachine.MoveInput;
-                float moveSpeed = stateMachine.MoveSpeed;
-
-                Transform transform = stateMachine.transform;
-                stateMachine?.Move(Time.deltaTime * (Vector3.right * input.x * moveSpeed +
-                                                     Vector3.forward * input.y * moveSpeed));
-            }
-
-            protected sealed override void SetType(ref MovementPresetType controlType)
-            {
-                controlType = MovementPresetType.ClampedFirstPerson;
-            }
-        }
-
-       
-        [System.Serializable]
-        public sealed partial class ThirdPersonMovementPreset : MovementPreset
-        {
-            public ThirdPersonMovementPreset(PlayerMovementStateMachine stateMachine) : base(stateMachine)
-            {
-                CameraController = new TPSCameraController();
-            }
-
-            protected sealed override void Fall(PlayerMovementStateMachine stateMachine)
-            {
-                if (stateMachine == null) return;
-                stateMachine?.Move(Time.deltaTime * Vector2.up * stateMachine.FallSpeed);
-            }
-
-            protected sealed override void Move(PlayerMovementStateMachine stateMachine)
-            {
-                if (stateMachine == null) return;
-
-                Vector2 input = stateMachine.MoveInput;
-                float moveSpeed = stateMachine.MoveSpeed;
-
-                Transform transform = stateMachine.transform;
-                stateMachine?.Move(Time.deltaTime * (Vector3.right * input.x * moveSpeed +
-                                                     Vector3.forward * input.y * moveSpeed));
-            }
-
-            protected sealed override void SetType(ref MovementPresetType controlType)
-            {
-                controlType = MovementPresetType.ThirdPerson;
-            }
-        }
-
-
-        [System.Serializable]
-        public sealed partial class ThirdPersonTankControlMovementPreset : MovementPreset
-        {
-            public ThirdPersonTankControlMovementPreset(PlayerMovementStateMachine stateMachine) : base(stateMachine)
-            {
-                CameraController = new TPSCameraController();
-            }
-
-            protected sealed override void Fall(PlayerMovementStateMachine stateMachine)
-            {
-                if (stateMachine == null) return;
-                stateMachine?.Move(Time.deltaTime * Vector2.up * stateMachine.FallSpeed);
-            }
-
-            protected sealed override void Move(PlayerMovementStateMachine stateMachine)
-            {
-                if (stateMachine == null) return;
-
-                Vector2 input   = stateMachine.MoveInput;
-                float moveSpeed = stateMachine.MoveSpeed;
-
-                Transform transform = stateMachine.transform;
-                stateMachine?.Move(Time.deltaTime * (Vector3.forward * input.y * moveSpeed));
-            }
-
-            protected sealed override void SetType(ref MovementPresetType controlType)
-            {
-                controlType = MovementPresetType.ThirdPersonTankControl;
-            }
-        }
-    }
-
-    public abstract partial class PlayerMovementStateMachine : MovementStateMachine
-    {
-        public abstract partial class MovementPreset
-        {
-#if UNITY_EDITOR
-            [SerializeField, HideInInspector] private bool displayMovementPreset;
-
-            public virtual void DrawInspector(InspectorVisualizer visualizer) {
-                if (visualizer == null) return;
-                else if(EditorExtension.DisplayFoldout(GetPresetName(GetType().Name), ref displayMovementPreset, visualizer.FoldoutColor)) {
-                    EditorExtension.IncrementIndent();
-
-  
-
-                    interactionHandler?.DrawInspector(visualizer.FoldoutColor, visualizer.BackgroundColor, visualizer.ButtonColor);
-                    cameraController?.DrawInspector(visualizer.FoldoutColor, visualizer.ButtonColor, visualizer.BackgroundColor);
-
-                    EditorExtension.DecrementIndent();
-                }           
-            }
-#endif
-        }
-
-        public abstract partial class TankControlMovementPreset : MovementPreset
-        {
-#if UNITY_EDITOR
-            public sealed override void DrawInspector(InspectorVisualizer visualizer)
-            {
-                base.DrawInspector(visualizer);
-
-                EditorExtension.Space(10f);
-                rotationSpeed = EditorExtension.DisplayFloatSlider("Rotation Speed", rotationSpeed,  0f, 100f);
-            }
-#endif
+            if (movementPresetDatas == null || !movementPresetDatas.ContainsKey(presetType)) return null;
+            return movementPresetDatas[presetType].Preset;
         }
     }
 
@@ -744,34 +208,36 @@ namespace RedSilver2.Framework.StateMachines.Controllers {
 
         private void AddOrRemoveMovementPresets(InspectorVisualizer visualizer)
         {
-            if (visualizer == null || movementPresets == null) return;
+            if (visualizer == null || movementPresetDatas == null) return;
             else if (EditorExtension.DisplayFoldout("Add / Remove", ref addOrRemoveMovementPresetsFoldout, visualizer.FoldoutColor)) {
-                MovementPresetType[] values = Enum.GetValues(typeof(MovementPresetType)) as MovementPresetType[];
+                PlayerMovementPreset.PresetType[] values = UnityExtension.GetEnumValues(PlayerMovementPreset.PresetType.FirstPerson);
                 if (values == null) return;
 
                 EditorExtension.DrawVertical(() => {
 
-                    foreach(MovementPresetType value in values) DisplayPreset(value); 
+                    foreach(PlayerMovementPreset.PresetType value in values) DisplayPreset(value); 
                     EditorExtension.Space(10f);
 
                     EditorExtension.DrawHorizontal(() =>
                     {
-                        if (movementPresets.Values.Count != values.Length) EditorExtension.DisplayButton("Add All Presets", () => {
-                            foreach (MovementPresetType value in values) AddMovementPreset(value);
+                        if (movementPresetDatas.Values.Count != values.Length) EditorExtension.DisplayButton("Add All Presets", () => {
+                            foreach (PlayerMovementPreset.PresetType value in values) AddMovementPreset(value);
                         });
 
-                        if (movementPresets.Values.Count > 0) EditorExtension.DisplayButton("Remove All Presets", () => {
-                            movementPresets?.Clear();
+                        if (movementPresetDatas.Values.Count > 0) EditorExtension.DisplayButton("Remove All Presets", () => {
+                            movementPresetDatas?.Clear();
                         });
                     });
                 }, true);
+
+                EditorExtension.Space(10f);
             }
         }
 
-        private void DisplayPreset(MovementPresetType controlType)
+        private void DisplayPreset(PlayerMovementPreset.PresetType controlType)
         {
-            if (movementPresets.ContainsKey(controlType))
-                if (movementPresets[controlType] != null) return;
+            if (movementPresetDatas.ContainsKey(controlType))
+                if(movementPresetDatas[controlType].Preset != null) return;
 
             EditorExtension.Space(10f);
 
@@ -803,15 +269,15 @@ namespace RedSilver2.Framework.StateMachines.Controllers {
 
         private void DisplayMovementPresets(InspectorVisualizer visualizer)
         {
-            if (visualizer == null || movementPresets == null) return;
+            if (visualizer == null || movementPresetDatas == null) return;
             else if (EditorExtension.DisplayFoldout("Show", ref showMovementPresetsFoldout, visualizer.FoldoutColor))  {
              
-                var datas = movementPresets.Values.ToArray();
+                var datas = movementPresetDatas.Values.ToArray();
                 EditorExtension.IncrementIndent();
 
-                if(datas != null) {
-                    foreach(var data in datas) {
-                        if(data == null) continue;
+                if (datas != null) {
+                    foreach (var data in datas)
+                    {
                         data.Preset?.DrawInspector(visualizer);
                     }
                 }

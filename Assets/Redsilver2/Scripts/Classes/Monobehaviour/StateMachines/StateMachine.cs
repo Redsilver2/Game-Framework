@@ -74,6 +74,14 @@ namespace RedSilver2.Framework.StateMachines
                 }
             }
 
+            if(events != null)
+            {
+                foreach(var data in events.Values)
+                {
+                    data?._Event?.Enable();
+                }
+            }
+
         }
 
         private void OnDisable() { onDisabled?.Invoke(); }
@@ -457,7 +465,6 @@ namespace RedSilver2.Framework.StateMachines
                 {
                     EditorExtension.DrawVerticalHelpBox(() => {
                         visualizer?.DrawInpsector("Default");
-
                         EditorExtension.Space(10f);
                     }, defaultBackgroundColor, true);
                 }
@@ -577,8 +584,6 @@ namespace RedSilver2.Framework.StateMachines
 
             SetFoldoutChecks(ref showStates, values.Length);
             SetFoldoutChecks(ref lockStates, values.Length);
-
-
 
             for (int i = 0; i < values.Length; i++) {
                 if (values.GetValue(i) == null) continue;;

@@ -10,14 +10,14 @@ namespace RedSilver2.Framework.StateMachines.Events
         {
         }
 
-        protected override void Disable(MovementStateMachine stateMachine)
+        protected override void Disable(PlayerMovementStateMachine stateMachine)
         {
-            throw new System.NotImplementedException();
+
         }
 
-        protected override void Enable(MovementStateMachine stateMachine)
+        protected override void Enable(PlayerMovementStateMachine stateMachine)
         {
-            throw new System.NotImplementedException();
+
         }
 
         protected sealed override void UpdateRotation(Vector2 input, ref Vector3 desired)

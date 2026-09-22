@@ -31,16 +31,29 @@ namespace RedSilver2.Framework.Player
 
         [SerializeField, HideInInspector] Vector3 originalHeadRotation;
 
+        private Vector2 input;
+
         protected float headRotation;
         protected float bodyRotation;
+
+        private bool canUpdateCameraTransform;
+        private bool canUpdateHeadRotation;
+        private bool canUpdateBodyRotation;
+
+        public float MinHeadRotation => maxHeadRotation;
+        public float MaxHeadRotation => maxHeadRotation;
 
         public float HeadRotation => headRotation;
         public float BodyRotation => bodyRotation;
 
+        public bool CanUpdateCameraTransform => canUpdateCameraTransform;
+        public bool CanUpdateHeadRotation    => canUpdateBodyRotation;
+        public bool CanUpdateBodyRotation    => canUpdateBodyRotation;
+
+
         public Transform Body => body;
         public Transform Head => head;
-
-        public Vector2 Input => inputSettings != null ? inputSettings.GetValue() : Vector2.zero;
+        public Vector2 Input => input;
 
         public FPSCameraController() : base()
         {
@@ -49,15 +62,12 @@ namespace RedSilver2.Framework.Player
 
         public void SetMinHeadRotation(float minHeadRotation)
         {
-            maxHeadRotation = Mathf.Clamp(maxHeadRotation, float.MinValue, 0f);
-            this.minHeadRotation = minHeadRotation;
+            this.minHeadRotation = Mathf.Clamp(minHeadRotation, float.MinValue, 0f);
         }
 
         public void SetMaxHeadRotation(float maxHeadRotation)
         {
-            maxHeadRotation = Mathf.Clamp(maxHeadRotation, 0f, float.MaxValue);
-            this.maxHeadRotation = maxHeadRotation;
-
+           this.maxHeadRotation = Mathf.Clamp(maxHeadRotation, 0f, float.MaxValue);
         }
 
         public void SetCanLerpHeadRotation(bool canLerpHeadRotation)
@@ -65,33 +75,67 @@ namespace RedSilver2.Framework.Player
             this.canLerpHeadRotation = canLerpHeadRotation;
         }
 
+        public void SetCanUpdateCameraTransform(bool canUpdateCameraTransform)
+        {
+            this.canUpdateCameraTransform = canUpdateCameraTransform;
+        }
+
+        public void SetCanUpdateHeadRotation(bool canUpdateHeadRotation)
+        {
+            this.canUpdateHeadRotation = canUpdateHeadRotation;
+        }
+
+        public void SetCanUpdateBodyRotation(bool canUpdateBodyRotation)
+        {
+            this.canUpdateBodyRotation = canUpdateBodyRotation;
+        }
 
         public void SetHeadRotationReturnSpeed(float headRotationReturnSpeed)
         {
             this.headRotationReturnSpeed = headRotationReturnSpeed;
         }
 
+        public void SetParent(Transform parent)
+        {
+            this.parent = parent;
+        }
+
+        public void SetBody(Transform body) 
+        {
+            this.body = body; 
+        }
+
+        public void SetHead(Transform head)
+        {
+            this.head = head;
+        }
+
         protected override void Update(Camera camera) {
             inputSettings?.Enable();
+            input = inputSettings != null ? inputSettings.GetValue() : Vector2.zero;
+
+
             if (camera != null) camera.transform.SetParent(parent);
 
-            minHeadRotation = Mathf.Clamp(minHeadRotation, float.MinValue, 0f);
-            maxHeadRotation = Mathf.Clamp(maxHeadRotation, 0f, float.MaxValue);
-
-            UpdateBodyRotation(body);
-            UpdateHeadRotation(head);
+            if (canUpdateHeadRotation) UpdateHeadRotation(head);
+            if (canUpdateBodyRotation) UpdateBodyRotation(body);
         }
 
         protected override void LateUpdate(Camera camera) {
-            
-            Quaternion _headRotation = Quaternion.Euler(headRotation, originalHeadRotation.y, originalHeadRotation.z);
-            Quaternion _bodyRotation = Quaternion.Euler(originalHeadRotation.x, bodyRotation, originalHeadRotation.z);
+            if(canUpdateCameraTransform) UpdateCameraTransform(camera, 1f);
 
-            UpdateCameraTransform(camera, 1f);
+            if (canUpdateHeadRotation) {
+                Quaternion _headRotation = Quaternion.Euler(headRotation, originalHeadRotation.y, originalHeadRotation.z);
+                UpdateTransform(canDragHead, dragHeadSpeed, _headRotation, head);
+            }
 
-            UpdateTransform(canDragHead, dragHeadSpeed, _headRotation, head);
-            UpdateTransform(canDragBody, dragBodySpeed, _bodyRotation, body);
+            if (canUpdateBodyRotation) {
+                Quaternion _bodyRotation = Quaternion.Euler(originalHeadRotation.x, bodyRotation, originalHeadRotation.z);
+                UpdateTransform(canDragBody, dragBodySpeed, _bodyRotation, body);
+            }
         }
+
+
 
         protected virtual void UpdateCameraTransform(Camera camera, float updateSpeed)
         {

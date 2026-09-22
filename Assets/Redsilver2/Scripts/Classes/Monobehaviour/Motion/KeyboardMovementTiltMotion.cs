@@ -28,14 +28,14 @@ namespace RedSilver2.Framework.StateMachines.Events
             return GetUpdatedRotation(current);
         }
 
-        protected override void Enable(MovementStateMachine stateMachine)
+        protected override void Enable(PlayerMovementStateMachine stateMachine)
         {
-            throw new System.NotImplementedException();
+
         }
 
-        protected override void Disable(MovementStateMachine stateMachine)
+        protected override void Disable(PlayerMovementStateMachine stateMachine)
         {
-            throw new System.NotImplementedException();
+
         }
     }
 }

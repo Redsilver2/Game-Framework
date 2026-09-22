@@ -6,22 +6,29 @@ namespace RedSilver2.Framework.Player
     public partial class TopDown3DCameraController : TargetFollowCameraController
     {
         [SerializeField, HideInInspector] private float height;
+        [SerializeField, HideInInspector] private Vector3 desiredRotation;
 
-        public TopDown3DCameraController() : base()  { }
+        public TopDown3DCameraController() : base() { }
 
         protected sealed override void LateUpdate(Camera camera, Transform target)
         {
-            if (camera != null) {
-                camera.transform.localRotation = Quaternion.Slerp(camera.transform.localRotation, Quaternion.Euler(90f, 0f, 0f), Time.deltaTime);
+            camera.transform.localRotation = Quaternion.Slerp(camera.transform.localRotation, Quaternion.Euler(desiredRotation), Time.deltaTime);
 
-                if (target != null) {
-                    Vector3 result =  Vector3.right * target.transform.position.x +
-                             Vector3.up      * (target.transform.position.y + height) +
-                             Vector3.forward * target.transform.position.z;
+
+            if (camera != null) {
+                if (target != null && camera != null) {
+                    Vector3 result = Vector3.right * target.transform.position.x +
+                                      Vector3.up * (target.transform.position.y + height) +
+                                      Vector3.forward * target.transform.position.z;
 
                     camera.transform.localPosition = Vector3.Lerp(camera.transform.position, result, Time.deltaTime * 10f);
                 }
             }
+        }
+
+        public void SetDesiredRotation(Vector3 desiredRotation)
+        {
+            this.desiredRotation = desiredRotation;
         }
     }
 

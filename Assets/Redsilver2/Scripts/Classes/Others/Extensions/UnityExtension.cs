@@ -1,8 +1,14 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
 public static class UnityExtension
 {
+    public static T[] GetEnumValues<T>(T value) where T : Enum {
+        if (value == null) return null;
+        return (T[])Enum.GetValues(typeof(T)); 
+    }
+
     public static float Set(this float current, float value)
     {
         current = value;

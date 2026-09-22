@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 
 namespace RedSilver2.Framework.Interactions
 {
-    public class MouseInteractionHandler : FPSInteractionHandler
+    public class MouseInteractionHandler : CameraInteractionHandler
     {
         protected override Collider GetCollider(float interactionRange, Camera camera)
         {

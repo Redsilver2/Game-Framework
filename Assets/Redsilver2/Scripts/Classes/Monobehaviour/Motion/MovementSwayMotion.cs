@@ -77,12 +77,12 @@ public class MovementSwayMotion : MovementMotion
         }
     }
 
-    protected override void Enable(MovementStateMachine stateMachine)
+    protected override void Enable(PlayerMovementStateMachine stateMachine)
     {
         stateMachine?.AddOnLateUpdateListener(OnLateUpdate);
     }
 
-    protected override void Disable(MovementStateMachine stateMachine) {
+    protected override void Disable(PlayerMovementStateMachine stateMachine) {
         stateMachine?.RemoveOnLateUpdateListener(OnLateUpdate);
     }
 }

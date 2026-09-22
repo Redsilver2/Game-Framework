@@ -1,5 +1,9 @@
 using UnityEngine;
 using UnityEngine.Events;
+using System;
+using System.Collections.Generic;
+
+
 
 
 #if UNITY_EDITOR
@@ -162,7 +166,6 @@ public static class EditorExtension {
         DisplayButton(label, default, clickAction);
     }
 
-
     public static void DisplayButton(string label, Color buttonColor, UnityAction clickAction)
     {
         EditorGUILayout.BeginHorizontal();   
@@ -258,20 +261,79 @@ public static class EditorExtension {
             return currentValue;
     }
 
-        public static T DisplayCustomField<T>(string label, bool isScenePrefabAllowed, T value) where T : UnityEngine.Object
-        {
-            EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField(label, EditorStyles.boldLabel);
+    public static void DisplaySelectableArray(string label, ref int selectedValue, Array array, UnityAction<int> onChoiceMade) {
+        if (array == null) return;
+        string[] values = GetValues();
 
-            T result = (T)EditorGUILayout.ObjectField(
-              value,
-              typeof(T),
-              isScenePrefabAllowed
-            );
+        int previousValue = selectedValue;
+        int currentValue  = selectedValue;
 
-            EditorGUILayout.EndHorizontal();
-            return result;
+        DrawVertical(() => {
+          EditorGUILayout.LabelField(label, EditorStyles.boldLabel);
+
+          for (int i = 0; i < values.Length; i++) {
+            if (string.IsNullOrEmpty(values[i])) continue;
+             else {
+
+                DrawHorizontal(() => {
+
+                if (i == previousValue) { DisplayButton("Deselect", () => { currentValue = -1; }); }
+                else                    { DisplayButton("Select"  , () => { currentValue = i; }); }
+                });
+             }
+          }
+
+            EditorGUILayout.Separator();
+        });
+
+        selectedValue = currentValue;
+
+
+        string[] GetValues() {
+            if (array == null) return new string[0];
+            List<string> values = new List<string>();
+
+            for (int i = 0; i < array.Length; i++) {
+                var value = array.GetValue(i);
+                if(value != null) {
+                    if(!values.Contains(value.ToString()))
+                        values?.Add(value.ToString());
+                } 
+            }
+
+            return values.ToArray();
         }
     }
+
+
+    public static T DisplayEnum<T>(string label, T value) where T : Enum
+    {
+        T result = default;
+
+        DrawHorizontal(() => {
+            EditorGUILayout.LabelField(label, EditorStyles.boldLabel);
+            result = (T)EditorGUILayout.EnumPopup(value);
+        });
+
+        return result;
+    } 
+
+    public static T DisplayCustomField<T>(string label, bool isScenePrefabAllowed, T value) where T : UnityEngine.Object
+    {
+        T result = null;
+
+        DrawHorizontal(() => {
+            EditorGUILayout.LabelField(label, EditorStyles.boldLabel);
+
+            result = (T)EditorGUILayout.ObjectField(
+               value,
+               typeof(T),
+               isScenePrefabAllowed
+            );
+        });
+
+        return result;
+    }
+}
 
 #endif
