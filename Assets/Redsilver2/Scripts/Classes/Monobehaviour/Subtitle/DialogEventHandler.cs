@@ -1,21 +1,21 @@
 using UnityEngine;
 
-namespace RedSilver2.Framework.Dialogs 
+namespace RedSilver2.Framework.Subtitles 
 {
     public abstract class DialogEventHandler : MonoBehaviour
     {
         private void Awake() {
-            SetDefaultEvents(DialogManager.GetInstance(), true);
+            SetDefaultEvents(SubtitleManager.GetInstance(), true);
         }
 
         private void OnEnable() {
-            SetDefaultEvents(DialogManager.GetInstance(), true);
+            SetDefaultEvents(SubtitleManager.GetInstance(), true);
         }
 
         private void OnDisable() {
-            SetDefaultEvents(DialogManager.GetInstance(), false);
+            SetDefaultEvents(SubtitleManager.GetInstance(), false);
         }
 
-        protected abstract void SetDefaultEvents(DialogManager manager, bool isAddingEvents);
+        protected abstract void SetDefaultEvents(SubtitleManager manager, bool isAddingEvents);
     }
 }

@@ -1,6 +1,6 @@
 using UnityEngine.Events;
 
-namespace RedSilver2.Framework.Dialogs {
+namespace RedSilver2.Framework.Subtitles {
     public sealed class DialogChoice {
         public  readonly string Name;
         public  readonly string Description;

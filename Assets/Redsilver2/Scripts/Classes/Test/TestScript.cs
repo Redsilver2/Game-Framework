@@ -1,5 +1,5 @@
 using RedSilver2.Framework.Inputs;
-using RedSilver2.Framework.Dialogs;
+using RedSilver2.Framework.Subtitles;
 using UnityEngine;
 using RedSilver2.Framework.Quests.Datas;
 using RedSilver2.Framework.Quests;
@@ -33,7 +33,7 @@ public class TestScript : MonoBehaviour
             if (state == QuestState.Completed)
             {
 
-                DialogManager.PlayScreenSpace("I've reached the targeted destination and I am going to go take a nap that will last decades because why not...", 1.5f, 3f);
+               // DialogManager.PlayScreenSpace("I've reached the targeted destination and I am going to go take a nap that will last decades because why not...", 1.5f, 3f);
             }
         });
 
@@ -44,11 +44,11 @@ public class TestScript : MonoBehaviour
     {
         if (InputManager.GetKeyDown(KeyboardKey.A)) {
             if (count >= tests.Length + 1) return;
-            DialogManager.GetInstance()?.Play(parent, tests[count], 0.5f, 3f);
+           // DialogManager.GetInstance()?.Play(parent, tests[count], 0.5f, 3f);
             count++;
         }
         else if (InputManager.GetKeyDown(KeyboardKey.Q)) {
-            DialogManager.GetInstance()?.Play(info);
+            SubtitleManager.GetInstance()?.Play(info);
         }
         else if (InputManager.GetKeyDown(MouseButton.LeftButton)) {
         }

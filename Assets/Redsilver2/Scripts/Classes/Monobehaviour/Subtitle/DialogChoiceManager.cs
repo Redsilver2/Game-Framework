@@ -8,7 +8,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace RedSilver2.Framework.Dialogs
+namespace RedSilver2.Framework.Subtitles
 {
     public class DialogChoiceManager : MonoBehaviour {
         [SerializeField] private DialogChoiceHandler template;
@@ -251,6 +251,6 @@ namespace RedSilver2.Framework.Dialogs
             choiceHandlers?.Remove(handler);
         }
 
-        public static DialogChoiceManager GetInstance() { return DialogManager.GetChoiceManager(); }
+        public static DialogChoiceManager GetInstance() { return SubtitleManager.GetChoiceManager(); }
     }
 }

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace RedSilver2.Framework.Dialogs
+namespace RedSilver2.Framework.Subtitles
 {
     [CreateAssetMenu(fileName = "New Dialog Info", menuName = "Dialog/Info/Default")]
     public sealed class DialogInfo : ScriptableObject {
@@ -24,10 +24,7 @@ namespace RedSilver2.Framework.Dialogs
 
             foreach (SubtitleInfo info in subtitleInfos.Distinct()) {
                 if (info == null) continue;
-                Subtitle subtitle = info.GetSubtitle();
 
-                if (subtitle == null) continue;
-                results.Add(subtitle);
             }
 
             return results.ToArray();

@@ -3,7 +3,7 @@ using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace RedSilver2.Framework.Dialogs
+namespace RedSilver2.Framework.Subtitles
 {
     [System.Serializable]
     public sealed class Dialog {
@@ -16,7 +16,7 @@ namespace RedSilver2.Framework.Dialogs
         private readonly List<DialogChoice> choices;
 
         public bool  CanUpdateChoiceDuration => canUpdateChoiceDuration;
-        public float ChoiceDuration => choiceDuration;
+        public float ChoiceDuration          => choiceDuration;
 
         private static readonly List<Dialog> instances = new List<Dialog>();
         private const string PATH = "Dialog/";
@@ -119,15 +119,6 @@ namespace RedSilver2.Framework.Dialogs
         public void RemoveSubtitle(Subtitle subtitle) {
             if (subtitle == null || subtitles == null || !subtitles.Contains(subtitle)) return;
             subtitles?.Remove(subtitle);
-        }
-
-        public bool IsSimilar(Dialog data) {
-           foreach(Subtitle subtitle in data.subtitles) {
-               var results = data.subtitles.Where(x => x != null).Where(X => X.IsSimilar(subtitle));
-               if(results.Count() > 0) return true;
-           }
-
-           return data.Name.Equals(Name, System.StringComparison.OrdinalIgnoreCase);
         }
 
         public int GetChoicesCount() { 

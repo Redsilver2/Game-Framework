@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using UnityEngine;
 
-namespace RedSilver2.Framework.Dialogs
+namespace RedSilver2.Framework.Subtitles
 {
     public sealed class DialogChoiceSizeUpdater : DialogChoiceSelection
     {

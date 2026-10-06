@@ -1,163 +1,218 @@
-using RedSilver2.Framework.Dialogs.Datas;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
-using UnityEngine.Events;
 
 
-namespace RedSilver2.Framework.Dialogs
+namespace RedSilver2.Framework.Subtitles
 {
-    [System.Serializable]
-    public class Subtitle {
-        [SerializeField] private List<SubtitleData> datas;
+    [CreateAssetMenu(fileName = "New Subtitle", menuName = "Subtitle")]
+    public partial class Subtitle : ScriptableObject {
+
+        [SerializeField] private string title;
+        [SerializeField] private Dictionary<string, List<SubtitleDataReference>> dataReferences;
+
+        private static readonly List<SubtitleUpdater> subtitleUpdaters = new List<SubtitleUpdater>();
        
-        private RectTransform parent; 
-        private readonly UnityEvent onPlay, onStop;
+        public string Title => title;
 
-        public RectTransform Parent => parent;
-        private const string PATH = "Subtitle/";
 
-        public Subtitle() {
-            onPlay = new UnityEvent();
-            onStop = new UnityEvent();
-            datas  = new List<SubtitleData>();
+
+        public static void Play(List<SubtitleData> datas, string anchorName, bool resetAllDatas) {
+          
         }
 
-        public Subtitle(RectTransform parent)
+        public static void Play(List<SubtitleData> datas, bool resetAllDatas)
         {
-            onPlay = new UnityEvent();
-            onStop = new UnityEvent();
-            datas = new List<SubtitleData>();
-            this.parent = parent;
+
         }
 
-        public Subtitle(List<SubtitleData> datas) {
-            onPlay = new UnityEvent();
-            onStop = new UnityEvent();
-            this.datas = datas  != null ? datas : new List<SubtitleData>();
+        public static void Play(SubtitleData[] datas, bool resetAllDatas) {
 
-            SortDatasByTime();
         }
 
-        public Subtitle(List<SubtitleData> datas, RectTransform parent)
+        public static void Play(SubtitleData[] datas, string anchorName, bool resetAllDatas)
         {
-            onPlay = new UnityEvent();
-            onStop = new UnityEvent();
-            this.datas = datas != null ? datas : new List<SubtitleData>();
 
-            this.parent = parent;
-            SortDatasByTime();
         }
 
-        public Subtitle(SubtitleData[] datas) {
-            onPlay = new UnityEvent();
-            onStop = new UnityEvent();
+        public static async void Play() { }
+        public static void Resume(Subtitle subtitle) { }
 
-            this.datas = datas != null ? datas.ToList() : new List<SubtitleData>();
-            SortDatasByTime();
-        }
 
-        public Subtitle(SubtitleData[] datas, RectTransform parent)
+
+        public static void Pause(Subtitle subtitle) { }
+
+        private void SortDatasByTime()
         {
-            onPlay = new UnityEvent();
-            onStop = new UnityEvent();
-
-            this.datas = datas != null ? datas.ToList() : new List<SubtitleData>();
-            this.parent = parent;
-
-            SortDatasByTime();
+            if (dataReferences != null)
+            {
+                foreach (var pair in dataReferences)
+                {
+                    dataReferences[pair.Key] = dataReferences[pair.Key].OrderBy(x => x.GetSortedTime()).ToList();
+                }
+            }
         }
 
-        public void AddOnPlayListener(UnityAction action){
-            if (action != null) onPlay?.AddListener(action);
-        }
-        public void RemoveOnPlayListener(UnityAction action) {
-            if (action != null) onPlay?.RemoveListener(action);
-        }
 
-        public void AddOnStopListener(UnityAction action)
-        {
-            if (action != null) onStop?.AddListener(action);
-        }
-        public void RemoveOnStopListener(UnityAction action) {
-            if (action != null) onStop?.RemoveListener(action);
-        }
-
-        public void Play() { onPlay?.Invoke(); }
-        public void Stop() { onStop?.Invoke(); }    
-
-        public void AddData(SubtitleData data) {
-            datas?.Add(data);
-            SortDatasByTime();
-        }
-
-        public void RemoveData(SubtitleData data) {
-            datas?.Remove(data);
-            SortDatasByTime();
-        }
-
-        public void RemoveData(int index) {
-            RemoveData(GetData(index));         
-        }
-
-        public void SetParent(RectTransform parent) { 
-            this.parent = parent; 
-        }
-
-        public SubtitleData GetData(int index)
-        {
-            SubtitleData[] results = GetDatas();
-
-            if(results == null || results.Length == 0 || index < 0 || index >= results.Length)
-                return default;
-
-            return results[index];  
-        }
-
-        public SubtitleData[] GetDatas(int[] indexes)
+        public SubtitleData[] GetSubtitleDatas()
         {
             List<SubtitleData> results = new List<SubtitleData>();
-            if (indexes == null) return null;
+            if (dataReferences == null) return results.ToArray();
 
-            for (int i = 0; i < indexes.Length; i++) {
-               results.Add(GetData(indexes[i]));         
+            foreach (List<SubtitleDataReference> references in dataReferences.Values) {
+                foreach (SubtitleDataReference reference in references) {
+                    SubtitleData data = reference != null ? reference.Data : null;
+                    if (data == null || results.Contains(data)) continue;
+                    results?.Add(data);
+                }
             }
 
             return results.ToArray();
         }
 
-        public SubtitleData[] GetDatas() {
-            if(datas == null) return null;
-            return datas.ToArray();
-        }
+        [System.Serializable]
+        private class SubtitleDataReference
+        {
+            [SerializeField, SerializeReference] private SubtitleData data;
+            public SubtitleData Data => data;
 
-        public bool ContainsData(SubtitleData data) {
-            if (datas == null) return false;
-            return datas.Contains(data);
-        }
+            public SubtitleDataReference(SubtitleData data)
+            {
+                this.data = data;
+            }
 
-        public virtual bool IsSimilar(Subtitle subtitle) {
-            if(subtitle == null) return false;
-            return subtitle.Equals(this);
-        }
-
-#if UNITY_EDITOR
-        public void ValidateDatas() { 
-            if (datas == null) return;
-            foreach(SubtitleData data in datas) {
-                 data.Validate();
+            public float GetSortedTime() {
+                return data != null ? data.StartTime : 0f;
             }
         }
-#endif
+    }
 
-        private void SortDatasByTime() {
-           datas = datas.OrderBy(x => x.StartTime).ToList();
-        }
+    public partial class Subtitle : ScriptableObject
+    {
+#if UNITY_EDITOR
+        [SerializeField, HideInInspector] private bool addOrRemoveDatas;
+        [SerializeField, HideInInspector] private bool showDatas;
 
+        [SerializeField, HideInInspector] private string dataName;
+        [SerializeField, HideInInspector] private bool[] showDataFoldouts;
+        [SerializeField, HideInInspector] private bool[] showDataCreation;
 
-        public string GetPath()
+        public void DrawInspector()
         {
-            return $"{Dialog.GetPath()}{PATH}"; 
+           
+
+            EditorExtension.DrawVerticalHelpBox(() =>
+            {
+                if (dataReferences != null &&  EditorExtension.DisplayFoldout("Add / Remove", ref addOrRemoveDatas, new Color32(0, 0, 0, 181))) {
+                    EditorExtension.DrawHorizontal(() => {
+                        EditorExtension.DisplayBoldLabel("Data Reference Name");
+                        dataName = EditorGUILayout.TextField(dataName).ToLower();
+                    }, true);
+
+                    if (!dataReferences.ContainsKey(dataName)) EditorExtension.DisplayButton("Add"   , () => { 
+                        dataReferences.Add(dataName, new List<SubtitleDataReference>());
+                        showDataFoldouts = new bool[dataReferences.Keys.Count];
+                        showDataCreation = new bool[dataReferences.Keys.Count];
+                        Debug.Log(showDataCreation.Length);
+                    });
+                    else                                      
+                    EditorExtension.DisplayButton("Remove", () => { 
+                        dataReferences.Remove(dataName);
+                        showDataFoldouts = new bool[dataReferences.Keys.Count];
+                        showDataCreation = new bool[dataReferences.Keys.Count];
+                    });
+
+                    EditorExtension.Space(10f);
+                }
+
+                if (dataReferences != null && showDataFoldouts.Length > 0 && EditorExtension.DisplayFoldout("Show", ref showDatas, new Color32(0, 0, 0, 181)))
+                {
+                    var results = dataReferences;
+                    int index = 0;
+
+                    if (showDataCreation == null)
+                    {
+                        showDataCreation = new bool[results.Count];
+                    }
+
+                    foreach (var keyPair in results) {
+                        bool isRemoved = false;
+                        bool isRemovingData = false;
+
+                        EditorExtension.DrawVerticalHelpBox(() => {
+                            if (EditorExtension.DisplayFoldout(keyPair.Key, ref showDataFoldouts[index], new Color32(0, 0, 0, 181))) {
+
+                                EditorExtension.DisplayButton("Remove", () => {
+                                    results?.Remove(keyPair.Key);
+                                    showDataFoldouts = new bool[results.Keys.Count];
+                                    showDataCreation = new bool[results.Keys.Count]; 
+                                    isRemoved = true;
+                                });
+
+                                EditorExtension.Space(10f);
+
+                                EditorExtension.IncrementIndent();
+
+                                Debug.Log(showDataCreation[index] + " | " + index);
+
+                                if (EditorExtension.DisplayFoldout("Data Creation", ref showDataCreation[index], new Color32(0, 0, 0, 181))){
+                                    EditorExtension.IncrementIndent();
+                                    EditorExtension.Space(10f);
+
+                                    EditorExtension.DisplayButton("Add Default Subtitle Data", () => {
+                                        keyPair.Value.Add(new SubtitleDataReference(new SubtitleData()));
+                                    });
+
+                                    EditorExtension.Space(5f);
+
+                                    EditorExtension.DisplayButton("Add Audible Subtitle Data", () => {
+                                        keyPair.Value.Add(new SubtitleDataReference(new AudibleSubtitleData()));
+                                    });
+
+                                    EditorExtension.Space(5f);
+
+                                    EditorExtension.DisplayButton("Add Character Subtitle Data", () => {
+                                        keyPair.Value.Add(new SubtitleDataReference(new CharacterSubtitleData()));
+                                    });
+
+                                    EditorExtension.Space(5f);
+
+                                    EditorExtension.DisplayButton("Add Audible Character Subtitle Data", () => {
+                                        keyPair.Value.Add(new SubtitleDataReference(new AudibleCharacterSubtitleData()));
+                                    });
+
+
+                                    EditorExtension.Space(10f);
+                                    EditorExtension.DecrementIndent();
+                                }
+
+                                var values = keyPair.Value;
+
+                                foreach (var value in values) {
+                                    if (value == null || value.Data == null) continue;
+
+                                    value.Data?.DrawInspector($"Data {keyPair.Value.IndexOf(value) + 1}", ref isRemovingData);
+                                    if (isRemovingData) { keyPair.Value.Remove(value); break; }
+                                }
+
+                                EditorExtension.DecrementIndent();
+                            }
+
+                        }, true);
+
+
+
+                        index++;
+
+                        if (isRemoved || isRemovingData) break;
+
+                    }
+
+                    dataReferences = results;
+                }
+            });
         }
+#endif
     }
 }

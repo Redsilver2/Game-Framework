@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Audio;
 
-namespace RedSilver2.Framework.Dialogs
+namespace RedSilver2.Framework.Subtitles
 {
     [CreateAssetMenu(fileName = "New Subtitle Audio Info", menuName = "Dialog/Subtitle/Audio Info")]
     public sealed class SubtitleAudioInfo : ScriptableObject {

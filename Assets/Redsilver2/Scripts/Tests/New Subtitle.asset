@@ -1,0 +1,132 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7794b7093eddd5a439d940253f4289eb, type: 3}
+  m_Name: New Subtitle
+  m_EditorClassIdentifier: Assembly-CSharp::RedSilver2.Framework.Subtitles.Subtitle
+  title: 
+  dataReferences:
+  - key: aa
+    value:
+    - data:
+        rid: 972955131623506024
+    - data:
+        rid: 972955131623506025
+    - data:
+        rid: 972955131623506027
+    - data:
+        rid: 972955144942518402
+    - data:
+        rid: 972955154560057344
+  addOrRemoveDatas: 1
+  showDatas: 1
+  dataName: aa
+  showDataFoldouts: 01y
+  showDataCreation: 01y
+  references:
+    version: 2
+    RefIds:
+    - rid: 972955131623506024
+      type: {class: Subtitle/SubtitleData, ns: RedSilver2.Framework.Subtitles, asm: Assembly-CSharp}
+      data:
+        startTime:
+          hours: 0
+          minutes: 0
+          seconds: 0
+        endTime:
+          hours: 0
+          minutes: 0
+          seconds: 4
+        fadeInWaitTime: 0
+        fadeInDuration: 1.5
+        fadeOutWaitTime: 3
+        fadeOutDuration: 1.5
+        anchorName: Screen Space Main
+        context: Pretty sure this is not it...
+        showBaseFoldout: 0
+        useWorldSpaceAnchor: 0
+    - rid: 972955131623506025
+      type: {class: Subtitle/SubtitleData, ns: RedSilver2.Framework.Subtitles, asm: Assembly-CSharp}
+      data:
+        startTime:
+          hours: 0
+          minutes: 0
+          seconds: 10
+        endTime:
+          hours: 0
+          minutes: 0
+          seconds: 13
+        fadeInWaitTime: 0
+        fadeInDuration: 1.5
+        fadeOutWaitTime: 0
+        fadeOutDuration: 1.5
+        anchorName: Screen Space Main
+        context: What am I suppose to say? I mean there is alot that can be said here but I can really say what
+        showBaseFoldout: 0
+        useWorldSpaceAnchor: 0
+    - rid: 972955131623506027
+      type: {class: Subtitle/SubtitleData, ns: RedSilver2.Framework.Subtitles, asm: Assembly-CSharp}
+      data:
+        startTime:
+          hours: 0
+          minutes: 0
+          seconds: 13
+        endTime:
+          hours: 0
+          minutes: 0
+          seconds: 15
+        fadeInWaitTime: 0
+        fadeInDuration: 1.5
+        fadeOutWaitTime: 0
+        fadeOutDuration: 1.5
+        anchorName: Screen Space Main
+        context: They have reached another level of insanity here...
+        showBaseFoldout: 0
+        useWorldSpaceAnchor: 0
+    - rid: 972955144942518402
+      type: {class: Subtitle/CharacterSubtitleData, ns: RedSilver2.Framework.Subtitles, asm: Assembly-CSharp}
+      data:
+        startTime:
+          hours: 0
+          minutes: 0
+          seconds: 7
+        endTime:
+          hours: 0
+          minutes: 0
+          seconds: 10
+        fadeInWaitTime: 0
+        fadeInDuration: 0.5
+        fadeOutWaitTime: 0
+        fadeOutDuration: 0.5
+        anchorName: Screen Space Main
+        context: Hi my name is whatever you want it to be
+        showBaseFoldout: 0
+        useWorldSpaceAnchor: 0
+        characterName: hohn
+    - rid: 972955154560057344
+      type: {class: Subtitle/SubtitleData, ns: RedSilver2.Framework.Subtitles, asm: Assembly-CSharp}
+      data:
+        startTime:
+          hours: 0
+          minutes: 0
+          seconds: 2
+        endTime:
+          hours: 0
+          minutes: 0
+          seconds: 6
+        fadeInWaitTime: 0
+        fadeInDuration: 1.5
+        fadeOutWaitTime: 3
+        fadeOutDuration: 1.5
+        anchorName: Screen Space Main
+        context: Im testing this dialog system because its very awesome and cool
+        showBaseFoldout: 1
+        useWorldSpaceAnchor: 0

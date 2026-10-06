@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-namespace RedSilver2.Framework.Dialogs
+namespace RedSilver2.Framework.Subtitles
 {
     [RequireComponent(typeof(CanvasGroup))]
     public class DialogChoiceHandler : MonoBehaviour {   

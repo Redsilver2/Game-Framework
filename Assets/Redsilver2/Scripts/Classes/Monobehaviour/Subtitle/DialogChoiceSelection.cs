@@ -1,4 +1,4 @@
-namespace RedSilver2.Framework.Dialogs
+namespace RedSilver2.Framework.Subtitles
 {
     public abstract class DialogChoiceSelection : DialogChoiceEventHandler {
         private DialogChoiceHandler selected;

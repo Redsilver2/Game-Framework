@@ -132,7 +132,6 @@ namespace RedSilver2.Framework.Scenes
             if (currentLoadingScreen) currentLoadingScreen.gameObject.SetActive(true);
 
             GameManager.DisableControls();
-            GameManager.DialogManager?.Stop();
 
             StopAllSceneLoadingOperations();
             IsLoadingSingleScene = true;

@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using UnityEngine;
 
-namespace RedSilver2.Framework.Dialogs
+namespace RedSilver2.Framework.Subtitles
 {
     public abstract class SubtitlePositionHandler : DialogEventHandler
     {
@@ -15,23 +15,23 @@ namespace RedSilver2.Framework.Dialogs
         [SerializeField] private float subtitleLerpSpeed   = 10f;
 
 
-        protected void UpdateSubtitleHandlers(SubtitleHandler[] handlers) {
+        protected void UpdateSubtitleHandlers(SubtitleDisplayer[] handlers) {
             if (handlers == null) return;
 
             float previousHeight = 0f;
-            handlers = handlers.Where(x => x.IsUpdateStarted && !x.IsFadedIn()).Reverse().ToArray();
+           // handlers = handlers.Where(x => x.IsUpdateStarted && !x.IsFadedIn()).Reverse().ToArray();
 
             for (int i = 0; i < handlers.Length; i++)
                 UpdateSubtitleHandler(handlers[i], i, ref previousHeight);
         }
 
-        protected virtual void UpdateSubtitleHandler(SubtitleHandler handler, int index, ref float previousHeight){
+        protected virtual void UpdateSubtitleHandler(SubtitleDisplayer handler, int index, ref float previousHeight){
             if(handler == null) return;
             UpdateSubtitleHandlerParent(handler, GetParent(handler));
             UpdateSubtitleHandlersPosition(handler, index, ref previousHeight);
         }
 
-        private void UpdateSubtitleHandlerParent(SubtitleHandler handler, Transform parent) {
+        private void UpdateSubtitleHandlerParent(SubtitleDisplayer handler, Transform parent) {
             if (handler == null) return;
             Transform transform = handler.transform;
             Vector3 _default = defaultPosition;
@@ -40,7 +40,7 @@ namespace RedSilver2.Framework.Dialogs
             transform.localPosition = Vector3.right * _default.x + Vector3.up * transform.localPosition.y + Vector3.forward * _default.z;
         }
 
-        private void UpdateSubtitleHandlersPosition(SubtitleHandler handler, int index, ref float previousHeight) {
+        private void UpdateSubtitleHandlersPosition(SubtitleDisplayer handler, int index, ref float previousHeight) {
             if (handler == null) return;
 
             int       lineCount = handler.LineCount;
@@ -65,6 +65,6 @@ namespace RedSilver2.Framework.Dialogs
                    Vector3.forward * transform.localPosition.z;
         }
 
-        protected abstract Transform GetParent(SubtitleHandler handler);
+        protected abstract Transform GetParent(SubtitleDisplayer handler);
     }
 }

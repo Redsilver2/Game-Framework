@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace RedSilver2.Framework.Dialogs {
+namespace RedSilver2.Framework.Subtitles {
     public class DialogChoiceVerticalPositionUpdater : DialogChoicePositionUpdater {
         [Space]
         [SerializeField] private float deselectedVerticalSpacing = 0f;

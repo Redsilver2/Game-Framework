@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace RedSilver2.Framework.Dialogs
+namespace RedSilver2.Framework.Subtitles
 {
     [CreateAssetMenu(fileName = "New Dialog Choice Info", menuName = "Dialog/Choice/Info")]
     public sealed class DialogChoiceInfo : ScriptableObject {

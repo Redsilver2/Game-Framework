@@ -5,7 +5,7 @@ using RedSilver2.Framework.Player;
 using RedSilver2.Framework.Scenes;
 using RedSilver2.Framework.Settings;
 using RedSilver2.Framework.StateMachines.Controllers;
-using RedSilver2.Framework.Dialogs;
+using RedSilver2.Framework.Subtitles;
 using UnityEngine;
 using RedSilver2.Framework.UI;
 using RedSilver2.Framework.Achievements;
@@ -16,7 +16,7 @@ namespace RedSilver2.Framework
     public class GameManager : MonoBehaviour
     {
         [SerializeField] private SceneLoaderManager sceneLoaderManager;    
-        [SerializeField] private DialogManager      subtitleManager;
+        [SerializeField] private SubtitleManager      subtitleManager;
         [SerializeField] private SettingManager     settingManager;
         [SerializeField] private LightManager       lightManager;
 
@@ -32,7 +32,7 @@ namespace RedSilver2.Framework
 
 
         public static SceneLoaderManager SceneLoaderManager => instance ? instance.sceneLoaderManager : null;
-        public static DialogManager      DialogManager      => instance ? instance.subtitleManager    : null;
+        public static SubtitleManager      DialogManager      => instance ? instance.subtitleManager    : null;
         public static SettingManager     SettingManager     => instance ? instance.settingManager     : null;
         public static LightManager       LightManager       => instance ? instance.lightManager       : null;
         public static GameUIController   UIController       => instance ? instance.uiController       : null;

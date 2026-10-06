@@ -2,7 +2,7 @@ using System;
 using TMPro;
 using UnityEngine;
 
-namespace RedSilver2.Framework.Dialogs
+namespace RedSilver2.Framework.Subtitles
 {
     public sealed class DialogChoiceHighlightUpdater : DialogChoiceSelection {
         [SerializeField] private Color deselectedColor;
